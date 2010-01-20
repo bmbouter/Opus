@@ -1,0 +1,6 @@
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="{% url mysite.vdi.views.desktop %}{{ desktopId }}/save/" method="POST">
+{{ form.as_p }}
+{% csrf_token %}
+<input type="submit" value="Save as New Image" />
+</form>
