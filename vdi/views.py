@@ -1,4 +1,4 @@
-from mysite.vdi.models import ImageLibrary, Instance
+from djangoSite.vdi.models import ImageLibrary, Instance, LDAPservers
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
@@ -16,6 +16,12 @@ def imageLibrary(request):
     images = ec2.get_all_images([i.imageId for i in db_images])
     return render_to_response('image-library.html',
     {'image_library': images},
+    context_instance=RequestContext(request))
+
+def ldaplogin(request):
+    ldap = LDAPservers.objects.all()
+    return render_to_response('ldap.html',
+    {'ldap_servers': ldap},
     context_instance=RequestContext(request))
 
 def desktop(request,action=None,desktopId=None):
