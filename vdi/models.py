@@ -1,7 +1,5 @@
 from django.db import models
 
-# a test line
-
 class ImageLibrary(models.Model):
     username = models.CharField(max_length=32)
     imageId = models.CharField(max_length=32)

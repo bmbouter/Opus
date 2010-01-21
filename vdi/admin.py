@@ -1,4 +1,4 @@
-from djangoSite.vdi.models import ImageLibrary, Instance, LDAPservers
+from mysite.vdi.models import ImageLibrary, Instance, LDAPservers
 from django.contrib import admin
 
 admin.site.register(Instance)
