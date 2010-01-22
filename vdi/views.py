@@ -1,4 +1,4 @@
-from djangoSite.vdi.models import ImageLibrary, Instance, LDAPservers
+from djangoSite.vdi.models import Image, Instance, LDAPserver
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
@@ -12,14 +12,14 @@ from subprocess import Popen, PIPE
 
 def imageLibrary(request):
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-    db_images = ImageLibrary.objects.all()
+    db_images = Image.objects.all()
     images = ec2.get_all_images([i.imageId for i in db_images])
     return render_to_response('image-library.html',
     {'image_library': images},
     context_instance=RequestContext(request))
 
 def ldaplogin(request):
-    ldap = LDAPservers.objects.all()
+    ldap = LDAPserver.objects.all()
     return render_to_response('ldap.html',
     {'ldap_servers': ldap},
     context_instance=RequestContext(request))
@@ -74,7 +74,7 @@ def saveDesktop(request, desktopId):
                 print "new=%s"%newImageId
                 #newImageId = ec2.create_image(db_instance.instanceId, form.cleaned_data['name'], form.cleaned_data['description'])
                 # Record the new image in the ImageLibrary
-                db_image = ImageLibrary(username="bmbouter", imageId=newImageId)
+                db_image = Image(username="bmbouter", imageId=newImageId)
                 db_image.save()
                 # Delete the existing ec2 instance
                 ec2.get_all_instances([db_instance.instanceId])[0].stop_all()
