@@ -72,7 +72,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'mysite.urls'
+ROOT_URLCONF = 'urls'
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -90,5 +90,5 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.admin',
-    'mysite.vdi',
+    'vdi',
 )

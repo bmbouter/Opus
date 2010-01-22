@@ -1,5 +1,7 @@
 from django.conf.urls.defaults import *
 
+import vdi
+
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -12,13 +14,13 @@ urlpatterns = patterns('',
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    (r'^vdi/desktop/(?P<action>new)', 'djangoSite.vdi.views.desktop'),
-    (r'^vdi/ldap_login/$', 'djangoSite.vdi.views.ldaplogin'),
-    (r'^vdi/desktop/(?P<desktopId>(\w|-)*)/save/$', 'djangoSite.vdi.views.saveDesktop'),
-    (r'^vdi/desktop/(?P<desktopId>(\w|-)*)/(?P<action>(connect|delete))$', 'djangoSite.vdi.views.desktop'),
-    #(r'^vdi/desktop/(?P<desktopId>(\w|-)*)/(?P<conn_type>(nx|rdp))$', 'djangoSite.vdi.views.desktop'),
-    (r'^vdi/desktop/(?P<desktopId>(\w|-)*)/$', 'djangoSite.vdi.views.desktop'),
-    (r'^vdi/desktop/$', 'djangoSite.vdi.views.desktop'),
-    (r'^vdi/image-library/$', 'djangoSite.vdi.views.imageLibrary'),
+    (r'^vdi/desktop/(?P<action>new)', vdi.views.desktop),
+    (r'^vdi/ldap_login/$', vdi.views.ldaplogin),
+    (r'^vdi/desktop/(?P<desktopId>(\w|-)*)/save/$', vdi.views.saveDesktop),
+    (r'^vdi/desktop/(?P<desktopId>(\w|-)*)/(?P<action>(connect|delete))$', vdi.views.desktop),
+    #(r'^vdi/desktop/(?P<desktopId>(\w|-)*)/(?P<conn_type>(nx|rdp))$', vdi.views.desktop),
+    (r'^vdi/desktop/(?P<desktopId>(\w|-)*)/$', vdi.views.desktop),
+    (r'^vdi/desktop/$', vdi.views.desktop),
+    (r'^vdi/image-library/$', vdi.views.imageLibrary),
     (r'^admin/', include(admin.site.urls)),
 )

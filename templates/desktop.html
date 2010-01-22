@@ -6,10 +6,10 @@
             <td>{{ instance.state }}</td>
             <td><center>
             {% ifequal instance.state "running" %}
-                <a href="{% url mysite.vdi.views.desktop %}{{ instance.id }}/connect">connect</a>
-                <a href="{% url mysite.vdi.views.desktop %}{{ instance.id }}/save">Save as New Image</a>
+                <a href="{% url vdi.views.desktop %}{{ instance.id }}/connect">connect</a>
+                <a href="{% url vdi.views.desktop %}{{ instance.id }}/save">Save as New Image</a>
             {% endifequal %}
-            <form action="{% url mysite.vdi.views.desktop %}{{ instance.id }}/delete" method="post">
+            <form action="{% url vdi.views.desktop %}{{ instance.id }}/delete" method="post">
             {% csrf_token %}
             <input type="submit" value="Off" />
             </form></center></td>

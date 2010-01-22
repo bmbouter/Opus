@@ -1,4 +1,3 @@
-from djangoSite.vdi.models import Image, Instance, LDAPserver
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
@@ -9,6 +8,8 @@ from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError
 
 from subprocess import Popen, PIPE
+
+from vdi.models import Image, Instance, LDAPserver
 
 def imageLibrary(request):
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
