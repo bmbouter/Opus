@@ -1,6 +1,8 @@
-from models import Image, Instance, LDAPserver
 from django.contrib import admin
 
-admin.site.register(Instance)
-admin.site.register(Image)
-admin.site.register(LDAPserver)
+import models
+
+admin.site.register(models.Instance)
+admin.site.register(models.Image)
+admin.site.register(models.LDAPserver)
+admin.site.register(models.Role)

@@ -13,18 +13,20 @@ from vdi.models import Image, Instance, LDAPserver
 import ldap
 
 def imageLibrary(request):
+    #TODO: Make sure user is logged in
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
     db_images = Image.objects.all()
     images = ec2.get_all_images([i.imageId for i in db_images])
+    #TODO: Get permissions and only display those images
     return render_to_response('image-library.html',
-    {'image_library': images},
-    context_instance=RequestContext(request))
+        {'image_library': images},
+        context_instance=RequestContext(request))
 
 def ldaplogin(request):
     ldap = LDAPserver.objects.all()
     return render_to_response('ldap.html',
-    {'ldap_servers': ldap},
-    context_instance=RequestContext(request))
+        {'ldap_servers': ldap},
+        context_instance=RequestContext(request))
 
 def login(request):
     username = request.POST['username']
@@ -61,28 +63,40 @@ def login(request):
 
 
 def desktop(request,action=None,desktopId=None):
+    if "aoeu" in request.session:
+        request.session["aoeu"] += 1
+    else:
+        request.session["aoeu"] = 1
+    print request.session["aoeu"]
+    #TODO: Make sure user is logged in
     if request.method == 'GET':
         if desktopId is None:
             # viewing all desktops
+            #TODO: Only get desktops that user has permissions for
             return _GET_all_desktops(request,desktopId)
         else:
+            #TODO: Makes sure user has access to desktop
             if action is None:
                 # viewing a single desktop
                 return _GET_single_desktop(request,desktopId)
             elif action == 'connect':
                 # viewing a single desktop connection info
                 return _GET_connect(request,desktopId)
+
     elif request.method =='POST':
         ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
         if action == 'new':
             # Create a new instance
             image = ec2.get_all_images([request.GET['name']])[0]
+            #TODO: Make sure user has access to image
+            #TODO: Error if image doesn't exist
             reservation = image.run(key_name="somekey")
             instance = Instance(username="bmbouter",instanceId=reservation.instances[0].id)
             instance.save()
             return HttpResponseRedirect('/vdi/desktop/%s' % instance.instanceId)
         elif action == 'delete':
             # Delete an existing instance
+            #TODO: Make sure user has access to desktop
             instance = Instance.objects.filter(instanceId=desktopId)
             ec2.get_all_instances([i.instanceId for i in instance])[0].stop_all()
             instance.delete()
@@ -93,6 +107,7 @@ class saveDesktopForm(forms.Form):
     description = forms.CharField()
 
 def saveDesktop(request, desktopId):
+    #TODO: Make sure user has access to desktop
     if request.method == 'POST':
         form = saveDesktopForm(request.POST)
         if form.is_valid():
@@ -122,11 +137,12 @@ def saveDesktop(request, desktopId):
                     return render_to_response('save_desktop.html',
                     {'form' : form, 'desktopId' : desktopId, 'error_message' : error_message},
                     context_instance=RequestContext(request))
+
     else:
         form = saveDesktopForm()
     return render_to_response('save_desktop.html', {'form' : form, 'desktopId' : desktopId}, context_instance=RequestContext(request))
 
-def _GET_all_desktops(request,desktopId):
+def _GET_all_desktops(request, desktopId):
     # GET all desktops
     # TODO: refactor this function so it is more efficient 
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
