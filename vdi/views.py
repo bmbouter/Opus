@@ -10,6 +10,7 @@ from boto.exception import EC2ResponseError
 from subprocess import Popen, PIPE
 
 from vdi.models import Image, Instance, LDAPserver
+import ldap
 
 def imageLibrary(request):
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
@@ -24,6 +25,40 @@ def ldaplogin(request):
     return render_to_response('ldap.html',
     {'ldap_servers': ldap},
     context_instance=RequestContext(request))
+
+def login(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    server = request.POST['server']
+    result_set = []
+    timeout = 0
+    try:
+        server = 'ldap://'+server+'/'
+        l = ldap.initialize(server)
+        l.start_tls_s()
+        l.protocol_version = ldap.VERSION3
+        # Any errors will throw an ldap.LDAPError exception 
+        # or related exception so you can ignore the result
+        l.set_option(ldap.OPT_X_TLS_DEMAND, True)
+        search_string = "uid="+username
+        authentication_string = "uid=" + username + ",ou=accounts,dc=ncsu,dc=edu"
+        l.simple_bind_s(authentication_string,password)
+        result_id = l.search("ou=accounts,dc=ncsu,dc=edu",ldap.SCOPE_SUBTREE,search_string,["memberNisNetgroup"])
+        while 1:
+            result_type, result_data = l.result(result_id, timeout)
+            if (result_data == []):
+                break
+            else:
+                if result_type == ldap.RES_SEARCH_ENTRY:
+                    result_set.append(result_data)
+        print result_set
+        #if you got here then the right password has been entered for the user
+        return render_to_response('image-library.html',
+        {'image_library': images},
+        context_instance=RequestContext(request))
+    except ldap.LDAPError, e:
+        print e
+
 
 def desktop(request,action=None,desktopId=None):
     if request.method == 'GET':
