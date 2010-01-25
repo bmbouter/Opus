@@ -8,7 +8,7 @@
             <td>{{ image.description }}</td>
             <td><center><form action="{% url vdi.views.desktop %}new?name={{ image.id }}" method="post">
             {% csrf_token %}
-            <input type="submit" value="On" />
+            <input type="submit" value="Login" />
             </form></center></td>
             </tr>
         {% endfor %}
