@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 def login(request, username, ldap, role):
     request.session["logged_in"] = True
@@ -7,10 +7,14 @@ def login(request, username, ldap, role):
     request.session["role"] = role
 
 def logout(request):
-    del request.session["logged_in"]
-    del request.session["username"]
-    del request.session["ldap"]
-    del request.session["role"]
+    if "logged_in" in request.session:
+        del request.session["logged_in"]
+    if "username" in request.session:
+        del request.session["username"]
+    if "ldap" in request.session:
+        del request.session["ldap"]
+    if "role" in request.session:
+        del request.session["role"]
 
 def is_logged_in(request):
     return "logged_in" in request.session
@@ -23,7 +27,7 @@ def can_access_instance(request, instance):
     #TODO
     pass
 
-def require_user(func):
+def login_required(func):
     '''
     A decorator that redirects to the login page if the user isn't logged in.
     Meant to be used on a django view function, hence the first argument being
@@ -33,5 +37,5 @@ def require_user(func):
         if is_logged_in(request):
             return func(request, *args, **kwargs)
         else:
-            return HttpResponse("You have to log in.  IN the future, this will be a redirect.")
+            return HttpResponseRedirect("/vdi/ldap_login")
     return check_func

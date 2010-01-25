@@ -8,15 +8,18 @@ from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError
 
 from subprocess import Popen, PIPE
-
-from vdi.models import Image, Instance, LDAPserver
 import ldap
 
+from vdi.models import Image, Instance, LDAPserver
+from vdi import user_tools
+
+@user_tools.login_required
 def imageLibrary(request):
     #TODO: Make sure user is logged in
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
     db_images = Image.objects.all()
     images = ec2.get_all_images([i.imageId for i in db_images])
+    #TODO: If image database is empty, set images=[]
     #TODO: Get permissions and only display those images
     return render_to_response('image-library.html',
         {'image_library': images},
@@ -31,10 +34,13 @@ def ldaplogin(request):
 def login(request):
     username = request.POST['username']
     password = request.POST['password']
+    #TODO: Reference ldap servers by ID in the database to only allow servers
+    #      that are in the database
     server = request.POST['server']
     result_set = []
     timeout = 0
     try:
+        #TODO: Make this work with ldap servers that aren't ldap.ncsu.edu
         server = 'ldap://'+server+'/'
         l = ldap.initialize(server)
         l.start_tls_s()
@@ -55,19 +61,21 @@ def login(request):
                     result_set.append(result_data)
         print result_set
         #if you got here then the right password has been entered for the user
-        return render_to_response('image-library.html',
-        {'image_library': images},
-        context_instance=RequestContext(request))
+        #TODO: Get Role
+        role = "TODO"
+        user_tools.login(request, username, server, role)
+        return HttpResponseRedirect('/vdi/desktop')
     except ldap.LDAPError, e:
+        #TODO: Handle login error
         print e
 
+@user_tools.login_required
+def logout(request):
+    user_tools.logout(request)
+    return HttpResponseRedirect('/vdi/ldap_login')
 
+@user_tools.login_required
 def desktop(request,action=None,desktopId=None):
-    if "aoeu" in request.session:
-        request.session["aoeu"] += 1
-    else:
-        request.session["aoeu"] = 1
-    print request.session["aoeu"]
     #TODO: Make sure user is logged in
     if request.method == 'GET':
         if desktopId is None:
@@ -106,6 +114,7 @@ class saveDesktopForm(forms.Form):
     name = forms.CharField()
     description = forms.CharField()
 
+@user_tools.login_required
 def saveDesktop(request, desktopId):
     #TODO: Make sure user has access to desktop
     if request.method == 'POST':
