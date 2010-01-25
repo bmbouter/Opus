@@ -62,7 +62,7 @@ def login(request):
         print result_set
         #if you got here then the right password has been entered for the user
         #TODO: Get Role
-        role = "TODO"
+        role = result_set[0][0][1]['memberNisNetgroup']
         user_tools.login(request, username, server, role)
         return HttpResponseRedirect('/vdi/desktop')
     except ldap.LDAPError, e:
