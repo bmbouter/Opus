@@ -17,10 +17,10 @@ class LDAPserver(models.Model):
 
 class Role(models.Model):
     '''
-    Maps an ldap server and role to a number of AMI's which it has access to.
+    Maps an ldap server and role to a number of image which it has access to.
     '''
     ldapServer = models.ForeignKey(LDAPserver)
     ldapRole = models.CharField(max_length=32)
-    amis = models.ManyToManyField(Image)
+    images = models.ManyToManyField(Image)
     class Meta:
         unique_together = (("ldapServer", "ldapRole"),)

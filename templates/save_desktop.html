@@ -1,6 +1,13 @@
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-<form action="{% url vdi.views.desktop %}{{ desktopId }}/save/" method="POST">
-{{ form.as_p }}
-{% csrf_token %}
-<input type="submit" value="Save as New Image" />
-</form>
+{% extends "base.html" %}
+{% block title %}Save Desktop{% endblock %}
+
+{% block content %}
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <form action="{% url vdi.views.desktop %}{{ desktopId }}/save/" method="POST">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <input type="submit" value="Save as New Image" />
+    </form>
+
+{% block content %}

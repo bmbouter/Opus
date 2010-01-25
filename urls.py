@@ -14,9 +14,10 @@ urlpatterns = patterns('',
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    (r'^vdi/desktop/(?P<action>new)', vdi.views.desktop),
     (r'^vdi/ldap_login/$', vdi.views.ldaplogin),
     (r'^vdi/login/$', vdi.views.login),
+    (r'^vdi/logout/$', vdi.views.logout),
+    (r'^vdi/desktop/(?P<action>new)', vdi.views.desktop),
     (r'^vdi/desktop/(?P<desktopId>(\w|-)*)/save/$', vdi.views.saveDesktop),
     (r'^vdi/desktop/(?P<desktopId>(\w|-)*)/(?P<action>(connect|delete))$', vdi.views.desktop),
     #(r'^vdi/desktop/(?P<desktopId>(\w|-)*)/(?P<conn_type>(nx|rdp))$', vdi.views.desktop),

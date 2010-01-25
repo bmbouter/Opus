@@ -1,17 +1,23 @@
-{% if ldap_servers %}
-    <form action="{% url vdi.views.login %}" method="post">
-    <input type="text" name="username"><br>
-    <input type="password" name="password"><br>
-    <select name="server">
-	{% for server in ldap_servers %}
-	  <option value="{{ server.url }}">{{server.name}}</option>
-	{% endfor %}
-    </select>
-            {% csrf_token %}
-            <input type="submit" value="On" />
-            </form>
-    
-{% else %}
-    <p>No images are available.</p>
-{% endif %}
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
 
+{% block content %}
+
+    {% if ldap_servers %}
+        <form action="{% url vdi.views.login %}" method="post">
+        <input type="text" name="username"><br>
+        <input type="password" name="password"><br>
+        <select name="server">
+        {% for server in ldap_servers %}
+          <option value="{{ server.url }}">{{server.name}}</option>
+        {% endfor %}
+        </select>
+                {% csrf_token %}
+                <input type="submit" value="On" />
+                </form>
+        
+    {% else %}
+        <p>No images are available.</p>
+    {% endif %}
+
+{% endblock %}
