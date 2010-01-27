@@ -16,7 +16,6 @@ from vdi import user_tools
 @user_tools.login_required
 def imageLibrary(request):
     db_images = user_tools.get_user_images(request)
-    print "db_images = %s" % db_images
     if db_images:
         ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
         images = ec2.get_all_images([i.imageId for i in db_images])

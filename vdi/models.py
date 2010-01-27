@@ -2,6 +2,8 @@ from django.db import models
 
 class Image(models.Model):
     imageId = models.CharField(max_length=32, unique=True) # Amazon ec2 ID
+    #TODO: I don't think this information is used.  It's grabbed from ec2
+    #      instead.
     name = models.CharField(max_length=64)
     os = models.CharField(max_length=32)
     description = models.TextField()
