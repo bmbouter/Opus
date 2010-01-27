@@ -10,19 +10,19 @@
     {% endfor %}
     {% endif %}
         <form action="{% url vdi.views.login %}" method="post">
-        <input type="text" name="username"><br>
-        <input type="password" name="password"><br>
-        <select name="server">
-        {% for server in ldap_servers %}
-          <option value="{{ server.url }}">{{server.name}}</option>
-        {% endfor %}
-        </select>
-                {% csrf_token %}
-                <input type="submit" value="On" />
-                </form>
+            <input type="text" name="username"><br>
+            <input type="password" name="password"><br>
+            <select name="server">
+                {% for server in ldap_servers %}
+                    <option value="{{ server.id }}">{{server.name}}</option>
+                {% endfor %}
+            </select>
+            {% csrf_token %}
+            <input type="submit" value="On" />
+        </form>
         
     {% else %}
-        <p>No LDAP servers are available to continue authentication.</p>
+        <p>There are no LDAP servers in the database.</p>
     {% endif %}
 
 {% endblock %}

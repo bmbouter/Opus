@@ -1,14 +1,20 @@
 from django.db import models
 
 class Image(models.Model):
-    username = models.CharField(max_length=32)
-    imageId = models.CharField(max_length=32, unique=True)
+    imageId = models.CharField(max_length=32, unique=True) # Amazon ec2 ID
+    #TODO: I don't think this information is used.  It's grabbed from ec2
+    #      instead.
+    name = models.CharField(max_length=64)
+    os = models.CharField(max_length=32)
+    description = models.TextField()
 
 class Instance(models.Model):
-    username = models.CharField(max_length=32)
-    instanceId = models.CharField(max_length=32, unique=True)
+    instanceId = models.CharField(max_length=32, unique=True) # Amazon ec2 ID
+    ldap = models.ForeignKey('LDAPserver')
+    username = models.CharField(max_length=64)
 
 class LDAPserver(models.Model):
+    id = models.AutoField(primary_key=True)
     url = models.CharField(max_length=60, unique=True)
     name = models.CharField(max_length=60, unique=True)
     class Meta:
@@ -19,8 +25,8 @@ class Role(models.Model):
     '''
     Maps an ldap server and role to a number of image which it has access to.
     '''
-    ldapServer = models.ForeignKey(LDAPserver)
-    ldapRole = models.CharField(max_length=32)
+    ldap = models.ForeignKey(LDAPserver)
+    name = models.CharField(max_length=128)
     images = models.ManyToManyField(Image)
     class Meta:
-        unique_together = (("ldapServer", "ldapRole"),)
+        unique_together = (("ldap", "name"),)
