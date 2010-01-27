@@ -25,10 +25,10 @@ def imageLibrary(request):
         {'image_library': images},
         context_instance=RequestContext(request))
 
-def ldaplogin(request):
+def ldaplogin(request, ldap_error=None):
     ldap = LDAPserver.objects.all()
     return render_to_response('ldap.html',
-        {'ldap_servers': ldap},
+        {'ldap_servers': ldap, 'ldap_error':ldap_error},
         context_instance=RequestContext(request))
 
 def login(request):
@@ -68,6 +68,7 @@ def login(request):
     except ldap.LDAPError, e:
         #TODO: Handle login error
         print e
+        return ldaplogin(request, e)
 
 @user_tools.login_required
 def logout(request):
