@@ -15,11 +15,12 @@ from vdi import user_tools
 
 @user_tools.login_required
 def imageLibrary(request):
-    #TODO: Make sure user is logged in
-    ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-    db_images = Image.objects.all()
-    images = ec2.get_all_images([i.imageId for i in db_images])
-    #TODO: If image database is empty, set images=[]
+    db_images = user_tools.get_user_instances(request)
+    if db_images:
+        ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
+        images = ec2.get_all_images([i.imageId for i in db_images])
+    else:
+        images = []
     #TODO: Get permissions and only display those images
     return render_to_response('image-library.html',
         {'image_library': images},
@@ -36,13 +37,14 @@ def login(request):
     password = request.POST['password']
     #TODO: Reference ldap servers by ID in the database to only allow servers
     #      that are in the database
-    server = request.POST['server']
+    server_id = request.POST['server']
+    server = LDAPserver.Objects.filter(id=server_id)
     result_set = []
     timeout = 0
     try:
         #TODO: Make this work with ldap servers that aren't ldap.ncsu.edu
-        server = 'ldap://'+server+'/'
-        l = ldap.initialize(server)
+        server = 'ldap://'+server.url+'/'
+        l = ldap.initialize(server.url)
         l.start_tls_s()
         l.protocol_version = ldap.VERSION3
         # Any errors will throw an ldap.LDAPError exception 
@@ -62,8 +64,8 @@ def login(request):
         print result_set
         #if you got here then the right password has been entered for the user
         #TODO: Get Role
-        role = "TODO"
-        user_tools.login(request, username, server, role)
+        roles = []
+        user_tools.login(request, username, server, roles)
         return HttpResponseRedirect('/vdi/desktop')
     except ldap.LDAPError, e:
         #TODO: Handle login error
@@ -76,7 +78,6 @@ def logout(request):
 
 @user_tools.login_required
 def desktop(request,action=None,desktopId=None):
-    #TODO: Make sure user is logged in
     if request.method == 'GET':
         if desktopId is None:
             # viewing all desktops
@@ -99,7 +100,7 @@ def desktop(request,action=None,desktopId=None):
             #TODO: Make sure user has access to image
             #TODO: Error if image doesn't exist
             reservation = image.run(key_name="somekey")
-            instance = Instance(username="bmbouter",instanceId=reservation.instances[0].id)
+            instance = Instance(instanceId=reservation.instances[0].id, )
             instance.save()
             return HttpResponseRedirect('/vdi/desktop/%s' % instance.instanceId)
         elif action == 'delete':
@@ -110,13 +111,13 @@ def desktop(request,action=None,desktopId=None):
             instance.delete()
             return HttpResponseRedirect('/vdi/desktop/')
 
+@user_tools.login_required
 class saveDesktopForm(forms.Form):
     name = forms.CharField()
     description = forms.CharField()
 
 @user_tools.login_required
 def saveDesktop(request, desktopId):
-    #TODO: Make sure user has access to desktop
     if request.method == 'POST':
         form = saveDesktopForm(request.POST)
         if form.is_valid():
@@ -155,8 +156,8 @@ def _GET_all_desktops(request, desktopId):
     # GET all desktops
     # TODO: refactor this function so it is more efficient 
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-    db_instances = Instance.objects.all()
-    if len(db_instances) == 0:
+    db_instances = user_tools.get_user_instances(request)
+    if not db_instances:
         # There are no desktops so we do not need to check with Amazon
         return render_to_response('desktop.html')
     else:
