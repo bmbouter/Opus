@@ -4,6 +4,11 @@
 {% block content %}
 
     {% if ldap_servers %}
+    {% if ldap_error %}
+    {% for key,value in ldap_error %}
+            <font color="red">{{value}}</font>
+    {% endfor %}
+    {% endif %}
         <form action="{% url vdi.views.login %}" method="post">
             <input type="text" name="username"><br>
             <input type="password" name="password"><br>
