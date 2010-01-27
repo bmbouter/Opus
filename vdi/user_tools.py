@@ -1,5 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from vdi.models import Role, Instance
+from vdi.log import log
 
 def login(request, username, ldap, roles):
     request.session["logged_in"] = True
@@ -34,7 +35,7 @@ def get_user_images(request):
     '''
     if not request.session["roles"]:
         return []
-    print request.session["roles"]
+    log.debug(request.session["roles"])
     roles = Role.objects.filter(ldap=request.session['ldap'],
                                 name__in=request.session['roles'])
     #TODO: Optimize this query

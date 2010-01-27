@@ -12,6 +12,7 @@ import ldap
 
 from vdi.models import Image, Instance, LDAPserver
 from vdi import user_tools
+from vdi.log import log
 
 @user_tools.login_required
 def imageLibrary(request):
@@ -33,6 +34,7 @@ def ldaplogin(request):
         context_instance=RequestContext(request))
 
 def login(request):
+    #TODO: What if one of these 3 fields aren't set?
     username = request.POST['username']
     password = request.POST['password']
     #TODO: Reference ldap servers by ID in the database to only allow servers
@@ -60,14 +62,14 @@ def login(request):
             else:
                 if result_type == ldap.RES_SEARCH_ENTRY:
                     result_set.append(result_data)
-        print result_set
+        log.debug(result_set)
         #if you got here then the right password has been entered for the user
         roles = result_set[0][0][1]['memberNisNetgroup']
         user_tools.login(request, username, server, roles)
         return HttpResponseRedirect('/vdi/desktop')
     except ldap.LDAPError, e:
         #TODO: Handle login error
-        print e
+        log.debug(e)
 
 @user_tools.login_required
 def logout(request):
@@ -130,9 +132,9 @@ def saveDesktop(request, desktopId):
                 id = db_instance.instanceId
                 name = form.cleaned_data['name']
                 desc = form.cleaned_data['description']
-                print "^\n%s\n%s\n%s\n^" % (id,name,desc)
+                log.debug("^\n%s\n%s\n%s\n^" % (id,name,desc))
                 newImageId = ec2.create_image(id, name, desc)
-                print "new=%s"%newImageId
+                log.debug("new=%s"%newImageId)
                 #newImageId = ec2.create_image(db_instance.instanceId, form.cleaned_data['name'], form.cleaned_data['description'])
                 # Record the new image in the ImageLibrary
                 db_image = Image(username="bmbouter", imageId=newImageId)
@@ -142,7 +144,7 @@ def saveDesktop(request, desktopId):
                 return HttpResponseRedirect('/vdi/desktop/')
             except EC2ResponseError as e:
                 if e.error_code == 'InvalidAMIName.Duplicate':
-                    print e.error_message
+                    log.debug(e.error_message)
                     error_message = 'The name %s is already in use by another image' % form.cleaned_data['name']
                     return render_to_response('save_desktop.html',
                     {'form' : form, 'desktopId' : desktopId, 'error_message' : error_message},
@@ -166,9 +168,9 @@ def _GET_all_desktops(request, desktopId):
         for reservation in reservations:
             instances.extend(reservation.instances)
         for instance in instances:
-            print instance.state
+            log.debug(instance.state)
             if instance.state != "running" and instance.state != "pending":
-                print "removing %s" % instance
+                log.debug("removing %s" % instance)
                 instances.remove(instance)
         return render_to_response('desktop.html',
         {'desktops': instances},
@@ -192,14 +194,14 @@ def _GET_connect(request,desktopId):
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
     db_instance = Instance.objects.filter(instanceId=desktopId)[0]
     instance = ec2.get_all_instances([db_instance.instanceId])[0].instances[0]
-    print instance.id
+    log.debug(instance.id)
     #image = ec2.get_image(instance.image_id)
     password = Popen(["/home/bmbouter/ec2-api-tools-1.3-46266/bin/ec2-get-password",
     "-K", "/home/bmbouter/certs/privatekey.pem",
     "-k", "/home/bmbouter/certs/somekey.pem",
     "-C", "/home/bmbouter/certs/cert.pem", instance.id], stdout=PIPE,
     env={"EC2_HOME" : "/home/bmbouter/boto/boto-1.9b", "JAVA_HOME" : "/usr"}).communicate()[0]
-    print "THE PASSWORD IS: %s" % password
+    log.debug("THE PASSWORD IS: %s" % password)
     if 1 == 1:
         # Remote Desktop Connection Type
         content = """screen mode id:i:2
