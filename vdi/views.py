@@ -15,7 +15,8 @@ from vdi import user_tools
 
 @user_tools.login_required
 def imageLibrary(request):
-    db_images = user_tools.get_user_instances(request)
+    db_images = user_tools.get_user_images(request)
+    print "db_images = %s" % db_images
     if db_images:
         ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
         images = ec2.get_all_images([i.imageId for i in db_images])
@@ -36,14 +37,13 @@ def login(request):
     username = request.POST['username']
     password = request.POST['password']
     #TODO: Reference ldap servers by ID in the database to only allow servers
-    #      that are in the database
+    #      that are in the database (input validation)
     server_id = request.POST['server']
-    server = LDAPserver.Objects.filter(id=server_id)
+    server = LDAPserver.objects.filter(id=server_id)[0]
     result_set = []
     timeout = 0
     try:
         #TODO: Make this work with ldap servers that aren't ldap.ncsu.edu
-        server = 'ldap://'+server.url+'/'
         l = ldap.initialize(server.url)
         l.start_tls_s()
         l.protocol_version = ldap.VERSION3
@@ -63,7 +63,6 @@ def login(request):
                     result_set.append(result_data)
         print result_set
         #if you got here then the right password has been entered for the user
-        #TODO: Get Role
         roles = result_set[0][0][1]['memberNisNetgroup']
         user_tools.login(request, username, server, roles)
         return HttpResponseRedirect('/vdi/desktop')
@@ -100,7 +99,9 @@ def desktop(request,action=None,desktopId=None):
             #TODO: Make sure user has access to image
             #TODO: Error if image doesn't exist
             reservation = image.run(key_name="somekey")
-            instance = Instance(instanceId=reservation.instances[0].id, )
+            instance = Instance(instanceId=reservation.instances[0].id,
+                                ldap=request.session["ldap"],
+                                username=request.session["username"])
             instance.save()
             return HttpResponseRedirect('/vdi/desktop/%s' % instance.instanceId)
         elif action == 'delete':

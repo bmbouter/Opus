@@ -32,13 +32,15 @@ def get_user_images(request):
     '''
     Returns a list of images the user has access to.
     '''
-    if not request.session["roles"]: return []
+    if not request.session["roles"]:
+        return []
+    print request.session["roles"]
     roles = Role.objects.filter(ldap=request.session['ldap'],
                                 name__in=request.session['roles'])
     #TODO: Optimize this query
     images = []
     for role in roles:
-        images += role.images
+        images += role.images.all()
     return images
 
 def get_user_instances(request):
