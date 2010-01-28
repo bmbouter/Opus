@@ -24,8 +24,8 @@
       * read access on everything
       * rwx mysite
       * rwx mysite/log/
-      * Access to read/write to the database.  The default database engine is
-        sqlite3, with a default file is mysite/sqlite3.db.
+      * If you're using sqlite, make sure the server has read/write permissions
+        to the file.
 
 2. Setting up the server
 
