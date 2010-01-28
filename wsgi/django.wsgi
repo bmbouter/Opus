@@ -9,4 +9,4 @@ from django.conf import settings
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 application = django.core.handlers.wsgi.WSGIHandler()
-settings.LOG_FILE = settings.BASE_DIR+"/stdout.log"
+settings.LOG_FILE = settings.BASE_DIR+"/log/vdi.log"
