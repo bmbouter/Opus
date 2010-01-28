@@ -95,5 +95,8 @@ AWS_SECRET_KEY = ''
 
 # Logging
 LOG_FILE = sys.stdout   # This may be a filename, or a stream
+#TODO: wsgi overrides LOG_FILE.  This is not good, but I'm not sure what the
+#      correct behaviour is.  Maybe there should be a seperate setting for wsgi
+#      logs.
 #TODO: Add log level setting
 #TODO: Change the LOG_FILE setting to a list, LOG_FILES

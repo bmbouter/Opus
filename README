@@ -1,0 +1,34 @@
+===== Setting Up the Installation =====
+
+1.  Copy the file settings.py.sample to settings.py
+
+2.  Fill in EC2 Credentials.
+
+3.  Configure the database, or leave the default sqlite3.
+
+4.  Create database.  The user specified in settings must have permissions for
+    this.  Run the command:
+     $ python manage.py syncdb
+
+@TODO: More?
+
+
+===== Using mod_wsgi =====
+
+1. Setting up your django app
+
+   A. Permissions
+      In order for the webserver to access your app, the webserver needs to
+      have these permissions.  mysite/ refers to the site's folder.
+
+      * read access on everything
+      * rwx mysite
+      * rwx mysite/log/
+      * Access to read/write to the database.  The default database engine is
+        sqlite3, with a default file is mysite/sqlite3.db.
+
+2. Setting up the server
+
+   If you aren't the one setting up the server you don't need to worry about
+   this.
+   @TODO
