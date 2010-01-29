@@ -8,12 +8,9 @@ from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError
 
 from subprocess import Popen, PIPE
-<<<<<<< HEAD:vdi/views.py
-from random import *
+from random import choice
 import string
-=======
 import ldap
->>>>>>> 8ee35fbfa5f8b204d6e0f20b1532f5f8ccf85f85:vdi/views.py
 
 from vdi.models import Image, Instance, LDAPserver
 from vdi import user_tools
@@ -21,12 +18,6 @@ from vdi.log import log
 
 @user_tools.login_required
 def imageLibrary(request):
-<<<<<<< HEAD:vdi/views.py
-    ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-    db_images = Image.objects.all()
-
-    images = ec2.get_all_images([i.imageId for i in db_images])
-=======
     db_images = user_tools.get_user_images(request)
     if db_images:
         ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
@@ -35,7 +26,6 @@ def imageLibrary(request):
         images = []
     form = forms.DateTimeField()
     #TODO: Get permissions and only display those images
->>>>>>> 8ee35fbfa5f8b204d6e0f20b1532f5f8ccf85f85:vdi/views.py
     return render_to_response('image-library.html',
         {'image_library': images,
          'form': form},
@@ -173,16 +163,8 @@ def _GET_all_desktops(request, desktopId):
     # GET all desktops
     # TODO: refactor this function so it is more efficient 
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-<<<<<<< HEAD:vdi/views.py
-
-    db_instances = Instance.objects.all()
-    if len(db_instances) == 0:
-        
-         
-=======
     db_instances = user_tools.get_user_instances(request)
     if not db_instances:
->>>>>>> 8ee35fbfa5f8b204d6e0f20b1532f5f8ccf85f85:vdi/views.py
         # There are no desktops so we do not need to check with Amazon
         return render_to_response('desktop.html')
     else:
@@ -228,7 +210,6 @@ def _GET_connect(request,desktopId):
     instance = ec2.get_all_instances([db_instance.instanceId])[0].instances[0]
     log.debug(instance.id)
     #image = ec2.get_image(instance.image_id)
-<<<<<<< HEAD:vdi/views.py
 
     #Random Password Generation string
     chars=string.ascii_letters+string.digits
@@ -236,14 +217,6 @@ def _GET_connect(request,desktopId):
 
     print "THE PASSWORD IS: %s" % password
 
-=======
-    password = Popen(["/home/bmbouter/ec2-api-tools-1.3-46266/bin/ec2-get-password",
-    "-K", "/home/bmbouter/certs/privatekey.pem",
-    "-k", "/home/bmbouter/certs/somekey.pem",
-    "-C", "/home/bmbouter/certs/cert.pem", instance.id], stdout=PIPE,
-    env={"EC2_HOME" : "/home/bmbouter/boto/boto-1.9b", "JAVA_HOME" : "/usr"}).communicate()[0]
-    log.debug("THE PASSWORD IS: %s" % password)
->>>>>>> 8ee35fbfa5f8b204d6e0f20b1532f5f8ccf85f85:vdi/views.py
     if 1 == 1:
         # Remote Desktop Connection Type
         content = """screen mode id:i:2
