@@ -8,12 +8,9 @@ from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError
 
 from subprocess import Popen, PIPE
-<<<<<<< HEAD:vdi/views.py
 from random import *
 import string
-=======
 import ldap
->>>>>>> 8ee35fbfa5f8b204d6e0f20b1532f5f8ccf85f85:vdi/views.py
 
 from vdi.models import Image, Instance, LDAPserver
 from vdi import user_tools
@@ -21,12 +18,6 @@ from vdi.log import log
 
 @user_tools.login_required
 def imageLibrary(request):
-<<<<<<< HEAD:vdi/views.py
-    ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-    db_images = Image.objects.all()
-
-    images = ec2.get_all_images([i.imageId for i in db_images])
-=======
     db_images = user_tools.get_user_images(request)
     if db_images:
         ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
@@ -34,7 +25,6 @@ def imageLibrary(request):
     else:
         images = []
     #TODO: Get permissions and only display those images
->>>>>>> 8ee35fbfa5f8b204d6e0f20b1532f5f8ccf85f85:vdi/views.py
     return render_to_response('image-library.html',
         {'image_library': images},
         context_instance=RequestContext(request))
@@ -171,16 +161,8 @@ def _GET_all_desktops(request, desktopId):
     # GET all desktops
     # TODO: refactor this function so it is more efficient 
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-<<<<<<< HEAD:vdi/views.py
-
-    db_instances = Instance.objects.all()
-    if len(db_instances) == 0:
-        
-         
-=======
     db_instances = user_tools.get_user_instances(request)
     if not db_instances:
->>>>>>> 8ee35fbfa5f8b204d6e0f20b1532f5f8ccf85f85:vdi/views.py
         # There are no desktops so we do not need to check with Amazon
         return render_to_response('desktop.html')
     else:
