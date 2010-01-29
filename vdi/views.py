@@ -8,12 +8,15 @@ from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError
 
 from subprocess import Popen, PIPE
+from random import *
+import string
 
 from vdi.models import Image, Instance, LDAPserver
 
 def imageLibrary(request):
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
     db_images = Image.objects.all()
+
     images = ec2.get_all_images([i.imageId for i in db_images])
     return render_to_response('image-library.html',
     {'image_library': images},
@@ -95,13 +98,23 @@ def _GET_all_desktops(request,desktopId):
     # GET all desktops
     # TODO: refactor this function so it is more efficient 
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
+
     db_instances = Instance.objects.all()
     if len(db_instances) == 0:
+        
+         
         # There are no desktops so we do not need to check with Amazon
         return render_to_response('desktop.html')
     else:
-        reservations = ec2.get_all_instances([i.instanceId for i in db_instances])
+       # return HttpResponse('\n%s'%[i.instanceId for i in db_instances])
+        
+        reservations = ec2.get_all_instances() 
+        return HttpResponse('%s'%reservations) 
+#       reservations = ec2.get_all_instances([i.instanceId for i in db_instances])
         instances = []
+        
+        return HttpResponse('\n%s'%reservations)
+        
         for reservation in reservations:
             instances.extend(reservation.instances)
         for instance in instances:
@@ -130,15 +143,18 @@ def _GET_connect(request,desktopId):
     # GET connection information
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
     db_instance = Instance.objects.filter(instanceId=desktopId)[0]
+
+    print db_instance.username
     instance = ec2.get_all_instances([db_instance.instanceId])[0].instances[0]
     print instance.id
     #image = ec2.get_image(instance.image_id)
-    password = Popen(["/home/bmbouter/ec2-api-tools-1.3-46266/bin/ec2-get-password",
-    "-K", "/home/bmbouter/certs/privatekey.pem",
-    "-k", "/home/bmbouter/certs/somekey.pem",
-    "-C", "/home/bmbouter/certs/cert.pem", instance.id], stdout=PIPE,
-    env={"EC2_HOME" : "/home/bmbouter/boto/boto-1.9b", "JAVA_HOME" : "/usr"}).communicate()[0]
+
+    #Random Password Generation string
+    chars=string.ascii_letters+string.digits
+    password = ''.join(choice(chars) for x in range(randint(8,14)))
+
     print "THE PASSWORD IS: %s" % password
+
     if 1 == 1:
         # Remote Desktop Connection Type
         content = """screen mode id:i:2
@@ -166,7 +182,14 @@ def _GET_connect(request,desktopId):
         disable themes:i:0
         disable cursor setting:i:0
         bitmapcachepersistenable:i:1\n"""%instance.dns_name
+    
+    #SSH to AMI using Popen subprocess
+    pub_dns_name = "root@"+str(instance.dns_name)
+    print pub_dns_name
+    print Popen(["ssh","-i","/home/umang/mysite/vdi/keys/id_rsa",pub_dns_name,"cmd", "/C","cd"],stdout = PIPE).communicate()[0]
+    
     resp = HttpResponse(content)
     resp['Content-Type']="application/rdp"
     resp['Content-Disposition'] = 'attachment; filename=%s.rdp' % desktopId
     return resp
+
