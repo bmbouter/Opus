@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Image Library{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/media/admin/css/base.css" /> 
+<link rel="stylesheet" type="text/css" href="/media/admin/css/forms.css" /> 
+
+<script type="text/javascript" src="/my_admin/jsi18n/"></script>
+<script type="text/javascript" src="/media/admin/js/core.js"></script>
+
+{{ form.media }}
+
+{% endblock %}
+
 {% block content %}
 
     {% if image_library %}
@@ -18,6 +29,7 @@
                     <td>{{ image.description }}</td>
                     <td><center><form action="{% url vdi.views.desktop %}new?name={{ image.id }}" method="post">
                         {% csrf_token %}
+                        {{ form.as_p }}
                         <input type="submit" value="On" />
                     </form></center></td>
                 </tr>

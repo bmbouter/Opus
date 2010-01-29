@@ -13,6 +13,7 @@ import string
 import ldap
 
 from vdi.models import Image, Instance, LDAPserver
+from vdi.forms import InstanceForm
 from vdi import user_tools
 from vdi.log import log
 
@@ -24,11 +25,11 @@ def imageLibrary(request):
         images = ec2.get_all_images([i.imageId for i in db_images])
     else:
         images = []
-    form = forms.DateTimeField()
     #TODO: Get permissions and only display those images
+    instanceform = InstanceForm()
     return render_to_response('image-library.html',
         {'image_library': images,
-         'form': form},
+         'form': instanceform},
         context_instance=RequestContext(request))
 
 def ldaplogin(request, ldap_error=None):
@@ -100,16 +101,21 @@ def desktop(request,action=None,desktopId=None):
     elif request.method =='POST':
         ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
         if action == 'new':
-            # Create a new instance
-            image = ec2.get_all_images([request.GET['name']])[0]
-            #TODO: Make sure user has access to image
-            #TODO: Error if image doesn't exist
-            reservation = image.run(key_name="somekey")
-            instance = Instance(instanceId=reservation.instances[0].id,
-                                ldap=request.session["ldap"],
-                                username=request.session["username"])
-            instance.save()
-            return HttpResponseRedirect('/vdi/desktop/%s' % instance.instanceId)
+            form = InstanceForm(request.POST)
+            if form.is_valid():
+                new_instance = form.save(commit=False)
+                # Create a new instance
+                image = ec2.get_all_images([request.GET['name']])[0]
+                #TODO: Make sure user has access to image
+                #TODO: Error if image doesn't exist
+                reservation = image.run(key_name="somekey")
+                new_instance.instanceId = reservation.instances[0].id
+                new_instance.ldap = request.session["ldap"]
+                new_instance.username = request.session["username"]
+                new_instance.save()
+                return HttpResponseRedirect('/vdi/desktop/%s' % new_instance.instanceId)
+            else:
+                return HttpResponseRedirect('/vdi/image-library/')
         elif action == 'delete':
             # Delete an existing instance
             #TODO: Make sure user has access to desktop
