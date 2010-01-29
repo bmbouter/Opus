@@ -1,6 +1,9 @@
-from models import Image, Instance, LDAPserver
 from django.contrib import admin
+from django.contrib.admin import widgets
 
-admin.site.register(Instance)
-admin.site.register(Image)
-admin.site.register(LDAPserver)
+import models
+
+admin.site.register(models.Instance)
+admin.site.register(models.LDAPserver)
+admin.site.register(models.Role)
+admin.site.register(models.Image)

@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <title>{% block title %}Opus{% endblock %}</title>
+        <style type="text/css">
+            #navigation {
+                text-align: center;
+                background-color: #DDDDDD;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+            };
+            #title {
+                font-size: 200%;
+                text-decoration: underline;
+            };
+        </style>
+    </head>
+    <body>
+        <div id="navigation">
+            <a href="/vdi/image-library/">Image Library</a> -
+            <a href="/vdi/desktop">Desktops</a>
+        </div>
+        <div id="content">
+            <br />
+            {% block content %}{% endblock %}
+        </div>
+    </body>
+</html>

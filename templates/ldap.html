@@ -1,19 +1,28 @@
-{% if image_library %}
-    <table border="1">
-        <tr><td>Name</td><td>Operating System</td><td>Description</td><td>Actions</td></tr>
-        {% for image in image_library %}
-            <tr>
-            <td>{{ image.name }}</td>
-            <td>{{ image.platform|capfirst }}</td>
-            <td>{{ image.description }}</td>
-            <td><center><form action="{% url vdi.views.desktop %}new?name={{ image.id }}" method="post">
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+    {% if ldap_servers %}
+    {% if ldap_error %}
+    {% for key,value in ldap_error %}
+            <font color="red">{{value}}</font>
+    {% endfor %}
+    {% endif %}
+        <form action="{% url vdi.views.login %}" method="post">
+            <input type="text" name="username"><br>
+            <input type="password" name="password"><br>
+            <select name="server">
+                {% for server in ldap_servers %}
+                    <option value="{{ server.id }}">{{server.name}}</option>
+                {% endfor %}
+            </select>
             {% csrf_token %}
             <input type="submit" value="On" />
-            </form></center></td>
-            </tr>
-        {% endfor %}
-    </table> 
-{% else %}
-    <p>No images are available.</p>
-{% endif %}
+        </form>
+        
+    {% else %}
+        <p>There are no LDAP servers in the database.</p>
+    {% endif %}
 
+{% endblock %}
