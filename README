@@ -32,6 +32,11 @@
       * If you're using sqlite, make sure the server has read/write permissions
         to the file.
 
+      Remember that the webserver needs access to whatever path mysite/ is in
+      as well.  For example: if your mysite/ directory is in
+      /home/username/mysite/ then apache needs rwx permissions to
+      /home/username also.
+
 2. Setting up the server
 
    If you aren't the one setting up the server you don't need to worry about
