@@ -208,7 +208,6 @@ def _GET_connect(request,desktopId):
     instance = ec2.get_all_instances([db_instance.instanceId])[0].instances[0]
     log.debug(instance.id)
     #image = ec2.get_image(instance.image_id)
-<<<<<<< HEAD:vdi/views.py
 
     #Random Password Generation string
     chars=string.ascii_letters+string.digits
@@ -216,14 +215,6 @@ def _GET_connect(request,desktopId):
 
     print "THE PASSWORD IS: %s" % password
 
-=======
-    password = Popen(["/home/bmbouter/ec2-api-tools-1.3-46266/bin/ec2-get-password",
-    "-K", "/home/bmbouter/certs/privatekey.pem",
-    "-k", "/home/bmbouter/certs/somekey.pem",
-    "-C", "/home/bmbouter/certs/cert.pem", instance.id], stdout=PIPE,
-    env={"EC2_HOME" : "/home/bmbouter/boto/boto-1.9b", "JAVA_HOME" : "/usr"}).communicate()[0]
-    log.debug("THE PASSWORD IS: %s" % password)
->>>>>>> 8ee35fbfa5f8b204d6e0f20b1532f5f8ccf85f85:vdi/views.py
     if 1 == 1:
         # Remote Desktop Connection Type
         content = """screen mode id:i:2
