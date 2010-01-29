@@ -22,9 +22,11 @@ def imageLibrary(request):
         images = ec2.get_all_images([i.imageId for i in db_images])
     else:
         images = []
+    form = forms.DateTimeField()
     #TODO: Get permissions and only display those images
     return render_to_response('image-library.html',
-        {'image_library': images},
+        {'image_library': images,
+         'form': form},
         context_instance=RequestContext(request))
 
 def ldaplogin(request, ldap_error=None):

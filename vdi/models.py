@@ -8,6 +8,7 @@ class Instance(models.Model):
     instanceId = models.CharField(max_length=32, unique=True) # Amazon ec2 ID
     ldap = models.ForeignKey('LDAPserver')
     username = models.CharField(max_length=64)
+    expire = models.DateTimeField()
     #TODO: Add __str__()
 
 class LDAPserver(models.Model):
@@ -26,6 +27,11 @@ class Role(models.Model):
     ldap = models.ForeignKey(LDAPserver)
     name = models.CharField(max_length=128)
     images = models.ManyToManyField(Image)
+    PERM_CHOICES = (
+        (u'1', u'Use'),
+        (u'2', u'Use and Save'),
+    )
+    permissions = models.IntegerField(max_length=2, choices=PERM_CHOICES, default=2)
     class Meta:
         unique_together = (("ldap", "name"),)
     #TODO: Add __str__()

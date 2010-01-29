@@ -12,6 +12,11 @@
 
 @TODO: More?
 
+===== Reasonable Test Data =====
+
+1. Create an LDAPserver object (url='ldap://ldap.ncsu.edu/', name='NCSU')
+2. Create an ImageId (id = 'ami-b1a24ed8')
+3. Create a role ( name='cn=ncsu,ou=access,ou=groups,dc=ncsu,dc=edu' )
 
 ===== Using mod_wsgi =====
 
