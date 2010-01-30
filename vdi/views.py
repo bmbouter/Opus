@@ -8,7 +8,7 @@ from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError
 
 from subprocess import Popen, PIPE
-from random import choice
+from random import choice, randint
 import string
 import ldap
 
@@ -167,31 +167,26 @@ def saveDesktop(request, desktopId):
 
 def _GET_all_desktops(request, desktopId):
     # GET all desktops
-    # TODO: refactor this function so it is more efficient 
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
     db_instances = user_tools.get_user_instances(request)
     if not db_instances:
         # There are no desktops so we do not need to check with Amazon
-        return render_to_response('desktop.html')
+        return HttpResponseRedirect('/vdi/image-library/')
     else:
-       # return HttpResponse('\n%s'%[i.instanceId for i in db_instances])
-        
-        reservations = ec2.get_all_instances() 
-        return HttpResponse('%s'%reservations) 
-#       reservations = ec2.get_all_instances([i.instanceId for i in db_instances])
-        instances = []
-        
-        return HttpResponse('\n%s'%reservations)
-        
+        reservations = ec2.get_all_instances([str(i.instanceId) for i in db_instances]) 
+
+        # Get the instances from the EC2 List of Reservations
+        ec2_instances = []
         for reservation in reservations:
-            instances.extend(reservation.instances)
-        for instance in instances:
-            log.debug(instance.state)
-            if instance.state != "running" and instance.state != "pending":
-                log.debug("removing %s" % instance)
-                instances.remove(instance)
+            ec2_instances.extend(reservation.instances)
+
+        for ec2_instance in ec2_instances:
+            if ec2_instance.state != "running" and ec2_instance.state != "pending":
+                # WHY IS THIS TEST HERE?
+                # ec2_instances.remove(instance)
+                pass
         return render_to_response('desktop.html',
-        {'desktops': instances},
+        {'desktops': ec2_instances},
         context_instance=RequestContext(request))
 
 def _GET_single_desktop(request,desktopId):
@@ -212,7 +207,6 @@ def _GET_connect(request,desktopId):
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
     db_instance = Instance.objects.filter(instanceId=desktopId)[0]
 
-    print db_instance.username
     instance = ec2.get_all_instances([db_instance.instanceId])[0].instances[0]
     log.debug(instance.id)
     #image = ec2.get_image(instance.image_id)
@@ -221,40 +215,58 @@ def _GET_connect(request,desktopId):
     chars=string.ascii_letters+string.digits
     password = ''.join(choice(chars) for x in range(randint(8,14)))
 
-    print "THE PASSWORD IS: %s" % password
+    log.debug("THE PASSWORD IS: %s" % password)
 
-    if 1 == 1:
-        # Remote Desktop Connection Type
-        content = """screen mode id:i:2
-        desktopwidth:i:1280
-        desktopheight:i:800
-        session bpp:i:16
-        winposstr:s:0,3,0,0,800,600
-        full address:s:%s
-        compression:i:1
-        keyboardhook:i:2
-        audiomode:i:0
-        redirectdrives:i:0
-        redirectprinters:i:1
-        redirectcomports:i:0
-        redirectsmartcards:i:1
-        displayconnectionbar:i:1
-        autoreconnection enabled:i:1
-        username:s:Administrator
-        domain:s:NETAPP-A415F33E
-        alternate shell:s:
-        shell working directory:s:
-        disable wallpaper:i:1
-        disable full window drag:i:1
-        disable menu anims:i:1
-        disable themes:i:0
-        disable cursor setting:i:0
-        bitmapcachepersistenable:i:1\n"""%instance.dns_name
-    
     #SSH to AMI using Popen subprocesses
-    pub_dns_name = "root@"+str(instance.dns_name)
-    print pub_dns_name
-    print Popen(["ssh","-i","/home/umang/mysite/vdi/keys/id_rsa",pub_dns_name,"cmd", "/C","cd"],stdout = PIPE).communicate()[0]
+    #TODO REDO ALL THE CAPITALIZED DEBUG STATEMENTS BELOW
+    #TODO refactor this so it isn't so crazy and verbose, and a series of special cases
+    output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",instance.dns_name,"NET", "USER",request.session["username"],password,"/ADD"],stdout = PIPE).communicate()[0]
+    if output.find("The command completed successfully.") > -1:
+        log.debug("THE USER HAS BEEN CREATED")
+    elif output.find("The account already exists.") > -1:
+        output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",instance.dns_name,"NET", "USER",request.session["username"],password],stdout = PIPE).communicate()[0]
+        log.debug('THE USER ALREADY EXISTS, GOING TO TRY TO SET THE PASSWORD')
+        if output.find("The command completed successfully.") > -1:
+            log.debug('THE PASSWORD WAS RESET')
+        else:
+            error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.session["username"],instance.dns_name,output)
+            log.error(error_string)
+            return HttpResponse(error_string)
+    else:
+        error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.session["username"],instance.dns_name,output)
+        log.error(error_string)
+        return HttpResponse(error_string)
+    
+    # Add the created user to the Administrator group
+    output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",instance.dns_name,"NET", "localgroup",'"Administrators"',"/add",request.session["username"]],stdout = PIPE).communicate()[0]
+    log.debug("ADDED THE USER TO THE ADMINISTRATORS GROUP")
+
+    # Remote Desktop Connection Type
+    content = """screen mode id:i:2
+    desktopwidth:i:1280
+    desktopheight:i:800
+    session bpp:i:16
+    winposstr:s:0,3,0,0,800,600
+    full address:s:%s
+    compression:i:1
+    keyboardhook:i:2
+    audiomode:i:0
+    redirectdrives:i:0
+    redirectprinters:i:1
+    redirectcomports:i:0
+    redirectsmartcards:i:1
+    displayconnectionbar:i:1
+    autoreconnection enabled:i:1
+    username:s:%s
+    domain:s:NETAPP-A415F33E
+    alternate shell:s:
+    shell working directory:s:
+    disable wallpaper:i:1
+    disable full window drag:i:1
+    disable menu anims:i:1
+    disable themes:i:0
+    disable cursor setting:i:0
+    bitmapcachepersistenable:i:1\n""" % (instance.dns_name,request.session["username"])
     
     resp = HttpResponse(content)
     resp['Content-Type']="application/rdp"
