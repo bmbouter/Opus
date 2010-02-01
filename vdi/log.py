@@ -69,7 +69,7 @@ try:
 except NameError:
     settings.LOG_FILE = sys.stdout
 if isinstance(settings.LOG_FILE, basestring):
-    stream = open(settings.LOG_FILE, "w")
+    stream = open(settings.LOG_FILE, "a")
 else:
     stream = settings.LOG_FILE
 sh = logging.StreamHandler(stream)
