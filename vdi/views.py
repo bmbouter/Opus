@@ -11,10 +11,11 @@ from subprocess import Popen, PIPE
 from random import choice, randint
 import string
 import ldap
+from datetime import datetime, timedelta
 
 from vdi.models import Image, Instance, LDAPserver
 from vdi.forms import InstanceForm
-from vdi import user_tools
+from vdi import user_tools, ec2_tools
 from vdi.log import log
 
 @user_tools.login_required
@@ -82,24 +83,39 @@ def logout(request):
     user_tools.logout(request)
     return HttpResponseRedirect('/vdi/ldap_login')
 
+#TODO limit the access to this function to the local cron job ... not sure how
+def reclaim(request):
+    # TODO fix this time zone hack
+    return HttpResponse('currently disabled')
+    now = datetime.now() + timedelta (hours=1)
+    instances = Instance.objects.filter(expire__lte=now)
+    num_del = ec2_tools.terminate_instances(instances)
+    return HttpResponse('deleted %s instances' % num_del)
+
 @user_tools.login_required
 def desktop(request,action=None,desktopId=None):
+    ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
     if request.method == 'GET':
         if desktopId is None:
             # viewing all desktops
-            #TODO: Only get desktops that user has permissions for
-            return _GET_all_desktops(request,desktopId)
+            instances_qs = user_tools.get_user_instances(request)
         else:
             #TODO: Makes sure user has access to desktop
             if action is None:
+                instances_qs = Instance.objects.filter(instanceId=desktopId)
                 # viewing a single desktop
-                return _GET_single_desktop(request,desktopId)
             elif action == 'connect':
                 # viewing a single desktop connection info
                 return _GET_connect(request,desktopId)
-
+        ec2_instances = ec2_tools.get_filtered_results(instances_qs)
+        #return HttpResponse('%s'%[i.id for i in ec2_instances])
+        if not ec2_instances:
+            return HttpResponseRedirect('/vdi/image-library/')
+        else:
+            return render_to_response('desktop.html',
+            {'desktops': ec2_instances},
+            context_instance=RequestContext(request))
     elif request.method =='POST':
-        ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
         if action == 'new':
             form = InstanceForm(request.POST)
             if form.is_valid():
@@ -118,21 +134,20 @@ def desktop(request,action=None,desktopId=None):
                 return HttpResponseRedirect('/vdi/image-library/')
         elif action == 'delete':
             # Delete an existing instance
-            #TODO: Make sure user has access to desktop
+            #TODO: handle case when instance is empty ...
             instance = Instance.objects.filter(instanceId=desktopId)
-            ec2.get_all_instances([i.instanceId for i in instance])[0].stop_all()
-            instance.delete()
+            ec2_tools.terminate_instances(instance)
             return HttpResponseRedirect('/vdi/desktop/')
 
 @user_tools.login_required
-class saveDesktopForm(forms.Form):
+class saveInstanceForm(forms.Form):
     name = forms.CharField()
     description = forms.CharField()
 
 @user_tools.login_required
 def saveDesktop(request, desktopId):
     if request.method == 'POST':
-        form = saveDesktopForm(request.POST)
+        form = saveInstanceForm(request.POST)
         if form.is_valid():
             # Saving an existing image as a new AMI
             ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
@@ -162,45 +177,8 @@ def saveDesktop(request, desktopId):
                     context_instance=RequestContext(request))
 
     else:
-        form = saveDesktopForm()
+        form = saveInstanceForm()
     return render_to_response('save_desktop.html', {'form' : form, 'desktopId' : desktopId}, context_instance=RequestContext(request))
-
-def _GET_all_desktops(request, desktopId):
-    # GET all desktops
-    ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-    db_instances = user_tools.get_user_instances(request)
-    if not db_instances:
-        # There are no desktops so we do not need to check with Amazon
-        return HttpResponseRedirect('/vdi/image-library/')
-    else:
-        reservations = ec2.get_all_instances([str(i.instanceId) for i in db_instances]) 
-
-        # Get the instances from the EC2 List of Reservations
-        ec2_instances = []
-        for reservation in reservations:
-            ec2_instances.extend(reservation.instances)
-
-        for ec2_instance in ec2_instances:
-            if ec2_instance.state != "running" and ec2_instance.state != "pending":
-                # WHY IS THIS TEST HERE?
-                # ec2_instances.remove(instance)
-                pass
-        return render_to_response('desktop.html',
-        {'desktops': ec2_instances},
-        context_instance=RequestContext(request))
-
-def _GET_single_desktop(request,desktopId):
-    # GET a single desktop
-    ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-    try:
-        db_instance = Instance.objects.filter(instanceId=desktopId)[0]
-    except IndexError:
-        # TODO this error return should really be better
-        return HttpResponse('Desktop %s does not exist'%desktopId)
-    instance = ec2.get_all_instances([db_instance.instanceId])[0].instances
-    return render_to_response('desktop.html',
-    {'desktops': instance},
-    context_instance=RequestContext(request))
 
 def _GET_connect(request,desktopId):
     # GET connection information

@@ -25,4 +25,5 @@ urlpatterns = patterns('',
     (r'^vdi/desktop/$', vdi.views.desktop),
     (r'^vdi/image-library/$', vdi.views.imageLibrary),
     (r'^admin/', include(admin.site.urls)),
+    (r'^vdi/reclaim', vdi.views.reclaim),
 )

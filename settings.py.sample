@@ -95,6 +95,9 @@ INSTALLED_APPS = (
 AWS_ACCESS_KEY = ''
 AWS_SECRET_KEY = ''
 
+# Connection Broker Options
+MINIMUM_RESERVATION_LEN = 15    # This is in minutes
+
 # Logging
 LOG_FILE = sys.stdout   # This may be a filename, or a stream
 #TODO: wsgi overrides LOG_FILE.  This is not good, but I'm not sure what the
