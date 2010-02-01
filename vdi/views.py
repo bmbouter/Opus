@@ -12,6 +12,7 @@ from random import choice, randint
 import string
 import ldap
 from datetime import datetime, timedelta
+import time
 
 from vdi.models import Image, Instance, LDAPserver
 from vdi.forms import InstanceForm
@@ -86,7 +87,7 @@ def logout(request):
 #TODO limit the access to this function to the local cron job ... not sure how
 def reclaim(request):
     # TODO fix this time zone hack
-    return HttpResponse('currently disabled')
+    #return HttpResponse('currently disabled')
     now = datetime.now() + timedelta (hours=1)
     instances = Instance.objects.filter(expire__lte=now)
     num_del = ec2_tools.terminate_instances(instances)
@@ -139,7 +140,6 @@ def desktop(request,action=None,desktopId=None):
             ec2_tools.terminate_instances(instance)
             return HttpResponseRedirect('/vdi/desktop/')
 
-@user_tools.login_required
 class saveInstanceForm(forms.Form):
     name = forms.CharField()
     description = forms.CharField()
@@ -151,22 +151,27 @@ def saveDesktop(request, desktopId):
         if form.is_valid():
             # Saving an existing image as a new AMI
             ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-            # Check that the image is in the image library
+            # Check that it is in the Instance library
             db_instance = Instance.objects.filter(instanceId=desktopId)[0]
             try:
                 # Create the new instance
                 id = db_instance.instanceId
                 name = form.cleaned_data['name']
                 desc = form.cleaned_data['description']
+                log.debug(type(name))
                 log.debug("^\n%s\n%s\n%s\n^" % (id,name,desc))
-                newImageId = ec2.create_image(id, name, desc)
+                newImageId = ec2.create_image('i-3a001452', 'katiesavetest')
+                #newImageId = ec2.create_image(id, name, desc)
                 log.debug("new=%s"%newImageId)
-                #newImageId = ec2.create_image(db_instance.instanceId, form.cleaned_data['name'], form.cleaned_data['description'])
-                # Record the new image in the ImageLibrary
-                db_image = Image(username="bmbouter", imageId=newImageId)
+                # Record the new Image
+                db_image = Image(imageId=newImageId)
                 db_image.save()
+                # Update the permission for this user on this image
+                role = Instance.objects.filter(images=db_instance)
+                role.images.append(db_image)
+                role.save()
                 # Delete the existing ec2 instance
-                ec2.get_all_instances([db_instance.instanceId])[0].stop_all()
+                ec2_tools.terminate_instance([id])
                 return HttpResponseRedirect('/vdi/desktop/')
             except EC2ResponseError as e:
                 if e.error_code == 'InvalidAMIName.Duplicate':
@@ -175,7 +180,6 @@ def saveDesktop(request, desktopId):
                     return render_to_response('save_desktop.html',
                     {'form' : form, 'desktopId' : desktopId, 'error_message' : error_message},
                     context_instance=RequestContext(request))
-
     else:
         form = saveInstanceForm()
     return render_to_response('save_desktop.html', {'form' : form, 'desktopId' : desktopId}, context_instance=RequestContext(request))
