@@ -10,8 +10,8 @@
     {% endfor %}
     {% endif %}
         <form action="{% url vdi.views.login %}" method="post">
-            <input type="text" name="username"><br>
-            <input type="password" name="password"><br>
+            <label>Username:</label><input type="text" name="username"><br>
+            <label>Password:</label><input type="password" name="password"><br>
             <select name="server">
                 {% for server in ldap_servers %}
                     <option value="{{ server.id }}">{{server.name}}</option>
