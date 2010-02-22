@@ -5,10 +5,9 @@
 
     {% if desktops %}
         <table border="1">
-            <tr><td>Desktop</td><td>Status</td><td>Actions</td></tr>
+            <tr><td>Status</td><td>Actions</td></tr>
             {% for instance in desktops %}
                 <tr>
-                <td>{{ instance.architecture }}</td>
                 <td>{{ instance.state }}</td>
                 <td><center>
                 {% ifequal instance.state "running" %}

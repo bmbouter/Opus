@@ -160,9 +160,8 @@ def saveDesktop(request, desktopId):
                 desc = form.cleaned_data['description']
                 log.debug(type(name))
                 log.debug("^\n%s\n%s\n%s\n^" % (id,name,desc))
-                newImageId = ec2.create_image('i-3a001452', 'katiesavetest')
-                #newImageId = ec2.create_image(id, name, desc)
-                log.debug("new=%s"%newImageId)
+                newImageId = ec2.create_image(id, name, desc)
+                log.debug("new=%s\ntype=%s"%(newImageId,type(newImageId)))
                 # Record the new Image
                 db_image = Image(imageId=newImageId)
                 db_image.save()
