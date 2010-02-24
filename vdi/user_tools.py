@@ -29,9 +29,9 @@ def can_access_instance(instance, roles):
     #TODO
     return True
 
-def get_user_images(request):
+def get_user_apps(request):
     '''
-    Returns a list of images the user has access to.
+    Returns a list of applications the user has access to.
     '''
     if not request.session["roles"]:
         return []
@@ -39,10 +39,10 @@ def get_user_images(request):
     roles = Role.objects.filter(ldap=request.session['ldap'],
                                 name__in=request.session['roles'])
     #TODO: Optimize this query
-    images = []
+    apps = []
     for role in roles:
-        images += role.images.all()
-    return images
+        apps += role.applications.all()
+    return apps
 
 def get_user_instances(request):
     '''

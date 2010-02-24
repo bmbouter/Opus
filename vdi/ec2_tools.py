@@ -18,14 +18,14 @@ def terminate_instances(dm_instances):
         return num_del
     return 0
 
-def get_filtered_results(dm_instances):
+def get_ec2_instances(db_instances):
     '''
-    dm_instances should be either a django QuerySet of vdi.models.Instance
+    db_instances should be a QuerySet of vdi.model.Instances
     '''
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
 
     # Create a list of instance id's
-    ids = [i.instanceId for i in dm_instances]
+    ids = [i.instanceId for i in db_instances]
     if ids:
         reservations = ec2.get_all_instances(ids) 
     else:
@@ -37,10 +37,4 @@ def get_filtered_results(dm_instances):
         ec2_instances.extend(reservation.instances)
 
     #log.debug('c\n%s'%[(i.state,i.id) for i in ec2_instances])
-    for ec2_instance in ec2_instances:
-        # Remove desktops in the terminated state.  Other valid states include 'running' and 'pending'
-        if ec2_instance.state == "terminated":
-            ec2_instances.remove(ec2_instance)
-    #log.debug('a\n%s'%[i.state for i in ec2_instances])
-
     return ec2_instances
