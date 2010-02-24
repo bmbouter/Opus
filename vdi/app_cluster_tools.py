@@ -67,8 +67,7 @@ class AppCluster(object):
         for host in nodes:
             # TODO: check with the ACTUAL number of users
             n = Node(host.ip)
-            log.debug('((( %s'%n.sessions)
-            cur_users = 2
+            cur_users = len(n.sessions)
             app_map.append((host.ip,cur_users))
         return app_map
 
@@ -85,10 +84,7 @@ class Node(object):
     '''
     def check_user_load(self):
         self.sessions = []
-        output = Popen(["ssh", "-i", "/home/private_key",  "root@"+self.ip, "Quser"], stdout=PIPE).communicate()[0]
-        log.debug(' '.join(["ssh", "-i", "/home/private_key",  "root@"+self.ip, "Quser"]))
-        output = Popen(["ls"], stdout=PIPE).communicate()[0]
-        log.debug('#######&& %s*******'%output)
+        output = Popen(["ssh", "-i", "/home/private_key",  "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", "root@"+self.ip, "Quser"], stdout=PIPE).communicate()[0]
         for line in output.split('\n'):
             fields = split("(\S+) +(\d+) +(Disc) +([\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
             if (len(fields) > 1):
@@ -134,7 +130,7 @@ class Node(object):
     If user was logged off succesfully returns true. If error occured returns false.
     '''
     def log_user_off(self,session_id):
-        output = Popen(["ssh", "-i", "/home/private_key",  "root@"+self.ip, "logoff "+session_id], stdout=PIPE).communicate()[0]
+        output = Popen(["ssh", "-i", "/home/private_key",  "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", "root@"+self.ip, "logoff "+session_id], stdout=PIPE).communicate()[0]
         if (len(output) == 0):
             return True
         else:

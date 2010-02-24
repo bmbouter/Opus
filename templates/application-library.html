@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Applications{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/media/admin/css/base.css" /> 
+<link rel="stylesheet" type="text/css" href="/media/admin/css/forms.css" /> 
+
+<script type="text/javascript" src="/admin/jsi18n/"></script>
+<script type="text/javascript" src="/media/admin/js/core.js"></script>
+
+{{ form.media }}
+
+{% endblock %}
+
+{% block content %}
+    {% if app_library %}
+        <table border="1">
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+            {% for app in app_library %}
+                <tr>
+                    <td>{{ app.name }}</td>
+                    <td><a href="/vdi/{{ app.pk }}/connect">connect</a></td>
+                </tr>
+            {% endfor %}
+        </table> 
+
+    {% else %}
+        <p>No applications are available.</p>
+    {% endif %}
+
+{% endblock %}
