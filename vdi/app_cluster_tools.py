@@ -86,7 +86,7 @@ class Node(object):
         self.sessions = []
         output = Popen(["ssh", "-i", "/home/private_key",  "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", "root@"+self.ip, "Quser"], stdout=PIPE).communicate()[0]
         for line in output.split('\n'):
-            fields = split("(\S+) +(\d+) +(Disc) +([\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
+            fields = split("(\S+) +(\d+) +(Disc) +([none]*[\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
             if (len(fields) > 1):
                 user = dict()
                 for i,value in enumerate(fields):
@@ -106,7 +106,7 @@ class Node(object):
                     self.sessions.append(user)
 
             else:
-                fields = split("(\S+) +(\S+) +(\d+) +(Active) +([\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
+                fields = split("(\S+) +(\S+) +(\d+) +(Active) +([none]*[\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
                 user = dict()
                 for i,value in enumerate(fields):
                     if(i == 1):
@@ -135,3 +135,35 @@ class Node(object):
             return True
         else:
             return False
+
+    def user_cleanup(self,timeout):
+        '''
+        Checks idle time for all sessions on the node.  If any session is disconnected then the user   
+        is logged off.  If the idle time exceeds the timeout parameter, the user is logged off. Timeout
+        is in MINUTES.
+        '''
+        for session in self.sessions:
+            if(session["state"] == "Disc"):
+                self.log_user_off(session["sessionid"])
+            elif(session["idletime"] == ". "):
+                break
+            else:
+                days = session["idletime"].split("+")
+                if(len(days) > 1):
+                    idletime = 24*60*int(days[0])
+                    for i,digit in enumerate(days[1].split(":")):
+                        if(i == 0):
+                            idletime += 60*int(digit)
+                        else:
+                            idletime += int(digit)
+                else:
+                    idletime = 0
+                    for i,digit in enumerate(days[0].split(":")):
+                        if(i == 0):
+                            idletime += 60*int(digit)
+                        else:
+                            idletime += int(digit)
+
+            if(idletime > timeout):
+                self.log_user_off(session["sessionid"])
+        self.check_user_load()
