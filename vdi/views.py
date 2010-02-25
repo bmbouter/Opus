@@ -14,11 +14,12 @@ import re
 import ldap
 from datetime import datetime, timedelta
 import time
+import math
 
 from vdi.models import Application, Instance, LDAPserver
 from vdi.forms import InstanceForm
 from vdi import user_tools, ec2_tools
-from vdi.app_cluster_tools import AppCluster
+from vdi.app_cluster_tools import AppCluster, AppNode
 from vdi.log import log
 
 @user_tools.login_required
@@ -99,26 +100,50 @@ def scale(request):
         if num_booting > 0:
             log.debug("Application cluster '%s' is still waiting for %s cluster nodes to boot" % (cluster.name,len(ec2_booting)))
 
+        # Consider if the cluster needs to be scaled
+        log.debug('Considering %s app cluster for scaling ...' % cluster.name)
+        # Should I scale up?
+        log.debug('%s is avail (%s) < req (%s)?' % (cluster.app.name, cluster.avail_headroom, cluster.req_headroom))
+        if cluster.avail_headroom < cluster.req_headroom:
+            # Yes I should scale up
+            space_needed = cluster.req_headroom - cluster.avail_headroom
+            servers_needed = int(math.ceil(space_needed / float(cluster.app.users_per_small)))
+            log.debug('Available headroom (%s) is less than the cluster headroom goal (%s).  Starting %s additional cluster nodes now' % (cluster.avail_headroom,cluster.req_headroom,servers_needed))
+            for i in range(servers_needed):
+                # Consider if we can re-use a node about to be shutdown, or if we should create a new on ec2
+                if cluster.to_shut_down:
+                    new_node = cluster.to_shut_down[0]
+                    new_node.state = 2
+                    new_node.priority = cluster.find_next_priority()
+                else:
+                    new_instance_id = ec2_tools.create_instance(cluster.app.ec2ImageId)
+                    new_priority = cluster.find_next_priority()
+                    log.debug('New instance created with id %s and priority %s' % (new_instance_id,new_priority))
+                    new_node = Instance(instanceId=new_instance_id,application=cluster.app,priority=new_priority)
+                new_node.save()
+
         # Handle instances we are supposed to shut down
         toTerminate = []
         for host in cluster.to_shut_down:
-            # TODO check to make sure no users are currently connected to this node
-            pass
+            n = AppNode(host.ip)
+            log.debug('AppNode %s is waiting to be shut down and has %s connections' % (host.ip,n.sessions))
+            if n.sessions == []:
+                toTerminate.append(host)
         ec2_tools.terminate_instances(toTerminate)
 
-        # Consider if the cluster needs to be scaled
-        log.debug('Considering app cluster %s for scaling ...' % cluster.name)
-        # Do I need to scale up?
-        if cluster.avail_headroom < cluster.req_headroom:
-            log.debug('Available sessions (%s) is less than the required cluster headroom (%s).  Scaling Cluster up by 1 node!' % (cluster.avail_headroom,cluster.req_headroom))
-            # TODO implement the scaling up by one node stuff
-        # Can I scale down?
-        adj_size = cluster.capacity - cluster.app.users_per_small
-        for (ip,inuse) in cluster.inuse_map:
-            # TODO what if the cluster scales down by more than 1 in this loop?!?!?
+        # Should I scale down?
+        overprov_num = cluster.avail_headroom - cluster.req_headroom
+        log.debug('overprov (%s) avail (%s) required(%s)' % (overprov_num,cluster.avail_headroom,cluster.req_headroom))
+        # Reverse the list to try to remove the boxes at the end of the waterfall
+        inuse_reverse = cluster.inuse_map
+        inuse_reverse.reverse()
+        for (host,inuse) in inuse_reverse:
             # The node must have 0 sessions and the cluster must be able to be smaller while still leaving enough headroom
-            if int(inuse) == 0 and adj_size >= app.cluster_headroom:
-                log.debug('Application Server %s has no sessions.  Removing that node from the cluster!' % ip)
+            if int(inuse) == 0 and overprov_num > cluster.req_headroom:
+                overprov_num = overprov_num - cluster.app.users_per_small
+                host.state = 4
+                host.save()
+                log.debug('Application Server %s has no sessions.  Removing that node from the cluster!' % host.ip)
     return HttpResponse('scaling complete @TODO put scaling event summary in this output')
 
 @user_tools.login_required

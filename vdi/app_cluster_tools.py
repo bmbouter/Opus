@@ -9,7 +9,18 @@ from re import split
 class AppCluster(object):
     def __init__(self, app_pk):
         self.app = Application.objects.filter(pk=app_pk)[0]
-        self.nodes = Instance.objects.filter(pk=app_pk)
+        self.nodes = Instance.objects.filter(application=app_pk)
+
+    def find_next_priority(self):
+        '''
+        Returns the appropriate priority of the next instance
+        This function only considers nodes in the {'booting', 'active', 'maintenance'} states)
+        '''
+        nodes = self.nodes.filter(Q(state='1') | Q(state='2') | Q(state='3')).order_by('priority')
+        for i in range(len(nodes)):
+            if nodes[i].priority != i:
+                return i
+        return len(nodes)
 
     def select_host(self):
         '''
@@ -22,7 +33,7 @@ class AppCluster(object):
 
     def __getattr__(self, item):
         if item == "avail_headroom":
-            return reduce(lambda add, item: add + item[1], self.avail_map, 0)
+            return reduce(lambda add, item: add + item[1], self.avail_map, 0) + (len(self.booting) * self.app.users_per_small)
         elif item == "req_headroom":
             return self.app.cluster_headroom
         elif item == "booting":
@@ -41,7 +52,7 @@ class AppCluster(object):
     def _capacity(self, app_pk):
         '''
         Returns the aggregate user capacity of this application cluster.
-        This includes instances in the ready and booting state
+        This function only considers nodes in the {'active', 'booting'} states
         '''
         nodes = self.nodes.filter(Q(state='2') | Q(state='1')).order_by('priority')
         return len(nodes) * self.app.users_per_small
@@ -51,31 +62,31 @@ class AppCluster(object):
         Returns a list of tuples, sorted by 'priority' from lowest to highest: [ (ip,numAvail), (ip,numAvail), .... ]
         Index 0 of the returned list has the priority closest to 0.  Here a low number indicates high priority.
         numAvail are the number of client slots currently available on a given host
+        This function only considers instances in state '2'
         '''
-        app_map = self._map_app_cluster_inuse(app_pk)
-        ec2_small_max_users = Application.objects.filter(pk=app_pk)[0].users_per_small
-        return map(lambda x: (x[0],ec2_small_max_users - x[1]), app_map)
+        return map(lambda x: (x[0],self.app.users_per_small - x[1]), self.inuse_map)
 
     def _map_app_cluster_inuse(self, app_pk):
         '''
         Returns a list of tuples, sorted by 'priority' from lowest to highest: [ (ip,numInUse), (ip,numInUse), .... ]
         Index 0 of the returned list has the priority closest to 0.  Here a low number indicates high priority.
         numInUse are the number of clients currently using a given host
+        This function only considers instances in state '2'
         '''
         app_map = []
         nodes = self.nodes.filter(state='2').order_by('priority')
         for host in nodes:
-            # TODO: check with the ACTUAL number of users
-            n = Node(host.ip)
+            n = AppNode(host.ip)
             cur_users = len(n.sessions)
-            app_map.append((host.ip,cur_users))
+            app_map.append((host,cur_users))
         return app_map
 
-class Node(object):
+class AppNode(object):
 
     def __init__(self,ip):
         self.ip = ip
         self.check_user_load()
+        log.debug('On ip %s there are %s sessions' % (self.ip,len(self.sessions)))
 
     '''
     Create an SSH pipe to the specified ip and store all sessions information in list. 

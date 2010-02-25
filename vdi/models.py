@@ -16,14 +16,13 @@ class Application(models.Model):
 
 class Instance(models.Model):
     instanceId = models.CharField(max_length=32, unique=True) # Amazon ec2 ID
-    ldap = models.ForeignKey('LDAPserver')
     application = models.ForeignKey('Application')
     priority = models.IntegerField()
     STATUS_CHOICES = (
         (u'1', u'booting'),
         (u'2', u'active'),
         (u'3', u'maintenance'),
-        (u'3', u'shutting-down'),
+        (u'4', u'shutting-down'),
     )
     state = models.IntegerField(max_length=2, choices=STATUS_CHOICES, default=1)
     ip = models.IPAddressField(blank=True,null=True)
@@ -32,7 +31,7 @@ class Instance(models.Model):
         unique_together = (("application","priority"),)
 
     def __str__(self):
-        return 'Instance(instanceId=%s, ldap=%s)' % (self.instanceId, self.ldap)
+        return 'Instance(application=%s, instanceId=%s)' % (self.application, self.instanceId)
 
     def __repr__(self):
         return self.instanceId

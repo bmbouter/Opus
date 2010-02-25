@@ -6,6 +6,16 @@ from vdi import user_tools
 from boto.ec2.connection import EC2Connection
 from vdi.models import Instance
 
+def create_instance(ami_id):
+    '''
+    ami_id should be a string containing the EC2 ami to be scaled out
+    returns the instance id of the newly created instance
+    '''
+    ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
+    ami = ec2.get_all_images([ami_id])[0]
+    reservation = ami.run(instance_type='m1.large')
+    return reservation.instances[0].id
+
 def terminate_instances(dm_instances):
     '''
     dm_instances should be either a django QuerySet of vdi.models.Instance
@@ -13,8 +23,12 @@ def terminate_instances(dm_instances):
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
     ids = [i.instanceId for i in dm_instances]
     if ids:
-        num_del = len(ec2.terminate_instances(ids))
-        dm_instances.delete()
+        terminated = ec2.terminate_instances(ids)
+        num_del = len(terminated)
+        for item in terminated:
+            dbitem = Instance.objects.filter(instanceId=item.id)[0]
+            log.debug('The node has been deleted on ec2.  I will now delete %s from the local db' % dbitem.instanceId)
+            dbitem.delete()
         return num_del
     return 0
 
