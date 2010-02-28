@@ -13,13 +13,12 @@ import string
 import re
 import ldap
 from datetime import datetime, timedelta
-import time
 import math
 
 from vdi.models import Application, Instance, LDAPserver
 from vdi.forms import InstanceForm
 from vdi import user_tools, ec2_tools
-from vdi.app_cluster_tools import AppCluster, AppNode
+from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 from vdi.log import log
 
 @user_tools.login_required
@@ -82,7 +81,13 @@ def logout(request):
 
 def scale(request):
     for app in Application.objects.all():
+        # Create the cluster object to help us manage the cluster
         cluster = AppCluster(app.pk)
+
+        # Clean up all idle users on all nodes for this application cluster
+        log.debug('APP NAME %s'%app.name)
+        #cluster.logout_idle_users()
+
         # Handle vms we were waiting on to boot up
         ec2_booting = ec2_tools.get_ec2_instances(cluster.booting)
         for ec2_vm in ec2_booting:
@@ -110,21 +115,12 @@ def scale(request):
             servers_needed = int(math.ceil(space_needed / float(cluster.app.users_per_small)))
             log.debug('Available headroom (%s) is less than the cluster headroom goal (%s).  Starting %s additional cluster nodes now' % (cluster.avail_headroom,cluster.req_headroom,servers_needed))
             for i in range(servers_needed):
-                # Consider if we can re-use a node about to be shutdown, or if we should create a new on ec2
-                if cluster.to_shut_down:
-                    new_node = cluster.to_shut_down[0]
-                    new_node.state = 2
-                    new_node.priority = cluster.find_next_priority()
-                else:
-                    new_instance_id = ec2_tools.create_instance(cluster.app.ec2ImageId)
-                    new_priority = cluster.find_next_priority()
-                    log.debug('New instance created with id %s and priority %s' % (new_instance_id,new_priority))
-                    new_node = Instance(instanceId=new_instance_id,application=cluster.app,priority=new_priority)
-                new_node.save()
+                cluster.start_node()
 
         # Handle instances we are supposed to shut down
         toTerminate = []
-        for host in cluster.to_shut_down:
+        for host in cluster.shutting_down:
+            log.debug('ASDASDASD    %s' % host.instanceId)
             n = AppNode(host.ip)
             log.debug('AppNode %s is waiting to be shut down and has %s connections' % (host.ip,n.sessions))
             if n.sessions == []:
@@ -139,7 +135,7 @@ def scale(request):
         inuse_reverse.reverse()
         for (host,inuse) in inuse_reverse:
             # The node must have 0 sessions and the cluster must be able to be smaller while still leaving enough headroom
-            if int(inuse) == 0 and overprov_num > cluster.req_headroom:
+            if int(inuse) == 0 and overprov_num >= cluster.app.users_per_small:
                 overprov_num = overprov_num - cluster.app.users_per_small
                 host.state = 4
                 host.save()
@@ -149,7 +145,17 @@ def scale(request):
 @user_tools.login_required
 def connect(request,app_pk=None):
     cluster = AppCluster(app_pk)
-    ip = cluster.select_host()
+    try:
+        host = cluster.select_host()
+    except NoHostException:
+        # Start a new ec2 instance immedietly and redirect the user back to this page after 20 seconds
+        # Only boot a new node if there are none currently booting up
+        if len(cluster.booting) == 0:
+            cluster.start_node()
+        return render_to_response('app_not_ready.html',
+            {'app': cluster.app,
+            'reload_s': settings.USER_WAITING_PAGE_RELOAD_TIME,
+            'reload_ms': settings.USER_WAITING_PAGE_RELOAD_TIME * 1000})
 
     if request.method == 'GET':
         #Random Password Generation string
@@ -163,25 +169,25 @@ def connect(request,app_pk=None):
         #SSH to AMI using Popen subprocesses
         #TODO REDO ALL THE CAPITALIZED DEBUG STATEMENTS BELOW
         #TODO refactor this so it isn't so crazy and verbose, and a series of special cases
-        output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",ip,"NET", "USER",request.session["username"],password,"/ADD"],stdout = PIPE).communicate()[0]
+        output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "USER",request.session["username"],password,"/ADD"],stdout = PIPE).communicate()[0]
         if output.find("The command completed successfully.") > -1:
             log.debug("THE USER HAS BEEN CREATED")
         elif output.find("The account already exists.") > -1:
-            output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",ip,"NET", "USER",request.session["username"],password],stdout = PIPE).communicate()[0]
+            output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "USER",request.session["username"],password],stdout = PIPE).communicate()[0]
             log.debug('THE USER ALREADY EXISTS, GOING TO TRY TO SET THE PASSWORD')
             if output.find("The command completed successfully.") > -1:
                 log.debug('THE PASSWORD WAS RESET')
             else:
-                error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.session["username"],ip,output)
+                error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
                 log.error(error_string)
                 return HttpResponse(error_string)
         else:
-            error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.session["username"],ip,output)
+            error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
             log.error(error_string)
             return HttpResponse(error_string)
         
         # Add the created user to the Administrator group
-        output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",ip,"NET", "localgroup",'"Administrators"',"/add",request.session["username"]],stdout = PIPE).communicate()[0]
+        output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "localgroup",'"Administrators"',"/add",request.session["username"]],stdout = PIPE).communicate()[0]
         log.debug("ADDED THE USER TO THE ADMINISTRATORS GROUP")
         log.debug('444 %s'%cluster.app.name)
         return render_to_response('connect.html',
@@ -216,7 +222,7 @@ def connect(request,app_pk=None):
         disable menu anims:i:1
         disable themes:i:0
         disable cursor setting:i:0
-        bitmapcachepersistenable:i:1\n""" % (ip,request.session["username"],cluster.app.path)
+        bitmapcachepersistenable:i:1\n""" % (host.ip,request.session["username"],cluster.app.path)
         
         resp = HttpResponse(content)
         resp['Content-Type']="application/rdp"

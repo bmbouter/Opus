@@ -1,10 +1,15 @@
 from vdi.models import Application, Instance
 from vdi.log import log
+from vdi import ec2_tools
 from django.conf import settings
 from django.db.models import Q
 
 from subprocess import Popen, PIPE
 from re import split
+import traceback
+
+class NoHostException(Exception):
+    pass
 
 class AppCluster(object):
     def __init__(self, app_pk):
@@ -14,13 +19,37 @@ class AppCluster(object):
     def find_next_priority(self):
         '''
         Returns the appropriate priority of the next instance
-        This function only considers nodes in the {'booting', 'active', 'maintenance'} states)
+        This function considers nodes in all states
         '''
-        nodes = self.nodes.filter(Q(state='1') | Q(state='2') | Q(state='3')).order_by('priority')
+        nodes = self.nodes.order_by('priority')
         for i in range(len(nodes)):
             if nodes[i].priority != i:
                 return i
         return len(nodes)
+
+    def start_node(self):
+        '''
+        Starts a new node on the cluster.  This function first tries to reuse a 'shutting-down' node first.
+        If no 'shutting-down' nodes are available to reuse, start a new one on ec2
+        '''
+        # Consider if we can re-use a node about to be shutdown, or if we should create a new one ec2
+        if self.shutting_down:
+            new_node = self.shutting_down[0]
+            new_node.state = 2
+            new_node.priority = self.find_next_priority()
+        else:
+            new_instance_id = ec2_tools.create_instance(self.app.ec2ImageId)
+            new_priority = self.find_next_priority()
+            log.debug('New instance created with id %s and priority %s' % (new_instance_id,new_priority))
+            new_node = Instance(instanceId=new_instance_id,application=self.app,priority=new_priority)
+        new_node.save()
+
+    def logout_idle_users(self):
+        '''
+        Logs off idle users for all nodes in this cluster
+        '''
+        for node in self.nodes:
+            AppNode(node.ip).user_cleanup(10)
 
     def select_host(self):
         '''
@@ -30,6 +59,7 @@ class AppCluster(object):
         for (ip,slots) in map:
             if slots > 0:
                 return ip
+        raise NoHostException
 
     def __getattr__(self, item):
         if item == "avail_headroom":
@@ -38,7 +68,11 @@ class AppCluster(object):
             return self.app.cluster_headroom
         elif item == "booting":
             return self.nodes.filter(state="1")
-        elif item == "to_shut_down":
+        elif item == "active":
+            return self.nodes.filter(state="2")
+        elif item == "maintenance":
+            return self.nodes.filter(state="3")
+        elif item == "shutting_down":
             return self.nodes.filter(state="4")
         elif item == "inuse_map":
             return self._map_app_cluster_inuse(self.app.pk)
@@ -136,13 +170,16 @@ class AppNode(object):
                         user["logontime"] = value
                 if (len(user) == 7):
                     self.sessions.append(user)
-    '''
-    Log user off from server with provided ip.  User is identified by session id.
-    If user was logged off succesfully returns true. If error occured returns false.
-    '''
+
     def log_user_off(self,session_id):
-        output = Popen(["ssh", "-i", "/home/private_key",  "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", "root@"+self.ip, "logoff "+session_id], stdout=PIPE).communicate()[0]
+        '''
+        Log user off from server with provided ip.  User is identified by session id.
+        If user was logged off succesfully returns true. If error occured returns false.
+        '''
+        output = Popen(["ssh", "-i", "/home/private_key",  "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", "root@"+self.ip,"c:\logoff.exe",str(session_id)], stdout=PIPE).communicate()[0]
+        log.debug('$#$#$#  %s'%output)
         if (len(output) == 0):
+            log.debug('LOGGED OFF USER')
             return True
         else:
             return False
@@ -174,7 +211,6 @@ class AppNode(object):
                             idletime += 60*int(digit)
                         else:
                             idletime += int(digit)
-
-            if(idletime > timeout):
-                self.log_user_off(session["sessionid"])
+                if(idletime > timeout):
+                    self.log_user_off(session["sessionid"])
         self.check_user_load()

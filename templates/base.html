@@ -2,7 +2,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        <title>{% block title %}Opus{% endblock %}</title>
+        <title>{% block title %}Opus{% endblock title %}</title>
         <style type="text/css">
             #navigation {
                 text-align: center;
@@ -17,16 +17,16 @@
                 text-decoration: underline;
             };
         </style>
-        {% block head %}{% endblock %}
+        {% block head %}{% endblock head %}
     </head>
-    <body>
+    {% block body_tag %}<body>{% endblock body_tag %}
         <div id="navigation">
             <a href="/vdi/">Application Library</a> -
             <a href="/vdi/logout">Logout</a>
         </div>
         <div id="content">
             <br />
-            {% block content %}{% endblock %}
+            {% block content %}{% endblock content %}
         </div>
     </body>
 </html>
