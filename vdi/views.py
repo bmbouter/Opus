@@ -86,7 +86,7 @@ def scale(request):
 
         # Clean up all idle users on all nodes for this application cluster
         log.debug('APP NAME %s'%app.name)
-        #cluster.logout_idle_users()
+        cluster.logout_idle_users()
 
         # Handle vms we were waiting on to boot up
         ec2_booting = ec2_tools.get_ec2_instances(cluster.booting)
