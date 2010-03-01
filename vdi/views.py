@@ -143,7 +143,7 @@ def scale(request):
     return HttpResponse('scaling complete @TODO put scaling event summary in this output')
 
 @user_tools.login_required
-def connect(request,app_pk=None):
+def connect(request,app_pk=None,conn_type='nx'):
     cluster = AppCluster(app_pk)
     try:
         host = cluster.select_host()
@@ -185,7 +185,7 @@ def connect(request,app_pk=None):
             error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
             log.error(error_string)
             return HttpResponse(error_string)
-        
+     
         # Add the created user to the Administrator group
         output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "localgroup",'"Administrators"',"/add",request.session["username"]],stdout = PIPE).communicate()[0]
         log.debug("ADDED THE USER TO THE ADMINISTRATORS GROUP")
@@ -196,36 +196,67 @@ def connect(request,app_pk=None):
             'password': password},
             context_instance=RequestContext(request))
     elif request.method == 'POST':
-        # Remote Desktop Connection Type
-        content = """screen mode id:i:2
-        desktopwidth:i:800
-        desktopheight:i:600
-        desktopallowresize:i:1
-        session bpp:i:16
-        winposstr:s:0,3,0,0,800,600
-        full address:s:%s
-        compression:i:1
-        keyboardhook:i:2
-        audiomode:i:0
-        redirectdrives:i:0
-        redirectprinters:i:1
-        redirectcomports:i:0
-        redirectsmartcards:i:1
-        displayconnectionbar:i:1
-        autoreconnection enabled:i:1
-        username:s:%s
-        domain:s:NETAPP-A415F33E
-        alternate shell:s:%s
-        shell working directory:s:
-        disable wallpaper:i:1
-        disable full window drag:i:1
-        disable menu anims:i:1
-        disable themes:i:0
-        disable cursor setting:i:0
-        bitmapcachepersistenable:i:1\n""" % (host.ip,request.session["username"],cluster.app.path)
-        
-        resp = HttpResponse(content)
-        resp['Content-Type']="application/rdp"
-        resp['Content-Disposition'] = 'attachment; filename=%s.rdp' % cluster.app.name
-        return resp
+        if conn_type == 'rdp':
+            return _create_rdp_conn_file(host.ip,request.session["username"],cluster.app.path)
+        elif conn_type == 'nx':
+            log.debug('#$#$#$ %s' % request.session["username"])
+            log.debug('#$#22$ %s' % host.ip)
+            return _create_nx_conn_file(host.ip,request.session["username"],cluster.app.path)
+
+@user_tools.login_required
+def nxsession(request,app_pk=None):
+    '''
+    Returns a response object containing an hardcoded nx session.
+    '''
+    # TODO: make this function better
+    return render_to_response('nxsession.nxs', {'app_pk' : app_pk})
+
+def _create_nx_conn_file(ip, username, app_path):
+    '''
+    Returns a response object which will return a downloadable nx file
+    ip is the IP address of the windows server to connect to
+    username is the username the connection should use
+    app_path is the application to be run on startup
+    '''
+    return render_to_response('nxapplet.html', {'wcpath' : 'https://opus-dev.cnl.ncsu.edu/plugin/'})
+
+def _create_rdp_conn_file(ip, username, app_path):
+    '''
+    Returns a response object which will return a downloadable rdp file
+    ip is the IP address of the windows server to connect to
+    username is the username the connection should use
+    app_path is the application to be run on startup
+    '''
+    # Remote Desktop Connection Type
+    content = """screen mode id:i:2
+    desktopwidth:i:800
+    desktopheight:i:600
+    desktopallowresize:i:1
+    session bpp:i:16
+    winposstr:s:0,3,0,0,800,600
+    full address:s:%s
+    compression:i:1
+    keyboardhook:i:2
+    audiomode:i:0
+    redirectdrives:i:0
+    redirectprinters:i:1
+    redirectcomports:i:0
+    redirectsmartcards:i:1
+    displayconnectionbar:i:1
+    autoreconnection enabled:i:1
+    username:s:%s
+    domain:s:NETAPP-A415F33E
+    alternate shell:s:%s
+    shell working directory:s:
+    disable wallpaper:i:1
+    disable full window drag:i:1
+    disable menu anims:i:1
+    disable themes:i:0
+    disable cursor setting:i:0
+    bitmapcachepersistenable:i:1\n""" % (ip,username,path)
+    
+    resp = HttpResponse(content)
+    resp['Content-Type']="application/rdp"
+    resp['Content-Disposition'] = 'attachment; filename=%s.rdp' % path
+    return resp
 

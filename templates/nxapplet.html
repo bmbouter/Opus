@@ -1,0 +1,230 @@
+<!--
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2004, 2009 NoMachine, http://www.nomachine.com.          */
+/*                                                                        */
+/* NXAPPLET, NX protocol compression and NX extensions to this            */
+/* software are copyright of NoMachine. Redistribution and use of the     */
+/* present software is allowed according to terms specified in the file   */
+/* LICENSE which comes in the source distribution.                        */
+/*                                                                        */
+/* Check http://www.nomachine.com/licensing.html for applicability.       */
+/*                                                                        */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                    */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/**************************************************************************/
+
+This file is provided as an example, you can freely personalize it to fit
+your needs.
+-->
+
+<HTML>
+    <HEAD>
+        <META HTTP-EQUIV="expires" CONTENT="0">
+        <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+        <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
+        <script src="{{wcpath}}deployJava.js"  language=javaScript type="text/javascript"></script>
+    </HEAD>
+    <BODY>
+        <SCRIPT LANGUAGE="Javascript1.1">
+            <!-- hide JavaScript from non-JavaScript browsers-->
+            SOWIN = (navigator.userAgent.toLowerCase().indexOf("win") > -1) ? 1 : 0;
+            SOMAC = (navigator.userAgent.toLowerCase().indexOf("mac") > -1) ? 1 : 0;
+            SOLIN = (navigator.userAgent.toLowerCase().indexOf("linux") > -1) ? 1 : 0;
+            SOSOL = (navigator.userAgent.toLowerCase().indexOf("solaris") > -1) ? 1 : 0;
+            SOALT = (!SOWIN && !SOMAC && !SOLIN && !SOSOL) ? 1 : 0;
+            
+            var downloadPlugin="";
+            var winPlug="http://plugindoc.mozdev.org/windows.html#Java";
+            var linPlug="http://plugindoc.mozdev.org/linux.html#Java";            
+            if (SOWIN) downloadPlugin = winPlug;
+            if (SOLIN) downloadPlugin = linPlug;
+            var startMessage='<table cellpadding="0" cellspacing="0" bgcolor="#ecebe5" border="0" width="400" height="300">';
+                startMessage+='<tr><td valign="top" align="center">';
+                startMessage+='<table cellpadding="2" cellspacing="0" bgcolor="#ffffff" border="0" width="380" height="230" style="margin-top: 10px;border: 1px solid #ffffff">';
+                startMessage+='<tr><td align="center" width="150" valign="bottom" bgcolor="f9f8f1"><img style="margin-bottom:25px;" src="images/backgrounds/background-5.png" border="0"><br><img src="images/backgrounds/background-7.png" border="0">';
+                startMessage+='</td><td valign="top" style="font-size: 12px;">';
+                
+            var stopMessage='</td></tr></table><img align="right" onclick="parent.location=\''+downloadPlugin+'\'" onmouseover="this.src=\'images/buttons/download-over.png\'" onmouseout="this.src=\'images/buttons/download.png\'" style="margin-top:15px;margin-right:10px;" src="images/buttons/download.png" border="0"></td></tr></table>';
+            
+            var agt=navigator.userAgent.toLowerCase();
+            //alert(agt);
+            var is_nav = ((agt.indexOf('mozilla')!=-1) && (agt.indexOf('spoofer')==-1) && (agt.indexOf('compatible') == -1) && (agt.indexOf('opera')==-1) && (agt.indexOf('webtv')==-1) && (agt.indexOf('hotjava')==-1));
+            var is_ie = ((agt.indexOf("msie") != -1) && (agt.indexOf("opera") == -1));
+            var is_ie7 = agt.indexOf("msie 7") != -1;
+            var pluginDetected = false;
+            if (SOWIN)
+            {
+              var is_win98 = (navigator.userAgent.toLowerCase().indexOf("98") > -1) ? 1 : 0;            
+            } 
+            if (is_nav && !SOMAC)
+            {
+                for (i = 0; i < navigator.plugins.length; i++)
+                {
+                if (navigator.plugins[i].description.indexOf("Java") != -1)
+                    {
+                        pluginDetected = true;
+                        document.writeln('<APPLET ARCHIVE="{{wcpath}}Java/nxapplet.jar"  CODE="NXApplet.class" NAME= "NX Web Companion" width="400" height="300">');
+                        break;
+                    }
+                }
+            if (pluginDetected == false)
+            {
+              document.write(startMessage+"<div style=\"margin:5px;font-family:arial; font-size:12px;\">The option to support Java applets may be disabled in your browser");
+              document.write("<BR>or you haven't a suitable Java Plugin installed.<br><br>Click on button below to download <br> the Java Plugin.</div>"+stopMessage);
+            }
+        }
+        else if (is_ie && SOWIN)
+        {
+	        if (!is_win98)
+            document.writeln('<OBJECT classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93" width="400" height="300" align="baseline" codebase="http://java.sun.com/update/1.5.0/jinstall-1_5_0-windows-i586.cab">');
+          else
+            document.writeln('<OBJECT classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93" width="400" height="300" align="baseline" codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_3_0_05-win.cab#Version=1,3,0,05">');
+            
+        }
+        else if ((is_nav || is_ie) && SOMAC)
+        {
+            if(navigator.plugins)
+            {
+                navigator.plugins.refresh(false);
+            }
+            if(navigator.mimeTypes)
+            {
+                for (i=0; i < navigator.mimeTypes.length; i++)
+                {
+                    if ((navigator.mimeTypes[i].type != null) && (navigator.mimeTypes[i].type.indexOf("application/x-java-applet") != -1))
+                    {
+                        pluginDetected = true;
+                        break;
+                    }
+                }
+            }
+            if (pluginDetected)
+            {
+                document.writeln('<APPLET ARCHIVE="{{wcpath}}Java/nxapplet.jar"  CODE="NXApplet.class" NAME= "NX Web Companion" width="400" height="300">');
+            }
+            else
+            {
+                document.write(startMessage+"<div style=\"margin:5px;font-family:arial; font-size:12px;\">The option to support Java applets may be disabled in your browser");
+                document.write("<BR>or you haven't a suitable Java Plugin installed.<br><br>Click on button below to download<br> the Java Plugin.</div>"+stopMessage);
+            }
+        }
+        else if(!is_nav && !is_ie)
+        {
+            document.writeln('<APPLET ARCHIVE="{{wcpath}}Java/nxapplet.jar"  CODE="NXApplet.class" NAME= "NX Web Companion" width="400" height="300">');
+        }
+        if (deployJava.isPluginInstalled() && deployJava.getPlugin().isPlugin2())
+        {
+         document.writeln('<PARAM NAME="isPlugin2" VALUE="true">');
+        }
+        else { 
+         document.writeln('<PARAM NAME="isPlugin2" VALUE="false">');
+        }
+        
+        
+        </SCRIPT>
+        <noscript>
+           <table cellpadding="0" cellspacing="0" bgcolor="#ecebe5" border="0" width="400" height="300">
+            <tr>
+             <td valign="top" align="center">
+              <table cellpadding="2" cellspacing="0" bgcolor="#ffffff" border="0" width="380" height="230" style="margin-top: 10px;border: 1px solid #ffffff">
+               <tr>
+                <td align="center" width="150" valign="bottom" bgcolor="f9f8f1"><img style="margin-bottom:25px;" src="images/backgrounds/background-5.png" border="0"><br><img src="images/backgrounds/background-7.png" border="0">
+                </td>
+                <td valign="top" style="font-size: 12px;">
+                 <div style="margin:5px;font-family:arial; font-size:12px;">The option to support JavaScript may be disabled in your browser. Enable JavaScript and reload this page. </div>
+                </td>
+               </tr>
+              </table>
+             </td>
+           </tr>
+         </table>
+       </noscript>
+        
+        <PARAM NAME="boxbgcolor" VALUE="236, 235, 229">
+        <PARAM NAME="progressbar" VALUE="true">
+        <PARAM NAME="boxmessage" VALUE="Please wait while Java applet loads...">
+        <PARAM NAME="SiteUrl" VALUE="">
+        <PARAM NAME="BackgroundsUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/images/backgrounds/">
+        <PARAM NAME="Background1" VALUE="background-1.png">
+        <PARAM NAME="Background2" VALUE="background-2.png">
+        <PARAM NAME="Background3" VALUE="background-3.png">
+        <PARAM NAME="Background4" VALUE="background-2.png">
+        <PARAM NAME="Background5" VALUE="background-4.png">
+        <PARAM NAME="Background6" VALUE="background-4.png">
+        <PARAM NAME="Background7" VALUE="background-5.png">
+        <PARAM NAME="Background8" VALUE="background-6.png">
+        <PARAM NAME="Background9" VALUE="background-7.png">
+        <PARAM NAME="StringsUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/images/strings/">
+        <PARAM NAME="String1" VALUE="string-1.png">
+        <PARAM NAME="String2" VALUE="string-2.png">
+        <PARAM NAME="String3" VALUE="string-3.png">
+        <PARAM NAME="String4" VALUE="string-4.png">
+        <PARAM NAME="String5" VALUE="string-5.png">
+        <PARAM NAME="String6" VALUE="string-6.png">
+        <PARAM NAME="String7" VALUE="string-7.png">
+        <PARAM NAME="ErrorsUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/images/errors/">
+        <PARAM NAME="Error1" VALUE="error-1.png">
+        <PARAM NAME="Error2" VALUE="error-2.png">
+        <PARAM NAME="Error3" VALUE="error-3.png">
+        <PARAM NAME="Error4" VALUE="error-4.png">
+        <PARAM NAME="Error5" VALUE="error-5.png">
+        <PARAM NAME="Error6" VALUE="error-6.png">
+        <PARAM NAME="Error7" VALUE="error-7.png">
+        <PARAM NAME="Error8" VALUE="error-8.png">
+        <PARAM NAME="Error9" VALUE="error-9.png">
+        <PARAM NAME="Error10" VALUE="error-10.png">
+        <PARAM NAME="Error11" VALUE="error-11.png">
+        <PARAM NAME="Error12" VALUE="error-12.png">
+
+        <PARAM NAME="ButtonsUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/images/buttons/">
+        <PARAM NAME="Cancel" VALUE="cancel.png">
+        <PARAM NAME="CancelOver" VALUE="cancel-over.png">
+        <PARAM NAME="CancelActive" VALUE="cancel-active.png">
+        <PARAM NAME="Continue" VALUE="continue.png">
+        <PARAM NAME="ContinueOver" VALUE="continue-over.png">
+        <PARAM NAME="ContinueActive" VALUE="continue-active.png">
+        <PARAM NAME="Download" VALUE="download.png">
+        <PARAM NAME="DownloadOver" VALUE="download-over.png">
+        <PARAM NAME="DownloadActive" VALUE="download-active.png">
+        <PARAM NAME="Run" VALUE="run.png">
+        <PARAM NAME="RunOver" VALUE="run-over.png">
+        <PARAM NAME="RunActive" VALUE="run-active.png">
+        <PARAM NAME="Details" VALUE="details.png">
+        <PARAM NAME="DetailsOver" VALUE="details-over.png">
+        <PARAM NAME="DetailsActive" VALUE="details-active.png">
+        <PARAM NAME="Pause" VALUE="pause.png">
+        <PARAM NAME="PauseOver" VALUE="pause-over.png">
+        <PARAM NAME="PauseActive" VALUE="pause-active.png">
+        <PARAM NAME="Resume" VALUE="resume.png">
+        <PARAM NAME="ResumeOver" VALUE="resume-over.png">
+        <PARAM NAME="ResumeActive" VALUE="resume-active.png">
+        <PARAM NAME="Exit" VALUE="exit.png">
+        <PARAM NAME="ExitOver" VALUE="exit-over.png">
+        <PARAM NAME="ExitActive" VALUE="exit-active.png">
+        <PARAM NAME="Update" VALUE="update.png">
+        <PARAM NAME="UpdateOver" VALUE="update-over.png">
+        <PARAM NAME="UpdateActive" VALUE="update-active.png">
+
+        <PARAM NAME="RedirectUrl" VALUE="https://opus-dev.cnl.ncsu.edu:9001/vdi/">
+        <PARAM NAME="SessionUrl" VALUE="https://opus-dev.cnl.ncsu.edu:9001/vdi/2/connect/nxsession">
+        <PARAM NAME="SessionName" VALUE="testdrive.nxs">
+        <PARAM NAME="LinuxClientUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/Linux/client.zip">
+        <PARAM NAME="LinuxClientVersion" VALUE = "3.4.0-5">
+        <PARAM NAME="WindowsClientUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/Windows/client.zip">
+        <PARAM NAME="WindowsClientVersion" VALUE = "3.4.0-5">
+        <PARAM NAME="MacOSClientUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/MacOSX/client.zip">
+        <PARAM NAME="MacOSClientVersion" VALUE = "3.4.0-5">
+        <PARAM NAME="SolarisClientUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/Solaris/client.zip">
+        <PARAM NAME="SolarisClientVersion" VALUE = "3.4.0-5">
+        <PARAM NAME="archive" VALUE="{{wcpath}}Java/nxapplet.jar">
+        <PARAM NAME="code" VALUE="NXApplet.class">
+        <PARAM NAME="type" VALUE="application/x-java-applet;version=1.2">
+        <PARAM NAME="loglevel" VALUE="3">
+        </OBJECT>
+        </APPLET>      
+    </BODY>
+
+</HTML>
