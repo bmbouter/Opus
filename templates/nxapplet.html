@@ -25,7 +25,7 @@ your needs.
         <META HTTP-EQUIV="expires" CONTENT="0">
         <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
         <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
-        <script src="{{wcpath}}deployJava.js"  language=javaScript type="text/javascript"></script>
+        <script src="{{wc_url}}deployJava.js"  language=javaScript type="text/javascript"></script>
     </HEAD>
     <BODY>
         <SCRIPT LANGUAGE="Javascript1.1">
@@ -66,7 +66,7 @@ your needs.
                 if (navigator.plugins[i].description.indexOf("Java") != -1)
                     {
                         pluginDetected = true;
-                        document.writeln('<APPLET ARCHIVE="{{wcpath}}Java/nxapplet.jar"  CODE="NXApplet.class" NAME= "NX Web Companion" width="400" height="300">');
+                        document.writeln('<APPLET ARCHIVE="{{wc_url}}Java/nxapplet.jar"  CODE="NXApplet.class" NAME= "NX Web Companion" width="400" height="300">');
                         break;
                     }
                 }
@@ -103,7 +103,7 @@ your needs.
             }
             if (pluginDetected)
             {
-                document.writeln('<APPLET ARCHIVE="{{wcpath}}Java/nxapplet.jar"  CODE="NXApplet.class" NAME= "NX Web Companion" width="400" height="300">');
+                document.writeln('<APPLET ARCHIVE="{{wc_url}}Java/nxapplet.jar"  CODE="NXApplet.class" NAME= "NX Web Companion" width="400" height="300">');
             }
             else
             {
@@ -113,7 +113,7 @@ your needs.
         }
         else if(!is_nav && !is_ie)
         {
-            document.writeln('<APPLET ARCHIVE="{{wcpath}}Java/nxapplet.jar"  CODE="NXApplet.class" NAME= "NX Web Companion" width="400" height="300">');
+            document.writeln('<APPLET ARCHIVE="{{wc_url}}Java/nxapplet.jar"  CODE="NXApplet.class" NAME= "NX Web Companion" width="400" height="300">');
         }
         if (deployJava.isPluginInstalled() && deployJava.getPlugin().isPlugin2())
         {
@@ -147,7 +147,7 @@ your needs.
         <PARAM NAME="progressbar" VALUE="true">
         <PARAM NAME="boxmessage" VALUE="Please wait while Java applet loads...">
         <PARAM NAME="SiteUrl" VALUE="">
-        <PARAM NAME="BackgroundsUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/images/backgrounds/">
+        <PARAM NAME="BackgroundsUrl" VALUE="{{wc_url}}images/backgrounds/">
         <PARAM NAME="Background1" VALUE="background-1.png">
         <PARAM NAME="Background2" VALUE="background-2.png">
         <PARAM NAME="Background3" VALUE="background-3.png">
@@ -157,7 +157,7 @@ your needs.
         <PARAM NAME="Background7" VALUE="background-5.png">
         <PARAM NAME="Background8" VALUE="background-6.png">
         <PARAM NAME="Background9" VALUE="background-7.png">
-        <PARAM NAME="StringsUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/images/strings/">
+        <PARAM NAME="StringsUrl" VALUE="{{wc_url}}images/strings/">
         <PARAM NAME="String1" VALUE="string-1.png">
         <PARAM NAME="String2" VALUE="string-2.png">
         <PARAM NAME="String3" VALUE="string-3.png">
@@ -165,7 +165,7 @@ your needs.
         <PARAM NAME="String5" VALUE="string-5.png">
         <PARAM NAME="String6" VALUE="string-6.png">
         <PARAM NAME="String7" VALUE="string-7.png">
-        <PARAM NAME="ErrorsUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/images/errors/">
+        <PARAM NAME="ErrorsUrl" VALUE="{{wc_url}}images/errors/">
         <PARAM NAME="Error1" VALUE="error-1.png">
         <PARAM NAME="Error2" VALUE="error-2.png">
         <PARAM NAME="Error3" VALUE="error-3.png">
@@ -179,7 +179,7 @@ your needs.
         <PARAM NAME="Error11" VALUE="error-11.png">
         <PARAM NAME="Error12" VALUE="error-12.png">
 
-        <PARAM NAME="ButtonsUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/images/buttons/">
+        <PARAM NAME="ButtonsUrl" VALUE="{{wc_url}}images/buttons/">
         <PARAM NAME="Cancel" VALUE="cancel.png">
         <PARAM NAME="CancelOver" VALUE="cancel-over.png">
         <PARAM NAME="CancelActive" VALUE="cancel-active.png">
@@ -208,18 +208,18 @@ your needs.
         <PARAM NAME="UpdateOver" VALUE="update-over.png">
         <PARAM NAME="UpdateActive" VALUE="update-active.png">
 
-        <PARAM NAME="RedirectUrl" VALUE="https://opus-dev.cnl.ncsu.edu:9001/vdi/">
-        <PARAM NAME="SessionUrl" VALUE="https://opus-dev.cnl.ncsu.edu:9001/vdi/2/connect/nxsession">
+        <PARAM NAME="RedirectUrl" VALUE="{{redirect_url}}">
+        <PARAM NAME="SessionUrl" VALUE="{{session_url}}">
         <PARAM NAME="SessionName" VALUE="testdrive.nxs">
-        <PARAM NAME="LinuxClientUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/Linux/client.zip">
+        <PARAM NAME="LinuxClientUrl" VALUE="{{wc_url}}Linux/client.zip">
         <PARAM NAME="LinuxClientVersion" VALUE = "3.4.0-5">
-        <PARAM NAME="WindowsClientUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/Windows/client.zip">
+        <PARAM NAME="WindowsClientUrl" VALUE="{{wc_url}}Windows/client.zip">
         <PARAM NAME="WindowsClientVersion" VALUE = "3.4.0-5">
-        <PARAM NAME="MacOSClientUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/MacOSX/client.zip">
+        <PARAM NAME="MacOSClientUrl" VALUE="{{wc_url}}MacOSX/client.zip">
         <PARAM NAME="MacOSClientVersion" VALUE = "3.4.0-5">
-        <PARAM NAME="SolarisClientUrl" VALUE="https://opus-dev.cnl.ncsu.edu/plugin/Solaris/client.zip">
+        <PARAM NAME="SolarisClientUrl" VALUE="{{wc_url}}Solaris/client.zip">
         <PARAM NAME="SolarisClientVersion" VALUE = "3.4.0-5">
-        <PARAM NAME="archive" VALUE="{{wcpath}}Java/nxapplet.jar">
+        <PARAM NAME="archive" VALUE="{{wc_url}}Java/nxapplet.jar">
         <PARAM NAME="code" VALUE="NXApplet.class">
         <PARAM NAME="type" VALUE="application/x-java-applet;version=1.2">
         <PARAM NAME="loglevel" VALUE="3">
