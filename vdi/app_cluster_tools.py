@@ -3,7 +3,7 @@ from vdi.log import log
 from vdi import ec2_tools
 from django.conf import settings
 from django.db.models import Q
-
+import string
 from subprocess import Popen, PIPE
 from re import split
 import traceback
@@ -136,17 +136,17 @@ class AppNode(object):
                 user = dict()
                 for i,value in enumerate(fields):
                     if(i == 1):
-                        user["username"] = value
+                        user["username"] = string.rstrip(value)
                     if(i == 2):
-                        user["sessionid"] = value
+                        user["sessionid"] = string.rstrip(value)
                     if(i == 3):
-                        user["state"] = value
+                        user["state"] = string.rstrip(value)
                     if(i == 4):
-                        user["idletime"] = value
+                        user["idletime"] = string.rstrip(value)
                     if(i == 5):
-                        user["logondate"] = value
+                        user["logondate"] = string.rstrip(value)
                     if(i == 6):
-                        user["logontime"] = value
+                        user["logontime"] = string.rstrip(value)
                 if (len(user) == 6):
                     self.sessions.append(user)
 
@@ -155,19 +155,19 @@ class AppNode(object):
                 user = dict()
                 for i,value in enumerate(fields):
                     if(i == 1):
-                        user["username"] = value
+                        user["username"] = string.rstrip(value)
                     if(i == 2):
-                        user["sessionname"] = value
+                        user["sessionname"] = string.rstrip(value)
                     if(i == 3):
-                        user["sessionid"] = value
+                        user["sessionid"] = string.rstrip(value)
                     if(i == 4):
-                        user["state"] = value
+                        user["state"] = string.rstrip(value)
                     if(i == 5):
-                        user["idletime"] = value
+                        user["idletime"] = string.rstrip(value)
                     if(i == 6):
-                        user["logondate"] = value
+                        user["logondate"] = string.rstrip(value)
                     if(i == 7):
-                        user["logontime"] = value
+                        user["logontime"] = string.rstrip(value)
                 if (len(user) == 7):
                     self.sessions.append(user)
 
@@ -190,11 +190,13 @@ class AppNode(object):
         is logged off.  If the idle time exceeds the timeout parameter, the user is logged off. Timeout
         is in MINUTES.
         '''
+        log.debug(self.sessions)
         for session in self.sessions:
+            log.debug("Reported idletime: "+session["idletime"])
             if(session["state"] == "Disc"):
                 self.log_user_off(session["sessionid"])
-            elif(session["idletime"] == ". "):
-                break
+            elif((session["idletime"] == ".") or (session["idletime"] == "none")):
+                continue
             else:
                 days = session["idletime"].split("+")
                 if(len(days) > 1):
@@ -206,11 +208,13 @@ class AppNode(object):
                             idletime += int(digit)
                 else:
                     idletime = 0
-                    for i,digit in enumerate(days[0].split(":")):
-                        if(i == 0):
-                            idletime += 60*int(digit)
-                        else:
-                            idletime += int(digit)
+                    hoursandmins = days[0].split(":")
+                    if(len(hoursandmins) > 1):
+                        idletime += 60*int(hoursandmins[0])
+                        idletime += int(hoursandmins[1])
+                    else:
+                        idletime += int(hoursandmins[0])
+                log.debug("Calculated idle time: "+str(idletime))
                 if(idletime > timeout):
                     self.log_user_off(session["sessionid"])
         self.check_user_load()
