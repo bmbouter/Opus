@@ -14,6 +14,8 @@ import string
 import re
 import ldap
 from datetime import datetime, timedelta
+from cgi import escape
+from urllib import urlencode
 import math
 
 from vdi.models import Application, Instance, LDAPserver
@@ -203,35 +205,32 @@ def connect(request,app_pk=None,conn_type='nx'):
         output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "localgroup",'"Administrators"',"/add",request.session["username"]],stdout = PIPE).communicate()[0]
         log.debug("ADDED THE USER TO THE ADMINISTRATORS GROUP")
         log.debug('444 %s'%cluster.app.name)
-        return render_to_response('connect.html',
-            {'app_name': cluster.app.name,
-            'app_pk': app_pk,
-            'password': password},
-            context_instance=RequestContext(request))
+        if conn_type == 'rdp':
+            return render_to_response('rdp_connect.html',
+                {'app_name': cluster.app.name,
+                'app_pk': app_pk,
+                'password': password},
+                context_instance=RequestContext(request))
+        else:
+            return _create_nx_conn_file(host.ip,request.session["username"],password,cluster.app)
     elif request.method == 'POST':
         if conn_type == 'rdp':
             return _create_rdp_conn_file(host.ip,request.session["username"],cluster.app.path)
-        elif conn_type == 'nx':
-            log.debug('#$#$#$ %s' % request.session["username"])
-            log.debug('#$#22$ %s' % host.ip)
-            return _create_nx_conn_file(host.ip,request.session["username"],cluster.app.path)
 
-@user_tools.login_required
-def nxsession(request,app_pk=None):
-    '''
-    Returns a response object containing an hardcoded nx session.
-    '''
-    # TODO: make this function better
-    return render_to_response('nxsession.nxs', {'app_pk' : app_pk})
-
-def _create_nx_conn_file(ip, username, app_path):
+def _create_nx_conn_file(ip, username, password, app):
     '''
     Returns a response object which will return a downloadable nx file
     ip is the IP address of the windows server to connect to
     username is the username the connection should use
-    app_path is the application to be run on startup
+    app is a vdi.models.Application
     '''
-    return render_to_response('nxapplet.html', {'wcpath' : 'https://opus-dev.cnl.ncsu.edu/plugin/'})
+    # TODO -- These urls should not be hard coded
+    session_url = 'https://opus-dev.cnl.ncsu.edu:9001/nxproxy/conn_builder?' + urlencode({'dest' : ip, 'dest_user' : username, 'dest_pass' : password, 'app_path' : app.path})
+    redirect_url = 'https://opus-dev.cnl.ncsu.edu:9001/vdi/'
+    wc_url = 'https://opus-dev.cnl.ncsu.edu/plugin/'
+    return render_to_response('nxapplet.html', {'wc_url' : wc_url,
+                                                'redirect_url' : redirect_url,
+                                                'session_url' : session_url})
 
 def _create_rdp_conn_file(ip, username, app_path):
     '''
