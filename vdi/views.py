@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django import forms
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError
@@ -29,10 +30,22 @@ def applicationLibrary(request):
         {'app_library': db_apps},
         context_instance=RequestContext(request))
 
-def ldaplogin(request, ldap_error=None):
-    ldap = LDAPserver.objects.all()
+def ldaplogin(request, ldap_error=None, school=None):
+    if school == None:
+        ldap = LDAPserver.objects.all()
+        single_school = False
+    else:
+        try:
+            ldap = [LDAPserver.objects.get(name__iexact=school.lower())]
+            single_school = True
+        except ObjectDoesNotExist:
+            ldap = LDAPserver.objects.all()
+            log.debug('Schoolname "%s" is not in the database.' % school);
+            single_school = False
+
     return render_to_response('ldap.html',
-        {'ldap_servers': ldap, 'ldap_error':ldap_error},
+        {'ldap_servers': ldap, 'ldap_error':ldap_error,
+        'single_school':single_school},
         context_instance=RequestContext(request))
 
 def login(request):
