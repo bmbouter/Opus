@@ -32,7 +32,7 @@ def applicationLibrary(request):
         {'app_library': db_apps},
         context_instance=RequestContext(request))
 
-def ldaplogin(request, ldap_error=None, school=None):
+def ldaplogin(request, ldap_error=[], school=None):
     if school == None:
         ldap = LDAPserver.objects.all()
         single_school = False
@@ -45,9 +45,17 @@ def ldaplogin(request, ldap_error=None, school=None):
             log.debug('Schoolname "%s" is not in the database.' % school);
             single_school = False
 
+    if single_school:
+        school_name = ldap[0].name.lower()
+    else:
+        school_name = False
+
     return render_to_response('ldap.html',
-        {'ldap_servers': ldap, 'ldap_error':ldap_error,
-        'single_school':single_school},
+        {'ldap_servers': ldap,
+         'ldap_error': ldap_error,
+         'single_school': single_school,
+         'school_name': school_name,
+        },
         context_instance=RequestContext(request))
 
 def login(request):
@@ -65,7 +73,7 @@ def login(request):
         l = ldap.initialize(server.url)
         l.start_tls_s()
         l.protocol_version = ldap.VERSION3
-        # Any errors will throw an ldap.LDAPError exception 
+        # Any errors will throw an ldap.LDAPError exception
         # or related exception so you can ignore the result
         l.set_option(ldap.OPT_X_TLS_DEMAND, True)
         search_string = "uid="+username

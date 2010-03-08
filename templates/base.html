@@ -17,6 +17,10 @@
                 text-decoration: underline;
             };
         </style>
+        {% if school_name %}
+            <link href="{{vdi_media_dir}}schools/{{school_name}}/style.css"
+                  rel="stylesheet" type="text/css" />
+        {% endif %}
         {% block head %}{% endblock head %}
     </head>
     {% block body_tag %}<body>{% endblock body_tag %}

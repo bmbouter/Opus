@@ -3,10 +3,6 @@
 
 {% block content %}
 
-    {% if single_school %}
-        <img alt="{{ server.0.name }}" src="{{ server.0.name }}" />
-    {% endif %}
-
     {% if ldap_servers %}
     {% if ldap_error %}
     {% for key,value in ldap_error %}
