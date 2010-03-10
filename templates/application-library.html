@@ -16,13 +16,11 @@
     {% if app_library %}
         <table border="1">
             <tr>
-                <th>Name</th>
-                <th>Actions</th>
+                <th>Application List</th>
             </tr>
             {% for app in app_library %}
                 <tr>
-                    <td>{{ app.name }}</td>
-                    <td><a href="/vdi/{{ app.pk }}/connect">connect</a></td>
+                    <td><a href="/vdi/{{ app.pk }}/connect"><img src="{{app.icon_url}}" height="75" border="2" alt="Connect to {{app.name}}" /></a></td>
                 </tr>
             {% endfor %}
         </table> 
