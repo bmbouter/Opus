@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sessions>{% for session in sessions %}
+    <session>
+        <display id="{{session.display}}"/>
+        <username id="{{session.username}}"/>
+        <user_ip id="{{session.user_ip}}"/>
+        <session_id id="{{session.session_id}}"/>
+        <node id="{{session.node}}"/>
+    </session>{% endfor %}
+</sessions>
