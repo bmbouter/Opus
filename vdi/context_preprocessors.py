@@ -7,5 +7,5 @@ def context_preprocessor(request):
     }
     if user_tools.is_logged_in(request):
         d['ldap_object'] = request.session['ldap']
-        d['school_name'] = request.session['ldap'].name
+        d['school_name'] = request.session['ldap'].name.lower()
     return d
