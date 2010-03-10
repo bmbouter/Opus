@@ -26,7 +26,6 @@ def sessions(request):
     elif request.method == 'POST':
         return HttpResponse('POST')
 
-@user_tools.login_required
 def conn_builder(request,app_pk=None):
     '''
     Returns a response object containing an nx session.
@@ -38,7 +37,6 @@ def conn_builder(request,app_pk=None):
     #Random Password Generation string
     chars = ascii_letters + digits
     nx_password = ''.join([choice(chars) for x in range(14)])
-    nx_password = 'NEXTpassw0rd'
     username = request.session["username"]
 
     # SSH to the node, create a user, and set the password with the one-time password above
@@ -51,7 +49,7 @@ def conn_builder(request,app_pk=None):
     else:
         app_path = ''
 
-    return render_to_response('nx_connect.html', {'nx_ip' : node.ip,
+    resp = render_to_response('nx_single_session.html', {'nx_ip' : node.ip,
                         'nx_username' : username,
                         'nx_password' : encryptNXPass(nx_password),
                         'conn_type' : 'windows',
@@ -59,6 +57,15 @@ def conn_builder(request,app_pk=None):
                         'dest_username' : request.GET["dest_user"],
                         'dest_password' : encodePassword(request.GET["dest_pass"]),
                         'app_path' : app_path})
+
+    if "nodownload" in request.GET:
+        if int(request.GET["nodownload"]) == 1:
+            return resp
+
+    resp['Content-Type']="application/nx"
+    # TODO update the hardcoded string 'connection' below to something like app.name  I'm not sure how to get that data here architecturally
+    resp['Content-Disposition'] = 'attachment; filename="%s.nxs"' % 'connection'
+    return resp
 
 def encryptNXPass(s):
     '''
@@ -116,5 +123,5 @@ def _get_sessions():
                 break;
             all_sessions.append(NXSession(line))
     
-    return render_to_response('nx-sessions.html',
+    return render_to_response('nx_list_sessions.html',
         {'sessions': all_sessions})
