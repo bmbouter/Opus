@@ -90,6 +90,11 @@ INSTALLED_APPS = (
     'vdi',
 )
 
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'vdi.context_preprocessor',
+)
+
 ######### VDI Settings #######
 # Keys for Amazon Web Services
 AWS_ACCESS_KEY = ''
@@ -106,3 +111,6 @@ LOG_FILE = sys.stdout   # This may be a filename, or a stream
 #      logs.
 #TODO: Add log level setting
 #TODO: Change the LOG_FILE setting to a list, LOG_FILES
+
+# URL prefix for vdi media.  Make sure to use a trailing slash.
+VDI_MEDIA_PREFIX = '/vdi-media/'
