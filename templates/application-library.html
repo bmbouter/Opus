@@ -10,26 +10,13 @@
 
 {{ form.media }}
 
-<style type="text/css">
-    #content table, #content td {
-        border:0;
-    }
-    #content table {
-        border: 3px ridge #A30D01;
-    }
-    #content td {
-        padding: 20px;
-        text-align: center;
-    }
-</style>
-
 {% endblock %}
 
 {% block content %}
     {% if app_library %}
-        <table>
+        <table border="1">
             <tr>
-                <th>Choose an Application:</th>
+                <th>Application List</th>
             </tr>
             {% for app in app_library %}
                 <tr>
