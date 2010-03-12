@@ -1,6 +1,7 @@
 from vdi.models import Application, Instance
 from vdi.log import log
 from vdi import ec2_tools
+
 from django.conf import settings
 from django.db.models import Q
 import string
@@ -61,6 +62,17 @@ class AppCluster(object):
             if slots > 0:
                 return ip
         raise NoHostException
+    
+    def get_stats(self):
+        '''
+        Count number of sessions on all nodes. Get available headroom for cluster.
+        Return two as a tuple (number_of_users, available_headroom)
+        '''
+        number_of_users = 0
+        for node in self.active:
+            number_of_users += len(AppNode(node.ip).sessions)
+
+        return (number_of_users, self.avail_headroom)
 
     def __getattr__(self, item):
         if item == "avail_headroom":
