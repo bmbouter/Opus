@@ -24,6 +24,7 @@ from vdi.forms import InstanceForm
 from vdi import user_tools, ec2_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 from vdi.log import log
+import cost_tools
 
 @user_tools.login_required
 def applicationLibrary(request):
@@ -141,6 +142,7 @@ def scale(request):
             for i in range(servers_needed):
                 cluster.start_node()
 
+
         # Handle instances we are supposed to shut down
         toTerminate = []
         for host in cluster.shutting_down:
@@ -149,7 +151,10 @@ def scale(request):
             log.debug('AppNode %s is waiting to be shut down and has %s connections' % (host.ip,n.sessions))
             if n.sessions == []:
                 toTerminate.append(host)
+                host.shutdownDateTime = datetime.now()
+                host.save()
         ec2_tools.terminate_instances(toTerminate)
+
 
         # Should I scale down?
         overprov_num = cluster.avail_headroom - cluster.req_headroom
@@ -315,3 +320,12 @@ def _create_rdp_conn_file(ip, username, password, app):
     resp['Content-Disposition'] = 'attachment; filename="%s.rdp"' % app.name
     return resp
 
+def calculate_cost(request, start_date, end_date):
+ 
+    starting_date = cost_tools.convertToDateTime(start_date)
+    ending_date = cost_tools.convertToDateTime(end_date)
+ 
+    total_hoursInRange = cost_tools.getInstanceHoursInDateRange(starting_date, ending_date)
+    cost = cost_tools.generateCost(total_hoursInRange)
+
+    return HttpResponse("Calculating cost for date " + str(starting_date) + " to " + str(ending_date) + ".  The total hours used in this range is " + str(total_hoursInRange) + " with cost $" + str(cost))

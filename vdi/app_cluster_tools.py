@@ -7,6 +7,7 @@ import string
 from subprocess import Popen, PIPE
 from re import split
 import traceback
+import datetime
 
 class NoHostException(Exception):
     pass
@@ -48,7 +49,7 @@ class AppCluster(object):
         '''
         Logs off idle users for all nodes in this cluster
         '''
-        for node in self.nodes:
+        for node in self.active:
             AppNode(node.ip).user_cleanup(10)
 
     def select_host(self):
@@ -129,7 +130,7 @@ class AppNode(object):
     '''
     def check_user_load(self):
         self.sessions = []
-        output = Popen(["ssh", "-i", "/home/private_key",  "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", "root@"+self.ip, "Quser"], stdout=PIPE).communicate()[0]
+        output = Popen(["ssh", "-i", "/home/private_key",  "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", "root@"+str(self.ip), "Quser"], stdout=PIPE).communicate()[0]
         for line in output.split('\n'):
             fields = split("(\S+) +(\d+) +(Disc) +([none]*[\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
             if (len(fields) > 1):
