@@ -193,7 +193,7 @@ def connect(request,app_pk=None,conn_type=None):
     if request.method == 'GET':
         #Random Password Generation string
         chars=string.ascii_letters+string.digits
-        password = ''.join(choice(chars) for x in range(randint(8,14)))
+        password = ''.join(choice(chars) for x in range(6))
         log.debug("THE PASSWORD IS: %s" % password)
 
         # Get IP of user
