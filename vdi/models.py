@@ -7,6 +7,7 @@ class Application(models.Model):
     max_concurrent_instances = models.IntegerField()
     users_per_small = models.IntegerField()
     cluster_headroom = models.IntegerField()
+    icon_url = models.URLField()
 
     def __str__(self):
         return self.name

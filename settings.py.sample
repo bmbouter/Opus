@@ -90,6 +90,11 @@ INSTALLED_APPS = (
     'vdi',
 )
 
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'vdi.context_preprocessor',
+)
+
 ######### VDI Settings #######
 # Keys for Amazon Web Services
 AWS_ACCESS_KEY = ''
@@ -98,6 +103,7 @@ AWS_SECRET_KEY = ''
 # Connection Broker Options
 MINIMUM_RESERVATION_LEN = 15    # This is in minutes
 USER_WAITING_PAGE_RELOAD_TIME = 15       # This is in seconds
+DEFAULT_CONNECTION_PROTOCOL = 'rdp'
 
 # Logging
 LOG_FILE = sys.stdout   # This may be a filename, or a stream
@@ -106,3 +112,6 @@ LOG_FILE = sys.stdout   # This may be a filename, or a stream
 #      logs.
 #TODO: Add log level setting
 #TODO: Change the LOG_FILE setting to a list, LOG_FILES
+
+# URL prefix for vdi media.  Make sure to use a trailing slash.
+VDI_MEDIA_PREFIX = '/vdi-media/'

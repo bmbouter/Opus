@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django import forms
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError
@@ -12,7 +13,10 @@ from random import choice, randint
 import string
 import re
 import ldap
+from time import sleep
 from datetime import datetime, timedelta
+from cgi import escape
+from urllib import urlencode
 import math
 import os
 import rrdtool, time
@@ -31,10 +35,30 @@ def applicationLibrary(request):
         {'app_library': db_apps},
         context_instance=RequestContext(request))
 
-def ldaplogin(request, ldap_error=None):
-    ldap = LDAPserver.objects.all()
+def ldaplogin(request, ldap_error=[], school=None):
+    if school == None:
+        ldap = LDAPserver.objects.all()
+        single_school = False
+    else:
+        try:
+            ldap = [LDAPserver.objects.get(name__iexact=school.lower())]
+            single_school = True
+        except ObjectDoesNotExist:
+            ldap = LDAPserver.objects.all()
+            log.debug('Schoolname "%s" is not in the database.' % school);
+            single_school = False
+
+    if single_school:
+        school_name = ldap[0].name.lower()
+    else:
+        school_name = False
+
     return render_to_response('ldap.html',
-        {'ldap_servers': ldap, 'ldap_error':ldap_error},
+        {'ldap_servers': ldap,
+         'ldap_error': ldap_error,
+         'single_school': single_school,
+         'school_name': school_name,
+        },
         context_instance=RequestContext(request))
 
 def login(request):
@@ -52,7 +76,7 @@ def login(request):
         l = ldap.initialize(server.url)
         l.start_tls_s()
         l.protocol_version = ldap.VERSION3
-        # Any errors will throw an ldap.LDAPError exception 
+        # Any errors will throw an ldap.LDAPError exception
         # or related exception so you can ignore the result
         l.set_option(ldap.OPT_X_TLS_DEMAND, True)
         search_string = "uid="+username
@@ -227,7 +251,7 @@ def rrdTest(request):
     return HttpResponse('Timer done running. Check database.')
 
 @user_tools.login_required
-def connect(request,app_pk=None,conn_type='nx'):
+def connect(request,app_pk=None,conn_type=None):
     cluster = AppCluster(app_pk)
     try:
         host = cluster.select_host()
@@ -241,6 +265,15 @@ def connect(request,app_pk=None,conn_type='nx'):
             'reload_s': settings.USER_WAITING_PAGE_RELOAD_TIME,
             'reload_ms': settings.USER_WAITING_PAGE_RELOAD_TIME * 1000})
 
+    if conn_type == None:
+        # A conn_type was not explicitly requested, so let's decide which one to have the user use
+        if request.META["HTTP_USER_AGENT"].find('MSIE') == -1:
+            # User is not running IE, give them the default connection type
+            conn_type = settings.DEFAULT_CONNECTION_PROTOCOL
+        else:
+            # User is running IE, give them the rdpweb connection type
+            conn_type = 'rdpweb'
+
     if request.method == 'GET':
         #Random Password Generation string
         chars=string.ascii_letters+string.digits
@@ -248,17 +281,17 @@ def connect(request,app_pk=None,conn_type='nx'):
         log.debug("THE PASSWORD IS: %s" % password)
 
         # Get IP of user
+        # Implement firewall manipulation of the ami's
         log.debug('Found user ip of %s' % request.META["REMOTE_ADDR"])
 
         #SSH to AMI using Popen subprocesses
-        #TODO REDO ALL THE CAPITALIZED DEBUG STATEMENTS BELOW
         #TODO refactor this so it isn't so crazy and verbose, and a series of special cases
         output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "USER",request.session["username"],password,"/ADD"],stdout = PIPE).communicate()[0]
         if output.find("The command completed successfully.") > -1:
-            log.debug("THE USER HAS BEEN CREATED")
+            log.debug("User %s has been created" % request.session["username"])
         elif output.find("The account already exists.") > -1:
             output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "USER",request.session["username"],password],stdout = PIPE).communicate()[0]
-            log.debug('THE USER ALREADY EXISTS, GOING TO TRY TO SET THE PASSWORD')
+            log.debug('User %s already exists, going to try to set the password' % request.session["username"])
             if output.find("The command completed successfully.") > -1:
                 log.debug('THE PASSWORD WAS RESET')
             else:
@@ -272,44 +305,64 @@ def connect(request,app_pk=None,conn_type='nx'):
      
         # Add the created user to the Administrator group
         output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "localgroup",'"Administrators"',"/add",request.session["username"]],stdout = PIPE).communicate()[0]
-        log.debug("ADDED THE USER TO THE ADMINISTRATORS GROUP")
-        log.debug('444 %s'%cluster.app.name)
-        return render_to_response('connect.html',
-            {'app_name': cluster.app.name,
-            'app_pk': app_pk,
-            'password': password},
-            context_instance=RequestContext(request))
-    elif request.method == 'POST':
+        log.debug("Added user %s to the 'Administrators' group" % request.session["username"])
+        
+        # This is a hack for NC WISE only, and should be handled through a more general mechanism
+        # TODO refactor this to be more secure
+        rdesktopPid = Popen(["rdesktop","-u",request.session["username"],"-p",password, "-s", cluster.app.path, host.ip], env={"DISPLAY": ":1"}).pid
+        # Wait for rdesktop to logon
+        sleep(3)
+
         if conn_type == 'rdp':
-            return _create_rdp_conn_file(host.ip,request.session["username"],cluster.app.path)
+            # TODO modify the rdp_connect.html template to dynamically create the URL instead of passing in posturl.  This violates the DRY principle.
+            posturl = '/vdi/%s/connect' % cluster.app.pk
+            return render_to_response('connect.html', {'username' : request.session["username"],
+                                                        'password' : password,
+                                                        'app' : cluster.app,
+                                                        'posturl' : posturl},
+                                                        context_instance=RequestContext(request))
+        if conn_type == 'nxweb':
+            return _nxweb(host.ip,request.session["username"],password,cluster.app)
         elif conn_type == 'nx':
-            log.debug('#$#$#$ %s' % request.session["username"])
-            log.debug('#$#22$ %s' % host.ip)
-            return _create_nx_conn_file(host.ip,request.session["username"],cluster.app.path)
+            # TODO -- This url should not be hard coded
+            session_url = 'https://opus-dev.cnl.ncsu.edu:9001/nxproxy/conn_builder?' + urlencode({'dest' : host.ip, 'dest_user' : request.session["username"], 'dest_pass' : password, 'app_path' : cluster.app.path})
+            return HttpResponseRedirect(session_url)
+        elif conn_type == 'rdpweb':
+            # TODO -- This url should not be hard coded
+            tsweb_url = 'https://opus-dev.cnl.ncsu.edu/TSWeb/'
+            redirect_url = 'https://opus-dev.cnl.ncsu.edu:9001/vdi/'
+            return render_to_response('rdpweb.html', {'tsweb_url' : tsweb_url,
+                                                    'redirect_url' : redirect_url,
+                                                    'app' : cluster.app,
+                                                    'ip' : host.ip,
+                                                    'username' : request.session["username"],
+                                                    'password' : password})
+    elif request.method == 'POST':
+        # Handle POST request types
+        if conn_type == 'rdp':
+            return _create_rdp_conn_file(host.ip,request.session["username"],request.POST["password"],cluster.app)
 
-@user_tools.login_required
-def nxsession(request,app_pk=None):
+def _nxweb(ip, username, password, app):
     '''
-    Returns a response object containing an hardcoded nx session.
-    '''
-    # TODO: make this function better
-    return render_to_response('nxsession.nxs', {'app_pk' : app_pk})
-
-def _create_nx_conn_file(ip, username, app_path):
-    '''
-    Returns a response object which will return a downloadable nx file
+    Returns a response object which contains the embedded nx web companion
     ip is the IP address of the windows server to connect to
     username is the username the connection should use
-    app_path is the application to be run on startup
+    app is a vdi.models.Application
     '''
-    return render_to_response('nxapplet.html', {'wcpath' : 'https://opus-dev.cnl.ncsu.edu/plugin/'})
+    # TODO -- These urls should not be hard coded
+    session_url = 'https://opus-dev.cnl.ncsu.edu:9001/nxproxy/conn_builder?' + urlencode({'dest' : ip, 'dest_user' : username, 'dest_pass' : password, 'app_path' : app.path, 'nodownload' : 1})
+    redirect_url = 'https://opus-dev.cnl.ncsu.edu:9001/vdi/'
+    wc_url = 'https://opus-dev.cnl.ncsu.edu/plugin/'
+    return render_to_response('nxapplet.html', {'wc_url' : wc_url,
+                                                'redirect_url' : redirect_url,
+                                                'session_url' : session_url})
 
-def _create_rdp_conn_file(ip, username, app_path):
+def _create_rdp_conn_file(ip, username, password, app):
     '''
     Returns a response object which will return a downloadable rdp file
     ip is the IP address of the windows server to connect to
     username is the username the connection should use
-    app_path is the application to be run on startup
+    app is an instance of vdi.models.Application and is the application to be run on startup
     '''
     # Remote Desktop Connection Type
     content = """screen mode id:i:2
@@ -329,18 +382,20 @@ def _create_rdp_conn_file(ip, username, app_path):
     displayconnectionbar:i:1
     autoreconnection enabled:i:1
     username:s:%s
+    clear password:s:%s
     domain:s:NETAPP-A415F33E
     alternate shell:s:%s
+    authentication level:i:0
     shell working directory:s:
     disable wallpaper:i:1
     disable full window drag:i:1
     disable menu anims:i:1
     disable themes:i:0
     disable cursor setting:i:0
-    bitmapcachepersistenable:i:1\n""" % (ip,username,path)
+    bitmapcachepersistenable:i:1\n""" % (ip,username,password,app.path)
     
     resp = HttpResponse(content)
     resp['Content-Type']="application/rdp"
-    resp['Content-Disposition'] = 'attachment; filename=%s.rdp' % path
+    resp['Content-Disposition'] = 'attachment; filename="%s.rdp"' % app.name
     return resp
 

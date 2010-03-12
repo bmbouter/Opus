@@ -1,15 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Connect to {{ app_name }}{% endblock %}
-
-{% block head %}
-
-{% endblock %}
+{% block title %}Connect to {{app.name}}{% endblock %}
 
 {% block content %}
 <p>The password for your session is:  {{ password }}</p>
-
-<p><form name="input" action="/vdi/{{ app_pk }}/connect" method="post">
+<p><form name="input" action="{{posturl}}" method="post">
 {% csrf_token %}
+<input type="hidden" name="password" value={{password}} />
 <input type="submit" value="Get Your Connection File Here" />
-</form>
+</form></p>
 {% endblock %}

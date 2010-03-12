@@ -10,19 +10,30 @@
 
 {{ form.media }}
 
+<style type="text/css">
+    #content table, #content td {
+        border:0;
+    }
+    #content table {
+        border: 3px ridge #A30D01;
+    }
+    #content td {
+        padding: 20px;
+        text-align: center;
+    }
+</style>
+
 {% endblock %}
 
 {% block content %}
     {% if app_library %}
-        <table border="1">
+        <table>
             <tr>
-                <th>Name</th>
-                <th>Actions</th>
+                <th>Choose an Application:</th>
             </tr>
             {% for app in app_library %}
                 <tr>
-                    <td>{{ app.name }}</td>
-                    <td><a href="/vdi/{{ app.pk }}/connect">connect</a></td>
+                    <td><a href="/vdi/{{ app.pk }}/connect"><img src="{{app.icon_url}}" height="75" border="2" alt="Connect to {{app.name}}" /></a></td>
                 </tr>
             {% endfor %}
         </table> 
