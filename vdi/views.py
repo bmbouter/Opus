@@ -188,12 +188,14 @@ def scale(request):
 
     return HttpResponse('scaling complete @TODO put scaling event summary in this output')
 
-def stats(request): 
-    fname = settings.BASE_DIR+"/vdi/rrd/notepad.rrd"
+def stats(request,app_pk):
+    app = Application.objects.filter(pk=app_pk)[0]
+    fname = str(settings.BASE_DIR+"/vdi/rrd/" + app.name + ".rrd")
     gfname = []
     gfrelativepaths = []
-    gfname.append(settings.BASE_DIR+'/vdi/rrd/number_of_users.png')
-    gfrelativepaths.append("vdi/rrd/number_of_users.png")
+    gfname.append(str("/usr/share/opus/stats/"+app.name+"/number_of_users.png"))
+    gfrelativepaths.append(str(settings.VDI_MEDIA_PREFIX+"stats/"+app.name+"/number_of_users.png"))
+    log.debug(type(gfname[0]))
     rrdtool.graph(gfname[0] ,
             '--start' , str(int(time.time())-60*60*24*3) ,
             '--end' , str(int(time.time())) ,
@@ -207,9 +209,9 @@ def stats(request):
     )
 
 
-    fname = settings.BASE_DIR+"/vdi/rrd/notepad.rrd"
-    gfname.append(settings.BASE_DIR+'/vdi/rrd/available_headroom.png')
-    gfrelativepaths.append("vdi/rrd/available_headroom.png")
+    fname = str(settings.BASE_DIR+"/vdi/rrd/"+app.name +".rrd")
+    gfname.append(str("/usr/share/opus/stats/"+app.name+"/available_headroom.png"))
+    gfrelativepaths.append(str(settings.VDI_MEDIA_PREFIX+"stats/"+app.name+"/available_headroom.png"))
     rrdtool.graph(gfname[1] ,
             '--start' , str(int(time.time())-60*60*24*3) ,
             '--end' , str(int(time.time())) ,

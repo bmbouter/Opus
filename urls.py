@@ -24,5 +24,5 @@ urlpatterns = patterns('',
     (r'^vdi/scale', vdi.views.scale),
     (r'^admin/', include(admin.site.urls)),
     (r'^nxproxy/sessions/', nxproxy.views.sessions),
-    (r'^vdi/(?P<app_pk>(\d)*)/stats', vdi.views.stats),
+    (r'^vdi/(?P<app_pk>(\d)+)/stats', vdi.views.stats),
 )
