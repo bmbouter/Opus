@@ -24,7 +24,7 @@ urlpatterns = patterns('',
     (r'^vdi/scale', vdi.views.scale),
     (r'^admin/', include(admin.site.urls)),
     (r'^nxproxy/sessions/', nxproxy.views.sessions),
+    (r'^vdi/(?P<app_pk>(\d)+)/stats', vdi.views.stats),
     (r'^nxproxy/conn_builder', nxproxy.views.conn_builder),
     (r'^vdi/calculate_cost/(?P<start_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1}),(?P<end_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1})', vdi.views.calculate_cost),
-    (r'^vdi/(?P<app_pk>(\d)*)/stats', vdi.views.stats),
 )
