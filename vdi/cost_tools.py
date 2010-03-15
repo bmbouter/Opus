@@ -9,7 +9,7 @@ from vdi.models import Instance
 
 def convertToDateTime(date):
     '''
-    Assumes the date comes in the form month-day-year
+    Assumes the date comes in the form month-day-yearThour:minute:second
     '''
     year = str(date[0]) + str(date[1]) + str(date[2]) + str(date[3])
     month = str(date[5]) + str(date[6])
