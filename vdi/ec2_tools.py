@@ -27,8 +27,9 @@ def terminate_instances(dm_instances):
         num_del = len(terminated)
         for item in terminated:
             dbitem = Instance.objects.filter(instanceId=item.id)[0]
-            log.debug('The node has been deleted on ec2.  I will now delete %s from the local db' % dbitem.instanceId)
-            dbitem.delete()
+            log.debug('The node has been deleted on ec2.  I will now move %s into a deleted state' % dbitem.instanceId)
+            dbitem.state = 5
+            dbitem.save()
         return num_del
     return 0
 
