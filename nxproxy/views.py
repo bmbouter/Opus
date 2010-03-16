@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.conf import settings
 
 from nxproxy.models import NXNode
-from vdi import user_tools
+from auth import user_tools
 from vdi.log import log
 
 from subprocess import Popen, PIPE

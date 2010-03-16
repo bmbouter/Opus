@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-import vdi, nxproxy
+import vdi, nxproxy, auth
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -14,7 +14,6 @@ urlpatterns = patterns('',
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/jsi18n', 'django.views.i18n.javascript_catalog'),
-    (r'^vdi/login/$', vdi.views.ldaplogin),
     (r'^vdi/login/(?P<school>\w*)/$', vdi.views.ldaplogin),
     (r'^vdi/login/$', vdi.views.login),
     (r'^vdi/logout/$', vdi.views.logout),

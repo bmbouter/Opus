@@ -2,9 +2,7 @@ from vdi.models import Instance, Application
 from datetime import datetime
 from cost_tools import convertToDateTime
 
-def run_test():
-    for app in Application.objects.all():
-        print get_nodesInCluster(app, datetime.now())
+
 
 def get_nodesInCluster(application, date_time):
     instances = Instances.objects.filter(application=application_pk)
