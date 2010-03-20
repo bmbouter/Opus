@@ -23,7 +23,8 @@ import rrdtool, time
 
 from vdi.models import Application, Instance, LDAPserver
 from vdi.forms import InstanceForm
-from vdi import user_tools, ec2_tools
+from auth import user_tools
+from vdi import ec2_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 from vdi.log import log
 import cost_tools
@@ -72,6 +73,7 @@ def login(request):
     server = LDAPserver.objects.filter(id=server_id)[0]
     result_set = []
     timeout = 0
+    log.debug("Before Try in login")
     try:
         #TODO: Make this work with ldap servers that aren't ldap.ncsu.edu
         l = ldap.initialize(server.url)
@@ -95,6 +97,7 @@ def login(request):
         #if you got here then the right password has been entered for the user
         roles = result_set[0][0][1]['memberNisNetgroup']
         user_tools.login(request, username, server, roles)
+        log.debug("Redirecting to vdi")
         return HttpResponseRedirect('/vdi/')
     except ldap.LDAPError, e:
         #TODO: Handle login error
@@ -104,7 +107,7 @@ def login(request):
 @user_tools.login_required
 def logout(request):
     user_tools.logout(request)
-    return HttpResponseRedirect('/vdi/ldap_login')
+    return HttpResponseRedirect('/vdi/login')
 
 def scale(request):
     for app in Application.objects.all():

@@ -61,5 +61,5 @@ def login_required(func):
         if is_logged_in(request):
             return func(request, *args, **kwargs)
         else:
-            return HttpResponseRedirect("/vdi/ldap_login")
+            return HttpResponseRedirect("/vdi/login")
     return check_func

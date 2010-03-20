@@ -1,5 +1,5 @@
 from django.conf import settings
-from vdi import user_tools
+from auth import user_tools
 
 def context_preprocessor(request):
     d = {

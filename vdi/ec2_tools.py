@@ -2,7 +2,7 @@ from vdi.models import Instance
 from vdi.log import log
 from django.conf import settings
 from django.db.models.query import QuerySet
-from vdi import user_tools
+from auth import user_tools
 from boto.ec2.connection import EC2Connection
 from vdi.models import Instance
 
