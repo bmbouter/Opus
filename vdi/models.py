@@ -59,8 +59,8 @@ class Role(models.Model):
     name = models.CharField(max_length=128)
     applications = models.ManyToManyField(Application)
     PERM_CHOICES = (
-        (u'1', u'Use'),
-        (u'2', u'Use and Save'),
+        (1, u'Use'),
+        (2, u'Use and Save'),
     )
     permissions = models.IntegerField(max_length=2, choices=PERM_CHOICES, default=2)
     class Meta:
