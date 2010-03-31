@@ -317,11 +317,11 @@ def connect(request,app_pk=None,conn_type=None):
 
         #SSH to AMI using Popen subprocesses
         #TODO refactor this so it isn't so crazy and verbose, and a series of special cases
-        output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "USER",request.session["username"],password,"/ADD"],stdout = PIPE).communicate()[0]
+        output = Popen(["ssh","-i",settings.IMAGE_SSH_KEY,"-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "USER",request.session["username"],password,"/ADD"],stdout = PIPE).communicate()[0]
         if output.find("The command completed successfully.") > -1:
             log.debug("User %s has been created" % request.session["username"])
         elif output.find("The account already exists.") > -1:
-            output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "USER",request.session["username"],password],stdout = PIPE).communicate()[0]
+            output = Popen(["ssh","-i",settings.IMAGE_SSH_KEY,"-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "USER",request.session["username"],password],stdout = PIPE).communicate()[0]
             log.debug('User %s already exists, going to try to set the password' % request.session["username"])
             if output.find("The command completed successfully.") > -1:
                 log.debug('THE PASSWORD WAS RESET')
@@ -335,7 +335,7 @@ def connect(request,app_pk=None,conn_type=None):
             return HttpResponse(error_string)
      
         # Add the created user to the Administrator group
-        output = Popen(["ssh","-i","/home/private_key","-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "localgroup",'"Administrators"',"/add",request.session["username"]],stdout = PIPE).communicate()[0]
+        output = Popen(["ssh","-i",settings.IMAGE_SSH_KEY,"-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "localgroup",'"Administrators"',"/add",request.session["username"]],stdout = PIPE).communicate()[0]
         log.debug("Added user %s to the 'Administrators' group" % request.session["username"])
         
         # This is a hack for NC WISE only, and should be handled through a more general mechanism
