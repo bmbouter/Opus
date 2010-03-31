@@ -1,12 +1,15 @@
 from vdi.models import Instance, Application
+from vdi.log import log
 from datetime import datetime
 from cost_tools import convertToDateTime
+from app_cluster_tools import AppCluster
 
 
-
-def get_nodesInCluster(application, date_time):
-    instances = Instances.objects.filter(application=application_pk)
+def get_nodesInCluster(request, app_pk, date_time):
+    instances = AppCluster(app_pk).nodes
     num_nodes = 0
+    log.debug('instances = %s' % instances)
+    log.debug('appcluster =  %s' % AppCluster(app_pk).name)
 
     for instance in instances:
         if instance.state == 5:

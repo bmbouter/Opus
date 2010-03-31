@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 
 import vdi, nxproxy, dataservice.views, auth
+import vdi.testing_tools
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -27,4 +28,5 @@ urlpatterns = patterns('',
     (r'^vdi/(?P<app_pk>(\d)+)/stats', vdi.views.stats),
     (r'^nxproxy/conn_builder', nxproxy.views.conn_builder),
     (r'^vdi/calculate_cost/(?P<start_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1}),(?P<end_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1})', vdi.views.calculate_cost),
+    (r'^vdi/testing_tools/(?P<app_pk>(\d)+)/nodesInCluster/(?P<date_time>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1})', vdi.testing_tools.get_nodesInCluster),
 )

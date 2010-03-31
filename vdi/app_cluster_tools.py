@@ -87,6 +87,8 @@ class AppCluster(object):
             return self.nodes.filter(state="3")
         elif item == "shutting_down":
             return self.nodes.filter(state="4")
+        elif item == "deleted":
+            return self.nodes.filter(state="5")
         elif item == "inuse_map":
             return self._map_app_cluster_inuse(self.app.pk)
         elif item == "avail_map":
