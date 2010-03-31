@@ -1,4 +1,4 @@
-from vdi import user_tools
+from auth import user_tools
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from vdi.log import log
