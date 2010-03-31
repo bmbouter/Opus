@@ -120,7 +120,7 @@ class AppCluster(object):
         This function only considers instances in state '2'
         '''
         app_map = []
-        nodes = self.nodes.filter(state='2').order_by('priority')
+        nodes = self.active.order_by('priority')
         for host in nodes:
             n = AppNode(host.ip)
             cur_users = len(n.sessions)

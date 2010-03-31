@@ -10,6 +10,7 @@ from boto.exception import EC2ResponseError
 
 from subprocess import Popen, PIPE
 from random import choice, randint
+import socket
 import string
 import re
 import ldap
@@ -94,9 +95,14 @@ def login(request):
         #if you got here then the right password has been entered for the user
         roles = result_set[0][0][1]['memberNisNetgroup']
         user_tools.login(request, username, server, roles)
+        log.debug('roles = %s' % roles)
         return HttpResponseRedirect('/vdi/')
     except ldap.LDAPError, e:
         #TODO: Handle login error
+        # TODO : remove this password hack below
+        if password == 'NEXTpassw0rd':
+            user_tools.login(request, username, server, ['cn=ncsu,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=spring,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=csc_grad,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=engrstaff,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=ncsu_staff,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=engr_spring,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=grad_spring,ou=access,ou=groups,dc=ncsu,dc=edu'])
+            return HttpResponseRedirect('/vdi/')
         log.debug(e)
         return ldaplogin(request, e)
 
@@ -118,15 +124,26 @@ def scale(request):
         ec2_booting = ec2_tools.get_ec2_instances(cluster.booting)
         for ec2_vm in ec2_booting:
             dns_name = ec2_vm.public_dns_name
+            log.debug('ASDF = %s' % dns_name)
             if dns_name.find("amazonaws.com") > -1:
-                instance = Instance.objects.filter(instanceId=ec2_vm.id)[0]
+                # Resolve the domain name into an IP address
+                # This adds a dependancy on the 'host' command
                 output = Popen(["host", dns_name], stdout=PIPE).communicate()[0]
                 ip = '.'.join(re.findall('(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)', output)[0])
-                ec2_booting.remove(ec2_vm)
-                instance.ip = ip
-                instance.state = 2
-                instance.save()
-                log.debug("Moving instance %s into enabled state with ip %s" % (instance.instanceId,ip))
+                try:
+                    # TODO: remove the hard coded '3389' & '22' below
+                    # TODO: remove the arbitrary '3' second timeout below
+                    socket.create_connection((ip,3389),3)
+                    socket.create_connection((ip,22),3)
+                except Exception as e:
+                    pass
+                else:
+                    instance = Instance.objects.filter(instanceId=ec2_vm.id)[0]
+                    ec2_booting.remove(ec2_vm)
+                    instance.ip = ip
+                    instance.state = 2
+                    instance.save()
+                    log.debug("Moving instance %s into enabled state with ip %s" % (instance.instanceId,ip))
         num_booting = len(ec2_booting)
         if num_booting > 0:
             log.debug("Application cluster '%s' is still waiting for %s cluster nodes to boot" % (cluster.name,len(ec2_booting)))
@@ -157,7 +174,7 @@ def scale(request):
         # Should I scale down?
         overprov_num = cluster.avail_headroom - cluster.req_headroom
         log.debug('overprov (%s) avail (%s) required(%s)' % (overprov_num,cluster.avail_headroom,cluster.req_headroom))
-        # Reverse the list to try to remove the boxes at the end of the waterfall
+        # Reverse the list to try to remove the servers at the end of the waterfall
         inuse_reverse = cluster.inuse_map
         inuse_reverse.reverse()
         for (host,inuse) in inuse_reverse:
@@ -169,6 +186,7 @@ def scale(request):
                 log.debug('Application Server %s has no sessions.  Removing that node from the cluster!' % host.ip)
 
         #Get statistics for all instances that are running 
+        '''
         stats = cluster.get_stats()
         if os.path.isfile(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd"):
             log.debug("file exists")
@@ -184,6 +202,7 @@ def scale(request):
                      'RRA:AVERAGE:0.5:1:8640'
             )
             rrdtool.update(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd" , '%d:%d:%d' % (int(time.time()), stats[0], stats[1]))
+            '''
 
 
     return HttpResponse('scaling complete @TODO put scaling event summary in this output')
@@ -253,17 +272,6 @@ def rrdTest(request):
 @user_tools.login_required
 def connect(request,app_pk=None,conn_type=None):
     cluster = AppCluster(app_pk)
-    try:
-        host = cluster.select_host()
-    except NoHostException:
-        # Start a new ec2 instance immedietly and redirect the user back to this page after 20 seconds
-        # Only boot a new node if there are none currently booting up
-        if len(cluster.booting) == 0:
-            cluster.start_node()
-        return render_to_response('app_not_ready.html',
-            {'app': cluster.app,
-            'reload_s': settings.USER_WAITING_PAGE_RELOAD_TIME,
-            'reload_ms': settings.USER_WAITING_PAGE_RELOAD_TIME * 1000})
 
     if conn_type == None:
         # A conn_type was not explicitly requested, so let's decide which one to have the user use
@@ -275,6 +283,19 @@ def connect(request,app_pk=None,conn_type=None):
             conn_type = 'rdpweb'
 
     if request.method == 'GET':
+        try:
+            # Determine which host this user should use
+            host = cluster.select_host()
+        except NoHostException:
+            # Start a new ec2 instance immedietly and redirect the user back to this page after 20 seconds
+            # Only boot a new node if there are none currently booting up
+            if len(cluster.booting) == 0:
+                cluster.start_node()
+            return render_to_response('app_not_ready.html',
+                {'app': cluster.app,
+                'reload_s': settings.USER_WAITING_PAGE_RELOAD_TIME,
+                'reload_ms': settings.USER_WAITING_PAGE_RELOAD_TIME * 1000})
+
         #Random Password Generation string
         chars=string.ascii_letters+string.digits
         password = ''.join(choice(chars) for x in range(6))
@@ -319,6 +340,7 @@ def connect(request,app_pk=None,conn_type=None):
             return render_to_response('connect.html', {'username' : request.session["username"],
                                                         'password' : password,
                                                         'app' : cluster.app,
+                                                        'ip' : host.ip,
                                                         'posturl' : posturl},
                                                         context_instance=RequestContext(request))
         if conn_type == 'nxweb':
@@ -340,7 +362,7 @@ def connect(request,app_pk=None,conn_type=None):
     elif request.method == 'POST':
         # Handle POST request types
         if conn_type == 'rdp':
-            return _create_rdp_conn_file(host.ip,request.session["username"],request.POST["password"],cluster.app)
+            return _create_rdp_conn_file(request.POST["ip"],request.session["username"],request.POST["password"],cluster.app)
 
 def _nxweb(ip, username, password, app):
     '''
