@@ -24,9 +24,11 @@ import rrdtool, time
 
 from vdi.models import Application, Instance, LDAPserver
 from vdi.forms import InstanceForm
-from vdi import user_tools, ec2_tools
+from auth import user_tools
+from vdi import ec2_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 from vdi.log import log
+import cost_tools
 
 @user_tools.login_required
 def applicationLibrary(request):
@@ -72,6 +74,7 @@ def login(request):
     server = LDAPserver.objects.filter(id=server_id)[0]
     result_set = []
     timeout = 0
+    log.debug("Before Try in login")
     try:
         #TODO: Make this work with ldap servers that aren't ldap.ncsu.edu
         l = ldap.initialize(server.url)
@@ -96,6 +99,7 @@ def login(request):
         roles = result_set[0][0][1]['memberNisNetgroup']
         user_tools.login(request, username, server, roles)
         log.debug('roles = %s' % roles)
+        log.debug("Redirecting to vdi")
         return HttpResponseRedirect('/vdi/')
     except ldap.LDAPError, e:
         #TODO: Handle login error
@@ -109,7 +113,7 @@ def login(request):
 @user_tools.login_required
 def logout(request):
     user_tools.logout(request)
-    return HttpResponseRedirect('/vdi/ldap_login')
+    return HttpResponseRedirect('/vdi/login')
 
 def scale(request):
     for app in Application.objects.all():
@@ -161,6 +165,7 @@ def scale(request):
             for i in range(servers_needed):
                 cluster.start_node()
 
+
         # Handle instances we are supposed to shut down
         toTerminate = []
         for host in cluster.shutting_down:
@@ -169,7 +174,10 @@ def scale(request):
             log.debug('AppNode %s is waiting to be shut down and has %s connections' % (host.ip,n.sessions))
             if n.sessions == []:
                 toTerminate.append(host)
+                host.shutdownDateTime = datetime.now()
+                host.save()
         ec2_tools.terminate_instances(toTerminate)
+
 
         # Should I scale down?
         overprov_num = cluster.avail_headroom - cluster.req_headroom
@@ -207,12 +215,14 @@ def scale(request):
 
     return HttpResponse('scaling complete @TODO put scaling event summary in this output')
 
-def stats(request): 
-    fname = settings.BASE_DIR+"/vdi/rrd/notepad.rrd"
+def stats(request,app_pk):
+    app = Application.objects.filter(pk=app_pk)[0]
+    fname = str(settings.BASE_DIR+"/vdi/rrd/" + app.name + ".rrd")
     gfname = []
     gfrelativepaths = []
-    gfname.append(settings.BASE_DIR+'/vdi/rrd/number_of_users.png')
-    gfrelativepaths.append("vdi/rrd/number_of_users.png")
+    gfname.append(str("/usr/share/opus/stats/"+app.name+"/number_of_users.png"))
+    gfrelativepaths.append(str(settings.VDI_MEDIA_PREFIX+"stats/"+app.name+"/number_of_users.png"))
+    log.debug(type(gfname[0]))
     rrdtool.graph(gfname[0] ,
             '--start' , str(int(time.time())-60*60*24*3) ,
             '--end' , str(int(time.time())) ,
@@ -226,9 +236,9 @@ def stats(request):
     )
 
 
-    fname = settings.BASE_DIR+"/vdi/rrd/notepad.rrd"
-    gfname.append(settings.BASE_DIR+'/vdi/rrd/available_headroom.png')
-    gfrelativepaths.append("vdi/rrd/available_headroom.png")
+    fname = str(settings.BASE_DIR+"/vdi/rrd/"+app.name +".rrd")
+    gfname.append(str("/usr/share/opus/stats/"+app.name+"/available_headroom.png"))
+    gfrelativepaths.append(str(settings.VDI_MEDIA_PREFIX+"stats/"+app.name+"/available_headroom.png"))
     rrdtool.graph(gfname[1] ,
             '--start' , str(int(time.time())-60*60*24*3) ,
             '--end' , str(int(time.time())) ,
@@ -421,3 +431,12 @@ def _create_rdp_conn_file(ip, username, password, app):
     resp['Content-Disposition'] = 'attachment; filename="%s.rdp"' % app.name
     return resp
 
+def calculate_cost(request, start_date, end_date):
+ 
+    starting_date = cost_tools.convertToDateTime(start_date)
+    ending_date = cost_tools.convertToDateTime(end_date)
+ 
+    total_hoursInRange = cost_tools.getInstanceHoursInDateRange(starting_date, ending_date)
+    cost = cost_tools.generateCost(total_hoursInRange)
+
+    return HttpResponse("Calculating cost for date " + str(starting_date) + " to " + str(ending_date) + ".  The total hours used in this range is " + str(total_hoursInRange) + " with cost $" + str(cost))

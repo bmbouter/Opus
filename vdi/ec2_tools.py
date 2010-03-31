@@ -2,7 +2,7 @@ from vdi.models import Instance
 from vdi.log import log
 from django.conf import settings
 from django.db.models.query import QuerySet
-from vdi import user_tools
+from auth import user_tools
 from boto.ec2.connection import EC2Connection
 from vdi.models import Instance
 
@@ -27,8 +27,9 @@ def terminate_instances(dm_instances):
         num_del = len(terminated)
         for item in terminated:
             dbitem = Instance.objects.filter(instanceId=item.id)[0]
-            log.debug('The node has been deleted on ec2.  I will now delete %s from the local db' % dbitem.instanceId)
-            dbitem.delete()
+            log.debug('The node has been deleted on ec2.  I will now move %s into a deleted state' % dbitem.instanceId)
+            dbitem.state = 5
+            dbitem.save()
         return num_del
     return 0
 

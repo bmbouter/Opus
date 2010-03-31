@@ -24,9 +24,12 @@ class Instance(models.Model):
         (u'2', u'active'),
         (u'3', u'maintenance'),
         (u'4', u'shutting-down'),
+        (u'5', u'deleted'),
     )
     state = models.IntegerField(max_length=2, choices=STATUS_CHOICES, default=1)
     ip = models.IPAddressField(blank=True,null=True)
+    startUpDateTime = models.DateTimeField(auto_now=False, auto_now_add=True, editable=False)
+    shutdownDateTime = models.DateTimeField(auto_now=False, auto_now_add=True, editable=False, blank=True)
 
     class Meta:
         unique_together = (("application","priority"),)
@@ -56,8 +59,8 @@ class Role(models.Model):
     name = models.CharField(max_length=128)
     applications = models.ManyToManyField(Application)
     PERM_CHOICES = (
-        (u'1', u'Use'),
-        (u'2', u'Use and Save'),
+        (1, u'Use'),
+        (2, u'Use and Save'),
     )
     permissions = models.IntegerField(max_length=2, choices=PERM_CHOICES, default=2)
     class Meta:
