@@ -1,3 +1,4 @@
+from django.http import HttpResponse, HttpResponseRedirect
 from vdi.models import Instance, Application
 from vdi.log import log
 from datetime import datetime
@@ -7,9 +8,8 @@ from app_cluster_tools import AppCluster
 
 def get_nodesInCluster(request, app_pk, date_time):
     instances = AppCluster(app_pk).nodes
+    date_time = convertToDateTime(date_time)
     num_nodes = 0
-    log.debug('instances = %s' % instances)
-    log.debug('appcluster =  %s' % AppCluster(app_pk).name)
 
     for instance in instances:
         if instance.state == 5:
@@ -18,34 +18,33 @@ def get_nodesInCluster(request, app_pk, date_time):
         else:
             if instance.startUpDateTime < date_time:
                 num_nodes += 1
-    return num_nodes
+    return HttpResponse(num_nodes)
 
 
-def get_provisioningEventsInDateRange(application, start_date, end_date):
-    instances = Instances.objects.filter(application=application_pk)
+def get_provisioningEventsInDateRange(request, app_pk, start_date, end_date):
+    instances = AppCluster(app_pk).nodes
     num_events = 0
 
     starting_dateTime = convertToDateTime(start_date)
     ending_dateTime = convertToDateTime(end_date)
 
     for instance in instances:
-        if instance.startUpDateTime > start_date and instance.startUpDateTime < end_date:
+        if instance.startUpDateTime > starting_dateTime and instance.startUpDateTime < ending_dateTime:
             num_events += 1
 
-    return num_events
+    return HttpResponse(num_events)
 
 
-
-def get_deprovisioningEventsInDateRange(application, start_date, end_date):
-    instances = Instances.objects.filter(application=application_pk)
+def get_deprovisioningEventsInDateRange(request, app_pk, start_date, end_date):
+    instances = AppCluster(app_pk).deleted
     num_events = 0
 
     starting_dateTime = convertToDateTime(start_date)
     ending_dateTime = convertToDateTime(end_date)
 
     for instance in instances:
-        if instance.shutdownDateTime > start_date and instance.shutdownDateTime < end_date:
+        if instance.shutdownDateTime > starting_dateTime and instance.shutdownDateTime < ending_dateTime:
             num_events += 1
 
-    return num_events
+    return HttpResponse(num_events)
 
