@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+        <p>OpenID Login</p>
+        <form action="{% url idpauth.views.openid_login %}" method="post">
+            <button
+	            name="openid_url"
+        	    value="https://www.google.com/accounts/o8/id"
+        	    class="openid"
+ 	            type="submit">
+                <img src="http://www.google.com/intl/en_ALL/images/logo.gif" alt="google account" />
+	        </button>
+            <input type="hidden" name="institution" value="{{ institution }}" />
+            {% csrf_token %}
+            <input type="submit" value="Login" />
+        </form>
+
+{% endblock %}
