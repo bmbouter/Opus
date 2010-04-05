@@ -4,8 +4,8 @@
     <head>
         <title>{% block title %}Opus{% endblock title %}</title>
         {% block head %}{% endblock head %}
-        {% if school_name %}
-            <link href="{{vdi_media_dir}}schools/{{school_name}}/style.css"
+        {% if institution %}
+            <link href="{{vdi_media_dir}}schools/{{institution}}/style.css"
                   rel="stylesheet" type="text/css" />
         {% endif %}
     </head>
@@ -13,7 +13,7 @@
         <div id="main">
             <div id="navigation">
                 <a href="/vdi/">Application Library</a> -
-                <a href="/vdi/logout">Logout</a>
+                <a href="/vdi/logout/">Logout</a>
             </div>
             <div id="content">
                 <br />
