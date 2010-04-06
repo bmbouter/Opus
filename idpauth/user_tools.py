@@ -1,22 +1,23 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from vdi.models import Role, Instance
+from idpauth.models import Role, Resource
+#from vdi.models import Instance
 from vdi.log import log
 
-def login(request, username, ldap, roles):
+def login(request, username, roles, institution):
     request.session["logged_in"] = True
     request.session["username"] = username
-    request.session["ldap"] = ldap # Server object.  Not the url
     request.session["roles"] = roles
+    request.session["institution"] = institution
 
 def logout(request):
     if "logged_in" in request.session:
         del request.session["logged_in"]
     if "username" in request.session:
         del request.session["username"]
-    if "ldap" in request.session:
-        del request.session["ldap"]
     if "roles" in request.session:
         del request.session["roles"]
+    if "institution" in request.session:
+        del request.session["institution"]
 
 def is_logged_in(request):
     return "logged_in" in request.session
@@ -36,12 +37,12 @@ def get_user_apps(request):
     if not request.session["roles"]:
         return []
     log.debug(request.session["roles"])
-    roles = Role.objects.filter(ldap=request.session['ldap'],
-                                name__in=request.session['roles'])
+    roles = Role.objects.filter(permissions__iexact=request.session['roles'])
+
     #TODO: Optimize this query
     apps = []
     for role in roles:
-        apps += role.applications.all()
+        apps += role.resources.all()
     return apps
 
 def get_user_instances(request):

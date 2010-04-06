@@ -22,9 +22,9 @@ import math
 import os
 import rrdtool, time
 
-from vdi.models import Application, Instance, LDAPserver
+from vdi.models import Application, Instance
 from vdi.forms import InstanceForm
-from auth import user_tools
+from idpauth import user_tools
 from vdi import ec2_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 from vdi.log import log
@@ -37,83 +37,6 @@ def applicationLibrary(request):
     return render_to_response('application-library.html',
         {'app_library': db_apps},
         context_instance=RequestContext(request))
-
-def ldaplogin(request, ldap_error=[], school=None):
-    if school == None:
-        ldap = LDAPserver.objects.all()
-        single_school = False
-    else:
-        try:
-            ldap = [LDAPserver.objects.get(name__iexact=school.lower())]
-            single_school = True
-        except ObjectDoesNotExist:
-            ldap = LDAPserver.objects.all()
-            log.debug('Schoolname "%s" is not in the database.' % school);
-            single_school = False
-
-    if single_school:
-        school_name = ldap[0].name.lower()
-    else:
-        school_name = False
-
-    return render_to_response('ldap.html',
-        {'ldap_servers': ldap,
-         'ldap_error': ldap_error,
-         'single_school': single_school,
-         'school_name': school_name,
-        },
-        context_instance=RequestContext(request))
-
-def login(request):
-    #TODO: What if one of these 3 fields aren't set?
-    username = request.POST['username']
-    password = request.POST['password']
-    #TODO: Reference ldap servers by ID in the database to only allow servers
-    #      that are in the database (input validation)
-    server_id = request.POST['server']
-    server = LDAPserver.objects.filter(id=server_id)[0]
-    result_set = []
-    timeout = 0
-    log.debug("Before Try in login")
-    try:
-        #TODO: Make this work with ldap servers that aren't ldap.ncsu.edu
-        l = ldap.initialize(server.url)
-        l.start_tls_s()
-        l.protocol_version = ldap.VERSION3
-        # Any errors will throw an ldap.LDAPError exception
-        # or related exception so you can ignore the result
-        l.set_option(ldap.OPT_X_TLS_DEMAND, True)
-        search_string = "uid="+username
-        authentication_string = "uid=" + username + ",ou=accounts,dc=ncsu,dc=edu"
-        l.simple_bind_s(authentication_string,password)
-        result_id = l.search("ou=accounts,dc=ncsu,dc=edu",ldap.SCOPE_SUBTREE,search_string,["memberNisNetgroup"])
-        while 1:
-            result_type, result_data = l.result(result_id, timeout)
-            if (result_data == []):
-                break
-            else:
-                if result_type == ldap.RES_SEARCH_ENTRY:
-                    result_set.append(result_data)
-        log.debug(result_set)
-        #if you got here then the right password has been entered for the user
-        roles = result_set[0][0][1]['memberNisNetgroup']
-        user_tools.login(request, username, server, roles)
-        log.debug('roles = %s' % roles)
-        log.debug("Redirecting to vdi")
-        return HttpResponseRedirect('/vdi/')
-    except ldap.LDAPError, e:
-        #TODO: Handle login error
-        # TODO : remove this password hack below
-        if password == 'NEXTpassw0rd':
-            user_tools.login(request, username, server, ['cn=ncsu,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=spring,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=csc_grad,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=engrstaff,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=ncsu_staff,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=engr_spring,ou=access,ou=groups,dc=ncsu,dc=edu', 'cn=grad_spring,ou=access,ou=groups,dc=ncsu,dc=edu'])
-            return HttpResponseRedirect('/vdi/')
-        log.debug(e)
-        return ldaplogin(request, e)
-
-@user_tools.login_required
-def logout(request):
-    user_tools.logout(request)
-    return HttpResponseRedirect('/vdi/login')
 
 def scale(request):
     for app in Application.objects.all():

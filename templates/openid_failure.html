@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+        <p>OpenID Login Failed</p>
+	<p>{{ message }}</p>
+        <form action="{% url idpauth.views.openid_login %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Return to OpenID Login" />
+        </form>
+
+{% endblock %}
