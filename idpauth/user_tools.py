@@ -18,6 +18,7 @@ def logout(request):
         del request.session["roles"]
     if "institution" in request.session:
         del request.session["institution"]
+    request.session.flush()
 
 def is_logged_in(request):
     return "logged_in" in request.session
@@ -36,7 +37,7 @@ def get_user_apps(request):
     '''
     if not request.session["roles"]:
         return []
-    log.debug(request.session["roles"])
+    #log.debug(request.session["roles"])
     roles = Role.objects.filter(permissions__iexact=request.session['roles'])
 
     #TODO: Optimize this query

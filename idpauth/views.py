@@ -14,7 +14,7 @@ import openid
 from openid.consumer.consumer import Consumer, \
     SUCCESS, CANCEL, FAILURE, SETUP_NEEDED
 from openid.consumer.discover import DiscoveryFailure
-
+from openid.extensions import ax
 
 
 from idpauth import user_tools
@@ -91,17 +91,27 @@ def openid_login(request):
     trust_root =  openid_tools.get_url_host(request) + '/'
     redirect_to = openid_tools.get_url_host(request) + '/vdi/openid_login_complete/' + institution +'/'
 
+    requested_attributes = getattr(settings, 'OPENID_AX', False)
+
+    if requested_attributes:
+        log.debug("AX true")
+        ax_request = ax.FetchRequest()
+        for i in requested_attributes:
+            ax_request.add(ax.AttrInfo(i['type'], i['count'], i['required'], i['alias']))
+        auth_request.addExtension(ax_request)
+
     redirect_url = auth_request.redirectURL(trust_root, redirect_to)
- 
 
-    for r in request.POST.items():
+    debug_redirect_url = str(urllib.url2pathname(redirect_url)).split('&')
+    for r in debug_redirect_url:
         log.debug(r)
-
-    log.debug("\n")
 
     return HttpResponseRedirect(redirect_url)
 
 def openid_login_complete(request, institution):
+
+    for r in request.GET.items():
+        log.debug(r)
 
     consumer = Consumer(request.session, openid_tools.DjangoOpenIDStore())
 
@@ -111,14 +121,14 @@ def openid_login_complete(request, institution):
     ])
 
     openid_response = consumer.complete(query_dict, url)
+    openid = openid_tools.from_openid_response(openid_response)
 
-    for r in request.GET.items():
-        log.debug(r)
-
-    roles = openid_tools.get_domain_name(request.GET['openid.op_endpoint'])
+    username = openid.ax.getExtensionArgs()['value.ext0.1']
+    log.debug(username)
+    roles = openid_tools.get_provider(request.GET['openid.op_endpoint'])
 
     if openid_response.status == SUCCESS:
-        user_tools.login(request, "null", roles, institution)
+        user_tools.login(request, username, roles, institution)
         return HttpResponseRedirect('/vdi/')
     else:
         return HttpResponse(str(openid_response.message))
