@@ -1,6 +1,11 @@
 from django.conf.urls.defaults import *
 
+<<<<<<< HEAD:urls.py
 import vdi, nxproxy, idpauth
+=======
+import vdi, nxproxy, dataservice.views, auth
+import vdi.testing_tools
+>>>>>>> f53d70628f68e3f1b0f446d6e7825d043eae9b8a:urls.py
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -26,6 +31,11 @@ urlpatterns = patterns('',
     (r'^vdi/scale', vdi.views.scale),
     (r'^admin/', include(admin.site.urls)),
     (r'^nxproxy/sessions/', nxproxy.views.sessions),
+    (r'^dataservice/', dataservice.views.meta_feed),
     (r'^vdi/(?P<app_pk>(\d)+)/stats', vdi.views.stats),
     (r'^nxproxy/conn_builder', nxproxy.views.conn_builder),
-    (r'^vdi/calculate_cost/(?P<start_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1}),(?P<end_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1})', vdi.views.calculate_cost),)
+    (r'^vdi/calculate_cost/(?P<start_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1}),(?P<end_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1})', vdi.views.calculate_cost),
+    (r'^vdi/testing_tools/(?P<app_pk>(\d)+)/clusterSize/(?P<date_time>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1})$', vdi.testing_tools.get_nodesInCluster),
+    (r'^vdi/testing_tools/(?P<app_pk>(\d)+)/provEvents/(?P<start_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1}),(?P<end_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1})', vdi.testing_tools.get_provisioningEventsInDateRange),
+    (r'^vdi/testing_tools/(?P<app_pk>(\d)+)/deprovEvents/(?P<start_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1}),(?P<end_date>(\d{4}-\d{2}-\d{2}[T]\d{2}:\d{2}:\d{2}){1})$', vdi.testing_tools.get_deprovisioningEventsInDateRange),
+)

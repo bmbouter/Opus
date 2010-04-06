@@ -85,7 +85,6 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.messages',
     'django.contrib.admin',
     'vdi',
     'idpauth',
@@ -104,6 +103,8 @@ AWS_SECRET_KEY = ''
 # Connection Broker Options
 MINIMUM_RESERVATION_LEN = 15    # This is in minutes
 USER_WAITING_PAGE_RELOAD_TIME = 15       # This is in seconds
+DEFAULT_CONNECTION_PROTOCOL = 'rdp'   #This is the default connection type
+IMAGE_SSH_KEY = '/usr/share/opus/image_key'    # This is an absolute path to the identity key for user root on an application server
 
 # Logging
 LOG_FILE = sys.stdout   # This may be a filename, or a stream

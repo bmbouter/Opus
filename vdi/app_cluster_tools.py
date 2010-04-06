@@ -87,6 +87,8 @@ class AppCluster(object):
             return self.nodes.filter(state="3")
         elif item == "shutting_down":
             return self.nodes.filter(state="4")
+        elif item == "deleted":
+            return self.nodes.filter(state="5")
         elif item == "inuse_map":
             return self._map_app_cluster_inuse(self.app.pk)
         elif item == "avail_map":
@@ -121,7 +123,7 @@ class AppCluster(object):
         This function only considers instances in state '2'
         '''
         app_map = []
-        nodes = self.nodes.filter(state='2').order_by('priority')
+        nodes = self.active.order_by('priority')
         for host in nodes:
             n = AppNode(host.ip)
             cur_users = len(n.sessions)

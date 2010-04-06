@@ -1,0 +1,8 @@
+# Specific files
+settings.py
+sqlite3.db
+
+# File types
+*.swp
+*.pyc
+*.log
