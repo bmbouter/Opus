@@ -89,25 +89,36 @@ def openid_login(request):
         return HttpResponse('The OpenID was invalid')
 
     trust_root =  openid_tools.get_url_host(request) + '/'
-    redirect_to = openid_tools.get_url_host(request) + '/vdi/openid_login_complete/'
+    redirect_to = openid_tools.get_url_host(request) + '/vdi/openid_login_complete/' + institution +'/'
 
     redirect_url = auth_request.redirectURL(trust_root, redirect_to)
  
+
+    for r in request.POST.items():
+        log.debug(r)
+
+    log.debug("\n")
+
     return HttpResponseRedirect(redirect_url)
 
-def openid_login_complete(request):
+def openid_login_complete(request, institution):
 
     consumer = Consumer(request.session, openid_tools.DjangoOpenIDStore())
 
-    url = (openid_tools.get_url_host(request) + '/vdi/openid_login_complete/').encode('utf8') + '?janrain_nonce=' + urllib.pathname2url(request.GET['janrain_nonce'])
+    url = (openid_tools.get_url_host(request) + '/vdi/openid_login_complete/' + institution + '/').encode('utf8') + '?janrain_nonce=' + urllib.pathname2url(request.GET['janrain_nonce'])
     query_dict = dict([
         (k.encode('utf8'), v.encode('utf8')) for k, v in request.GET.items()
     ])
 
     openid_response = consumer.complete(query_dict, url)
 
+    for r in request.GET.items():
+        log.debug(r)
+
+    roles = openid_tools.get_domain_name(request.GET['openid.op_endpoint'])
+
     if openid_response.status == SUCCESS:
-        user_tools.login(request, "null", 'T', "null")
+        user_tools.login(request, "null", roles, institution)
         return HttpResponseRedirect('/vdi/')
     else:
         return HttpResponse(str(openid_response.message))

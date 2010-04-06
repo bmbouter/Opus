@@ -37,7 +37,7 @@ def get_user_apps(request):
     if not request.session["roles"]:
         return []
     log.debug(request.session["roles"])
-    roles = Role.objects.filter(permissions__in=request.session['roles'])
+    roles = Role.objects.filter(permissions__iexact=request.session['roles'])
 
     #TODO: Optimize this query
     apps = []

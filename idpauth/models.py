@@ -14,11 +14,11 @@ class IdentityProvider(models.Model):
          (u'openid', u'OpenID'),
     )
 
-    type = models.CharField(choices=TYPE_CHOICES,max_length=64, unique=True)
-    
-    class Meta:
-        unique_together = (("institution", "type"),)
+    type = models.CharField(choices=TYPE_CHOICES,max_length=64)
 
+    class Meta:
+        unique_together = ("type", "institution")
+    
     def __str__(self):
         return self.name
 

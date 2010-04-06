@@ -51,6 +51,11 @@ def is_valid_next_url(request, next):
     absUri = request.build_absolute_uri(next)
     return absUri != next
 
+def get_domain_name(url):
+    domain_name = str(url).split('//')[1]
+    domain_name = domain_name.split('/')[0]
+
+    return domain_name
 
 class OpenID:
     def __init__(self, openid, issued, attrs=None, sreg=None, pape=None, ax=None):
