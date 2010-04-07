@@ -15,7 +15,7 @@ from openid.consumer.consumer import Consumer, \
     SUCCESS, CANCEL, FAILURE, SETUP_NEEDED
 from openid.consumer.discover import DiscoveryFailure
 from openid.extensions import ax
-
+from openid.extensions import pape
 
 from idpauth import user_tools
 from idpauth.models import IdentityProvider, IdentityProviderLDAP, Role
@@ -23,7 +23,7 @@ from idpauth import openid_tools
 
 from vdi.log import log
 
-def login(request, institution):
+def login(request, institution, message=None):
     institutional_IdP = IdentityProvider.objects.filter(institution__iexact=str(institution))
 
     if not institutional_IdP:
@@ -32,7 +32,8 @@ def login(request, institution):
     else:
         authentication_type = institutional_IdP[0].type
         return render_to_response(str(authentication_type)+'.html',
-        {'institution': institution,},
+        {'institution': institution,
+        'message' : message,},
         context_instance=RequestContext(request))
 
 def ldap_login(request):
@@ -91,13 +92,14 @@ def openid_login(request):
     trust_root =  openid_tools.get_url_host(request) + '/'
     redirect_to = openid_tools.get_url_host(request) + '/vdi/openid_login_complete/' + institution +'/'
 
+    #Attribute Exchange
     requested_attributes = getattr(settings, 'OPENID_AX', False)
 
     if requested_attributes:
         log.debug("AX true")
         ax_request = ax.FetchRequest()
         for i in requested_attributes:
-            ax_request.add(ax.AttrInfo(i['type'], i['count'], i['required'], i['alias']))
+            ax_request.add(ax.AttrInfo(i['type_uri'], i['count'], i['required'], i['alias']))
         auth_request.addExtension(ax_request)
 
     redirect_url = auth_request.redirectURL(trust_root, redirect_to)
@@ -121,15 +123,20 @@ def openid_login_complete(request, institution):
     ])
 
     openid_response = consumer.complete(query_dict, url)
-    openid = openid_tools.from_openid_response(openid_response)
-
-    username = openid.ax.getExtensionArgs()['value.ext0.1']
-    log.debug(username)
-    roles = openid_tools.get_provider(request.GET['openid.op_endpoint'])
 
     if openid_response.status == SUCCESS:
+        openid = openid_tools.from_openid_response(openid_response)
+        username = openid.ax.getExtensionArgs()['value.ext0.1']
+        log.debug(username)
+        roles = openid_tools.get_provider(request.GET['openid.op_endpoint'])
         user_tools.login(request, username, roles, institution)
         return HttpResponseRedirect('/vdi/')
+    elif openid_response.status == CANCEL:
+        message = "OpenID login failed due to a cancelled request.  This can be due to failure to release email address which is required by the service."
+        return render_to_response('openid.html',
+        {'institution': institution,
+        'message' : message,},
+        context_instance=RequestContext(request))
     else:
         return HttpResponse(str(openid_response.message))
     
@@ -148,6 +155,17 @@ def local_login(request):
             return HttpResponseRedirect('/vdi/')
     else:
         return login(request, institution)
+
+def shibboleth_login(request):
+
+    try:
+        username = request.META['REMOTE_USER']
+        user_tools.login(request, username, "T", "null")
+        
+        return HttpResponse("Remote user set to:  " + remote_user)
+    except KeyError, e:
+        log.debug(e)
+        return HttpResponse("Remote user not set.")
 
 @user_tools.login_required
 def logout(request):

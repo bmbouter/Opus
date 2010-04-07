@@ -16,6 +16,9 @@
                 <a href="/vdi/">Application Library</a> -
                 <a href="/vdi/logout/">Logout</a>
             </div>
+            {% if message %}
+                <p>{{ message }}</p>
+            {% endif %}
             <div id="content">
                 <br />
                 {% block content %}{% endblock content %}

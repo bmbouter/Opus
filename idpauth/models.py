@@ -40,6 +40,11 @@ class IdentityProviderOpenID(IdentityProvider):
     class Meta:
         verbose_name = "OpenID Identity Provider"
 
+class IdentityProviderShibboleth(IdentityProvider):
+
+    class Meta:
+        verbose_name = "Shibboleth Identity Provider"
+
 class Role(models.Model):
     '''
     Maps an ldap server and role to a number of image which it has access to.
