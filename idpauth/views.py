@@ -72,7 +72,7 @@ def ldap_login(request):
         log.debug(roles)
         user_tools.login(request, username, roles, institution)
         log.debug("Redirecting to vdi")
-        return HttpResponseRedirect('/vdi/')
+        return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
     except ldap.LDAPError, e:
         #TODO: Handle login error
         log.debug(e)
@@ -130,7 +130,7 @@ def openid_login_complete(request, institution):
         log.debug(username)
         roles = openid_tools.get_provider(request.GET['openid.op_endpoint'])
         user_tools.login(request, username, roles, institution)
-        return HttpResponseRedirect('/vdi/')
+        return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
     elif openid_response.status == CANCEL:
         message = "OpenID login failed due to a cancelled request.  This can be due to failure to release email address which is required by the service."
         return render_to_response('openid.html',
@@ -152,9 +152,9 @@ def local_login(request):
     if user is not None:
         if user.is_active:
             user_tools.login(request, username, roles, institution)
-            return HttpResponseRedirect('/vdi/')
+        return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
     else:
-        return login(request, institution)
+        return HttpResponseRedirect('/login/'+str(institution))
 
 def shibboleth_login(request):
 
