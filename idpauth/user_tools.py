@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from idpauth.models import Role, Resource
+from idpauth.models import Role, Resource, IdentityProvider
 #from vdi.models import Instance
 from vdi.log import log
 
@@ -37,8 +37,18 @@ def get_user_apps(request):
     '''
     if not request.session["roles"]:
         return []
-    #log.debug(request.session["roles"])
-    roles = Role.objects.filter(permissions__iexact=request.session['roles'])
+    log.debug("Roles = " + str(request.session["roles"]))
+    institution = request.session["institution"]
+    institutional_IdP = IdentityProvider.objects.filter(institution__iexact=str(institution))
+    authentication_type = institutional_IdP[0].type
+    log.debug(authentication_type)
+    
+    if authentication_type == 'ldap':
+        log.debug("ldap")
+        roles = Role.objects.filter(permissions__in=request.session['roles'])
+    else:
+        roles = Role.objects.filter(permissions__iexact=request.session['roles'])
+    log.debug(str(roles))
 
     #TODO: Optimize this query
     apps = []
