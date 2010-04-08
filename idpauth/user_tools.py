@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from idpauth.models import Role, Resource, IdentityProvider
+from idpauth.models import Role, IdentityProvider
 #from vdi.models import Instance
 from vdi.log import log
 
@@ -53,7 +53,7 @@ def get_user_apps(request):
     #TODO: Optimize this query
     apps = []
     for role in roles:
-        apps += role.resources.all()
+        apps += role.applications.all()
     return apps
 
 def get_user_instances(request):
@@ -73,5 +73,5 @@ def login_required(func):
         if is_logged_in(request):
             return func(request, *args, **kwargs)
         else:
-            return HttpResponseRedirect("/vdi/login")
+            return HttpResponseRedirect("/login/")
     return check_func

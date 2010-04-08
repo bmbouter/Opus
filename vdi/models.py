@@ -1,8 +1,7 @@
 from django.db import models
-from idpauth.models import Resource
 
-class Application(Resource):
-    #name = models.CharField(max_length=64) # Pretty name of the application
+class Application(models.Model):
+    name = models.CharField(max_length=64, primary_key=True) # Pretty name of the application
     ec2ImageId = models.CharField(max_length=32, unique=True) # Amazon ec2 ID
     path = models.CharField(max_length=256,blank=True) # Path of the application to be run on the host
     max_concurrent_instances = models.IntegerField()

@@ -23,7 +23,7 @@ from idpauth import openid_tools
 
 from vdi.log import log
 
-def login(request, institution, message=None):
+def login(request, institution=None, message=None):
     institutional_IdP = IdentityProvider.objects.filter(institution__iexact=str(institution))
 
     if not institutional_IdP:
@@ -127,7 +127,6 @@ def openid_login_complete(request, institution):
     if openid_response.status == SUCCESS:
         openid = openid_tools.from_openid_response(openid_response)
         username = openid.ax.getExtensionArgs()['value.ext0.1']
-        log.debug(username)
         roles = openid_tools.get_provider(request.GET['openid.op_endpoint'])
         user_tools.login(request, username, roles, institution)
         return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
@@ -138,7 +137,11 @@ def openid_login_complete(request, institution):
         'message' : message,},
         context_instance=RequestContext(request))
     else:
-        return HttpResponse(str(openid_response.message))
+        message = openid_response.message
+        return render_to_response('openid.html',
+        {'institution': institution,
+        'message' : message,},
+        context_instance=RequestContext(request))
     
 def local_login(request):
 
@@ -169,6 +172,9 @@ def shibboleth_login(request):
 
 @user_tools.login_required
 def logout(request):
-    session_institution = request.session["institution"]
+    institution = request.session["institution"]
     user_tools.logout(request)
-    return HttpResponseRedirect('/login/'+str(session_institution))
+    
+    return render_to_response('logout.html',
+    {'institution': institution,},
+    context_instance=RequestContext(request))
