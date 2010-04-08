@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-import vdi, nxproxy, idpauth, dataservice.views, vdi.testing_tools
+import vdi, nxproxy, dataservice.views, vdi.testing_tools
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -14,13 +14,7 @@ urlpatterns = patterns('',
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/jsi18n', 'django.views.i18n.javascript_catalog'),
-    (r'^login/(?P<institution>\w*)/$', idpauth.views.login),
-    (r'^openid_login/$', idpauth.views.openid_login),
-    (r'^openid_login_complete/(?P<institution>\w*)/$', idpauth.views.openid_login_complete),
-    (r'^ldap_login/$', idpauth.views.ldap_login),
-    (r'^local_login/$', idpauth.views.local_login),
-    (r'^shibboleth_login/$', idpauth.views.shibboleth_login),
-    (r'^logout/$', idpauth.views.logout),
+    (r'idpauth/', include('idpauth.urls')),
     (r'^vdi/$', vdi.views.applicationLibrary),
     (r'^vdi/(?P<app_pk>(\d)+)/connect$', vdi.views.connect),
     (r'^vdi/(?P<app_pk>(\d)+)/connect/(?P<conn_type>(nx|nxweb|rdp|rdpweb)+)$', vdi.views.connect),

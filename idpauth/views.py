@@ -76,7 +76,7 @@ def ldap_login(request):
     except ldap.LDAPError, e:
         #TODO: Handle login error
         log.debug(e)
-        return HttpResponseRedirect('/login/'+str(institution))
+        return HttpResponseRedirect('/idpauth/login/'+str(institution))
 
 def openid_login(request):
     openid_url = request.POST['openid_url']
@@ -90,7 +90,7 @@ def openid_login(request):
         return HttpResponse('The OpenID was invalid')
 
     trust_root =  openid_tools.get_url_host(request) + '/'
-    redirect_to = openid_tools.get_url_host(request) + '/openid_login_complete/' + institution +'/'
+    redirect_to = openid_tools.get_url_host(request) + '/idpauth/openid_login_complete/' + institution +'/'
 
     #Attribute Exchange
     requested_attributes = getattr(settings, 'OPENID_AX', False)
@@ -117,7 +117,7 @@ def openid_login_complete(request, institution):
 
     consumer = Consumer(request.session, openid_tools.DjangoOpenIDStore())
 
-    url = (openid_tools.get_url_host(request) + '/openid_login_complete/' + institution + '/').encode('utf8') + '?janrain_nonce=' + urllib.pathname2url(request.GET['janrain_nonce'])
+    url = (openid_tools.get_url_host(request) + '/idpauth/openid_login_complete/' + institution + '/').encode('utf8') + '?janrain_nonce=' + urllib.pathname2url(request.GET['janrain_nonce'])
     query_dict = dict([
         (k.encode('utf8'), v.encode('utf8')) for k, v in request.GET.items()
     ])
@@ -157,7 +157,7 @@ def local_login(request):
             user_tools.login(request, username, roles, institution)
         return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
     else:
-        return HttpResponseRedirect('/login/'+str(institution))
+        return HttpResponseRedirect('/idpauth/login/'+str(institution))
 
 def shibboleth_login(request):
 
