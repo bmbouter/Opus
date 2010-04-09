@@ -20,13 +20,12 @@ from openid.extensions import pape
 from idpauth import user_tools
 from idpauth.models import IdentityProvider, IdentityProviderLDAP, Role
 from idpauth import openid_tools
+from idpauth import authentication_tools
 
 from vdi.log import log
 
 def login(request, message=None):
-    host_url = openid_tools.get_url_host(request)
-    institution = host_url.split('//')[1].split("." + settings.BASE_URL)[0]
-
+    institution = authentication_tools.get_institution(request)
     institutional_IdP = IdentityProvider.objects.filter(institution__iexact=str(institution))
 
     if not institutional_IdP:
@@ -83,7 +82,7 @@ def ldap_login(request):
 
 def openid_login(request):
     openid_url = request.POST['openid_url']
-    institution = request.POST['institution']
+    institution = authentication_tools.get_institution(request)
 
     consumer = Consumer(request.session, openid_tools.DjangoOpenIDStore())
 
@@ -92,8 +91,9 @@ def openid_login(request):
     except DiscoveryFailure:
         return HttpResponse('The OpenID was invalid')
 
-    trust_root =  openid_tools.get_url_host(request) + '/'
-    redirect_to = openid_tools.get_url_host(request) + '/idpauth/openid_login_complete/'
+    trust_root =  authentication_tools.get_url_host(request) + '/'
+    redirect_to = trust_root + 'idpauth/openid_login_complete/'
+    log.debug(redirect_to)
 
     #Attribute Exchange
     requested_attributes = getattr(settings, 'OPENID_AX', False)
@@ -113,14 +113,14 @@ def openid_login(request):
 
     return HttpResponseRedirect(redirect_url)
 
-def openid_login_complete(request, institution):
-
+def openid_login_complete(request):
+    institution = authentication_tools.get_institution(request)
     for r in request.GET.items():
         log.debug(r)
 
     consumer = Consumer(request.session, openid_tools.DjangoOpenIDStore())
 
-    url = (openid_tools.get_url_host(request) + '/idpauth/openid_login_complete/').encode('utf8') + '?janrain_nonce=' + urllib.pathname2url(request.GET['janrain_nonce'])
+    url = (authentication_tools.get_url_host(request) + '/idpauth/openid_login_complete/').encode('utf8') + '?janrain_nonce=' + urllib.pathname2url(request.GET['janrain_nonce'])
     query_dict = dict([
         (k.encode('utf8'), v.encode('utf8')) for k, v in request.GET.items()
     ])
@@ -130,20 +130,18 @@ def openid_login_complete(request, institution):
     if openid_response.status == SUCCESS:
         openid = openid_tools.from_openid_response(openid_response)
         username = openid.ax.getExtensionArgs()['value.ext0.1']
-        roles = openid_tools.get_provider(request.GET['openid.op_endpoint'])
+        roles = authentication_tools.get_provider(request.GET['openid.op_endpoint'])
         user_tools.login(request, username, roles, institution)
         return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
     elif openid_response.status == CANCEL:
         message = "OpenID login failed due to a cancelled request.  This can be due to failure to release email address which is required by the service."
         return render_to_response('openid.html',
-        {'institution': institution,
-        'message' : message,},
+        {'message' : message,},
         context_instance=RequestContext(request))
     else:
         message = openid_response.message
         return render_to_response('openid.html',
-        {'institution': institution,
-        'message' : message,},
+        {'message' : message,},
         context_instance=RequestContext(request))
     
 def local_login(request):
@@ -175,7 +173,6 @@ def shibboleth_login(request):
 
 @user_tools.login_required
 def logout(request):
-    #institution = request.session["institution"]
     user_tools.logout(request)
     
     return render_to_response('logout.html',
