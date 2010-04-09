@@ -28,6 +28,7 @@ from idpauth import user_tools
 from vdi import ec2_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 from vdi.log import log
+from vdi.tasks import MyTask
 from celery.decorators import task
 import cost_tools
 
@@ -39,7 +40,13 @@ def applicationLibrary(request):
         {'app_library': db_apps},
         context_instance=RequestContext(request))
 
-def scale(request):
+def atest(request):
+    #tasks.register(MyPeriodicTask)
+    MyTask.delay(some_arg="foo")
+    return HttpResponse('OK')
+
+@task
+def scale():
     for app in Application.objects.all():
         # Create the cluster object to help us manage the cluster
         cluster = AppCluster(app.pk)
