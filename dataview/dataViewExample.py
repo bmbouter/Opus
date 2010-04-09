@@ -16,7 +16,7 @@ Edm.String     UTF-16-encoded value. String values may be up to 64 KB in size.
 Every entry must contain PartitionKey and RowKey. Both have to be strings.
 '''
 props = {"Double":("Edm.Double","33.33"),"Address": "Cary","PartitionKey":"p","RowKey":"4"}
-client = dvclient.DVClient("https://opus-dev.cnl.ncsu.edu:9004","dennis")
+client = dvclient.DVClient("https://opus-dev.cnl.ncsu.edu:9001","dennis")
 test_table = "TestTable2"
 
 print client.create_table(test_table)
