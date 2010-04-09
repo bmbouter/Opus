@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+
+    <p>You have been successfully logged out.</p>
+    <form action="/idpauth/login/{{ institution }}" method="get">
+        <input type="submit" value="Return to Login page." />
+    </form>
+
+{% endblock %}

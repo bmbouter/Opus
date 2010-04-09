@@ -23,7 +23,7 @@ from idpauth import openid_tools
 
 from vdi.log import log
 
-def login(request, institution, message=None):
+def login(request, institution=None, message=None):
     institutional_IdP = IdentityProvider.objects.filter(institution__iexact=str(institution))
 
     if not institutional_IdP:
@@ -72,11 +72,11 @@ def ldap_login(request):
         log.debug(roles)
         user_tools.login(request, username, roles, institution)
         log.debug("Redirecting to vdi")
-        return HttpResponseRedirect('/vdi/')
+        return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
     except ldap.LDAPError, e:
         #TODO: Handle login error
         log.debug(e)
-        return login(request, institution)
+        return HttpResponseRedirect('/idpauth/login/'+str(institution))
 
 def openid_login(request):
     openid_url = request.POST['openid_url']
@@ -90,7 +90,7 @@ def openid_login(request):
         return HttpResponse('The OpenID was invalid')
 
     trust_root =  openid_tools.get_url_host(request) + '/'
-    redirect_to = openid_tools.get_url_host(request) + '/vdi/openid_login_complete/' + institution +'/'
+    redirect_to = openid_tools.get_url_host(request) + '/idpauth/openid_login_complete/' + institution +'/'
 
     #Attribute Exchange
     requested_attributes = getattr(settings, 'OPENID_AX', False)
@@ -117,7 +117,7 @@ def openid_login_complete(request, institution):
 
     consumer = Consumer(request.session, openid_tools.DjangoOpenIDStore())
 
-    url = (openid_tools.get_url_host(request) + '/vdi/openid_login_complete/' + institution + '/').encode('utf8') + '?janrain_nonce=' + urllib.pathname2url(request.GET['janrain_nonce'])
+    url = (openid_tools.get_url_host(request) + '/idpauth/openid_login_complete/' + institution + '/').encode('utf8') + '?janrain_nonce=' + urllib.pathname2url(request.GET['janrain_nonce'])
     query_dict = dict([
         (k.encode('utf8'), v.encode('utf8')) for k, v in request.GET.items()
     ])
@@ -127,10 +127,9 @@ def openid_login_complete(request, institution):
     if openid_response.status == SUCCESS:
         openid = openid_tools.from_openid_response(openid_response)
         username = openid.ax.getExtensionArgs()['value.ext0.1']
-        log.debug(username)
         roles = openid_tools.get_provider(request.GET['openid.op_endpoint'])
         user_tools.login(request, username, roles, institution)
-        return HttpResponseRedirect('/vdi/')
+        return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
     elif openid_response.status == CANCEL:
         message = "OpenID login failed due to a cancelled request.  This can be due to failure to release email address which is required by the service."
         return render_to_response('openid.html',
@@ -138,7 +137,11 @@ def openid_login_complete(request, institution):
         'message' : message,},
         context_instance=RequestContext(request))
     else:
-        return HttpResponse(str(openid_response.message))
+        message = openid_response.message
+        return render_to_response('openid.html',
+        {'institution': institution,
+        'message' : message,},
+        context_instance=RequestContext(request))
     
 def local_login(request):
 
@@ -147,14 +150,14 @@ def local_login(request):
     institution = request.POST['institution']
     user = authenticate(username=username, password=password)
 
-    roles = 'T'
+    roles = 'local'
 
     if user is not None:
         if user.is_active:
             user_tools.login(request, username, roles, institution)
-            return HttpResponseRedirect('/vdi/')
+        return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
     else:
-        return login(request, institution)
+        return HttpResponseRedirect('/idpauth/login/'+str(institution))
 
 def shibboleth_login(request):
 
@@ -169,6 +172,9 @@ def shibboleth_login(request):
 
 @user_tools.login_required
 def logout(request):
-    session_institution = request.session["institution"]
+    institution = request.session["institution"]
     user_tools.logout(request)
-    return HttpResponseRedirect('/vdi/login/'+str(session_institution))
+    
+    return render_to_response('logout.html',
+    {'institution': institution,},
+    context_instance=RequestContext(request))

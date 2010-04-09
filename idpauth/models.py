@@ -1,5 +1,5 @@
 from django.db import models
-
+from vdi.models import Application
 
 class IdentityProvider(models.Model):
     '''
@@ -52,16 +52,10 @@ class Role(models.Model):
     name = models.CharField(max_length=60, unique=True)
     idp = models.ForeignKey(IdentityProvider)
     permissions = models.CharField(max_length=128, blank=True)
-    resources = models.ManyToManyField('Resource')
+    applications = models.ManyToManyField(Application)
 
     class Meta:
         unique_together = (("idp", "permissions"),)
-    
-    def __str__(self):
-        return self.name
-
-class Resource(models.Model):
-    name = models.CharField(max_length=64)
     
     def __str__(self):
         return self.name
