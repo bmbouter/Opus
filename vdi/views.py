@@ -28,12 +28,12 @@ from idpauth import user_tools
 from vdi import ec2_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 from vdi.log import log
+from celery.decorators import task
 import cost_tools
 
 @user_tools.login_required
 def applicationLibrary(request):
     db_apps = user_tools.get_user_apps(request)
-    log.debug("**** %s" % db_apps[0].ec2ImageId)
     #TODO: Get permissions and only display those images
     return render_to_response('application-library.html',
         {'app_library': db_apps},

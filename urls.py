@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-import vdi, nxproxy, dataservice.views, vdi.testing_tools
+import vdi, nxproxy, vdi.testing_tools
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -18,7 +18,6 @@ urlpatterns = patterns('',
     (r'vdi/', include('vdi.urls')),
     (r'^admin/', include(admin.site.urls)),
     (r'^nxproxy/sessions/', nxproxy.views.sessions),
-    (r'^dataservice/', dataservice.views.meta_feed),
     (r'^nxproxy/conn_builder', nxproxy.views.conn_builder),
     (r'^dataview/', include('dataview.urls')),
 )
