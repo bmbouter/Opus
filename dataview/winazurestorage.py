@@ -19,15 +19,6 @@ from urlparse import urlsplit
 from datetime import datetime, timedelta
 from vdi.log import log
  
-DEVSTORE_ACCOUNT = "itng"
-DEVSTORE_SECRET_KEY = "lB7IwQE02zX40aXkHS6ZnBwKSrIcDDlgLI20svI6nqeOJ1FUaYZNYGoC7tDxxXUXz2haRDkIYNAezEOGFo51gQ=="
- 
-DEVSTORE_BLOB_HOST = "127.0.0.1:10000"
-DEVSTORE_TABLE_HOST = "127.0.0.1:10002"
- 
-CLOUD_BLOB_HOST = "blob.core.windows.net"
-CLOUD_TABLE_HOST = "table.core.windows.net"
- 
 PREFIX_PROPERTIES = "x-ms-prop-"
 PREFIX_METADATA = "x-ms-meta-"
 PREFIX_STORAGE_HEADER = "x-ms-"

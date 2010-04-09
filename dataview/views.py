@@ -11,10 +11,11 @@ import xml.etree.ElementTree as ET
 import exceptions
 import string
 from vdi.log import log
+import dataview_settings as dvsettings 
 # Create your views here.
 
 '''TODO:Check ff store was created succesfully and '''
-store = azure.TableStorage(azure.CLOUD_TABLE_HOST, azure.DEVSTORE_ACCOUNT, azure.DEVSTORE_SECRET_KEY)
+store = azure.TableStorage(dvsettings.CLOUD_TABLE_HOST, dvsettings.DEVSTORE_ACCOUNT, dvsettings.DEVSTORE_SECRET_KEY)
 
 @csrf_exempt
 def create_service(request, table_name):

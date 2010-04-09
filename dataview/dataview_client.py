@@ -64,7 +64,7 @@ class DVClient():
             p = properties_dict[k]
             property = ET.SubElement(properties,'d:'+k)
             if isinstance(p,str):
-                property.text = p[0]
+                property.text = p
             elif len(p) == 2:
                 property.set('m:type',p[0])
                 property.text = p[1]
@@ -122,7 +122,7 @@ class DVClient():
         req.add_header("Content-Type", "application/xml")
         #req.add_header("Content-Type","multipart/form-data")
         try:
-            return urlopen(req).read()
+            return urlopen(req)
         except URLError, e:
             return e.read()
 
