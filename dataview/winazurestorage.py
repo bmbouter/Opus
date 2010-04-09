@@ -18,7 +18,12 @@ from urllib2 import Request, urlopen, URLError
 from urlparse import urlsplit
 from datetime import datetime, timedelta
 from vdi.log import log
- 
+import dataview_settings as dvsettings 
+
+DEVSTORE_BLOB_HOST = dvsettings.DEVSTORE_BLOB_HOST
+DEVSTORE_ACCOUNT = dvsettings.DEVSTORE_ACCOUNT
+DEVSTORE_SECRET_KEY = dvsettings.DEVSTORE_SECRET_KEY
+
 PREFIX_PROPERTIES = "x-ms-prop-"
 PREFIX_METADATA = "x-ms-meta-"
 PREFIX_STORAGE_HEADER = "x-ms-"
