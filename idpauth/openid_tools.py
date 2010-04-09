@@ -4,6 +4,8 @@ from django.template import RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.utils.html import escape
+
 from models import Association, Nonce
 
 import time, base64, hashlib, re, urllib
@@ -26,9 +28,6 @@ from openid.consumer.consumer import Consumer, \
 from openid.consumer.discover import DiscoveryFailure
 from openid.yadis import xri
 
-from middleware import OpenIDMiddleware
-
-from django.utils.html import escape
 
 from vdi.log import log
 

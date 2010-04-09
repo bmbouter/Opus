@@ -23,7 +23,10 @@ from idpauth import openid_tools
 
 from vdi.log import log
 
-def login(request, institution=None, message=None):
+def login(request, message=None):
+    host_url = openid_tools.get_url_host(request)
+    institution = host_url.split('//')[1].split("." + settings.BASE_URL)[0]
+
     institutional_IdP = IdentityProvider.objects.filter(institution__iexact=str(institution))
 
     if not institutional_IdP:
@@ -76,7 +79,7 @@ def ldap_login(request):
     except ldap.LDAPError, e:
         #TODO: Handle login error
         log.debug(e)
-        return HttpResponseRedirect('/idpauth/login/'+str(institution))
+        return HttpResponseRedirect('/idpauth/login/')
 
 def openid_login(request):
     openid_url = request.POST['openid_url']
@@ -157,7 +160,7 @@ def local_login(request):
             user_tools.login(request, username, roles, institution)
         return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
     else:
-        return HttpResponseRedirect('/idpauth/login/'+str(institution))
+        return HttpResponseRedirect('/idpauth/login/')
 
 def shibboleth_login(request):
 
@@ -172,9 +175,8 @@ def shibboleth_login(request):
 
 @user_tools.login_required
 def logout(request):
-    institution = request.session["institution"]
+    #institution = request.session["institution"]
     user_tools.logout(request)
     
     return render_to_response('logout.html',
-    {'institution': institution,},
     context_instance=RequestContext(request))

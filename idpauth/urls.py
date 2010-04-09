@@ -7,7 +7,7 @@ import idpauth
 #admin.autodiscover()
 
 urlpatterns = patterns('opus.idpauth.views',
-    (r'^login/(?P<institution>\w*)/$', idpauth.views.login),
+    (r'^login/$', idpauth.views.login),
     (r'^openid_login/$', idpauth.views.openid_login),
     (r'^openid_login_complete/(?P<institution>\w*)/$', idpauth.views.openid_login_complete),
     (r'^ldap_login/$', idpauth.views.ldap_login),

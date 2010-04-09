@@ -1,6 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from idpauth.models import Role, IdentityProvider
-#from vdi.models import Instance
 from vdi.log import log
 
 def login(request, username, roles, institution):
@@ -56,13 +55,6 @@ def get_user_apps(request):
         apps += role.applications.all()
     return apps
 
-def get_user_instances(request):
-    '''
-    Returns a list of the user's instances
-    '''
-    return Instance.objects.filter(username=request.session['username'],
-                                   ldap=request.session['ldap'])
-
 def login_required(func):
     '''
     A decorator that redirects to the login page if the user isn't logged in.
@@ -73,5 +65,5 @@ def login_required(func):
         if is_logged_in(request):
             return func(request, *args, **kwargs)
         else:
-            return HttpResponseRedirect("/login/")
+            return HttpResponseRedirect("/idpauth/login/")
     return check_func
