@@ -120,3 +120,4 @@ VDI_MEDIA_PREFIX = '/vdi-media/'
 ######## IDPAUTH Settings ######
 OPENID_AX = [{"type_uri" : "http://axschema.org/contact/email", "count" : 1, "required" : True, "alias" : "email"}]
 RESOURCE_REDIRECT_URL = '/vdi/'
+BASE_URL = 'opus-dev.cnl.ncsu.edu'
