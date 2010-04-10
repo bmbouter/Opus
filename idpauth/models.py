@@ -1,5 +1,8 @@
 from django.db import models
+from django.db.models import signals
 from vdi.models import Application
+
+from vdi.log import log
 
 class IdentityProvider(models.Model):
     '''
@@ -7,14 +10,7 @@ class IdentityProvider(models.Model):
     '''
     institution = models.CharField(max_length=60, primary_key=True, unique=True)
     name = models.CharField(max_length=60, unique=True)
-
-    TYPE_CHOICES = (
-         (u'ldap', u'LDAP'),
-         (u'local', u'Local'),
-         (u'openid', u'OpenID'),
-    )
-
-    type = models.CharField(choices=TYPE_CHOICES,max_length=64)
+    type = models.CharField(max_length=64, editable=False, blank=True)
 
     class Meta:
         unique_together = ("type", "institution")
@@ -78,3 +74,21 @@ class Association(models.Model):
 
     def __unicode__(self):
         return "Association: %s, %s" % (self.server_url, self.handle)
+
+
+######## Signal Handler Functions ############
+def set_identityprovider_type(sender, instance, **kwargs):
+    idp_type = sender.__name__.split('IdentityProvider')[1].lower()
+    if idp_type == 'openid':
+        instance.type = 'openid'
+    elif idp_type == 'local':
+        instance.type = 'local'
+    elif idp_type == 'ldap':
+        instance.type = 'ldap'
+    else:
+        instance.type = ''
+
+######## Signal Declarations  ############
+signals.pre_save.connect(set_identityprovider_type, sender=IdentityProviderOpenID)
+signals.pre_save.connect(set_identityprovider_type, sender=IdentityProviderLocal)
+signals.pre_save.connect(set_identityprovider_type, sender=IdentityProviderLDAP)
