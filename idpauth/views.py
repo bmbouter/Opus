@@ -45,40 +45,49 @@ def ldap_login(request):
     institution = request.POST['institution']
 
     # @TODO resolve upper vs. lower case storage of key field like institution
-    server = IdentityProviderLDAP.objects.filter(institution=str(institution).upper())[0]
+    identityprovider = IdentityProviderLDAP.objects.filter(institution=str(institution).upper())
+    if identityprovider:
+        server = identityprovider[0]
     result_set = []
     timeout = 0
-
-    try:
-        #TODO: Make this work with ldap servers that aren't ldap.ncsu.edu
-        ldap_session = ldap.initialize(server.url)
-        ldap_session.start_tls_s()
-        ldap_session.protocol_version = ldap.VERSION3
-        # Any errors will throw an ldap.LDAPError exception
-        # or related exception so you can ignore the result
-        ldap_session.set_option(ldap.OPT_X_TLS_DEMAND, True)
-        search_string = "uid=" + username
-        authentication_string = search_string + "," +  server.authentication
-        ldap_session.simple_bind_s(authentication_string, password)
-        result_id = ldap_session.search(server.authentication,ldap.SCOPE_SUBTREE,search_string,["memberNisNetgroup"])
-        while 1:
-            result_type, result_data = ldap_session.result(result_id, timeout)
-            if (result_data == []):
-                break
-            else:
-                if result_type == ldap.RES_SEARCH_ENTRY:
-                    result_set.append(result_data)
-        log.debug(result_set)
-        #if you got here then the right password has been entered for the user
-        roles = result_set[0][0][1]['memberNisNetgroup']
-        log.debug(roles)
-        user_tools.login(request, username, roles, institution)
-        log.debug("Redirecting to vdi")
-        return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
-    except ldap.LDAPError, e:
-        #TODO: Handle login error
-        log.debug(e)
-        return HttpResponseRedirect('/idpauth/login/')
+    
+    if identityprovider:
+        try:
+            #TODO: Make this work with ldap servers that aren't ldap.ncsu.edu
+            ldap_session = ldap.initialize(server.url)
+            ldap_session.start_tls_s()
+            ldap_session.protocol_version = ldap.VERSION3
+            # Any errors will throw an ldap.LDAPError exception
+            # or related exception so you can ignore the result
+            ldap_session.set_option(ldap.OPT_X_TLS_DEMAND, True)
+            search_string = "uid=" + username
+            authentication_string = search_string + "," +  server.authentication
+            ldap_session.simple_bind_s(authentication_string, password)
+            result_id = ldap_session.search(server.authentication,ldap.SCOPE_SUBTREE,search_string,["memberNisNetgroup"])
+            while 1:
+                result_type, result_data = ldap_session.result(result_id, timeout)
+                if (result_data == []):
+                    break
+                else:
+                    if result_type == ldap.RES_SEARCH_ENTRY:
+                        result_set.append(result_data)
+            log.debug(result_set)
+            #if you got here then the right password has been entered for the user
+            roles = result_set[0][0][1]['memberNisNetgroup']
+            log.debug(roles)
+            user_tools.login(request, username, roles, institution)
+            log.debug("Redirecting to vdi")
+            return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
+        except ldap.LDAPError, e:
+            #TODO: Handle login error
+            log.debug(e)
+            return HttpResponseRedirect('/idpauth/login/')
+    else:
+        message = 'There were errors retrieving the identity provider information from the database'
+        return render_to_response('ldap.html', 
+        {'institution' : institution,
+        'message' : message},
+        context_instance=RequestContext(request))
 
 def openid_login(request):
     openid_url = request.POST['openid_url']
