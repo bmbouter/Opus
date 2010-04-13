@@ -13,18 +13,21 @@ class MyPeriodicTask(Task):
     def run(self, **kwargs):
         log.debug("Running periodic task!")
 
+'''
+
+class CreateUserTask(Task):
+    def run(self, username, password):
+        log.debug('8888888888888888888888')
+
+'''
 class MyTask(Task):
     def run(self, some_arg, **kwargs):
         logger = self.get_logger(**kwargs)
+        log.debug('*************')
         logger.info('AEIOU')
         logger.info("Did something: %s" % some_arg)
 '''
 
-@task
-def MyTask(some_arg, **kwargs):
-    logger = self.get_logger(**kwargs)
-    logger.info('AEIOU')
-    logger.info("Did something: %s" % some_arg)
-
-tasks.register(MyTask)
+tasks.register(CreateUserTask)
+#tasks.register(MyTask)
 log.debug('AAAAAAAAASDFSDFASFDASFDASFDSA')

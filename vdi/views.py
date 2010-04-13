@@ -8,6 +8,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError
 
+from core.ssh_tools import HostNotConnectableError , NodeUtil
+
 from subprocess import Popen, PIPE
 from random import choice, randint
 import socket
@@ -28,7 +30,8 @@ from idpauth import user_tools
 from vdi import ec2_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 from vdi.log import log
-from vdi.tasks import MyTask
+from vdi.tasks import CreateUserTask
+#from vdi.tasks import MyTask
 from celery.decorators import task
 import cost_tools
 
@@ -42,11 +45,11 @@ def applicationLibrary(request):
 
 def atest(request):
     #tasks.register(MyPeriodicTask)
-    MyTask.delay(some_arg="foo")
+    #MyTask.delay(some_arg="foo")
+    CreateUserTask.delay('bmbouter','apass')
     return HttpResponse('OK')
 
-@task
-def scale():
+def scale(request):
     for app in Application.objects.all():
         # Create the cluster object to help us manage the cluster
         cluster = AppCluster(app.pk)
@@ -101,12 +104,16 @@ def scale():
         toTerminate = []
         for host in cluster.shutting_down:
             log.debug('ASDASDASD    %s' % host.instanceId)
-            n = AppNode(host.ip)
-            log.debug('AppNode %s is waiting to be shut down and has %s connections' % (host.ip,n.sessions))
-            if n.sessions == []:
-                toTerminate.append(host)
-                host.shutdownDateTime = datetime.now()
-                host.save()
+            try:
+                n = AppNode(host.ip)
+                log.debug('AppNode %s is waiting to be shut down and has %s connections' % (host.ip,n.sessions))
+                if n.sessions == []:
+                    toTerminate.append(host)
+                    host.shutdownDateTime = datetime.now()
+                    host.save()
+            except HostNotConnectableError:
+                # Ignore this host that doesn't seem to be ssh'able, but log it as an error
+                log.warning('AppNode %s is NOT sshable and should be looked into.  It is currently in the shutdown state')
         ec2_tools.terminate_instances(toTerminate)
 
 
@@ -246,28 +253,32 @@ def connect(request,app_pk=None,conn_type=None):
         # Implement firewall manipulation of the ami's
         log.debug('Found user ip of %s' % request.META["REMOTE_ADDR"])
 
-        #SSH to AMI using Popen subprocesses
-        #TODO refactor this so it isn't so crazy and verbose, and a series of special cases
-        output = Popen(["ssh","-i",settings.IMAGE_SSH_KEY,"-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "USER",request.session["username"],password,"/ADD"],stdout = PIPE).communicate()[0]
-        if output.find("The command completed successfully.") > -1:
-            log.debug("User %s has been created" % request.session["username"])
-        elif output.find("The account already exists.") > -1:
-            output = Popen(["ssh","-i",settings.IMAGE_SSH_KEY,"-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "USER",request.session["username"],password],stdout = PIPE).communicate()[0]
-            log.debug('User %s already exists, going to try to set the password' % request.session["username"])
+        #SSH to AMI using NodeUtil
+        node = NodeUtil(host.ip, settings.IMAGE_SSH_KEY)
+        if node.ssh_avail():
+            #TODO refactor this so it isn't so verbose, and a series of special cases
+            output = node.run_ssh_command(["NET","USER",request.session["username"],password,"/ADD"])
             if output.find("The command completed successfully.") > -1:
-                log.debug('THE PASSWORD WAS RESET')
+                log.debug("User %s has been created" % request.session["username"])
+            elif output.find("The account already exists.") > -1:
+                log.debug('User %s already exists, going to try to set the password' % request.session["username"])
+                output = node.run_ssh_command(["NET", "USER",request.session["username"],password])
+                if output.find("The command completed successfully.") > -1:
+                    log.debug('THE PASSWORD WAS RESET')
+                else:
+                    error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
+                    log.error(error_string)
+                    return HttpResponse(error_string)
             else:
-                error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
+                error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
                 log.error(error_string)
                 return HttpResponse(error_string)
+         
+            # Add the created user to the Administrator group
+            output = node.run_ssh_command(["NET", "localgroup",'"Administrators"',"/add",request.session["username"]])
+            log.debug("Added user %s to the 'Administrators' group" % request.session["username"])
         else:
-            error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
-            log.error(error_string)
-            return HttpResponse(error_string)
-     
-        # Add the created user to the Administrator group
-        output = Popen(["ssh","-i",settings.IMAGE_SSH_KEY,"-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null","-l","root",host.ip,"NET", "localgroup",'"Administrators"',"/add",request.session["username"]],stdout = PIPE).communicate()[0]
-        log.debug("Added user %s to the 'Administrators' group" % request.session["username"])
+            return HttpResponse('Your server was not reachable')
         
         # This is a hack for NC WISE only, and should be handled through a more general mechanism
         # TODO refactor this to be more secure

@@ -5,6 +5,7 @@ from django.conf import settings
 from nxproxy.models import NXNode
 from idpauth import user_tools
 from vdi.log import log
+from core.ssh_tools import HostNotConnectableError , NodeUtil
 
 from subprocess import Popen, PIPE
 from string import ascii_letters, digits
@@ -40,8 +41,13 @@ def conn_builder(request,app_pk=None):
     username = request.session["username"]
 
     # SSH to the node, create a user, and set the password with the one-time password above
-    output = Popen(["ssh", "-i", settings.NX_NODE_PRIVATE_KEY, "-l", settings.NX_NODE_USER, "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", node.ip, "useradd", username], stdout=PIPE, stdin=PIPE).communicate()[0]
-    output = Popen(["ssh", "-i", settings.NX_NODE_PRIVATE_KEY, "-l", settings.NX_NODE_USER, "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", node.ip, "passwd", "--stdin", username, "<<<", nx_password], stdout=PIPE, stdin=PIPE).communicate()[0]
+    ssh_node = NodeUtil(node.ip, settings.NX_NODE_PRIVATE_KEY, settings.NX_NODE_USER)
+    try:
+        output = ssh_node.run_ssh_command(["useradd", username])
+        output = ssh_node.run_ssh_command(["passwd", "--stdin", username, "<<<", nx_password])
+    except HostNotConnectableError:
+        # TODO: recoded how the exception is handled to be useful
+        return HttpResponse('UNABLE TO SSH TO NXNODE')
 
     # Determine the app_path to be run
     if "app_path" in request.GET:
@@ -117,7 +123,12 @@ def _get_sessions():
 
     all_sessions = []
     for node in nodes:
-        output = Popen(["ssh", "-i", settings.NX_NODE_PRIVATE_KEY, "-l", settings.NX_NODE_USER, "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", node.ip, "nxserver", "--list"], stdout=PIPE, stdin=PIPE).communicate()[0]
+        ssh_node = NodeUtil(node.ip,settings.NX_NODE_PRIVATE_KEY,settings.NX_NODE_USER)
+        try:
+            output = ssh_node.run_ssh_command(["nxserver", "--list"])
+        except HostNotConnectableError:
+            # TODO: recoded how the exception is handled to be useful
+            return HttpResponse('Error: Could not connect to NXNode')
         for line in output.split('\n')[4:]:            
             if not line:
                 break;

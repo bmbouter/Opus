@@ -1,6 +1,7 @@
 from vdi.models import Application, Instance
 from vdi.log import log
 from vdi import ec2_tools
+from core.ssh_tools import HostNotConnectableError , NodeUtil
 
 from django.conf import settings
 from django.db.models import Q
@@ -51,7 +52,11 @@ class AppCluster(object):
         Logs off idle users for all nodes in this cluster
         '''
         for node in self.active:
-            AppNode(node.ip).user_cleanup(10)
+            try:
+                AppNode(node.ip).user_cleanup(10)
+            except HostNotConnectableError:
+                # Ignore this host that doesn't seem to be ssh'able, but log it as an error
+                log.warning('AppNode %s is NOT sshable and should be looked into')
 
     def select_host(self):
         '''
@@ -70,7 +75,11 @@ class AppCluster(object):
         '''
         number_of_users = 0
         for node in self.active:
-            number_of_users += len(AppNode(node.ip).sessions)
+            try:
+                number_of_users += len(AppNode(node.ip).sessions)
+            except HostNotConnectableError:
+                # Ignore this host that doesn't seem to be ssh'able, but log it as an error
+                log.warning('AppNode %s is NOT sshable and should be looked into')
 
         return (number_of_users, self.avail_headroom)
 
@@ -125,9 +134,13 @@ class AppCluster(object):
         app_map = []
         nodes = self.active.order_by('priority')
         for host in nodes:
-            n = AppNode(host.ip)
-            cur_users = len(n.sessions)
-            app_map.append((host,cur_users))
+            try:
+                n = AppNode(host.ip)
+                cur_users = len(n.sessions)
+                app_map.append((host,cur_users))
+            except HostNotConnectableError:
+                # Ignore this host that doesn't seem to be ssh'able, but log it as an error
+                log.warning('AppNode %s is NOT sshable and should be looked into')
         return app_map
 
 class AppNode(object):
@@ -144,7 +157,8 @@ class AppNode(object):
     '''
     def check_user_load(self):
         self.sessions = []
-        output = Popen(["ssh", "-i", "/home/private_key",  "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", "root@"+str(self.ip), "Quser"], stdout=PIPE).communicate()[0]
+        node = NodeUtil(self.ip,settings.IMAGE_SSH_KEY)
+        output = node.ssh_run_command(["Quser"])
         for line in output.split('\n'):
             fields = split("(\S+) +(\d+) +(Disc) +([none]*[\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
             if (len(fields) > 1):
@@ -191,7 +205,8 @@ class AppNode(object):
         Log user off from server with provided ip.  User is identified by session id.
         If user was logged off succesfully returns true. If error occured returns false.
         '''
-        output = Popen(["ssh", "-i", "/home/private_key",  "-o", "StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null", "root@"+self.ip,"c:\logoff.exe",str(session_id)], stdout=PIPE).communicate()[0]
+        node = NodeUtil(self.ip,settings.IMAGE_SSH_KEY)
+        output = node.ssh_run_command(["c:\logoff.exe",str(session_id)])
         log.debug('$#$#$#  %s'%output)
         if (len(output) == 0):
             log.debug('LOGGED OFF USER')
