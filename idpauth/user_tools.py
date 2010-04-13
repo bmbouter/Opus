@@ -34,6 +34,8 @@ def get_user_apps(request):
     '''
     Returns a list of applications the user has access to.
     '''
+    log.debug("Getting User Apps")
+    log.debug(request.session["roles"])
     if not request.session["roles"]:
         return []
     log.debug("Roles = " + str(request.session["roles"]))
