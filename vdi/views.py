@@ -113,7 +113,7 @@ def scale(request):
                     host.save()
             except HostNotConnectableError:
                 # Ignore this host that doesn't seem to be ssh'able, but log it as an error
-                log.warning('AppNode %s is NOT sshable and should be looked into.  It is currently in the shutdown state')
+                log.warning('AppNode %s is NOT sshable and should be looked into.  It is currently waiting to shutdown')
         ec2_tools.terminate_instances(toTerminate)
 
 
@@ -257,12 +257,12 @@ def connect(request,app_pk=None,conn_type=None):
         node = NodeUtil(host.ip, settings.IMAGE_SSH_KEY)
         if node.ssh_avail():
             #TODO refactor this so it isn't so verbose, and a series of special cases
-            output = node.run_ssh_command(["NET","USER",request.session["username"],password,"/ADD"])
+            output = node.ssh_run_command(["NET","USER",request.session["username"],password,"/ADD"])
             if output.find("The command completed successfully.") > -1:
                 log.debug("User %s has been created" % request.session["username"])
             elif output.find("The account already exists.") > -1:
                 log.debug('User %s already exists, going to try to set the password' % request.session["username"])
-                output = node.run_ssh_command(["NET", "USER",request.session["username"],password])
+                output = node.ssh_run_command(["NET", "USER",request.session["username"],password])
                 if output.find("The command completed successfully.") > -1:
                     log.debug('THE PASSWORD WAS RESET')
                 else:
@@ -275,7 +275,7 @@ def connect(request,app_pk=None,conn_type=None):
                 return HttpResponse(error_string)
          
             # Add the created user to the Administrator group
-            output = node.run_ssh_command(["NET", "localgroup",'"Administrators"',"/add",request.session["username"]])
+            output = node.ssh_run_command(["NET", "localgroup",'"Administrators"',"/add",request.session["username"]])
             log.debug("Added user %s to the 'Administrators' group" % request.session["username"])
         else:
             return HttpResponse('Your server was not reachable')
