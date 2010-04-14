@@ -377,7 +377,7 @@ end sub
 <script language="VBScript">
 <!--
 sub ReturnToConnectPage()
-   Window.Navigate("{{redirect_url}}")
+   Window.Navigate("{% url vdi.views.applicationLibrary %}")
 end sub
 
 sub MsRdpClient_OnConnected()

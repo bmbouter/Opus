@@ -3,7 +3,7 @@
 
 {% block content %}
 <p>The password for your session is:  {{ password }}</p>
-<p><form name="input" action="{{posturl}}" method="post">
+<p><form name="input" action="{% url vdi.views.connect app.pk  %}" method="post">
 {% csrf_token %}
 <input type="hidden" name="password" value={{password}} />
 <input type="hidden" name="ip" value={{ip}} />
