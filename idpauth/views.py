@@ -6,7 +6,6 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
 
-import ldap
 import os
 import urllib
 
@@ -21,6 +20,7 @@ from idpauth import user_tools
 from idpauth.models import IdentityProvider, IdentityProviderLDAP, Role
 from idpauth import openid_tools
 from idpauth import authentication_tools
+from idpauth import ldap_tools
 
 from vdi.log import log
 
@@ -44,46 +44,23 @@ def ldap_login(request):
     password = request.POST['password']
     institution = request.POST['institution']
 
-    # @TODO resolve upper vs. lower case storage of key field like institution
-    identityprovider = IdentityProviderLDAP.objects.filter(institution=str(institution).upper())
+    identityprovider = IdentityProviderLDAP.objects.filter(institution__iexact=str(institution))
     if identityprovider:
         server = identityprovider[0]
     result_set = []
-    timeout = 0
     
+    log.debug(identityprovider)
+
     if identityprovider:
-        try:
-            #TODO: Make this work with ldap servers that aren't ldap.ncsu.edu
-            ldap_session = ldap.initialize(server.url)
-            ldap_session.start_tls_s()
-            ldap_session.protocol_version = ldap.VERSION3
-            # Any errors will throw an ldap.LDAPError exception
-            # or related exception so you can ignore the result
-            ldap_session.set_option(ldap.OPT_X_TLS_DEMAND, True)
-            search_string = "uid=" + username
-            authentication_string = search_string + "," +  server.authentication
-            ldap_session.simple_bind_s(authentication_string, password)
-            result_id = ldap_session.search(server.authentication,ldap.SCOPE_SUBTREE,search_string,["memberNisNetgroup"])
-            while 1:
-                result_type, result_data = ldap_session.result(result_id, timeout)
-                if (result_data == []):
-                    break
-                else:
-                    if result_type == ldap.RES_SEARCH_ENTRY:
-                        result_set.append(result_data)
-            log.debug(result_set)
-            #if you got here then the right password has been entered for the user
-            roles = result_set[0][0][1]['memberNisNetgroup']
-            log.debug(roles)
-            user_tools.login(request, username, roles, institution)
+        roles = ldap_tools.get_ldap_roles(server.url, username, password, server.authentication, server.ssl)
+        user_tools.login(request, username, roles, institution)
+        if roles == None:
+            return HttpResponseRedirect('/idpauth/login/')
+        else:
             log.debug("Redirecting to vdi")
             return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
-        except ldap.LDAPError, e:
-            #TODO: Handle login error
-            log.debug(e)
-            return HttpResponseRedirect('/idpauth/login/')
     else:
-        message = 'There were errors retrieving the identity provider information from the database'
+        message = 'There were errors retrieving the identity provider'
         return render_to_response('ldap.html', 
         {'institution' : institution,
         'message' : message},
@@ -182,7 +159,9 @@ def shibboleth_login(request):
 
 @user_tools.login_required
 def logout(request):
+    institution = request.session['institution']
     user_tools.logout(request)
     
     return render_to_response('logout.html',
+    {'institution' : institution,},
     context_instance=RequestContext(request))

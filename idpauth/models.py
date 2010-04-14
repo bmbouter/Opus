@@ -21,7 +21,7 @@ class IdentityProvider(models.Model):
 class IdentityProviderLDAP(IdentityProvider):
     url = models.CharField("Server Url",max_length=60, unique=True)
     authentication = models.CharField("Authentication Code",max_length=128, unique=True)
-
+    ssl = models.BooleanField("Require SSl Certificate", default=False)
 
     class Meta:
         verbose_name = "LDAP Identity Provider"
