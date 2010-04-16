@@ -32,7 +32,7 @@ class Instance(models.Model):
     shutdownDateTime = models.DateTimeField(auto_now=False, auto_now_add=True, editable=False, blank=True)
 
     class Meta:
-        unique_together = (("application","priority"),)
+        unique_together = (("application","priority","state"),)
 
     def __str__(self):
         return 'Instance(application=%s, instanceId=%s)' % (self.application, self.instanceId)

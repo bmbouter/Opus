@@ -113,7 +113,7 @@ def scale(request):
                     host.save()
             except HostNotConnectableError:
                 # Ignore this host that doesn't seem to be ssh'able, but log it as an error
-                log.warning('AppNode %s is NOT sshable and should be looked into.  It is currently in the shutdown state')
+                log.warning('AppNode %s is NOT sshable and should be looked into.  It is currently waiting to shutdown')
         ec2_tools.terminate_instances(toTerminate)
 
 
@@ -257,12 +257,12 @@ def connect(request,app_pk=None,conn_type=None):
         node = NodeUtil(host.ip, settings.IMAGE_SSH_KEY)
         if node.ssh_avail():
             #TODO refactor this so it isn't so verbose, and a series of special cases
-            output = node.run_ssh_command(["NET","USER",request.session["username"],password,"/ADD"])
+            output = node.ssh_run_command(["NET","USER",request.session["username"],password,"/ADD"])
             if output.find("The command completed successfully.") > -1:
                 log.debug("User %s has been created" % request.session["username"])
             elif output.find("The account already exists.") > -1:
                 log.debug('User %s already exists, going to try to set the password' % request.session["username"])
-                output = node.run_ssh_command(["NET", "USER",request.session["username"],password])
+                output = node.ssh_run_command(["NET", "USER",request.session["username"],password])
                 if output.find("The command completed successfully.") > -1:
                     log.debug('THE PASSWORD WAS RESET')
                 else:
@@ -275,7 +275,7 @@ def connect(request,app_pk=None,conn_type=None):
                 return HttpResponse(error_string)
          
             # Add the created user to the Administrator group
-            output = node.run_ssh_command(["NET", "localgroup",'"Administrators"',"/add",request.session["username"]])
+            output = node.ssh_run_command(["NET", "localgroup",'"Administrators"',"/add",request.session["username"]])
             log.debug("Added user %s to the 'Administrators' group" % request.session["username"])
         else:
             return HttpResponse('Your server was not reachable')
@@ -287,26 +287,27 @@ def connect(request,app_pk=None,conn_type=None):
         sleep(3)
 
         if conn_type == 'rdp':
-            # TODO modify the rdp_connect.html template to dynamically create the URL instead of passing in posturl.  This violates the DRY principle.
-            posturl = '/vdi/%s/connect' % cluster.app.pk
             return render_to_response('connect.html', {'username' : request.session["username"],
                                                         'password' : password,
                                                         'app' : cluster.app,
-                                                        'ip' : host.ip,
-                                                        'posturl' : posturl},
+                                                        'ip' : host.ip},
                                                         context_instance=RequestContext(request))
-        if conn_type == 'nxweb':
+        '''
+        This code is commented out because it really compliments nxproxy.  Originally nxproxy and vdi were developed
+        together but nxproxy has not been touched in a while.  I'm leaving this here for now because it is was hard to
+        write, and it would be easy to refactor (probably into the nxproxy module) if anyone felt the need to do so.
+        NOTE: There is a vestige of this code in the vdi URLconf
+
+        elif conn_type == 'nxweb':
             return _nxweb(host.ip,request.session["username"],password,cluster.app)
         elif conn_type == 'nx':
             # TODO -- This url should not be hard coded
             session_url = 'https://opus-dev.cnl.ncsu.edu:9001/nxproxy/conn_builder?' + urlencode({'dest' : host.ip, 'dest_user' : request.session["username"], 'dest_pass' : password, 'app_path' : cluster.app.path})
             return HttpResponseRedirect(session_url)
+        '''
         elif conn_type == 'rdpweb':
-            # TODO -- This url should not be hard coded
-            tsweb_url = 'https://opus-dev.cnl.ncsu.edu/TSWeb/'
-            redirect_url = 'https://opus-dev.cnl.ncsu.edu:9001/vdi/'
+            tsweb_url = settings.VDI_MEDIA_PREFIX+'TSWeb/'
             return render_to_response('rdpweb.html', {'tsweb_url' : tsweb_url,
-                                                    'redirect_url' : redirect_url,
                                                     'app' : cluster.app,
                                                     'ip' : host.ip,
                                                     'username' : request.session["username"],
@@ -316,20 +317,22 @@ def connect(request,app_pk=None,conn_type=None):
         if conn_type == 'rdp':
             return _create_rdp_conn_file(request.POST["ip"],request.session["username"],request.POST["password"],cluster.app)
 
-def _nxweb(ip, username, password, app):
     '''
+def _nxweb(ip, username, password, app):
+    NOTE:
+    This function probably belongs in nxproxy, but is being left here until someone cares enough about nxproxy to move it there
+
     Returns a response object which contains the embedded nx web companion
     ip is the IP address of the windows server to connect to
     username is the username the connection should use
     app is a vdi.models.Application
-    '''
+
     # TODO -- These urls should not be hard coded
     session_url = 'https://opus-dev.cnl.ncsu.edu:9001/nxproxy/conn_builder?' + urlencode({'dest' : ip, 'dest_user' : username, 'dest_pass' : password, 'app_path' : app.path, 'nodownload' : 1})
-    redirect_url = 'https://opus-dev.cnl.ncsu.edu:9001/vdi/'
-    wc_url = 'https://opus-dev.cnl.ncsu.edu/plugin/'
+    wc_url = settings.VDI_MEDIA_PREFIX+'nx-plugin/'
     return render_to_response('nxapplet.html', {'wc_url' : wc_url,
-                                                'redirect_url' : redirect_url,
                                                 'session_url' : session_url})
+    '''
 
 def _create_rdp_conn_file(ip, username, password, app):
     '''

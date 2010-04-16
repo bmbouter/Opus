@@ -43,8 +43,8 @@ def conn_builder(request,app_pk=None):
     # SSH to the node, create a user, and set the password with the one-time password above
     ssh_node = NodeUtil(node.ip, settings.NX_NODE_PRIVATE_KEY, settings.NX_NODE_USER)
     try:
-        output = ssh_node.run_ssh_command(["useradd", username])
-        output = ssh_node.run_ssh_command(["passwd", "--stdin", username, "<<<", nx_password])
+        output = ssh_node.ssh_run_command(["useradd", username])
+        output = ssh_node.ssh_run_command(["passwd", "--stdin", username, "<<<", nx_password])
     except HostNotConnectableError:
         # TODO: recoded how the exception is handled to be useful
         return HttpResponse('UNABLE TO SSH TO NXNODE')
@@ -125,7 +125,7 @@ def _get_sessions():
     for node in nodes:
         ssh_node = NodeUtil(node.ip,settings.NX_NODE_PRIVATE_KEY,settings.NX_NODE_USER)
         try:
-            output = ssh_node.run_ssh_command(["nxserver", "--list"])
+            output = ssh_node.ssh_run_command(["nxserver", "--list"])
         except HostNotConnectableError:
             # TODO: recoded how the exception is handled to be useful
             return HttpResponse('Error: Could not connect to NXNode')
