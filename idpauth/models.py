@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, IntegrityError
 from django.db.models import signals
 from vdi.models import Application
 
@@ -8,7 +8,7 @@ class IdentityProvider(models.Model):
     '''
     Identity provider base class.
     '''
-    institution = models.CharField(max_length=60, primary_key=True, unique=True)
+    institution = models.CharField(max_length=60, primary_key=True)
     name = models.CharField(max_length=60, unique=True)
     type = models.CharField(max_length=64, editable=False, blank=True)
 
@@ -79,6 +79,9 @@ class Association(models.Model):
 ######## Signal Handler Functions ############
 def set_identityprovider_type(sender, instance, **kwargs):
     idp_type = sender.__name__.split('IdentityProvider')[1].lower()
+    
+    instance.institution = instance.institution.lower()
+
     if idp_type == 'openid':
         instance.type = 'openid'
     elif idp_type == 'local':

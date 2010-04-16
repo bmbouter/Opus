@@ -292,19 +292,19 @@ def connect(request,app_pk=None,conn_type=None):
                                                         'app' : cluster.app,
                                                         'ip' : host.ip},
                                                         context_instance=RequestContext(request))
-        '''
-        This code is commented out because it really compliments nxproxy.  Originally nxproxy and vdi were developed
-        together but nxproxy has not been touched in a while.  I'm leaving this here for now because it is was hard to
-        write, and it would be easy to refactor (probably into the nxproxy module) if anyone felt the need to do so.
-        NOTE: There is a vestige of this code in the vdi URLconf
+            '''
+            This code is commented out because it really compliments nxproxy.  Originally nxproxy and vdi were developed
+            together but nxproxy has not been touched in a while.  I'm leaving this here for now because it is was hard to
+            write, and it would be easy to refactor (probably into the nxproxy module) if anyone felt the need to do so.
+            NOTE: There is a vestige of this code in the vdi URLconf
 
-        elif conn_type == 'nxweb':
-            return _nxweb(host.ip,request.session["username"],password,cluster.app)
-        elif conn_type == 'nx':
-            # TODO -- This url should not be hard coded
-            session_url = 'https://opus-dev.cnl.ncsu.edu:9001/nxproxy/conn_builder?' + urlencode({'dest' : host.ip, 'dest_user' : request.session["username"], 'dest_pass' : password, 'app_path' : cluster.app.path})
-            return HttpResponseRedirect(session_url)
-        '''
+            elif conn_type == 'nxweb':
+                return _nxweb(host.ip,request.session["username"],password,cluster.app)
+            elif conn_type == 'nx':
+                # TODO -- This url should not be hard coded
+                session_url = 'https://opus-dev.cnl.ncsu.edu:9001/nxproxy/conn_builder?' + urlencode({'dest' : host.ip, 'dest_user' : request.session["username"], 'dest_pass' : password, 'app_path' : cluster.app.path})
+                return HttpResponseRedirect(session_url)
+            '''
         elif conn_type == 'rdpweb':
             tsweb_url = settings.VDI_MEDIA_PREFIX+'TSWeb/'
             return render_to_response('rdpweb.html', {'tsweb_url' : tsweb_url,

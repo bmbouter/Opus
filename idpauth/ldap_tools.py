@@ -37,4 +37,7 @@ def get_ldap_roles(url, username, password, authentication_identifier, ssl_optio
     except ldap.LDAPError, e:
         log.debug("LDAP Error: " + str(e))
         return None
+    finally:
+        log.debug("Unbinding")
+        ldap_session.unbind()
 
