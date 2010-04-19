@@ -1,4 +1,5 @@
 import logging # python standard library rocks!
+import inspect
 import sys
 import os
 
@@ -64,19 +65,38 @@ class MyFormatter(logging.Formatter):
 
         return logging.Formatter.format(self, record)
 
-try:
-    settings.LOG_FILE
-except NameError:
-    settings.LOG_FILE = sys.stdout
-if isinstance(settings.LOG_FILE, basestring):
-    stream = open(settings.LOG_FILE, "a")
-else:
-    stream = settings.LOG_FILE
-sh = logging.StreamHandler(stream)
-formatter = MyFormatter()
-sh.setFormatter(formatter)
-log = logging.getLogger()
-log.addHandler(sh)
-log.setLevel(logging.DEBUG)
+def init_logging(log_to_stdout=True):
 
-logging.getLogger('boto').setLevel(logging.WARNING)
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.DEBUG)
+    stream = open(settings.LOG_DIR+"master.log", "a")
+    handler = logging.StreamHandler(stream)
+    formatter = MyFormatter()
+    handler.setFormatter(formatter)
+    root_logger.addHandler(handler)
+
+    if log_to_stdout:
+        stdout_handler = logging.StreamHandler(sys.stdout)
+        stdout_handler.setFormatter(formatter)
+        root_logger.addHandler(stdout_handler)
+
+    logging.getLogger('boto').setLevel(logging.WARNING)
+
+def getLogger():
+
+    # Get the app name that is logging
+    stack = inspect.stack()
+    try:
+        app_name = stack[1][0].f_globals["__package__"].split(".")[-1]
+    finally:
+        del stack
+
+    log = logging.getLogger(app_name)
+    if not log.handlers:
+        stream = open(settings.LOG_DIR+app_name+".log", "a")
+        handler = logging.StreamHandler(stream)
+        formatter = MyFormatter()
+        handler.setFormatter(formatter)
+        log.addHandler(handler)
+
+    return log

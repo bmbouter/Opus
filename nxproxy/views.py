@@ -4,7 +4,8 @@ from django.conf import settings
 
 from nxproxy.models import NXNode
 from idpauth import user_tools
-from vdi.log import log
+import core
+log = core.log.getLogger()
 from core.ssh_tools import HostNotConnectableError , NodeUtil
 
 from subprocess import Popen, PIPE

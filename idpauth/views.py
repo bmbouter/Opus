@@ -22,7 +22,8 @@ from idpauth import openid_tools
 from idpauth import authentication_tools
 from idpauth import ldap_tools
 
-from vdi.log import log
+import core
+log = core.log.getLogger()
 
 def login(request, message=None):
     institution = authentication_tools.get_institution(request)

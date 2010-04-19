@@ -10,7 +10,8 @@ import xml.dom.minidom
 import xml.etree.ElementTree as ET
 import exceptions
 import string
-from vdi.log import log
+import core
+log = core.log.getLogger()
 import dataview_settings as dvsettings 
 # Create your views here.
 

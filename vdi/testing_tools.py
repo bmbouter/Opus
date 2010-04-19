@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from vdi.models import Instance, Application
-from vdi.log import log
+import core
+log = core.log.getLogger()
 from datetime import datetime
 from cost_tools import convertToDateTime
 from app_cluster_tools import AppCluster
