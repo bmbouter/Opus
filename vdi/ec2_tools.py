@@ -1,5 +1,6 @@
 from vdi.models import Instance
-from vdi.log import log
+import core
+log = core.log.getLogger()
 from django.conf import settings
 from django.db.models.query import QuerySet
 from idpauth import user_tools

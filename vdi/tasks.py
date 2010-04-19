@@ -2,7 +2,8 @@ from celery.task import PeriodicTask, Task
 from celery.registry import tasks
 from celery.decorators import task
 from datetime import timedelta
-from vdi.log import log
+import core
+log = core.log.getLogger()
 from django.http import HttpResponse, HttpResponseRedirect
 
 '''
@@ -30,4 +31,3 @@ class MyTask(Task):
 
 tasks.register(CreateUserTask)
 #tasks.register(MyTask)
-log.debug('AAAAAAAAASDFSDFASFDASFDASFDSA')

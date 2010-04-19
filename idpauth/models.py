@@ -2,7 +2,8 @@ from django.db import models, IntegrityError
 from django.db.models import signals
 from vdi.models import Application
 
-from vdi.log import log
+import core
+log = core.log.getLogger()
 
 class IdentityProvider(models.Model):
     '''

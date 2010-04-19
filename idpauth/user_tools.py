@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from idpauth.models import Role, IdentityProvider
-from vdi.log import log
+import core
+log = core.log.getLogger()
 
 def login(request, username, roles, institution):
     request.session["logged_in"] = True

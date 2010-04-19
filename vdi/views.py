@@ -29,7 +29,8 @@ from vdi.forms import InstanceForm
 from idpauth import user_tools
 from vdi import ec2_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
-from vdi.log import log
+import core
+log = core.log.getLogger()
 from vdi.tasks import CreateUserTask
 #from vdi.tasks import MyTask
 from celery.decorators import task

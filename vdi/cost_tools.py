@@ -2,7 +2,8 @@ import math
 from datetime import datetime
 import datetime
 
-from vdi.log import log
+import core
+log = core.log.getLogger()
 from vdi.app_cluster_tools import AppCluster, AppNode
 from vdi.models import Instance
 

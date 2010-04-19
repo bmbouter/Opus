@@ -2,7 +2,8 @@ from django import forms
 from vdi.models import Instance
 from django.contrib.admin import widgets
 from datetime import datetime, timedelta
-from vdi.log import log
+import core
+log = core.log.getLogger()
 from django.conf import settings
 
 class InstanceForm(forms.ModelForm):

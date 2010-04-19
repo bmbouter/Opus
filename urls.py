@@ -1,6 +1,5 @@
 from django.conf.urls.defaults import *
 
-import vdi.views
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -14,7 +13,6 @@ urlpatterns = patterns('',
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/jsi18n', 'django.views.i18n.javascript_catalog'),
-    (r'^ATEST/$', vdi.views.atest),
     (r'^admin/', include(admin.site.urls)),
     (r'^idpauth/', include('idpauth.urls')),
     (r'^vdi/', include('vdi.urls')),

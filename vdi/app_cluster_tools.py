@@ -1,5 +1,6 @@
 from vdi.models import Application, Instance
-from vdi.log import log
+import core
+log = core.log.getLogger()
 from vdi import ec2_tools
 from core.ssh_tools import HostNotConnectableError , NodeUtil
 

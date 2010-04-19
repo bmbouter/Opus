@@ -17,7 +17,8 @@ import re
 from urllib2 import Request, urlopen, URLError
 from urlparse import urlsplit
 from datetime import datetime, timedelta
-from vdi.log import log
+import core
+log = core.log.getLogger()
 import dataview_settings as dvsettings 
 
 DEVSTORE_BLOB_HOST = dvsettings.DEVSTORE_BLOB_HOST
