@@ -20,4 +20,7 @@ urlpatterns = patterns('',
     (r'^vdi/', include('vdi.urls')),
     (r'^nxproxy/', include('nxproxy.urls')),
     (r'^dataview/', include('dataview.urls')),
+    (r'^lunch/order$', 'lunch.views.orderForm'),
+    (r'^lunch/thanks$', 'lunch.views.thanks'),
+    (r'^lunch/viewOrder$', 'lunch.views.viewOrder'),
 )
