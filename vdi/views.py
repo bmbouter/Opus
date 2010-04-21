@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 
 from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError
@@ -36,7 +37,7 @@ from vdi.tasks import CreateUserTask
 from celery.decorators import task
 import cost_tools
 
-@user_tools.login_required
+@login_required
 def applicationLibrary(request):
     db_apps = user_tools.get_user_apps(request)
     #TODO: Get permissions and only display those images
@@ -218,7 +219,7 @@ def rrdTest(request):
 
     return HttpResponse('Timer done running. Check database.')
 
-@user_tools.login_required
+@login_required
 def connect(request,app_pk=None,conn_type=None):
     cluster = AppCluster(app_pk)
 
