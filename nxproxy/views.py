@@ -56,7 +56,7 @@ def conn_builder(request,app_pk=None):
     else:
         app_path = ''
 
-    resp = render_to_response('nx_single_session.html', {'nx_ip' : node.ip,
+    resp = render_to_response('nxproxy/nx_single_session.html', {'nx_ip' : node.ip,
                         'nx_username' : username,
                         'nx_password' : encryptNXPass(nx_password),
                         'conn_type' : 'windows',
@@ -135,5 +135,5 @@ def _get_sessions():
                 break;
             all_sessions.append(NXSession(line))
     
-    return render_to_response('nx_list_sessions.html',
+    return render_to_response('nxproxy/nx_list_sessions.html',
         {'sessions': all_sessions})

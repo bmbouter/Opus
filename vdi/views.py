@@ -4,7 +4,7 @@ from django.template import RequestContext
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError
@@ -27,7 +27,7 @@ import rrdtool, time
 
 from vdi.models import Application, Instance
 from vdi.forms import InstanceForm
-from idpauth import user_tools
+from idpauth.user_tools import get_user_apps
 from vdi import ec2_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 import core
@@ -38,10 +38,12 @@ from celery.decorators import task
 import cost_tools
 
 @login_required
+@permission_required('vdi.view_applications')
 def applicationLibrary(request):
-    db_apps = user_tools.get_user_apps(request)
+    #db_apps = get_user_apps(request)
+    db_apps = Application.objects.all()
     #TODO: Get permissions and only display those images
-    return render_to_response('application-library.html',
+    return render_to_response('vdi/application-library.html',
         {'app_library': db_apps},
         context_instance=RequestContext(request))
 
@@ -191,7 +193,7 @@ def stats(request,app_pk):
             'LINE1:mph#FF0000:Available slots in cluster' 
     )
 
-    return render_to_response('stats.html',
+    return render_to_response('vdi/stats.html',
         {'graphs': gfrelativepaths},
         context_instance=RequestContext(request))
 
@@ -241,7 +243,7 @@ def connect(request,app_pk=None,conn_type=None):
             # Only boot a new node if there are none currently booting up
             if len(cluster.booting) == 0:
                 cluster.start_node()
-            return render_to_response('app_not_ready.html',
+            return render_to_response('vdi/app_not_ready.html',
                 {'app': cluster.app,
                 'reload_s': settings.USER_WAITING_PAGE_RELOAD_TIME,
                 'reload_ms': settings.USER_WAITING_PAGE_RELOAD_TIME * 1000})
@@ -289,7 +291,7 @@ def connect(request,app_pk=None,conn_type=None):
         sleep(3)
 
         if conn_type == 'rdp':
-            return render_to_response('connect.html', {'username' : request.session["username"],
+            return render_to_response('vdi/connect.html', {'username' : request.session["username"],
                                                         'password' : password,
                                                         'app' : cluster.app,
                                                         'ip' : host.ip},
@@ -309,7 +311,7 @@ def connect(request,app_pk=None,conn_type=None):
             '''
         elif conn_type == 'rdpweb':
             tsweb_url = settings.VDI_MEDIA_PREFIX+'TSWeb/'
-            return render_to_response('rdpweb.html', {'tsweb_url' : tsweb_url,
+            return render_to_response('vdi/rdpweb.html', {'tsweb_url' : tsweb_url,
                                                     'app' : cluster.app,
                                                     'ip' : host.ip,
                                                     'username' : request.session["username"],
@@ -332,7 +334,7 @@ def _nxweb(ip, username, password, app):
     # TODO -- These urls should not be hard coded
     session_url = 'https://opus-dev.cnl.ncsu.edu:9001/nxproxy/conn_builder?' + urlencode({'dest' : ip, 'dest_user' : username, 'dest_pass' : password, 'app_path' : app.path, 'nodownload' : 1})
     wc_url = settings.VDI_MEDIA_PREFIX+'nx-plugin/'
-    return render_to_response('nxapplet.html', {'wc_url' : wc_url,
+    return render_to_response('vdi/nxapplet.html', {'wc_url' : wc_url,
                                                 'session_url' : session_url})
     '''
 

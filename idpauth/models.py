@@ -1,5 +1,7 @@
 from django.db import models, IntegrityError
 from django.db.models import signals
+from django.contrib.auth.models import Group
+
 from vdi.models import Application
 
 import core
@@ -12,6 +14,7 @@ class IdentityProvider(models.Model):
     institution = models.CharField(max_length=60, primary_key=True)
     name = models.CharField(max_length=60, unique=True)
     type = models.CharField(max_length=64, editable=False, blank=True)
+    roles = models.ManyToManyField(Group)
 
     class Meta:
         unique_together = ("type", "institution")
@@ -57,6 +60,7 @@ class Role(models.Model):
     def __str__(self):
         return self.name
 
+####### OpenID Required Models ##############
 class Nonce(models.Model):
     server_url = models.URLField()
     timestamp  = models.IntegerField()

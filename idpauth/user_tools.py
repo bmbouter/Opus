@@ -58,15 +58,15 @@ def get_user_apps(request):
         apps += role.applications.all()
     return apps
 
-def login_required(func):
-    '''
-    A decorator that redirects to the login page if the user isn't logged in.
-    Meant to be used on a django view function, hence the first argument being
-    "request".
-    '''
-    def check_func(request, *args, **kwargs):
-        if is_logged_in(request):
-            return func(request, *args, **kwargs)
-        else:
-            return HttpResponseRedirect("/idpauth/login/")
-    return check_func
+#def login_required(func):
+#    '''
+#    A decorator that redirects to the login page if the user isn't logged in.
+#    Meant to be used on a django view function, hence the first argument being
+#    "request".
+#    '''
+#    def check_func(request, *args, **kwargs):
+#        if is_logged_in(request):
+#        return func(request, *args, **kwargs)
+#        else:
+#            return HttpResponseRedirect("/idpauth/login/")
+#    return check_func

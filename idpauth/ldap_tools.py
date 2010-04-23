@@ -1,6 +1,6 @@
 import ldap
-import core
-log = core.log.getLogger()
+from core import log
+log = log.getLogger()
 
 
 def get_ldap_roles(url, username, password, authentication_identifier, ssl_option):
