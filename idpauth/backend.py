@@ -29,9 +29,11 @@ class IdpAuthBackend:
                     return None
     
     def get_group_permissions(self, user_obj):
-        institution = user_obj.username.split('++')[0]
-        log.debug(institution)
-        idp = IdentityProvider.objects.filter(institution=institution)
+        institution = user_obj.username.split('++')
+        if len(institution) == 1:
+            idp = 'local'
+        else:
+            idp = IdentityProvider.objects.filter(institution=institution[0])
         log.debug(idp)
         perms = Permission.objects.filter(group__identityprovider=idp
             ).values_list('content_type__app_label', 'codename').order_by()
