@@ -1,9 +1,9 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
 from nxproxy.models import NXNode
-from idpauth import user_tools
 import core
 log = core.log.getLogger()
 from core.ssh_tools import HostNotConnectableError , NodeUtil
@@ -21,7 +21,7 @@ class NXSession(object):
         self.session_id = terms[3]
         self.node = terms[4]
 
-@user_tools.login_required
+@login_required
 def sessions(request):
     if request.method == 'GET':
         return HttpResponse(_get_sessions())

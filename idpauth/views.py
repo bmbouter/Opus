@@ -4,7 +4,8 @@ from django.template import RequestContext
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 import os
 import urllib
@@ -16,16 +17,16 @@ from openid.consumer.discover import DiscoveryFailure
 from openid.extensions import ax
 from openid.extensions import pape
 
-from idpauth import user_tools
 from idpauth.models import IdentityProvider, IdentityProviderLDAP, Role
+from idpauth import user_tools
 from idpauth import openid_tools
 from idpauth import authentication_tools
 from idpauth import ldap_tools
 
-import core
-log = core.log.getLogger()
+from core import log
+log = log.getLogger()
 
-def login(request, message=None):
+def determine_login(request, message=None):
     institution = authentication_tools.get_institution(request)
     institutional_IdP = IdentityProvider.objects.filter(institution__iexact=str(institution))
 
@@ -50,16 +51,23 @@ def ldap_login(request):
         server = identityprovider[0]
     result_set = []
     
-    log.debug(identityprovider)
-
     if identityprovider:
         roles = ldap_tools.get_ldap_roles(server.url, username, password, server.authentication, server.ssl)
-        user_tools.login(request, username, roles, institution)
-        if roles == None:
-            return HttpResponseRedirect('/idpauth/login/')
+        
+        username = institution + "." + username
+        user = authenticate(username=username)
+        if user is not None:
+            if roles == None:
+                return HttpResponseRedirect('/idpauth/login/')
+            else:
+                log.debug("Logging user in")
+                login(request, user)
+                user_tools.login(request, username, roles, institution)
+                log.debug("Redirecting to " + settings.RESOURCE_REDIRECT_URL)
+                return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
         else:
-            log.debug("Redirecting to vdi")
-            return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
+            log.debug("No user found")
+            return HttpResponseRedirect('/idpauth/login/')   
     else:
         message = 'There were errors retrieving the identity provider'
         return render_to_response('ldap.html', 
@@ -118,8 +126,23 @@ def openid_login_complete(request):
         openid = openid_tools.from_openid_response(openid_response)
         username = openid.ax.getExtensionArgs()['value.ext0.1']
         roles = authentication_tools.get_provider(request.GET['openid.op_endpoint'])
-        user_tools.login(request, username, roles, institution)
-        return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
+        
+        username = institution + "." + username
+        user = authenticate(username=username)
+        if user is not None:
+            if user.is_active:
+                log.debug("Logging user in")
+                login(request, user)
+                user_tools.login(request, username, roles, institution)
+                log.debug("Redirecting to " + settings.RESOURCE_REDIRECT_URL)
+                return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
+            else:
+                log.debug("User is no longer active")
+                return HttpResponseRedirect('/idpauth/login/')   
+        else:
+            log.debug("No user found")
+            return HttpResponseRedirect('/idpauth/login/')   
+        
     elif openid_response.status == CANCEL:
         message = "OpenID login failed due to a cancelled request.  This can be due to failure to release email address which is required by the service."
         return render_to_response('openid.html',
@@ -132,23 +155,28 @@ def openid_login_complete(request):
         context_instance=RequestContext(request))
     
 def local_login(request):
-
     username = request.POST['username']
     password = request.POST['password']
     institution = request.POST['institution']
     user = authenticate(username=username, password=password)
 
     roles = 'local'
-
+        
     if user is not None:
         if user.is_active:
+            log.debug("Logging user in")
+            login(request, user)
             user_tools.login(request, username, roles, institution)
-        return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
+            log.debug("Redirecting to " + settings.RESOURCE_REDIRECT_URL)
+            return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
+        else:
+            log.debug("User is no longer active")
+            return HttpResponseRedirect('/idpauth/login/')   
     else:
-        return HttpResponseRedirect('/idpauth/login/')
+        log.debug("No user found")
+        return HttpResponseRedirect('/idpauth/login/')   
 
 def shibboleth_login(request):
-
     try:
         username = request.META['REMOTE_USER']
         user_tools.login(request, username, "T", "null")
@@ -158,9 +186,10 @@ def shibboleth_login(request):
         log.debug(e)
         return HttpResponse("Remote user not set.")
 
-@user_tools.login_required
-def logout(request):
+@login_required
+def logout_view(request):
     institution = request.session['institution']
+    logout(request)
     user_tools.logout(request)
     
     return render_to_response('logout.html',

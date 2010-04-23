@@ -90,6 +90,10 @@ INSTALLED_APPS = (
     'idpauth',
 )
 
+AUTHENTICATION_BACKENDS = (
+    'idpauth.backend.IdpAuthBackend',
+)
+
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 TEMPLATE_CONTEXT_PROCESSORS += (
     'vdi.context_preprocessor',
@@ -116,3 +120,4 @@ VDI_MEDIA_PREFIX = '/vdi-media/'
 OPENID_AX = [{"type_uri" : "http://axschema.org/contact/email", "count" : 1, "required" : True, "alias" : "email"}]
 RESOURCE_REDIRECT_URL = '/vdi/'
 BASE_URL = 'opus-dev.cnl.ncsu.edu'
+LOGIN_URL = '/idpauth/login/'
