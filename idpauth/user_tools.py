@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from idpauth.models import Role, IdentityProvider
+from idpauth.models import IdentityProvider
 import core
 log = core.log.getLogger()
 

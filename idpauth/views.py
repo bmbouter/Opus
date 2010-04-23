@@ -17,7 +17,7 @@ from openid.consumer.discover import DiscoveryFailure
 from openid.extensions import ax
 from openid.extensions import pape
 
-from idpauth.models import IdentityProvider, IdentityProviderLDAP, Role
+from idpauth.models import IdentityProvider, IdentityProviderLDAP
 from idpauth import user_tools
 from idpauth import openid_tools
 from idpauth import authentication_tools

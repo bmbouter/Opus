@@ -14,7 +14,7 @@ class IdentityProvider(models.Model):
     institution = models.CharField(max_length=60, primary_key=True)
     name = models.CharField(max_length=60, unique=True)
     type = models.CharField(max_length=64, editable=False, blank=True)
-    roles = models.ManyToManyField(Group)
+    groups = models.ManyToManyField(Group, blank=True)
 
     class Meta:
         unique_together = ("type", "institution")
@@ -45,20 +45,6 @@ class IdentityProviderShibboleth(IdentityProvider):
     class Meta:
         verbose_name = "Shibboleth Identity Provider"
 
-class Role(models.Model):
-    '''
-    Maps an ldap server and role to a number of image which it has access to.
-    '''
-    name = models.CharField(max_length=60, unique=True)
-    idp = models.ForeignKey(IdentityProvider)
-    permissions = models.CharField(max_length=128, blank=True)
-    applications = models.ManyToManyField(Application)
-
-    class Meta:
-        unique_together = (("idp", "permissions"),)
-    
-    def __str__(self):
-        return self.name
 
 ####### OpenID Required Models ##############
 class Nonce(models.Model):
