@@ -90,7 +90,6 @@ def init_logging(log_to_stdout=True):
     """
 
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
     stream = open(settings.LOG_DIR+"master.log", "a")
     handler = logging.StreamHandler(stream)
     formatter = MyFormatter()
@@ -102,6 +101,25 @@ def init_logging(log_to_stdout=True):
         stdout_handler.setFormatter(formatter)
         root_logger.addHandler(stdout_handler)
 
+    # Set logging level
+    if settings.LOG_LEVEL.upper() == "DEBUG":
+        log_level = logging.DEBUG
+    elif settings.LOG_LEVEL.upper() == "INFO":
+        log_level = logging.INFO
+    elif settings.LOG_LEVEL.upper() == "WARNING":
+        log_level = logging.WARNING
+    elif settings.LOG_LEVEL.upper() == "ERROR":
+        log_level = logging.ERROR
+    elif settings.LOG_LEVEL.upper() == "CRITICAL":
+        log_level = logging.CRITICAL
+    else:
+        root_logger.error('LOG_LEVEL should be one of: DEBUG, INFO, WARNING, ERROR or CRITICAL.  Instead it is "%s"' % settings.LOG_LEVEL)
+        root_logger.error('Setting LOG_LEVEL to DEBUG')
+        log_level = logging.DEBUG
+        # TODO: What should be done now?
+    root_logger.setLevel(log_level)
+
+    # Ignore messages from boto that we don't care about
     logging.getLogger('boto').setLevel(logging.WARNING)
 
 def getLogger():
