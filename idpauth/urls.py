@@ -1,6 +1,5 @@
 from django.conf.urls.defaults import *
 
-
 urlpatterns = patterns('idpauth.views',
     (r'^login/$', 'determine_login'),
     (r'^openid_login/$', 'openid_login'),

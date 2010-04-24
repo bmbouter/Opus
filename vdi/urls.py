@@ -1,6 +1,5 @@
 from django.conf.urls.defaults import *
 
-
 urlpatterns = patterns('vdi',
     (r'^$', 'views.applicationLibrary'),
     (r'^(?P<app_pk>(\d)+)/connect$', 'views.connect'),

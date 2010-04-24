@@ -1,21 +1,22 @@
 {% extends "base.html" %}
-{% block title %}Loading{{app.name}}{% endblock title %}
+{% block title %}Loading {{app.name}}{% endblock title %}
 
 {% block head %}
 
-<script type="text/JavaScript">
-<!--
-function timedRefresh(timeoutPeriod) {
-        setTimeout("location.reload(true);",timeoutPeriod);
-}
-//   -->
-</script>
+    <script type="text/JavaScript">
+    <!--
+    function timedRefresh(timeoutPeriod) {
+            setTimeout("location.reload(true);",timeoutPeriod);
+    }
+    //   -->
+    </script>
 
 {% endblock head %}
 
 {% block body_tag %}<body onload="JavaScript:timedRefresh({{reload_ms}});">{% endblock body_tag %}
 
 {% block content %}
+
     {% if app %}
         Give us a minute to get {{app.name}} ready for you.  This page will reload automatically after {{reload_s}} seconds.
     {% else %}

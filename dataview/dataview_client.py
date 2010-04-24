@@ -8,15 +8,18 @@ import time
 from datetime import datetime, timedelta
 
 class RequestWithMethod(Request):
-    '''Subclass urllib2.Request to add the capability of using methods other than GET and POST.
-Thanks to http://benjamin.smedbergs.us/blog/2008-10-21/putting-and-deleteing-in-python-urllib2/'''
+    """Subclass urllib2.Request that adds methods other than GET and POST.
+
+    Thanks to http://benjamin.smedbergs.us/blog/2008-10-21/putting-and-deleteing-in-python-urllib2/
+
+    """
     def __init__(self, method, *args, **kwargs):
         self._method = method
         Request.__init__(self, *args, **kwargs)
- 
+
     def get_method(self):
         return self._method
- 
+
 class BadPropertyException(exceptions.Exception):
     def __init__(self):
         return
@@ -24,24 +27,27 @@ class BadPropertyException(exceptions.Exception):
     def __str__(self):
         print "","Property definition exception occured."
 
-class TableEntity(object): pass
+class TableEntity(object):
+    """This is filled in baised on the table's data."""
+    pass
 
 def parse_edm_datetime(input):
     d = datetime.strptime(input[:input.find('.')], "%Y-%m-%dT%H:%M:%S")
     if input.find('.') != -1:
         d += timedelta(0, 0, int(round(float(input[input.index('.'):-1])*1000000)))
     return d
- 
+
 def parse_edm_int32(input):
     return int(input)
- 
+
 def parse_edm_double(input):
     return float(input)
- 
+
 def parse_edm_boolean(input):
     return input.lower() == "true"
 
 class DVClient():
+    """Represents a client for dataview."""
 
     def __init__(self,opus_uri,username):
         self.username = username
@@ -72,7 +78,7 @@ class DVClient():
                 raise BadPropertyException
 
         return unicode('<?xml version="1.0" encoding="utf-8" standalone="yes"?>')+ET.tostring(root)
-    
+
     def create_table(self, table_name):
         req = RequestWithMethod("POST", "%s/dataview/create/%s/" % (self.opus_uri, table_name))
         req.add_header("Content-Length", "0")
@@ -98,7 +104,7 @@ class DVClient():
             else: value = property.firstChild is not None and property.firstChild.data or None
             setattr(entity, key, value)
         return entity
-    
+
     def get_all_from_table(self, table_name):
         req = RequestWithMethod("GET", "%s/dataview/%s/" % (self.opus_uri, table_name))
         req.add_header("Content-Length", "0")
@@ -113,7 +119,6 @@ class DVClient():
             return entities
         except URLError, e:
             return e
-
 
     def insert(self, table_name, props):
         data = self.create_entry_xml(props)

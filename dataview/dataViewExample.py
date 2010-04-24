@@ -1,5 +1,3 @@
-import dataview_client as dvclient
-
 '''
 Properties are a dictionary where keys are property names and values can be either strings
 or tuples in the form of ("type","value") where type is one of the Azure supported types:
@@ -15,6 +13,8 @@ Edm.String     UTF-16-encoded value. String values may be up to 64 KB in size.
 
 Every entry must contain PartitionKey and RowKey. Both have to be strings.
 '''
+import dataview_client as dvclient
+
 props = {"Double":("Edm.Double","33.33"),"Address": "Cary","PartitionKey":"p","RowKey":"4"}
 client = dvclient.DVClient("https://opus-dev.cnl.ncsu.edu:9001","dennis")
 test_table = "TestTable2"

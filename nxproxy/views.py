@@ -29,10 +29,12 @@ def sessions(request):
         return HttpResponse('POST')
 
 def conn_builder(request,app_pk=None):
-    '''
+    """
+
     Returns a response object containing an nx session.
     This function selects a node from the cluster.
-    '''
+
+    """
     # TODO stop hardcoding the node selected
     node = NXNode.objects.all()[0]
 
@@ -75,9 +77,7 @@ def conn_builder(request,app_pk=None):
     return resp
 
 def encryptNXPass(s):
-    '''
-    Encrypt a password like No Machine does
-    '''
+    """Encrypt a password like No Machine does."""
     dummyString = '{{{{'
     validCharList = '!#$%&()*+-.0123456789:;<>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_abcdefghijklmnopqrstuvwxyz{|}'
     if not s:
@@ -107,9 +107,7 @@ def encryptNXPass(s):
     return sRet
 
 def encodePassword(password):
-    '''
-    Encode a password like No Machine does
-    '''
+    """Encode a password like No Machine does."""
     if not password:
         return password
     sPass = [':']
@@ -130,10 +128,10 @@ def _get_sessions():
         except HostNotConnectableError:
             # TODO: recoded how the exception is handled to be useful
             return HttpResponse('Error: Could not connect to NXNode')
-        for line in output.split('\n')[4:]:            
+        for line in output.split('\n')[4:]:
             if not line:
                 break;
             all_sessions.append(NXSession(line))
-    
+
     return render_to_response('nxproxy/nx_list_sessions.html',
         {'sessions': all_sessions})

@@ -8,9 +8,7 @@ import core
 log = core.log.getLogger()
 
 class IdentityProvider(models.Model):
-    '''
-    Identity provider base class.
-    '''
+    """Identity provider base class."""
     institution = models.CharField(max_length=60, primary_key=True)
     name = models.CharField(max_length=60, unique=True)
     type = models.CharField(max_length=64, editable=False, blank=True)

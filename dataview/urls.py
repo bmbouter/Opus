@@ -1,4 +1,3 @@
-#import dataview.views
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('dataview.views',

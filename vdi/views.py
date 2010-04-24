@@ -6,9 +6,6 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 
-from boto.ec2.connection import EC2Connection
-from boto.exception import EC2ResponseError
-
 from core.ssh_tools import HostNotConnectableError , NodeUtil
 
 from subprocess import Popen, PIPE
@@ -135,7 +132,7 @@ def scale(request):
                 host.save()
                 log.debug('Application Server %s has no sessions.  Removing that node from the cluster!' % host.ip)
 
-        #Get statistics for all instances that are running 
+        #Get statistics for all instances that are running
         '''
         stats = cluster.get_stats()
         if os.path.isfile(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd"):
@@ -174,7 +171,7 @@ def stats(request,app_pk):
             '--lower-limit' , '0' ,
             'DEF:myspeed=%s:users:AVERAGE' % fname ,
             'CDEF:mph=myspeed,1,*' ,
-            'LINE1:mph#FF0000:Number of users' 
+            'LINE1:mph#FF0000:Number of users'
     )
 
 
@@ -190,21 +187,21 @@ def stats(request,app_pk):
             '--lower-limit' , '0' ,
             'DEF:myspeed=%s:headroom:AVERAGE' % fname ,
             'CDEF:mph=myspeed,1,*' ,
-            'LINE1:mph#FF0000:Available slots in cluster' 
+            'LINE1:mph#FF0000:Available slots in cluster'
     )
 
     return render_to_response('vdi/stats.html',
         {'graphs': gfrelativepaths},
         context_instance=RequestContext(request))
 
-    
+
 
 
 
 def rrdTest(request):
     for app in Application.objects.all():
         cluster = AppCluster(app.pk)
-        #Get statistics for all instances that are running 
+        #Get statistics for all instances that are running
         if os.path.isfile(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd"):
             log.debug("file exists")
             rrdtool.update(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd" , '%d:%d' % (int(time.time()), cluster.get_stats()))
@@ -277,13 +274,13 @@ def connect(request,app_pk=None,conn_type=None):
                 error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
                 log.error(error_string)
                 return HttpResponse(error_string)
-         
+
             # Add the created user to the Administrator group
             output = node.ssh_run_command(["NET", "localgroup",'"Administrators"',"/add",request.session["username"]])
             log.debug("Added user %s to the 'Administrators' group" % request.session["username"])
         else:
             return HttpResponse('Your server was not reachable')
-        
+
         # This is a hack for NC WISE only, and should be handled through a more general mechanism
         # TODO refactor this to be more secure
         rdesktopPid = Popen(["rdesktop","-u",request.session["username"],"-p",password, "-s", cluster.app.path, host.ip], env={"DISPLAY": ":1"}).pid
@@ -339,12 +336,12 @@ def _nxweb(ip, username, password, app):
     '''
 
 def _create_rdp_conn_file(ip, username, password, app):
-    '''
+    """
     Returns a response object which will return a downloadable rdp file
     ip is the IP address of the windows server to connect to
     username is the username the connection should use
     app is an instance of vdi.models.Application and is the application to be run on startup
-    '''
+    """
     # Remote Desktop Connection Type
     content = """screen mode id:i:2
     desktopwidth:i:800
@@ -374,17 +371,17 @@ def _create_rdp_conn_file(ip, username, password, app):
     disable themes:i:0
     disable cursor setting:i:0
     bitmapcachepersistenable:i:1\n""" % (ip,username,password,app.path)
-    
+
     resp = HttpResponse(content)
     resp['Content-Type']="application/rdp"
     resp['Content-Disposition'] = 'attachment; filename="%s.rdp"' % app.name
     return resp
 
 def calculate_cost(request, start_date, end_date):
- 
+
     starting_date = cost_tools.convertToDateTime(start_date)
     ending_date = cost_tools.convertToDateTime(end_date)
- 
+
     total_hoursInRange = cost_tools.getInstanceHoursInDateRange(starting_date, ending_date)
     cost = cost_tools.generateCost(total_hoursInRange)
 

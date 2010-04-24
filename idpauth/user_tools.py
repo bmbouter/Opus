@@ -32,9 +32,7 @@ def can_access_instance(instance, roles):
     return True
 
 def get_user_apps(request):
-    '''
-    Returns a list of applications the user has access to.
-    '''
+    """Returns a list of applications the user has access to."""
     log.debug("Getting User Apps")
     log.debug(request.session["roles"])
     if not request.session["roles"]:
@@ -58,15 +56,17 @@ def get_user_apps(request):
         apps += role.applications.all()
     return apps
 
-#def login_required(func):
-#    '''
-#    A decorator that redirects to the login page if the user isn't logged in.
-#    Meant to be used on a django view function, hence the first argument being
-#    "request".
-#    '''
-#    def check_func(request, *args, **kwargs):
-#        if is_logged_in(request):
-#        return func(request, *args, **kwargs)
-#        else:
-#            return HttpResponseRedirect("/idpauth/login/")
-#    return check_func
+'''
+def login_required(func):
+    """
+    A decorator that redirects to the login page if the user isn't logged in.
+    Meant to be used on a django view function, hence the first argument being
+    "request".
+    """
+    def check_func(request, *args, **kwargs):
+        if is_logged_in(request):
+        return func(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect("/idpauth/login/")
+    return check_func
+'''

@@ -9,7 +9,7 @@ urlpatterns = patterns('',
     # Example:
     # (r'^djangoSite/', include('mysite.foo.urls')),
 
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
+    # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/jsi18n', 'django.views.i18n.javascript_catalog'),

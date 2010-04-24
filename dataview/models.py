@@ -1,3 +1,3 @@
 from django.db import models
 
-# Create your models here.
+# There are currently no models in dataview

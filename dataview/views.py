@@ -5,17 +5,16 @@ from django import forms
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
+
 import winazurestorage as azure
 import xml.dom.minidom
 import xml.etree.ElementTree as ET
-import exceptions
-import string
+
 import core
 log = core.log.getLogger()
 import dataview_settings as dvsettings 
-# Create your views here.
 
-'''TODO:Check ff store was created succesfully and '''
+# TODO: Check if store was created succesfully
 
 def _get_store(): 
     try:

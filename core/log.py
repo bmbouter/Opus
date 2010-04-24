@@ -1,3 +1,17 @@
+"""Allows applications to create a log.
+
+Each application will have its own log file named "<app>.log".  In addition,
+every log messsage will also be optionally appended to "master.log".  These log
+files will be located in the directory specified by the LOG_DIR setting.
+
+Each application has to get its own logger with the core.log.getLogger() function.  Here is an example:
+
+>>> import core
+>>> log = core.log.getLogger()
+>>> log.debug("Debug Message here!")
+
+"""
+
 import logging # python standard library rocks!
 import inspect
 import sys
@@ -25,6 +39,7 @@ HIGHLIGHT = {
 
 
 class MyFormatter(logging.Formatter):
+    """Used to format log messages all pretty like."""
     def __init__(self, use_color = True):
         logging.Formatter.__init__(self,
             '%(fileandlineno)-19s:%(funcName)s:%(pid)5s:%(asctime)s %(levelname)-8s %(message)s',
@@ -66,6 +81,13 @@ class MyFormatter(logging.Formatter):
         return logging.Formatter.format(self, record)
 
 def init_logging(log_to_stdout=True):
+    """Initializes Opus's logging
+
+    This is called before any of the applications get started to set up
+    logging.  If you don't want the log to be repeated to stdout, then specify
+    log_to_stdout=False.
+
+    """
 
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)
@@ -83,6 +105,16 @@ def init_logging(log_to_stdout=True):
     logging.getLogger('boto').setLevel(logging.WARNING)
 
 def getLogger():
+    """Returns the application's logger
+
+    This is called by each application to get their logging object.  It returns
+    a different logger baised on which application called it.  The application
+    can then use standard python logging, for example:
+    >>> import core
+    >>> log = core.log.getLogger()
+    >>> log.debug("Debug Message here!")
+
+    """
 
     # Get the app name that is logging
     stack = inspect.stack()
@@ -92,6 +124,8 @@ def getLogger():
         del stack
 
     log = logging.getLogger(app_name)
+
+    # Add a handler if it doesn't already exist
     if not log.handlers:
         stream = open(settings.LOG_DIR+app_name+".log", "a")
         handler = logging.StreamHandler(stream)

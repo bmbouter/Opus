@@ -9,6 +9,7 @@ class HostNotConnectableError(Exception):
     pass
 
 class NodeUtil(object):
+    """Represents a remote machine."""
 
     # SSH commands should use -p SSH_PORT
     SSH_PORT = 22
@@ -23,10 +24,10 @@ class NodeUtil(object):
 
     def ssh_run_command(self, cmd):
         """Runs a command on the remote machine with the given options.
-        Returns a string of the command's output.  This is a blocking call.
 
+        Returns a string of the command's output.  This is a blocking call.
         cmd is a list of strings, the first is the command to run, and the rest
-        are arguments
+        are arguments.
 
         """
         if not self.ssh_avail():
@@ -41,11 +42,13 @@ class NodeUtil(object):
                 ]
         command.extend(cmd)
         return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
-    
+
     def ssh_avail(self):
-        """Attempts to connect to ssh just enough to see if it's running
-        returns False if it's not running, True if it is.
-        Blocks for a maximum of 1 second
+        """Is ssh available?
+        
+        Attempts to connect to ssh just enough to see if it's running.
+        Returns False if it's not running, True if it is.
+        Blocks for a maximum of 1 second.
 
         """
         remote = socket.socket()
