@@ -56,12 +56,13 @@ def ldap_login(request):
     result_set = []
     
     if identityprovider:
-        roles = ldap_tools.get_ldap_roles(server.url, username, password, server.authentication, server.ssl)
+        roles = ldap_tools.get_ldap_roles(server.url, username, password, server.authentication, server.ssl, server.group_retrieval_string)
         
         username = institution + "++" + username
         user = authenticate(username=username)
         if user is not None:
             if roles == None:
+                log.debug("Roles were none, redirecting to login")
                 return HttpResponseRedirect(settings.LOGIN_URL)
             else:
                 log.debug("Logging user in")
