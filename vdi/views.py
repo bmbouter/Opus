@@ -25,6 +25,7 @@ import rrdtool, time
 from vdi.models import Application, Instance
 from vdi.forms import InstanceForm
 from vdi import ec2_tools
+from vdi import deltacloud_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 import core
 log = core.log.getLogger()
@@ -59,9 +60,9 @@ def scale(request):
         cluster.logout_idle_users()
 
         # Handle vms we were waiting on to boot up
-        ec2_booting = ec2_tools.get_ec2_instances(cluster.booting)
-        for ec2_vm in ec2_booting:
-            dns_name = ec2_vm.public_dns_name
+        booting = deltacloud_tools.get_instances(cluster.booting)
+        for vm in booting:
+            dns_name = vm.public_dns_name
             log.debug('ASDF = %s' % dns_name)
             if dns_name.find("amazonaws.com") > -1:
                 # Resolve the domain name into an IP address
@@ -76,15 +77,15 @@ def scale(request):
                 except Exception as e:
                     pass
                 else:
-                    instance = Instance.objects.filter(instanceId=ec2_vm.id)[0]
-                    ec2_booting.remove(ec2_vm)
+                    instance = Instance.objects.filter(instanceId=vm.id)[0]
+                    booting.remove(vm)
                     instance.ip = ip
                     instance.state = 2
                     instance.save()
                     log.debug("Moving instance %s into enabled state with ip %s" % (instance.instanceId,ip))
-        num_booting = len(ec2_booting)
+        num_booting = len(booting)
         if num_booting > 0:
-            log.debug("Application cluster '%s' is still waiting for %s cluster nodes to boot" % (cluster.name,len(ec2_booting)))
+            log.debug("Application cluster '%s' is still waiting for %s cluster nodes to boot" % (cluster.name,len(booting)))
 
 
         # Consider if the cluster needs to be scaled
@@ -114,7 +115,7 @@ def scale(request):
             except HostNotConnectableError:
                 # Ignore this host that doesn't seem to be ssh'able, but log it as an error
                 log.warning('AppNode %s is NOT sshable and should be looked into.  It is currently waiting to shutdown')
-        ec2_tools.terminate_instances(toTerminate)
+        deltacloud_tools.terminate_instances(toTerminate)
 
 
         # Should I scale down?
@@ -235,7 +236,7 @@ def connect(request,app_pk=None,conn_type=None):
             # Determine which host this user should use
             host = cluster.select_host()
         except NoHostException:
-            # Start a new ec2 instance immedietly and redirect the user back to this page after 20 seconds
+            # Start a new instance immedietly and redirect the user back to this page after 20 seconds
             # Only boot a new node if there are none currently booting up
             if len(cluster.booting) == 0:
                 cluster.start_node()
@@ -244,50 +245,50 @@ def connect(request,app_pk=None,conn_type=None):
                 'reload_s': settings.USER_WAITING_PAGE_RELOAD_TIME,
                 'reload_ms': settings.USER_WAITING_PAGE_RELOAD_TIME * 1000})
 
-        #Random Password Generation string
+        # Random Password Generation string
         chars=string.ascii_letters+string.digits
         password = ''.join(choice(chars) for x in range(6))
         log.debug("THE PASSWORD IS: %s" % password)
 
         # Get IP of user
-        # Implement firewall manipulation of the ami's
+        # Implement firewall manipulation of instance
         log.debug('Found user ip of %s' % request.META["REMOTE_ADDR"])
 
-        #SSH to AMI using NodeUtil
+        # SSH to instance using NodeUtil
         node = NodeUtil(host.ip, settings.IMAGE_SSH_KEY)
         if node.ssh_avail():
             #TODO refactor this so it isn't so verbose, and a series of special cases
-            output = node.ssh_run_command(["NET","USER",request.session["username"],password,"/ADD"])
+            output = node.ssh_run_command(["NET","USER",request.user.username.split('++')[1],password,"/ADD"])
             if output.find("The command completed successfully.") > -1:
-                log.debug("User %s has been created" % request.session["username"])
+                log.debug("User %s has been created" % request.user.username.split('++')[1])
             elif output.find("The account already exists.") > -1:
-                log.debug('User %s already exists, going to try to set the password' % request.session["username"])
-                output = node.ssh_run_command(["NET", "USER",request.session["username"],password])
+                log.debug('User %s already exists, going to try to set the password' % request.user.username.split('++')[1])
+                output = node.ssh_run_command(["NET", "USER",request.user.username.split('++')[1],password])
                 if output.find("The command completed successfully.") > -1:
                     log.debug('THE PASSWORD WAS RESET')
                 else:
-                    error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
+                    error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.user.username.split('++')[1],host.ip,output)
                     log.error(error_string)
                     return HttpResponse(error_string)
             else:
-                error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
+                error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.user.username.split('++')[1],host.ip,output)
                 log.error(error_string)
                 return HttpResponse(error_string)
 
             # Add the created user to the Administrator group
-            output = node.ssh_run_command(["NET", "localgroup",'"Administrators"',"/add",request.session["username"]])
-            log.debug("Added user %s to the 'Administrators' group" % request.session["username"])
+            output = node.ssh_run_command(["NET", "localgroup",'"Administrators"',"/add",request.user.username.split('++')[1]])
+            log.debug("Added user %s to the 'Administrators' group" % request.user.username.split('++')[1])
         else:
             return HttpResponse('Your server was not reachable')
 
         # This is a hack for NC WISE only, and should be handled through a more general mechanism
         # TODO refactor this to be more secure
-        rdesktopPid = Popen(["rdesktop","-u",request.session["username"],"-p",password, "-s", cluster.app.path, host.ip], env={"DISPLAY": ":1"}).pid
+        rdesktopPid = Popen(["rdesktop","-u",request.user.username.split('++')[1],"-p",password, "-s", cluster.app.path, host.ip], env={"DISPLAY": ":1"}).pid
         # Wait for rdesktop to logon
         sleep(3)
 
         if conn_type == 'rdp':
-            return render_to_response('vdi/connect.html', {'username' : request.session["username"],
+            return render_to_response('vdi/connect.html', {'username' : request.user.username.split('++')[1],
                                                         'password' : password,
                                                         'app' : cluster.app,
                                                         'ip' : host.ip},
@@ -310,12 +311,12 @@ def connect(request,app_pk=None,conn_type=None):
             return render_to_response('vdi/rdpweb.html', {'tsweb_url' : tsweb_url,
                                                     'app' : cluster.app,
                                                     'ip' : host.ip,
-                                                    'username' : request.session["username"],
+                                                    'username' : request.user.username.split('++')[1],
                                                     'password' : password})
     elif request.method == 'POST':
         # Handle POST request types
         if conn_type == 'rdp':
-            return _create_rdp_conn_file(request.POST["ip"],request.session["username"],request.POST["password"],cluster.app)
+            return _create_rdp_conn_file(request.POST["ip"],request.user.username.split('++')[1],request.POST["password"],cluster.app)
 
     '''
 def _nxweb(ip, username, password, app):

@@ -130,7 +130,7 @@ def openid_login_complete(request):
             if user.is_active:
                 log.debug("Logging user in")
                 login(request, user)
-                #user_tools.login(request, username, roles, institution)
+                user_tools.login(request, username, roles, institution)
                 log.debug("Redirecting to " + settings.RESOURCE_REDIRECT_URL)
                 return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
             else:
@@ -163,7 +163,7 @@ def local_login(request):
         if user.is_active:
             log.debug("Logging user in")
             login(request, user)
-            #user_tools.login(request, username, roles, institution)
+            user_tools.login(request, username, roles, institution)
             log.debug("Redirecting to " + settings.RESOURCE_REDIRECT_URL)
             return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
         else:
