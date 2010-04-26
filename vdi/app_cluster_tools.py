@@ -1,15 +1,14 @@
 from vdi.models import Application, Instance
 import core
 log = core.log.getLogger()
-from vdi import ec2_tools
-from core.ssh_tools import HostNotConnectableError , NodeUtil
+from vdi import deltacloud_tools
+from core.ssh_tools import HostNotConnectableError, NodeUtil
 
 from django.conf import settings
 from django.db.models import Q
 import string
 from subprocess import Popen, PIPE
 from re import split
-import traceback
 import datetime
 
 class NoHostException(Exception):
@@ -21,10 +20,10 @@ class AppCluster(object):
         self.nodes = Instance.objects.filter(application=app_pk)
 
     def find_next_priority(self):
-        '''
+        """
         Returns the appropriate priority of the next instance
         This function considers nodes in all states
-        '''
+        """
         nodes = self.nodes.order_by('priority')
         for i in range(len(nodes)):
             if nodes[i].priority != i:
@@ -32,26 +31,24 @@ class AppCluster(object):
         return len(nodes)
 
     def start_node(self):
-        '''
+        """
         Starts a new node on the cluster.  This function first tries to reuse a 'shutting-down' node first.
-        If no 'shutting-down' nodes are available to reuse, start a new one on ec2
-        '''
-        # Consider if we can re-use a node about to be shutdown, or if we should create a new one ec2
+        If no 'shutting-down' nodes are available to reuse, start a new one.
+        """
+        # Consider if we can re-use a node about to be shutdown, or if we should create a new one
         if self.shutting_down:
             new_node = self.shutting_down[0]
             new_node.state = 2
             new_node.priority = self.find_next_priority()
         else:
-            new_instance_id = ec2_tools.create_instance(self.app.ec2ImageId)
+            new_instance_id = deltacloud_tools.create_instance(self.app.image_id)
             new_priority = self.find_next_priority()
             log.debug('New instance created with id %s and priority %s' % (new_instance_id,new_priority))
             new_node = Instance(instanceId=new_instance_id,application=self.app,priority=new_priority)
         new_node.save()
 
     def logout_idle_users(self):
-        '''
-        Logs off idle users for all nodes in this cluster
-        '''
+        """Logs off idle users for all nodes in this cluster."""
         for node in self.active:
             try:
                 AppNode(node.ip).user_cleanup(10)
@@ -60,9 +57,9 @@ class AppCluster(object):
                 log.warning('AppNode %s is NOT sshable and should be looked into')
 
     def select_host(self):
-        '''
+        """
         Returns an ip address of the terminal server to use for this application
-        '''
+        """
         map = self.avail_map
         for (ip,slots) in map:
             if slots > 0:
@@ -70,10 +67,10 @@ class AppCluster(object):
         raise NoHostException
     
     def get_stats(self):
-        '''
+        """
         Count number of sessions on all nodes. Get available headroom for cluster.
         Return two as a tuple (number_of_users, available_headroom)
-        '''
+        """
         number_of_users = 0
         for node in self.active:
             try:
@@ -109,29 +106,29 @@ class AppCluster(object):
             return self.app.name
 
     def _capacity(self, app_pk):
-        '''
+        """
         Returns the aggregate user capacity of this application cluster.
         This function only considers nodes in the {'active', 'booting'} states
-        '''
+        """
         nodes = self.nodes.filter(Q(state='2') | Q(state='1')).order_by('priority')
         return len(nodes) * self.app.users_per_small
 
     def _map_app_cluster_avail(self, app_pk):
-        '''
+        """
         Returns a list of tuples, sorted by 'priority' from lowest to highest: [ (ip,numAvail), (ip,numAvail), .... ]
         Index 0 of the returned list has the priority closest to 0.  Here a low number indicates high priority.
         numAvail are the number of client slots currently available on a given host
         This function only considers instances in state '2'
-        '''
+        """
         return map(lambda x: (x[0],self.app.users_per_small - x[1]), self.inuse_map)
 
     def _map_app_cluster_inuse(self, app_pk):
-        '''
+        """
         Returns a list of tuples, sorted by 'priority' from lowest to highest: [ (ip,numInUse), (ip,numInUse), .... ]
         Index 0 of the returned list has the priority closest to 0.  Here a low number indicates high priority.
         numInUse are the number of clients currently using a given host
         This function only considers instances in state '2'
-        '''
+        """
         app_map = []
         nodes = self.active.order_by('priority')
         for host in nodes:
@@ -151,11 +148,11 @@ class AppNode(object):
         self.check_user_load()
         log.debug('On ip %s there are %s sessions' % (self.ip,len(self.sessions)))
 
-    '''
+    """
     Create an SSH pipe to the specified ip and store all sessions information in list. 
     Each session is stored as a dictionary containing username, sessionname, session id, idle time, 
     logon date, logon time. The two possible states are Active and Disc (disconnected).
-    '''
+    """
     def check_user_load(self):
         self.sessions = []
         node = NodeUtil(self.ip,settings.IMAGE_SSH_KEY)
@@ -202,10 +199,10 @@ class AppNode(object):
                     self.sessions.append(user)
 
     def log_user_off(self,session_id):
-        '''
+        """
         Log user off from server with provided ip.  User is identified by session id.
         If user was logged off succesfully returns true. If error occured returns false.
-        '''
+        """
         node = NodeUtil(self.ip,settings.IMAGE_SSH_KEY)
         output = node.ssh_run_command(["c:\logoff.exe",str(session_id)])
         log.debug('$#$#$#  %s'%output)
@@ -216,11 +213,11 @@ class AppNode(object):
             return False
 
     def user_cleanup(self,timeout):
-        '''
+        """
         Checks idle time for all sessions on the node.  If any session is disconnected then the user   
         is logged off.  If the idle time exceeds the timeout parameter, the user is logged off. Timeout
         is in MINUTES.
-        '''
+        """
         log.debug(self.sessions)
         for session in self.sessions:
             log.debug("Reported idletime: "+session["idletime"])

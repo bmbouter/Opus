@@ -2,7 +2,7 @@ from django.db import models
 
 class Application(models.Model):
     name = models.CharField(max_length=64) # Pretty name of the application
-    ec2ImageId = models.CharField(max_length=32, unique=True) # Amazon ec2 ID
+    image_id = models.CharField(max_length=32, unique=True) # Image id of the image that the actual application lies on
     path = models.CharField(max_length=256,blank=True) # Path of the application to be run on the host
     max_concurrent_instances = models.IntegerField()
     users_per_small = models.IntegerField()
@@ -16,7 +16,7 @@ class Application(models.Model):
         return self.name
 
 class Instance(models.Model):
-    instanceId = models.CharField(max_length=32, unique=True) # Amazon ec2 ID
+    instanceId = models.CharField(max_length=32, unique=True)
     application = models.ForeignKey('Application')
     priority = models.IntegerField()
     STATUS_CHOICES = (

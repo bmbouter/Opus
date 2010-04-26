@@ -4,46 +4,56 @@ log = core.log.getLogger()
 from django.conf import settings
 from django.db.models.query import QuerySet
 from idpauth import user_tools
-from boto.ec2.connection import EC2Connection
 from vdi.models import Instance
 
-def create_instance(ami_id):
-    '''
-    ami_id should be a string containing the EC2 ami to be scaled out
-    returns the instance id of the newly created instance
-    '''
+from boto.ec2.connection import EC2Connection
+
+def create_instance(image_id):
+    """Creates an given the instance.
+
+    image_id should be a string identifier of the image to be instantiated.
+    Returns the instance id of the newly created instance.
+
+    """
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-    ami = ec2.get_all_images([ami_id])[0]
+    ami = ec2.get_all_images([image_id])[0]
     reservation = ami.run(instance_type='m1.large')
     return reservation.instances[0].id
 
-def terminate_instances(dm_instances):
-    '''
-    dm_instances should be either a django QuerySet of vdi.models.Instance
-    '''
+def terminate_instances(instances):
+    """Turns off the list of instances given.
+
+    instances should be an iterable of vdi.models.Instance objects, for
+    example, a django queryset.  The number of instances that were successfully
+    terminated is returned.
+
+    """
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-    ids = [i.instanceId for i in dm_instances]
+    ids = [i.instanceId for i in instances]
     if ids:
         terminated = ec2.terminate_instances(ids)
         num_del = len(terminated)
         for item in terminated:
             dbitem = Instance.objects.filter(instanceId=item.id)[0]
-            log.debug('The node has been deleted on ec2.  I will now move %s into a deleted state' % dbitem.instanceId)
+            log.debug('The node has been deleted.  I will now move %s into a deleted state' % dbitem.instanceId)
             dbitem.state = 5
             dbitem.save()
         return num_del
     return 0
 
-def get_ec2_instances(db_instances):
-    '''
-    db_instances should be a QuerySet of vdi.model.Instances
-    '''
+def get_instances(instances):
+    """Return instance objects baised on database model.
+
+    instances should be an iterable of vdi.models.Instance objects, for
+    example, a django queryset.
+
+    """
     ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
 
     # Create a list of instance id's
-    ids = [i.instanceId for i in db_instances]
+    ids = [i.instanceId for i in instances]
     if ids:
-        reservations = ec2.get_all_instances(ids) 
+        reservations = ec2.get_all_instances(ids)
     else:
         reservations = []
 

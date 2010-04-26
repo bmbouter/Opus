@@ -25,7 +25,7 @@ import rrdtool, time
 from vdi.models import Application, Instance
 from vdi.forms import InstanceForm
 from idpauth.user_tools import get_user_apps
-from vdi import ec2_tools
+from vdi import deltacloud_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 import core
 log = core.log.getLogger()
@@ -60,9 +60,9 @@ def scale(request):
         cluster.logout_idle_users()
 
         # Handle vms we were waiting on to boot up
-        ec2_booting = ec2_tools.get_ec2_instances(cluster.booting)
-        for ec2_vm in ec2_booting:
-            dns_name = ec2_vm.public_dns_name
+        booting = deltacloud_tools.get_instances(cluster.booting)
+        for vm in booting:
+            dns_name = vm.public_dns_name
             log.debug('ASDF = %s' % dns_name)
             if dns_name.find("amazonaws.com") > -1:
                 # Resolve the domain name into an IP address
@@ -77,15 +77,15 @@ def scale(request):
                 except Exception as e:
                     pass
                 else:
-                    instance = Instance.objects.filter(instanceId=ec2_vm.id)[0]
-                    ec2_booting.remove(ec2_vm)
+                    instance = Instance.objects.filter(instanceId=vm.id)[0]
+                    booting.remove(vm)
                     instance.ip = ip
                     instance.state = 2
                     instance.save()
                     log.debug("Moving instance %s into enabled state with ip %s" % (instance.instanceId,ip))
-        num_booting = len(ec2_booting)
+        num_booting = len(booting)
         if num_booting > 0:
-            log.debug("Application cluster '%s' is still waiting for %s cluster nodes to boot" % (cluster.name,len(ec2_booting)))
+            log.debug("Application cluster '%s' is still waiting for %s cluster nodes to boot" % (cluster.name,len(booting)))
 
 
         # Consider if the cluster needs to be scaled
@@ -115,7 +115,7 @@ def scale(request):
             except HostNotConnectableError:
                 # Ignore this host that doesn't seem to be ssh'able, but log it as an error
                 log.warning('AppNode %s is NOT sshable and should be looked into.  It is currently waiting to shutdown')
-        ec2_tools.terminate_instances(toTerminate)
+        deltacloud_tools.terminate_instances(toTerminate)
 
 
         # Should I scale down?
@@ -236,7 +236,7 @@ def connect(request,app_pk=None,conn_type=None):
             # Determine which host this user should use
             host = cluster.select_host()
         except NoHostException:
-            # Start a new ec2 instance immedietly and redirect the user back to this page after 20 seconds
+            # Start a new instance immedietly and redirect the user back to this page after 20 seconds
             # Only boot a new node if there are none currently booting up
             if len(cluster.booting) == 0:
                 cluster.start_node()
@@ -245,16 +245,16 @@ def connect(request,app_pk=None,conn_type=None):
                 'reload_s': settings.USER_WAITING_PAGE_RELOAD_TIME,
                 'reload_ms': settings.USER_WAITING_PAGE_RELOAD_TIME * 1000})
 
-        #Random Password Generation string
+        # Random Password Generation string
         chars=string.ascii_letters+string.digits
         password = ''.join(choice(chars) for x in range(6))
         log.debug("THE PASSWORD IS: %s" % password)
 
         # Get IP of user
-        # Implement firewall manipulation of the ami's
+        # Implement firewall manipulation of instance
         log.debug('Found user ip of %s' % request.META["REMOTE_ADDR"])
 
-        #SSH to AMI using NodeUtil
+        # SSH to instance using NodeUtil
         node = NodeUtil(host.ip, settings.IMAGE_SSH_KEY)
         if node.ssh_avail():
             #TODO refactor this so it isn't so verbose, and a series of special cases
