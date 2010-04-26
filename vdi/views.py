@@ -24,7 +24,6 @@ import rrdtool, time
 
 from vdi.models import Application, Instance
 from vdi.forms import InstanceForm
-from idpauth.user_tools import get_user_apps
 from vdi import ec2_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 import core

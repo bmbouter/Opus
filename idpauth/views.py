@@ -18,7 +18,6 @@ from openid.extensions import ax
 from openid.extensions import pape
 
 from idpauth.models import IdentityProvider, IdentityProviderLDAP
-from idpauth import user_tools
 from idpauth import openid_tools
 from idpauth import authentication_tools
 from idpauth import ldap_tools
@@ -36,12 +35,11 @@ def determine_login(request, message=None):
     else:
         authentication_type = institutional_IdP[0].type
         return render_to_response('idpauth/' + str(authentication_type) + '.html',
-        {'institution': institution,
-        'message' : message,},
+        #{'institution': institution,
+        {'message' : message,},
         context_instance=RequestContext(request))
 
 def ldap_login(request):
-    #TODO: What if one of these 3 fields aren't set?
     username = request.POST['username']
     password = request.POST['password']
     institution = request.POST['institution']
@@ -62,9 +60,6 @@ def ldap_login(request):
             else:
                 log.debug("Logging user in")
                 login(request, user)
-                #for perm in user.get_all_permissions():
-                #    log.debug("Perms for user are " + perm)
-                #user_tools.login(request, username, roles, institution)
                 log.debug("Redirecting to " + settings.RESOURCE_REDIRECT_URL)
                 return HttpResponseRedirect(settings.RESOURCE_REDIRECT_URL)
         else:
@@ -191,7 +186,6 @@ def shibboleth_login(request):
 @login_required
 def logout_view(request):
     logout(request)
-    #user_tools.logout(request)
     institution = authentication_tools.get_institution(request)
     
     return render_to_response('idpauth/logout.html',
