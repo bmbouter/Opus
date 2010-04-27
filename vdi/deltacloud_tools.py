@@ -3,7 +3,6 @@ import core
 log = core.log.getLogger()
 from django.conf import settings
 from django.db.models.query import QuerySet
-from idpauth import user_tools
 from vdi.models import Instance
 
 from boto.ec2.connection import EC2Connection
