@@ -100,9 +100,10 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 )
 
 ######### VDI Settings #######
-# Keys for Amazon Web Services
-AWS_ACCESS_KEY = ''
-AWS_SECRET_KEY = ''
+# Credentials for deltacloud
+DELTACLOUD_API_URI = "" # Uri "Framework"
+DELTACLOUD_USERNAME = "" # Username for the underlying driver
+DELTACLOUD_PASSWORD = "" # Password for the underlying driver
 
 # Connection Broker Options
 MINIMUM_RESERVATION_LEN = 15    # This is in minutes
