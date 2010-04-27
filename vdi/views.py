@@ -24,7 +24,7 @@ import rrdtool, time
 
 from vdi.models import Application, Instance
 from vdi.forms import InstanceForm
-from idpauth.user_tools import get_user_apps
+from vdi import ec2_tools
 from vdi import deltacloud_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 import core
@@ -259,37 +259,37 @@ def connect(request,app_pk=None,conn_type=None):
         node = NodeUtil(host.ip, settings.IMAGE_SSH_KEY)
         if node.ssh_avail():
             #TODO refactor this so it isn't so verbose, and a series of special cases
-            output = node.ssh_run_command(["NET","USER",request.session["username"],password,"/ADD"])
+            output = node.ssh_run_command(["NET","USER",request.user.username.split('++')[1],password,"/ADD"])
             if output.find("The command completed successfully.") > -1:
-                log.debug("User %s has been created" % request.session["username"])
+                log.debug("User %s has been created" % request.user.username.split('++')[1])
             elif output.find("The account already exists.") > -1:
-                log.debug('User %s already exists, going to try to set the password' % request.session["username"])
-                output = node.ssh_run_command(["NET", "USER",request.session["username"],password])
+                log.debug('User %s already exists, going to try to set the password' % request.user.username.split('++')[1])
+                output = node.ssh_run_command(["NET", "USER",request.user.username.split('++')[1],password])
                 if output.find("The command completed successfully.") > -1:
                     log.debug('THE PASSWORD WAS RESET')
                 else:
-                    error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
+                    error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.user.username.split('++')[1],host.ip,output)
                     log.error(error_string)
                     return HttpResponse(error_string)
             else:
-                error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.session["username"],host.ip,output)
+                error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.user.username.split('++')[1],host.ip,output)
                 log.error(error_string)
                 return HttpResponse(error_string)
 
             # Add the created user to the Administrator group
-            output = node.ssh_run_command(["NET", "localgroup",'"Administrators"',"/add",request.session["username"]])
-            log.debug("Added user %s to the 'Administrators' group" % request.session["username"])
+            output = node.ssh_run_command(["NET", "localgroup",'"Administrators"',"/add",request.user.username.split('++')[1]])
+            log.debug("Added user %s to the 'Administrators' group" % request.user.username.split('++')[1])
         else:
             return HttpResponse('Your server was not reachable')
 
         # This is a hack for NC WISE only, and should be handled through a more general mechanism
         # TODO refactor this to be more secure
-        rdesktopPid = Popen(["rdesktop","-u",request.session["username"],"-p",password, "-s", cluster.app.path, host.ip], env={"DISPLAY": ":1"}).pid
+        rdesktopPid = Popen(["rdesktop","-u",request.user.username.split('++')[1],"-p",password, "-s", cluster.app.path, host.ip], env={"DISPLAY": ":1"}).pid
         # Wait for rdesktop to logon
         sleep(3)
 
         if conn_type == 'rdp':
-            return render_to_response('vdi/connect.html', {'username' : request.session["username"],
+            return render_to_response('vdi/connect.html', {'username' : request.user.username.split('++')[1],
                                                         'password' : password,
                                                         'app' : cluster.app,
                                                         'ip' : host.ip},
@@ -312,12 +312,12 @@ def connect(request,app_pk=None,conn_type=None):
             return render_to_response('vdi/rdpweb.html', {'tsweb_url' : tsweb_url,
                                                     'app' : cluster.app,
                                                     'ip' : host.ip,
-                                                    'username' : request.session["username"],
+                                                    'username' : request.user.username.split('++')[1],
                                                     'password' : password})
     elif request.method == 'POST':
         # Handle POST request types
         if conn_type == 'rdp':
-            return _create_rdp_conn_file(request.POST["ip"],request.session["username"],request.POST["password"],cluster.app)
+            return _create_rdp_conn_file(request.POST["ip"],request.user.username.split('++')[1],request.POST["password"],cluster.app)
 
     '''
 def _nxweb(ip, username, password, app):

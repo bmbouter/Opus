@@ -117,7 +117,7 @@ LOG_DIR = BASE_DIR+"/log/" # Remember the trailing slash
 LOG_LEVEL = "DEBUG"
 
 # URL prefix for vdi media.  Make sure to use a trailing slash.
-VDI_MEDIA_PREFIX = '/vdi-media/'
+OPUS_MEDIA_PREFIX = '/vdi-media/'
 
 ######## IDPAUTH Settings ######
 OPENID_AX = [{"type_uri" : "http://axschema.org/contact/email", "count" : 1, "required" : True, "alias" : "email"}]
