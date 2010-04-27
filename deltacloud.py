@@ -51,7 +51,13 @@ class Deltacloud(object):
         self.api_entry_host = matches.group(1)
         self.api_entry_path = matches.group(2)
 
+        self._connected = False
+
     def connect(self):
+
+        if self._connected:
+            return
+        self._connected = True
 
         # _auth_string will be used in every request header to authenticate
         self._auth_string = "%s:%s" % (self.name, self.password)
@@ -131,7 +137,7 @@ class Deltacloud(object):
             body = None
 
         # The actual request
-        print (host, method, path+query_string, body, headers)
+        #print (host, method, path+query_string, body, headers)
         if self.secure:
             connection = httplib.HTTPSConnection(host)
         else:
@@ -140,7 +146,7 @@ class Deltacloud(object):
         response = connection.getresponse()
         connection.close()
         text = response.read()
-        print text
+        #print text
         if response.status < 200 or response.status >= 400:
             # Response was not successful (status 2xx or 3xx).  3xx is included
             # because sometimes deltacloud returns a redirect even when the
@@ -223,7 +229,7 @@ class Deltacloud(object):
 
     def instance(self, id):
         """Return a specific instance object."""
-        raise NotImplementedError()
+        return self.instances({"id":id})[0]
 
     def post_instance(self, uri):
         """""" #TODO
