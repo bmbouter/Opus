@@ -30,9 +30,9 @@ def get_ldap_roles(url, username, password, authentication_identifier, ssl_optio
                 else:
                     if result_type == ldap.RES_SEARCH_ENTRY:
                         result_set.append(result_data)
-            log.debug(result_set)
+            #log.debug(result_set)
             roles = result_set[0][0][1][str(group_retrieval_string)]
-            log.debug("LDAP Roles = " + str(roles))
+            #log.debug("LDAP Roles = " + str(roles))
             return roles
         else:
             return {}

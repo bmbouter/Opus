@@ -1,16 +1,16 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
-from django import forms
+#from django import forms
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+#from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
-import os
+#import os
 import urllib
 
-import openid   
+#import openid   
 from openid.consumer.consumer import Consumer, \
     SUCCESS, CANCEL, FAILURE, SETUP_NEEDED
 from openid.consumer.discover import DiscoveryFailure
@@ -27,18 +27,18 @@ log = log.getLogger()
 
 def determine_login(request, message=None):
     institution = authentication_tools.get_institution(request)
-    institutional_IdP = IdentityProvider.objects.filter(institution__iexact=str(institution))
+    institutional_idp = IdentityProvider.objects.filter(institution__iexact=str(institution))
 
     if "next" in request.REQUEST:
         next = request.REQUEST['next']
     else:
         next = settings.RESOURCE_REDIRECT_URL
 
-    if not institutional_IdP:
+    if not institutional_idp:
         log.debug("No institution")
         return HttpResponse("There is no Identity Provider specified for your institution")
     else:
-        authentication_type = institutional_IdP[0].type
+        authentication_type = institutional_idp[0].type
         return render_to_response('idpauth/' + str(authentication_type) + '.html',
         {'next': next,
         'message' : message,},
@@ -53,9 +53,6 @@ def ldap_login(request):
     identityprovider = IdentityProviderLDAP.objects.filter(institution__iexact=str(institution))
     if identityprovider:
         server = identityprovider[0]
-    result_set = []
-    
-    if identityprovider:
         roles = ldap_tools.get_ldap_roles(server.url, username, password, server.authentication, server.ssl, server.group_retrieval_string)
         
         username = institution + "++" + username
