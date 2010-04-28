@@ -34,30 +34,31 @@ class Deltacloud(object):
     def __init__(self, name, password, api_uri):
         self.name = name
         self.password = password
+        self.api_uri = api_uri
 
         # This information will be gathered when self.connect() is called
         self._auth_string = None
         self.entry_points = {}
         self.driver = None
 
-        if api_uri.startswith("http://"):
-            self.secure = False
-        elif api_uri.startswith("https://"):
-            self.secure = True
-        else:
-            raise ValueError('api_uri must start with "http://" or "https://".  Given: "%s"' % api_uri)
-
-        matches = Deltacloud.url_regex.match(api_uri)
-        self.api_entry_host = matches.group(1)
-        self.api_entry_path = matches.group(2)
-
-        self._connected = False
+        self.connected = False
 
     def connect(self):
 
-        if self._connected:
+        if self.connected:
             return
-        self._connected = True
+        self.connected = True
+
+        if self.api_uri.startswith("http://"):
+            self.secure = False
+        elif self.api_uri.startswith("https://"):
+            self.secure = True
+        else:
+            raise ValueError('api_uri must start with "http://" or "https://".  Given: "%s"' % self.api_uri)
+
+        matches = Deltacloud.url_regex.match(self.api_uri)
+        self.api_entry_host = matches.group(1)
+        self.api_entry_path = matches.group(2)
 
         # _auth_string will be used in every request header to authenticate
         self._auth_string = "%s:%s" % (self.name, self.password)
