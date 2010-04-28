@@ -9,7 +9,6 @@ from deltacloud import Deltacloud
 deltacloud = Deltacloud(settings.DELTACLOUD_USERNAME,
                         settings.DELTACLOUD_PASSWORD,
                         settings.DELTACLOUD_API_URI)
-deltacloud.connect()
 
 def create_instance(image_id):
     """Creates an given the instance.
@@ -18,6 +17,8 @@ def create_instance(image_id):
     Returns the instance id of the newly created instance.
 
     """
+    if not deltacloud.connected: deltacloud.connect()
+
     image = deltacloud.create_instance(image_id)
     return image.id
 
@@ -29,6 +30,8 @@ def terminate_instances(instances):
     terminated is returned.
 
     """
+    if not deltacloud.connected: deltacloud.connect()
+
     num = 0
     for instance in instances:
         dcloud_instance = deltacloud.instance(instance.id)
@@ -49,6 +52,8 @@ def get_instances(instances):
     example, a django queryset.
 
     """
+    if not deltacloud.connected: deltacloud.connect()
+
     id_list = []
     for instance in instances:
         id_list.append(instance.instanceId)
