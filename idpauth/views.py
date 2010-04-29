@@ -4,8 +4,9 @@ from django.template import RequestContext
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 
-from idpauth.models import IdentityProvider, IdentityProviderLDAP
+from idpauth.models import IdentityProvider, IdentityProviderLDAP, UserProfile
 from idpauth import openid_tools
 from idpauth import authentication_tools
 from idpauth import ldap_tools
@@ -17,8 +18,8 @@ def determine_login(request, message=None):
     institution = authentication_tools.get_institution(request)
     institutional_idp = IdentityProvider.objects.filter(institution__iexact=str(institution))
 
-    if "next" in request.REQUEST:
-        next = request.REQUEST['next']
+    if "next" in request.GET:
+        next = request.GET['next']
     else:
         next = settings.RESOURCE_REDIRECT_URL
 
@@ -45,6 +46,15 @@ def ldap_login(request):
         
         username = institution + "++" + username
         user = authenticate(username=username)
+        roles = str(roles).strip('[').strip(']')
+        try:
+            user_profile = user.get_profile()
+            user_profile.ldap_roles = roles
+            user_profile.save()
+        except ObjectDoesNotExist:
+            user_profile = UserProfile(user=user, ldap_roles=roles)
+            user_profile.save()
+
         if user is not None:
             if roles == None:
                 log.debug("Roles were none, redirecting to login")
