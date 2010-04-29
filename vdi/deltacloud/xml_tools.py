@@ -1,4 +1,6 @@
-def xml_get_content(dom, element_name):
+"""An assortment of helper xml functions."""
+
+def xml_get_text(dom, element_name):
     """Gets the text data within the given element.
 
     It searches the dom object for the elements with the given name.  It hands
@@ -8,8 +10,8 @@ def xml_get_content(dom, element_name):
             <bar>data1</bar>
             <bar>data2</bar>
         </foo>
-    Then xml_get_content() can be used as so:
-        >>> xml_get_content(dom, "bar")
+    Then xml_get_text() can be used as so:
+        >>> xml_get_text(dom, "bar")
         ["data1", "data2"]
 
     """
@@ -22,7 +24,6 @@ def xml_get_content(dom, element_name):
         result.append(text)
     return result
     
-
 def xml_get_elements_dictionary(dom, element_name, key_name, value_name):
     """Iterates through a number of elements and generates a dictionary.
 

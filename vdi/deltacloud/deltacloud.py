@@ -7,6 +7,24 @@ from xml.dom.minidom import parseString
 
 from image import Image
 from instance import Instance
+from flavor import Flavor
+from realm import Realm
+from state import State
+from storage_snapshot import StorageSnapshot
+from storage_volume import StorageVolume
+from transition import Transition
+
+# Maps resource names to their classes
+resource_classes = {
+    "flavor": Flavor,
+    "image": Image,
+    "instance": Instance,
+    "realm": Realm,
+    "state": State,
+    "storage-snapshot": StorageSnapshot,
+    "storage-volume": StorageVolume,
+    #"transition": Transition,
+}
 
 ENCODE_TEMPLATE= """--%(boundary)s
 Content-Disposition: form-data; name="%(name)s"
@@ -15,16 +33,9 @@ Content-Disposition: form-data; name="%(name)s"
 """.replace('\n','\r\n')
 
 class Deltacloud(object):
-    """Represents a deltacloud api server.
+    """Represents a deltacloud api server."""
 
-    Once a Deltacloud is instantiated, you should call connect() before using
-    any other methods.
-    >>> d = Deltacloud("name", "pass", "http://example.com/api")
-    >>> d.connect()
-
-    """
-
-    # This is used to seperate host and path for a given uri
+    # This is used to seperate host and path for a given api_uri
     url_regex = re.compile(r"""
         ^https?://  # Ignore preceeding http(s)
         (.*?)       # Host url
@@ -79,7 +90,7 @@ class Deltacloud(object):
         if dom.documentElement.tagName != "api":
             print "Not a valid deltacloud api entry point!"
             # TODO: This should handle the error better
-            raise ValueError
+            raise ValueError("Deltacloud api entry point doesn't appear to be valid!")
         self.driver = dom.documentElement.getAttribute("driver")
         for entry_point in dom.getElementsByTagName('link'):
             rel = entry_point.getAttribute("rel")
@@ -87,11 +98,17 @@ class Deltacloud(object):
             self.entry_points[rel] = uri
         dom.unlink()
 
+        # There seems to be an inconsistancy in the naming of storage
+        # snapshots/volumes.  In the url it's one thing, but in the xml it's
+        # another.  We'll make sure the name is always gotten correct.
+        self.entry_points['storage-snapshots'] = self.entry_points['storage_snapshots']
+        self.entry_points['storage-volumes'] = self.entry_points['storage_volumes']
+
     def _request(self, location="", method="GET", query_args={}, form_data={}):
         """Send request to deltacloud and return a response dom object.
 
         The returned dom object should be unlinked after it's done being used:
-        >>> dom = self.request("/some/path")
+        >>> dom = self._request("/some/path")
         >>> dom.unlink()
 
         """
@@ -160,85 +177,52 @@ class Deltacloud(object):
             log.error("There was a problem parsing XML from deltacloud!")
             raise
 
-    def flavors(self, opts={}):
-        """Return a list of all flavors."""
-        raise NotImplementedError()
+    def _get_resources(self, singular_resource_name, opts={}):
+        plural_resource_name = singular_resource_name+"s"
+        resource_class = resource_classes[singular_resource_name]
+        entry_point_url = self.entry_points[plural_resource_name]
 
-    def flavor(self, id):
-        """Return a specific flavor object."""
-        raise NotImplementedError()
+        if not self.connected:
+            self.connect()
 
-    def fetch_flavor(self, uri):
-        """""" #TODO
-        raise NotImplementedError()
+        dom = self._request(entry_point_url, "GET", opts)
+        if dom.documentElement.tagName != plural_resource_name:
+            print 'Entry point for "%s" has something wrong with it!' % plural_resource_name
+            #TODO: Handle this error better
+            raise ValueError
 
-    def instance_states(self):
-        """Return different states which an image can have."""
-        raise NotImplementedError()
+        resource_object_list = []
+        for dom in dom.getElementsByTagName(singular_resource_name):
+            resource_object_list.append(resource_class(self, dom))
+        dom.unlink()
+        return resource_object_list
 
-    def instance_state(self, name):
-        """""" #TODO
-        raise NotImplementedError()
+    def _get_resource_by_id(self, singular_resource_name, id):
+        return self._get_resources(singular_resource_name, {"id":id})[0]
 
-    def realms(self, opts={}):
-        """Return a list of all realms."""
-        raise NotImplementedError()
-
-    def realm(self, id):
-        """Return a specific realm object."""
-        raise NotImplementedError()
-
-    def fetch_realm(self, uri):
-        """""" #TODO
-        raise NotImplementedError()
+    ##### Images #####
 
     def images(self, opts={}):
         """Return a list of all images."""
-        path = self.entry_points["images"]
-        dom = self._request(path, "GET", opts)
-        if dom.documentElement.tagName != "images":
-            print "Entry point for images has something wrong with it!"
-            #TODO: Handle this error better
-            raise ValueError
-        images = []
-        for image in dom.getElementsByTagName("image"):
-            images.append(Image(self, image))
-        dom.unlink()
-        return images
+        return self._get_resources("image", opts)
 
     def image(self, id):
         """Return a specific image object."""
-        raise NotImplementedError()
+        return self._get_resource_by_id("image", id)
 
     def fetch_image(self, uri):
-        """""" #TODO
+        """Return an image baised on its url."""
         raise NotImplementedError()
+
+    ##### Instances #####
 
     def instances(self, opts={}):
         """Return a list of all instances."""
-        path = self.entry_points["instances"]
-        dom = self._request(path, "GET", opts)
-        if dom.documentElement.tagName != "instances":
-            print "Entry point for instances has something wrong with it!"
-            #TODO: Handle this error better
-            raise ValueError
-        instances = []
-        for instance in dom.getElementsByTagName("instance"):
-            instances.append(Instance(self, instance))
-        dom.unlink()
-        return instances
+        return self._get_resources("instance", opts)
 
     def instance(self, id):
         """Return a specific instance object."""
-        return self.instances({"id":id})[0]
-
-    def post_instance(self, uri):
-        """""" #TODO
-        raise NotImplementedError()
-
-    def fetch_instance(self, uri):
-        """""" #TODO
-        raise NotImplementedError()
+        return self._get_resource_by_id("instance", id)
 
     def create_instance(self, image_id, opts={}):
         """Create an instance and return it's instance object."""
@@ -256,28 +240,75 @@ class Deltacloud(object):
             print "Entry point for instances has something wrong with it!"
             #TODO: Handle this error better
             raise ValueError
+        dom.unlink()
         return Instance(self, dom)
 
-    def storage_volumes(self):
-        """Return a list of all storage volumes."""
+    def fetch_instance(self, uri):
+        """Return an instance baised on its url."""
         raise NotImplementedError()
+
+    ##### Instance States #####
+
+    def instance_states(self):
+        """Return different states which an image can have."""
+        raise NotImplementedError()
+
+    def instance_state(self, name):
+        """Returns True if the instance state name exists."""
+        return name in self.instance_states()
+
+    ##### Flavors #####
+
+    def flavors(self, opts={}):
+        """Return a list of all flavors."""
+        return self._get_resources("flavor", opts)
+
+    def flavor(self, id):
+        """Return a specific flavor object."""
+        return self._get_resource_by_id("flavor", id)
+
+    def fetch_flavor(self, uri):
+        """Return a flavor baised on its url."""
+        raise NotImplementedError()
+
+    ##### Realms #####
+
+    def realms(self, opts={}):
+        """Return a list of all realms."""
+        return self._get_resources("realm", opts)
+
+    def realm(self, id):
+        """Return a specific realm object."""
+        return self._get_resource_by_id("realm", id)
+
+    def fetch_realm(self, uri):
+        """Return a realm baised on its url."""
+        raise NotImplementedError()
+
+    ##### Storage Volumes #####
+
+    def storage_volumes(self, opts={}):
+        """Return a list of all storage volumes."""
+        return self._get_resources("storage-volume", opts)
 
     def storage_volume(self, id):
         """Return a specific storage volume object."""
-        raise NotImplementedError()
+        return self._get_resource_by_id("storage-volume", id)
 
     def fetch_storage_volume(self, uri):
-        """""" #TODO
+        """Return a storage volume baised on its url."""
         raise NotImplementedError()
 
-    def storage_snapshots(self):
+    ##### Storage Volumes #####
+
+    def storage_snapshots(self, opts={}):
         """Return a list of all storage snapshots."""
-        raise NotImplementedError()
+        return self._get_resources("storage-snapshot", opts)
 
     def storage_snapshot(self, id):
         """Return a specific storage snapshot."""
-        raise NotImplementedError()
+        return self._get_resource_by_id("storage-snapshot", id)
 
     def fetch_storage_snapshot(self, uri):
-        """""" #TODO
+        """Return a storage snapshot baised on its url."""
         raise NotImplementedError()
