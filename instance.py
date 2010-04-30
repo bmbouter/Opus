@@ -1,4 +1,4 @@
-from tools import xml_get_text, xml_get_elements_dictionary
+from xml_tools import xml_get_text, xml_get_elements_dictionary
 
 class Instance(object):
     
