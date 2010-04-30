@@ -240,8 +240,9 @@ class Deltacloud(object):
             print "Entry point for instances has something wrong with it!"
             #TODO: Handle this error better
             raise ValueError
+        instance = Instance(self, dom)
         dom.unlink()
-        return Instance(self, dom)
+        return instance
 
     def fetch_instance(self, uri):
         """Return an instance baised on its url."""
