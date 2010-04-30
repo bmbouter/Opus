@@ -1,6 +1,6 @@
 from django.db import models, IntegrityError
 from django.db.models import signals
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 
 from vdi.models import Application
 
@@ -29,6 +29,10 @@ class IdentityProviderLDAP(IdentityProvider):
 
     class Meta:
         verbose_name = "LDAP Identity Provider"
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, unique=True)
+    ldap_roles = models.TextField("User's LDAP Roles", editable=False, blank=True)
 
 class IdentityProviderLocal(IdentityProvider):
     

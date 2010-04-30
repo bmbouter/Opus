@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User, Permission, Group
 
 from idpauth.models import IdentityProvider
 
@@ -15,8 +15,6 @@ class IdpAuthBackend:
             if password == None:
                 log.debug("Non-local authen")
                 user, created = User.objects.get_or_create(username=username)
-                if created:
-                    user = self.configure_user(user)
                 return user
             else:
                 log.debug("local authen")
@@ -34,10 +32,23 @@ class IdpAuthBackend:
             idp = 'local'
         else:
             idp = IdentityProvider.objects.filter(institution=institution[0])
-        log.debug(idp)
-        perms = Permission.objects.filter(group__identityprovider=idp
+
+        if idp[0].type == 'ldap':
+            perms = []
+            user_profile = user_obj.get_profile()
+            roles = user_profile.ldap_roles
+            groups = Group.objects.filter(identityprovider=idp)
+            for arg in groups:
+                group_name = str(arg.name)
+                if group_name in roles:
+                    perms.extend(Permission.objects.filter(group=arg
+                    ).values_list('content_type__app_label', 'codename').order_by())       
+            user_obj._group_perm_cache = set(["%s.%s" % (ct, name) for ct, name in perms])
+        else:
+            perms = Permission.objects.filter(group__identityprovider=idp
             ).values_list('content_type__app_label', 'codename').order_by()
-        user_obj._group_perm_cache = set(["%s.%s" % (ct, name) for ct, name in perms])
+            user_obj._group_perm_cache = set(["%s.%s" % (ct, name) for ct, name in perms])
+        
         return user_obj._group_perm_cache
 
 
@@ -62,6 +73,3 @@ class IdpAuthBackend:
         except User.DoesNotExist:
             return None
 
-    def configure_user(user):
-        return user
-            
