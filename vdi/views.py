@@ -61,7 +61,7 @@ def scale(request):
         # Handle vms we were waiting on to boot up
         booting = deltacloud_tools.get_instances(cluster.booting)
         for vm in booting:
-            dns_name = vm.public_dns_name
+            dns_name = vm.public_addresses[0]
             log.debug('ASDF = %s' % dns_name)
             if dns_name.find("amazonaws.com") > -1:
                 # Resolve the domain name into an IP address
@@ -74,6 +74,7 @@ def scale(request):
                     socket.create_connection((ip,3389),3)
                     socket.create_connection((ip,22),3)
                 except Exception as e:
+                    log.error("Exception: %s" % e)
                     pass
                 else:
                     instance = Instance.objects.filter(instanceId=vm.id)[0]

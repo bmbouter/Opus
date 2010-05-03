@@ -1,3 +1,1 @@
-import models
-import views
 from context_preprocessors import context_preprocessor

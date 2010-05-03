@@ -5,7 +5,10 @@ from django.conf import settings
 from django.db.models.query import QuerySet
 from vdi.models import Instance
 
-from boto.ec2.connection import EC2Connection
+from deltacloud import Deltacloud
+deltacloud = Deltacloud(settings.DELTACLOUD_USERNAME,
+                        settings.DELTACLOUD_PASSWORD,
+                        settings.DELTACLOUD_API_URI)
 
 def create_instance(image_id):
     """Creates an given the instance.
@@ -14,10 +17,10 @@ def create_instance(image_id):
     Returns the instance id of the newly created instance.
 
     """
-    ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-    ami = ec2.get_all_images([image_id])[0]
-    reservation = ami.run(instance_type='m1.large')
-    return reservation.instances[0].id
+    if not deltacloud.connected: deltacloud.connect()
+
+    image = deltacloud.create_instance(image_id)
+    return image.id
 
 def terminate_instances(instances):
     """Turns off the list of instances given.
@@ -27,18 +30,20 @@ def terminate_instances(instances):
     terminated is returned.
 
     """
-    ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-    ids = [i.instanceId for i in instances]
-    if ids:
-        terminated = ec2.terminate_instances(ids)
-        num_del = len(terminated)
-        for item in terminated:
-            dbitem = Instance.objects.filter(instanceId=item.id)[0]
+    if not deltacloud.connected: deltacloud.connect()
+
+    num = 0
+    for instance in instances:
+        dcloud_instance = deltacloud.instance(instance.id)
+        if dcloud_instance.stop():
+            dbitem = Instance.objects.filter(instanceId=instance.id)[0]
             log.debug('The node has been deleted.  I will now move %s into a deleted state' % dbitem.instanceId)
             dbitem.state = 5
             dbitem.save()
-        return num_del
-    return 0
+            num += 1
+        else:
+            log.warning('Could not shut down instance "%s"' % instance.id)
+    return num
 
 def get_instances(instances):
     """Return instance objects baised on database model.
@@ -47,19 +52,10 @@ def get_instances(instances):
     example, a django queryset.
 
     """
-    ec2 = EC2Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
+    if not deltacloud.connected: deltacloud.connect()
 
-    # Create a list of instance id's
-    ids = [i.instanceId for i in instances]
-    if ids:
-        reservations = ec2.get_all_instances(ids)
-    else:
-        reservations = []
-
-    # Get the instances from the EC2 List of Reservations
-    ec2_instances = []
-    for reservation in reservations:
-        ec2_instances.extend(reservation.instances)
-
-    #log.debug('c\n%s'%[(i.state,i.id) for i in ec2_instances])
-    return ec2_instances
+    id_list = []
+    for instance in instances:
+        id_list.append(instance.instanceId)
+    all_instances = deltacloud.instances()
+    return filter(lambda x: x.id in id_list, all_instances)
