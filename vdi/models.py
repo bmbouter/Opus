@@ -9,6 +9,9 @@ class Application(models.Model):
     cluster_headroom = models.IntegerField()
     icon_url = models.URLField()
 
+    class Meta:
+        permissions = (('view_applications','Can View Applications'),)
+
     def __str__(self):
         return self.name
 
