@@ -20,7 +20,6 @@ from cgi import escape
 from urllib import urlencode
 import math
 import os
-import rrdtool, time
 
 from vdi.models import Application, Instance
 from vdi.forms import InstanceForm
@@ -131,92 +130,7 @@ def scale(request):
                 host.state = 4
                 host.save()
                 log.debug('Application Server %s has no sessions.  Removing that node from the cluster!' % host.ip)
-
-        #Get statistics for all instances that are running
-        '''
-        stats = cluster.get_stats()
-        if os.path.isfile(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd"):
-            log.debug("file exists")
-            rrdtool.update(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd" , '%d:%d:%d' % (int(time.time()), stats[0], stats[1]))
-        else:
-            log.debug("have to create new file for this app")
-            stime = int(time.time())
-            rrdtool.create(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd" ,
-                     '--start' , str(stime) ,
-                     '--step', '300',
-                     'DS:users:GAUGE:600:U:U' ,
-                     'DS:headroom:GAUGE:600:U:U',
-                     'RRA:AVERAGE:0.5:1:8640'
-            )
-            rrdtool.update(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd" , '%d:%d:%d' % (int(time.time()), stats[0], stats[1]))
-            '''
-
-
     return HttpResponse('scaling complete @TODO put scaling event summary in this output')
-
-def stats(request,app_pk):
-    app = Application.objects.filter(pk=app_pk)[0]
-    fname = str(settings.BASE_DIR+"/vdi/rrd/" + app.name + ".rrd")
-    gfname = []
-    gfrelativepaths = []
-    gfname.append(str("/usr/share/opus/stats/"+app.name+"/number_of_users.png"))
-    gfrelativepaths.append(str(settings.VDI_MEDIA_PREFIX+"stats/"+app.name+"/number_of_users.png"))
-    log.debug(type(gfname[0]))
-    rrdtool.graph(gfname[0] ,
-            '--start' , str(int(time.time())-60*60*24*3) ,
-            '--end' , str(int(time.time())) ,
-            '--vertical-label' , '# of users' ,
-            '--imgformat' , 'PNG' ,
-            '--title' , 'Usage of Notepad' ,
-            '--lower-limit' , '0' ,
-            'DEF:myspeed=%s:users:AVERAGE' % fname ,
-            'CDEF:mph=myspeed,1,*' ,
-            'LINE1:mph#FF0000:Number of users'
-    )
-
-
-    fname = str(settings.BASE_DIR+"/vdi/rrd/"+app.name +".rrd")
-    gfname.append(str("/usr/share/opus/stats/"+app.name+"/available_headroom.png"))
-    gfrelativepaths.append(str(settings.VDI_MEDIA_PREFIX+"stats/"+app.name+"/available_headroom.png"))
-    rrdtool.graph(gfname[1] ,
-            '--start' , str(int(time.time())-60*60*24*3) ,
-            '--end' , str(int(time.time())) ,
-            '--vertical-label' , 'Headroom' ,
-            '--imgformat' , 'PNG' ,
-            '--title' , 'Headroom on Notepad Cluster' ,
-            '--lower-limit' , '0' ,
-            'DEF:myspeed=%s:headroom:AVERAGE' % fname ,
-            'CDEF:mph=myspeed,1,*' ,
-            'LINE1:mph#FF0000:Available slots in cluster'
-    )
-
-    return render_to_response('vdi/stats.html',
-        {'graphs': gfrelativepaths},
-        context_instance=RequestContext(request))
-
-
-
-
-
-def rrdTest(request):
-    for app in Application.objects.all():
-        cluster = AppCluster(app.pk)
-        #Get statistics for all instances that are running
-        if os.path.isfile(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd"):
-            log.debug("file exists")
-            rrdtool.update(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd" , '%d:%d' % (int(time.time()), cluster.get_stats()))
-        else:
-            log.debug("have to create new file for this app")
-            stime = int(time.time())
-            rrdtool.create(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd" ,
-                     '--start' , str(stime) ,
-                     '--step', '300',
-                     'DS:users:GAUGE:600:U:U' ,
-                     'RRA:AVERAGE:0:1:1'
-            )
-            rrdtool.update(settings.BASE_DIR+"/vdi/rrd/"+str(app.name)+".rrd" , '%d:%d' % (int(time.time()), cluster.get_stats()))
-
-    return HttpResponse('Timer done running. Check database.')
 
 @login_required
 def connect(request,app_pk=None,conn_type=None):
