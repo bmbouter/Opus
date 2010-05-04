@@ -255,7 +255,7 @@ def connect(request,app_pk=None,conn_type=None):
         log.debug('Found user ip of %s' % request.META["REMOTE_ADDR"])
 
         # SSH to instance using NodeUtil
-        node = NodeUtil(host.ip, settings.IMAGE_SSH_KEY)
+        node = NodeUtil(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
         if node.ssh_avail():
             #TODO refactor this so it isn't so verbose, and a series of special cases
             output = node.ssh_run_command(["NET","USER",request.user.username.split('++')[1],password,"/ADD"])

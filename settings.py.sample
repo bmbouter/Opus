@@ -37,6 +37,8 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = True
 
+FILE_UPLOAD_PERMISSIONS = 0600
+
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = ''

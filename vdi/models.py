@@ -8,6 +8,7 @@ class Application(models.Model):
     users_per_small = models.IntegerField()
     cluster_headroom = models.IntegerField()
     icon_url = models.URLField()
+    ssh_key = models.FileField(upload_to='sshkeys', blank=True)
 
     class Meta:
         permissions = (('view_applications','Can View Applications'),)
