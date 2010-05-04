@@ -86,7 +86,16 @@ def set_identityprovider_type(sender, instance, **kwargs):
     else:
         instance.type = ''
 
+def add_local_identifier(sender, instance, created, **kwargs):
+    if created:
+        user = instance.username.split('++')
+        if len(user) == 1:
+            instance.username = 'local++' + instance.username
+            instance.save()
+            log.debug(instance.username)
+
 ######## Signal Declarations  ############
 signals.pre_save.connect(set_identityprovider_type, sender=IdentityProviderOpenID)
 signals.pre_save.connect(set_identityprovider_type, sender=IdentityProviderLocal)
 signals.pre_save.connect(set_identityprovider_type, sender=IdentityProviderLDAP)
+signals.post_save.connect(add_local_identifier, sender=User)
