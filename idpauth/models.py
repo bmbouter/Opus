@@ -21,8 +21,8 @@ class IdentityProvider(models.Model):
         return self.name
 
 class IdentityProviderLDAP(IdentityProvider):
-    url = models.CharField("Server Url",max_length=60, unique=True)
-    bind_base = models.CharField("Bind Base", max_length=128, unique=True)
+    url = models.CharField("Server Url",max_length=60)
+    bind_base = models.CharField("Bind Base", max_length=128)
     distinguished_name = models.CharField("Bind Distinguished Name", max_length=128, unique=True, blank=True)
     ssl_option = models.BooleanField("Require SSl Certificate", default=False)
     group_retrieval_string = models.CharField("User groups retrieval string", max_length=128, blank=True) 

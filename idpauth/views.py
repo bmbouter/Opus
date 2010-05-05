@@ -18,6 +18,8 @@ def determine_login(request, message=None):
     institution = authentication_tools.get_institution(request)
     institutional_idp = IdentityProvider.objects.filter(institution__iexact=str(institution))
 
+    log.debug("Site ID " + str(settings.SITE_ID))
+
     if "next" in request.GET:
         next = request.GET['next']
     else:
