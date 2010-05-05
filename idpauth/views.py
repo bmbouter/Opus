@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.sites.models import Site
 
 from idpauth.models import IdentityProvider, IdentityProviderLDAP, UserProfile
 from idpauth import openid_tools
@@ -18,7 +19,7 @@ def determine_login(request, message=None):
     institution = authentication_tools.get_institution(request)
     institutional_idp = IdentityProvider.objects.filter(institution__iexact=str(institution))
 
-    log.debug("Site ID " + str(settings.SITE_ID))
+    log.debug(Site.objects.get_current())
 
     if "next" in request.GET:
         next = request.GET['next']
