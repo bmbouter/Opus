@@ -34,15 +34,15 @@ def terminate_instances(instances):
 
     num = 0
     for instance in instances:
-        dcloud_instance = deltacloud.instance(instance.id)
+        dcloud_instance = deltacloud.instance(instance.instanceId)
         if dcloud_instance.stop():
-            dbitem = Instance.objects.filter(instanceId=instance.id)[0]
+            dbitem = Instance.objects.filter(instanceId=instance.instanceId)[0]
             log.debug('The node has been deleted.  I will now move %s into a deleted state' % dbitem.instanceId)
             dbitem.state = 5
             dbitem.save()
             num += 1
         else:
-            log.warning('Could not shut down instance "%s"' % instance.id)
+            log.warning('Could not shut down instance "%s"' % instance.instanceId)
     return num
 
 def get_instances(instances):
