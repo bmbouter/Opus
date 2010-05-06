@@ -1,4 +1,10 @@
 from django.db import models
+from django.db.models import signals
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+
+from core import log
+log = log.getLogger()
 
 class Application(models.Model):
     name = models.CharField(max_length=64) # Pretty name of the application
@@ -43,4 +49,25 @@ class Instance(models.Model):
 
     def __repr__(self):
         return self.instanceId
+
+
+######## Signal Handler Functions ############
+def create_application_permission(sender, instance, created, **kwargs):
+    log.debug("App created")
+    if created:
+        log.debug('Application created')
+        log.debug('Use %s' % instance.name)
+        log.debug('vdi.use_%s' % instance.name)
+        ct = ContentType.objects.get(model='application')
+        log.debug(ct)
+        perm = Permission.objects.create(name='Use %s' % instance.name, content_type = ct, codename='use_%s' % instance.name)
+        log.debug(perm)
+
+def delete_application_permission(sender, instance, **kwargs):
+    perm = Permission.objects.get(codename='vdi.use_%s' % instance.name)
+    perm.delete()
+
+######## Signal Declarations  ############
+signals.post_save.connect(create_application_permission, sender=Application)
+signals.post_delete.connect(delete_application_permission, sender=Application)
 
