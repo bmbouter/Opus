@@ -1,13 +1,19 @@
 from celery.task import PeriodicTask, Task
 from celery.registry import tasks
 from celery.decorators import task
+
+from vdi.models import Application
+from vdi.app_cluster_tools import AppCluster
+from vdi import deltacloud_tools
+
 from datetime import timedelta
 import core
 log = core.log.getLogger()
 from django.http import HttpResponse, HttpResponseRedirect
 
 class Scale(PeriodicTask):
-    run_every = timedelta(seconds=10)
+    # By default this task runs every three minutes
+    run_every = timedelta(seconds=180)
 
     def run(self):
         for app in Application.objects.all():
@@ -29,7 +35,7 @@ class Scale(PeriodicTask):
                     output = Popen(["host", dns_name], stdout=PIPE).communicate()[0]
                     ip = '.'.join(re.findall('(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)', output)[0])
                     try:
-                        # TODO: remove the hard coded '3389' & '22' below
+                        # TODO: remove the hard coded '3389' & '22' below.  '3389' is for RDP and '22' is for SSH
                         # TODO: remove the arbitrary '3' second timeout below
                         socket.create_connection((ip,3389),3)
                         socket.create_connection((ip,22),3)

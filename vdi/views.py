@@ -23,7 +23,6 @@ import os
 
 from vdi.models import Application, Instance
 from vdi.forms import InstanceForm
-from vdi import deltacloud_tools
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 import core
 log = core.log.getLogger()
