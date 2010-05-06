@@ -124,6 +124,6 @@ OPUS_MEDIA_PREFIX = '/vdi-media/'
 ######## IDPAUTH Settings ######
 OPENID_AX = [{"type_uri" : "http://axschema.org/contact/email", "count" : 1, "required" : True, "alias" : "email"}]
 RESOURCE_REDIRECT_URL = '/vdi/' # Successful authentication redirects here
-BASE_URL = 'opus-dev.cnl.ncsu.edu'
+BASE_URL = '' # ex: 'opus-dev.cnl.ncsu.edu'
 LOGIN_URL = '/idpauth/login/'
 AUTH_PROFILE_MODULE = "idpauth.UserProfile"
