@@ -37,9 +37,13 @@ import cost_tools
 def applicationLibrary(request):
     #db_apps = get_user_apps(request)
     db_apps = Application.objects.all()
+    temp_list = list(db_apps)
+    for app in temp_list:
+        if not request.user.has_perm('vdi.use_%s' % app.name):
+            temp_list.remove(app)
     #TODO: Get permissions and only display those images
     return render_to_response('vdi/application-library.html',
-        {'app_library': db_apps},
+        {'app_library': temp_list},
         context_instance=RequestContext(request))
 
 def atest(request):
@@ -136,104 +140,101 @@ def scale(request):
 def connect(request,app_pk=None,conn_type=None):
     cluster = AppCluster(app_pk)
 
-    if not request.user.has_perm('vdi.use_%s' % cluster.app.name):
-        return HttpResponse('You lack the proper permission to connect')
-    else:
-        if conn_type == None:
-            # A conn_type was not explicitly requested, so let's decide which one to have the user use
-            if request.META["HTTP_USER_AGENT"].find('MSIE') == -1:
-                # User is not running IE, give them the default connection type
-                conn_type = settings.DEFAULT_CONNECTION_PROTOCOL
-            else:
-                # User is running IE, give them the rdpweb connection type
-                conn_type = 'rdpweb'
+    if conn_type == None:
+        # A conn_type was not explicitly requested, so let's decide which one to have the user use
+        if request.META["HTTP_USER_AGENT"].find('MSIE') == -1:
+            # User is not running IE, give them the default connection type
+            conn_type = settings.DEFAULT_CONNECTION_PROTOCOL
+        else:
+            # User is running IE, give them the rdpweb connection type
+            conn_type = 'rdpweb'
 
-        if request.method == 'GET':
-            try:
-                # Determine which host this user should use
-                host = cluster.select_host()
-            except NoHostException:
-                # Start a new instance immedietly and redirect the user back to this page after 20 seconds
-                # Only boot a new node if there are none currently booting up
-                if len(cluster.booting) == 0:
-                    cluster.start_node()
-                return render_to_response('vdi/app_not_ready.html',
-                    {'app': cluster.app,
-                    'reload_s': settings.USER_WAITING_PAGE_RELOAD_TIME,
-                    'reload_ms': settings.USER_WAITING_PAGE_RELOAD_TIME * 1000})
+    if request.method == 'GET':
+        try:
+            # Determine which host this user should use
+            host = cluster.select_host()
+        except NoHostException:
+            # Start a new instance immedietly and redirect the user back to this page after 20 seconds
+            # Only boot a new node if there are none currently booting up
+            if len(cluster.booting) == 0:
+                cluster.start_node()
+            return render_to_response('vdi/app_not_ready.html',
+                {'app': cluster.app,
+                'reload_s': settings.USER_WAITING_PAGE_RELOAD_TIME,
+                'reload_ms': settings.USER_WAITING_PAGE_RELOAD_TIME * 1000})
 
-            # Random Password Generation string
-            chars=string.ascii_letters+string.digits
-            password = ''.join(choice(chars) for x in range(6))
-            log.debug("THE PASSWORD IS: %s" % password)
+        # Random Password Generation string
+        chars=string.ascii_letters+string.digits
+        password = ''.join(choice(chars) for x in range(6))
+        log.debug("THE PASSWORD IS: %s" % password)
 
-            # Get IP of user
-            # Implement firewall manipulation of instance
-            log.debug('Found user ip of %s' % request.META["REMOTE_ADDR"])
+        # Get IP of user
+        # Implement firewall manipulation of instance
+        log.debug('Found user ip of %s' % request.META["REMOTE_ADDR"])
 
-            # SSH to instance using NodeUtil
-            node = NodeUtil(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
-            if node.ssh_avail():
-                #TODO refactor this so it isn't so verbose, and a series of special cases
-                output = node.ssh_run_command(["NET","USER",request.user.username.split('++')[1],password,"/ADD"])
+        # SSH to instance using NodeUtil
+        node = NodeUtil(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
+        if node.ssh_avail():
+            #TODO refactor this so it isn't so verbose, and a series of special cases
+            output = node.ssh_run_command(["NET","USER",request.user.username.split('++')[1],password,"/ADD"])
+            if output.find("The command completed successfully.") > -1:
+                log.debug("User %s has been created" % request.user.username.split('++')[1])
+            elif output.find("The account already exists.") > -1:
+                log.debug('User %s already exists, going to try to set the password' % request.user.username.split('++')[1])
+                output = node.ssh_run_command(["NET", "USER",request.user.username.split('++')[1],password])
                 if output.find("The command completed successfully.") > -1:
-                    log.debug("User %s has been created" % request.user.username.split('++')[1])
-                elif output.find("The account already exists.") > -1:
-                    log.debug('User %s already exists, going to try to set the password' % request.user.username.split('++')[1])
-                    output = node.ssh_run_command(["NET", "USER",request.user.username.split('++')[1],password])
-                    if output.find("The command completed successfully.") > -1:
-                        log.debug('THE PASSWORD WAS RESET')
-                    else:
-                        error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.user.username.split('++')[1],host.ip,output)
-                        log.error(error_string)
-                        return HttpResponse(error_string)
+                    log.debug('THE PASSWORD WAS RESET')
                 else:
-                    error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.user.username.split('++')[1],host.ip,output)
+                    error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.user.username.split('++')[1],host.ip,output)
                     log.error(error_string)
                     return HttpResponse(error_string)
-
-                # Add the created user to the Administrator group
-                output = node.ssh_run_command(["NET", "localgroup",'"Administrators"',"/add",request.user.username.split('++')[1]])
-                log.debug("Added user %s to the 'Administrators' group" % request.user.username.split('++')[1])
             else:
-                return HttpResponse('Your server was not reachable')
+                error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.user.username.split('++')[1],host.ip,output)
+                log.error(error_string)
+                return HttpResponse(error_string)
 
-            # This is a hack for NC WISE only, and should be handled through a more general mechanism
-            # TODO refactor this to be more secure
-            rdesktopPid = Popen(["rdesktop","-u",request.user.username.split('++')[1],"-p",password, "-s", cluster.app.path, host.ip], env={"DISPLAY": ":1"}).pid
-            # Wait for rdesktop to logon
-            sleep(3)
+            # Add the created user to the Administrator group
+            output = node.ssh_run_command(["NET", "localgroup",'"Administrators"',"/add",request.user.username.split('++')[1]])
+            log.debug("Added user %s to the 'Administrators' group" % request.user.username.split('++')[1])
+        else:
+            return HttpResponse('Your server was not reachable')
 
-            if conn_type == 'rdp':
-                return render_to_response('vdi/connect.html', {'username' : request.user.username.split('++')[1],
-                                                            'password' : password,
-                                                            'app' : cluster.app,
-                                                            'ip' : host.ip},
-                                                            context_instance=RequestContext(request))
-                '''
-                This code is commented out because it really compliments nxproxy.  Originally nxproxy and vdi were developed
-                together but nxproxy has not been touched in a while.  I'm leaving this here for now because it is was hard to
-                write, and it would be easy to refactor (probably into the nxproxy module) if anyone felt the need to do so.
-                NOTE: There is a vestige of this code in the vdi URLconf
+        # This is a hack for NC WISE only, and should be handled through a more general mechanism
+        # TODO refactor this to be more secure
+        rdesktopPid = Popen(["rdesktop","-u",request.user.username.split('++')[1],"-p",password, "-s", cluster.app.path, host.ip], env={"DISPLAY": ":1"}).pid
+        # Wait for rdesktop to logon
+        sleep(3)
 
-                elif conn_type == 'nxweb':
-                    return _nxweb(host.ip,request.session["username"],password,cluster.app)
-                elif conn_type == 'nx':
-                    # TODO -- This url should not be hard coded
-                    session_url = 'https://opus-dev.cnl.ncsu.edu:9001/nxproxy/conn_builder?' + urlencode({'dest' : host.ip, 'dest_user' : request.session["username"], 'dest_pass' : password, 'app_path' : cluster.app.path})
-                    return HttpResponseRedirect(session_url)
-                '''
-            elif conn_type == 'rdpweb':
-                tsweb_url = settings.VDI_MEDIA_PREFIX+'TSWeb/'
-                return render_to_response('vdi/rdpweb.html', {'tsweb_url' : tsweb_url,
+        if conn_type == 'rdp':
+            return render_to_response('vdi/connect.html', {'username' : request.user.username.split('++')[1],
+                                                        'password' : password,
                                                         'app' : cluster.app,
-                                                        'ip' : host.ip,
-                                                        'username' : request.user.username.split('++')[1],
-                                                        'password' : password})
-        elif request.method == 'POST':
-            # Handle POST request types
-            if conn_type == 'rdp':
-                return _create_rdp_conn_file(request.POST["ip"],request.user.username.split('++')[1],request.POST["password"],cluster.app)
+                                                        'ip' : host.ip},
+                                                        context_instance=RequestContext(request))
+            '''
+            This code is commented out because it really compliments nxproxy.  Originally nxproxy and vdi were developed
+            together but nxproxy has not been touched in a while.  I'm leaving this here for now because it is was hard to
+            write, and it would be easy to refactor (probably into the nxproxy module) if anyone felt the need to do so.
+            NOTE: There is a vestige of this code in the vdi URLconf
+
+            elif conn_type == 'nxweb':
+                return _nxweb(host.ip,request.session["username"],password,cluster.app)
+            elif conn_type == 'nx':
+                # TODO -- This url should not be hard coded
+                session_url = 'https://opus-dev.cnl.ncsu.edu:9001/nxproxy/conn_builder?' + urlencode({'dest' : host.ip, 'dest_user' : request.session["username"], 'dest_pass' : password, 'app_path' : cluster.app.path})
+                return HttpResponseRedirect(session_url)
+            '''
+        elif conn_type == 'rdpweb':
+            tsweb_url = settings.VDI_MEDIA_PREFIX+'TSWeb/'
+            return render_to_response('vdi/rdpweb.html', {'tsweb_url' : tsweb_url,
+                                                    'app' : cluster.app,
+                                                    'ip' : host.ip,
+                                                    'username' : request.user.username.split('++')[1],
+                                                    'password' : password})
+    elif request.method == 'POST':
+        # Handle POST request types
+        if conn_type == 'rdp':
+            return _create_rdp_conn_file(request.POST["ip"],request.user.username.split('++')[1],request.POST["password"],cluster.app)
 
     '''
 def _nxweb(ip, username, password, app):

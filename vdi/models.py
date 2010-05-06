@@ -17,7 +17,7 @@ class Application(models.Model):
     ssh_key = models.FileField("SSH Key", upload_to='vdi/sshkeys', blank=True)
 
     class Meta:
-        permissions = (('view_applications','Can View Applications'),)
+        permissions = (('view_applications','Can view applications'),)
 
     def __str__(self):
         return self.name

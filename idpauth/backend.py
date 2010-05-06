@@ -59,7 +59,6 @@ class IdpAuthBackend:
         return user_obj._perm_cache
 
     def has_perm(self, user_obj, perm):
-        log.debug(perm)
         return perm in self.get_all_permissions(user_obj)
 
     def has_module_perms(self, user_obj, app_label):
