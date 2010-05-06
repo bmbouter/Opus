@@ -98,8 +98,8 @@ def openid_login_complete(request):
     institution = authentication_tools.get_institution(request)
     resource_redirect_url = request.GET['next']
     session = request.session
-    #for r in request.GET.items():
-    #    log.debug(r)
+    for r in request.GET.items():
+        log.debug("GET item = " + str(r))
 
     host = authentication_tools.get_url_host(request)
     nonce = request.GET['janrain_nonce']
@@ -110,10 +110,14 @@ def openid_login_complete(request):
     ])
     
     status, username = openid_tools.complete_openid(session, query_dict, url)
+    log.debug(status)
+    log.debug(username)
 
     if status == "SUCCESS":
         username = institution + "++" + username
+        log.debug(username)
         user = authenticate(username=username)
+        log.debug(user)
         if user is not None:
             if user.is_active:
                 log.debug("Logging user in")

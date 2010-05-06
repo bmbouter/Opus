@@ -37,9 +37,13 @@ import cost_tools
 def applicationLibrary(request):
     #db_apps = get_user_apps(request)
     db_apps = Application.objects.all()
+    temp_list = list(db_apps)
+    for app in temp_list:
+        if not request.user.has_perm('vdi.use_%s' % app.name):
+            temp_list.remove(app)
     #TODO: Get permissions and only display those images
     return render_to_response('vdi/application-library.html',
-        {'app_library': db_apps},
+        {'app_library': temp_list},
         context_instance=RequestContext(request))
 
 @login_required
