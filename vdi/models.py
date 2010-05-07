@@ -14,10 +14,7 @@ class Application(models.Model):
     users_per_small = models.IntegerField()
     cluster_headroom = models.IntegerField()
     icon_url = models.URLField()
-    ssh_key = models.FileField("SSH Key", upload_to='vdi/sshkeys', blank=True)
-
-    class Meta:
-        permissions = (('view_applications','Can view applications'),)
+    ssh_key = models.FileField("SSH Key", upload_to='vdi/sshkeys')
 
     def __str__(self):
         return self.name

@@ -26,13 +26,9 @@ from vdi.forms import InstanceForm
 from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
 import core
 log = core.log.getLogger()
-#from vdi.tasks import CreateUserTask
-#from vdi.tasks import MyTask
-from celery.decorators import task
 import cost_tools
 
 @login_required
-@permission_required('vdi.view_applications')
 def applicationLibrary(request):
     #db_apps = get_user_apps(request)
     db_apps = Application.objects.all()
@@ -47,6 +43,12 @@ def applicationLibrary(request):
 
 @login_required
 def connect(request,app_pk=None,conn_type=None):
+    # Check that the user has permissions to access this
+    app = Application.objects.filter(pk=app_pk)[0]
+    if not request.user.has_perm('vdi.use_%s' % app.name):
+        return HttpResponseRedirect(settings.LOGIN_URL)
+
+    # Get an AppCluster instance
     cluster = AppCluster(app_pk)
 
     if conn_type == None:
