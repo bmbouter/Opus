@@ -36,3 +36,7 @@ def get_provider(url):
         provider = 'unknown'
 
     return provider
+
+def add_session_username(request, username):
+    clean_username = username.split('++')[1]
+    request.session['username'] = clean_username

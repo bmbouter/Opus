@@ -63,6 +63,7 @@ def ldap_login(request):
             else:
                 log.debug("Logging user in")
                 login(request, user)
+                authentication_tools.add_session_username(request, username)
                 log.debug("Redirecting to " + resource_redirect_url)
                 return HttpResponseRedirect(resource_redirect_url)
         else:
@@ -111,6 +112,7 @@ def openid_login_complete(request):
             if user.is_active:
                 log.debug("Logging user in")
                 login(request, user)
+                authentication_tools.add_session_username(request, username)
                 log.debug("Redirecting to " + resource_redirect_url)
                 return HttpResponseRedirect(resource_redirect_url)
             else:
@@ -145,6 +147,7 @@ def local_login(request):
         if user.is_active:
             log.debug("Logging user in")
             login(request, user)
+            authentication_tools.add_session_username(request, username)
             log.debug("Redirecting to " + redirect_url)
             return HttpResponseRedirect(redirect_url)
         else:
@@ -166,6 +169,10 @@ def shibboleth_login(request):
 
 @login_required
 def logout_view(request):
+    try:
+        del request.session['username']
+    except KeyError:
+        pass
     logout(request)
     institution = authentication_tools.get_institution(request)
     
