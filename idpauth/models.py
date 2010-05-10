@@ -49,7 +49,6 @@ class IdentityProviderShibboleth(IdentityProvider):
     class Meta:
         verbose_name = "Shibboleth Identity Provider"
 
-
 ####### OpenID Required Models ##############
 class Nonce(models.Model):
     server_url = models.URLField()

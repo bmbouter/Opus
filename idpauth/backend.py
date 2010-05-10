@@ -9,7 +9,6 @@ log = log.getLogger()
 class IdpAuthBackend:
 
     def authenticate(self, username=None, password=None):
-        log.debug(username)
         if not username:
             return None
         else:
@@ -49,7 +48,6 @@ class IdpAuthBackend:
             perms = Permission.objects.filter(group__identityprovider=idp
             ).values_list('content_type__app_label', 'codename').order_by()
             user_obj._group_perm_cache = set(["%s.%s" % (ct, name) for ct, name in perms])
-        log.debug(user_obj._group_perm_cache)
         return user_obj._group_perm_cache
 
 

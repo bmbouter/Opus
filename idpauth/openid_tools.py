@@ -2,20 +2,9 @@ from django.conf import settings
 
 import time 
 import base64
-#import hashlib
-#import re
 import urllib
 
-#import openid   
-#if openid.__version__ < '2.0.0':
-#    raise ImportError, 'You need python-openid 2.0.0 or newer'
-#elif openid.__version__ < '2.1.0':
-#    from openid import sreg as oidsreg
-#else: 
-    #from openid.extensions import sreg as oidsreg
-    #from openid.extensions import pape as oidpape
 from openid.extensions import ax as oidax
-
 from openid.store import nonce as oid_nonce
 from openid.store.interface import OpenIDStore
 from openid.association import Association as OIDAssociation
@@ -65,7 +54,7 @@ def complete_openid(session, query_dict, url):
         return None, None
 
 def get_return_url(host, nonce):
-    url = (host + '/idpauth/openid_login_complete/').encode('utf8') + '?janrain_nonce=' + urllib.pathname2url(nonce)
+    url = (host + '/idpauth/openid_login_complete/').encode('utf8')     
     return url
 
 def from_openid_response(openid_response):

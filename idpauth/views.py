@@ -19,8 +19,6 @@ def determine_login(request, message=None):
     institution = authentication_tools.get_institution(request)
     institutional_idp = IdentityProvider.objects.filter(institution__iexact=str(institution))
 
-    log.debug(Site.objects.get_current())
-
     if "next" in request.GET:
         next = request.GET['next']
     else:
@@ -89,18 +87,13 @@ def openid_login(request):
     if not redirect_url:
         return HttpResponse('The OpenID was invalid')
     else:
-        #debug_redirect_url = str(urllib.url2pathname(redirect_url)).split('&')
-        #for r in debug_redirect_url:
-        #    log.debug(r)
         return HttpResponseRedirect(redirect_url)
 
 def openid_login_complete(request):
     institution = authentication_tools.get_institution(request)
     resource_redirect_url = request.GET['next']
     session = request.session
-    #for r in request.GET.items():
-        #log.debug("GET item = " + str(r))
-
+    
     host = authentication_tools.get_url_host(request)
     nonce = request.GET['janrain_nonce']
     url = openid_tools.get_return_url(host, nonce)
@@ -110,14 +103,10 @@ def openid_login_complete(request):
     ])
     
     status, username = openid_tools.complete_openid(session, query_dict, url)
-    #log.debug(status)
-    #log.debug(username)
 
     if status == "SUCCESS":
-        username = institution + "++" + username
-        #log.debug(username)
+        username = institution + "++" + username.split('@')[0]
         user = authenticate(username=username)
-        #log.debug(user)
         if user is not None:
             if user.is_active:
                 log.debug("Logging user in")
