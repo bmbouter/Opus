@@ -206,6 +206,21 @@ def _create_rdp_conn_file(ip, username, password, app):
     resp['Content-Disposition'] = 'attachment; filename="%s.rdp"' % app.name
     return resp
 
+def show_cost(request):
+    log.debug('cost = ')
+    log.debug('weekday = %s' % datetime.now().weekday())
+    log.debug(datetime.now().isocalendar())
+    yesterday_midnight = datetime.today().replace(hour=0,minute=0,second=0,microsecond=0)
+    day = cost_tools.getInstanceHoursInDateRange(yesterday_midnight,datetime.now())
+    month_midnight = datetime.today().replace(day=1,hour=0,minute=0,second=0,microsecond=0)
+    month = cost_tools.getInstanceHoursInDateRange(month_midnight,datetime.now())
+    year_midnight = datetime.today().replace(month=1,day=1,hour=0,minute=0,second=0,microsecond=0)
+    week_midnight = year_midnight +timedelta(weeks=datetime.today().isocalendar()[1])
+    week = cost_tools.getInstanceHoursInDateRange(week_midnight,datetime.now())
+    return render_to_response('vdi/cost_display.html',
+        {'day' : day, 'week' : week, 'month' : month},
+        context_instance=RequestContext(request))
+
 def calculate_cost(request, start_date, end_date):
 
     starting_date = cost_tools.convertToDateTime(start_date)
