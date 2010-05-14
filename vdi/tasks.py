@@ -2,7 +2,7 @@ from celery.task import PeriodicTask, Task
 from celery.registry import tasks
 from celery.decorators import task
 
-from vdi.models import Application
+from vdi.models import Application, UserExperience
 from vdi.app_cluster_tools import AppCluster
 from vdi import deltacloud_tools
 
@@ -23,6 +23,20 @@ class Scale(PeriodicTask):
             # Clean up all idle users on all nodes for this application cluster
             log.debug('APP NAME %s'%app.name)
             cluster.logout_idle_users()
+
+
+            for host in cluster.active:
+                an = AppNode(host.ip)
+                user_experience = UserExperience.objects.all(connection_closed__isnull=True)
+                tmp_list = list(user_experience)
+                for user_exp in tmp_list:
+                    for session in an.sessions:
+                        if(user_exp.user.username == session['username']:
+                            tmp_list.remove(user)
+                for user_exp in tmp_list:
+                    user_exp.user.connection_closed = datetime.today()
+
+
 
             # Handle vms we were waiting on to boot up
             booting = deltacloud_tools.get_instances(cluster.booting)

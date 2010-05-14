@@ -155,7 +155,7 @@ class AppNode(object):
     """
     def check_user_load(self):
         self.sessions = []
-        node = NodeUtil(self.ip,settings.IMAGE_SSH_KEY)
+        node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
         output = node.ssh_run_command(["Quser"])
         for line in output.split('\n'):
             fields = split("(\S+) +(\d+) +(Disc) +([none]*[\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
@@ -203,7 +203,7 @@ class AppNode(object):
         Log user off from server with provided ip.  User is identified by session id.
         If user was logged off succesfully returns true. If error occured returns false.
         """
-        node = NodeUtil(self.ip,settings.IMAGE_SSH_KEY)
+        node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
         output = node.ssh_run_command(["c:\logoff.exe",str(session_id)])
         log.debug('$#$#$#  %s'%output)
         if (len(output) == 0):

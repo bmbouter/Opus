@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import signals
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
 
 from core import log
@@ -46,6 +46,13 @@ class Instance(models.Model):
 
     def __repr__(self):
         return self.instanceId
+
+class UserExperience(models.Model):
+    user = models.ForeignKey(User)
+    application = models.ForeignKey(Application)
+    file_presented = models.DateTimeField(auto_now=False, auto_now_add=False, editable=False)
+    connection_closed = models.DateTimeField(auto_now=False, auto_now_add=False, editable=False)
+    access_date = models.DateTimeField(auto_now=False, auto_now_add=False, editable=False)
 
 
 ######## Signal Handler Functions ############

@@ -2,6 +2,9 @@ from django.utils.html import escape
 from django.http import get_host
 from django.conf import settings
 
+from core import log
+log = log.getLogger()
+
 def get_institution(request):
     host_url = get_url_host(request)
     institution = host_url.split('//')[1].split("." + settings.BASE_URL)[0]
