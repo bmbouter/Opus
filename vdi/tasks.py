@@ -2,9 +2,14 @@ from celery.task import PeriodicTask, Task
 from celery.registry import tasks
 from celery.decorators import task
 
-from vdi.models import Application, UserExperience
-from vdi.app_cluster_tools import AppCluster
+from vdi.models import Application, UserExperience, Instance
+from vdi.app_cluster_tools import AppCluster, AppNode
 from vdi import deltacloud_tools
+
+import math
+from subprocess import Popen, PIPE
+import re
+import socket
 
 from datetime import timedelta
 import core
@@ -13,7 +18,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 class Scale(PeriodicTask):
     # By default this task runs every three minutes
-    run_every = timedelta(seconds=180)
+    run_every = timedelta(seconds=30)
 
     def run(self):
         for app in Application.objects.all():
@@ -24,17 +29,18 @@ class Scale(PeriodicTask):
             log.debug('APP NAME %s'%app.name)
             cluster.logout_idle_users()
 
-
-            for host in cluster.active:
-                an = AppNode(host.ip)
-                user_experience = UserExperience.objects.all(connection_closed__isnull=True)
-                tmp_list = list(user_experience)
-                for user_exp in tmp_list:
-                    for session in an.sessions:
-                        if(user_exp.user.username == session['username']:
-                            tmp_list.remove(user)
-                for user_exp in tmp_list:
-                    user_exp.user.connection_closed = datetime.today()
+            log.debug("Checking for active clusters")
+            #for host in cluster.active:
+            #    an = AppNode(host)
+            #    user_experience = UserExperience.objects.all(connection_closed__isnull=True)
+            #    tmp_list = list(user_experience)
+            #    log.debug(tmp_list)
+            #    for user_exp in tmp_list:
+            #        for session in an.sessions:
+            #            if(user_exp.user.username == session['username']):
+            #                tmp_list.remove(user)
+            #    for user_exp in tmp_list:
+            #        user_exp.user.connection_closed = datetime.today()
 
 
 
@@ -86,7 +92,7 @@ class Scale(PeriodicTask):
             for host in cluster.shutting_down:
                 log.debug('ASDASDASD    %s' % host.instanceId)
                 try:
-                    n = AppNode(host.ip)
+                    n = AppNode(host)
                     log.debug('AppNode %s is waiting to be shut down and has %s connections' % (host.ip,n.sessions))
                     if n.sessions == []:
                         toTerminate.append(host)

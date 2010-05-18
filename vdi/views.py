@@ -22,8 +22,8 @@ import math
 import os
 
 from vdi.models import Application, Instance, UserExperience
-from vdi.forms import InstanceForm
-from vdi.app_cluster_tools import AppCluster, AppNode, NoHostException
+from vdi.forms import InstanceForm, UserFeedbackForm
+from vdi.app_cluster_tools import AppCluster, NoHostException
 import core
 log = core.log.getLogger()
 import cost_tools
@@ -52,7 +52,7 @@ def connect(request,app_pk=None,conn_type=None):
     cluster = AppCluster(app_pk)
     
     user_experience = UserExperience(user=request.user, application=app)
-    user_experience.access_datetime = datetime.today()
+    user_experience.access_date = datetime.today()
     user_experience.save()
             
     if conn_type == None:
@@ -216,10 +216,16 @@ def _create_rdp_conn_file(ip, username, password, app):
 
 def calculate_cost(request, start_date, end_date):
 
-    starting_date = cost_tools.convertToDateTime(start_date)
-    ending_date = cost_tools.convertToDateTime(end_date)
+    starting_date = cost_tools.convert_to_date_time(start_date)
+    ending_date = cost_tools.convert_to_date_time(end_date)
 
-    total_hoursInRange = cost_tools.getInstanceHoursInDateRange(starting_date, ending_date)
-    cost = cost_tools.generateCost(total_hoursInRange)
+    total_hours_in_range = cost_tools.get_instance_hours_in_date_range(starting_date, ending_date)
+    cost = cost_tools.generate_cost(total_hours_in_range)
 
-    return HttpResponse("Calculating cost for date " + str(starting_date) + " to " + str(ending_date) + ".  The total hours used in this range is " + str(total_hoursInRange) + " with cost $" + str(cost))
+    return HttpResponse("Calculating cost for date " + str(starting_date) + " to " + str(ending_date) + ".  The total hours used in this range is " + str(total_hours_in_range) + " with cost $" + str(cost))
+
+def user_feedback(request):
+    form = UserFeedbackForm()
+    return render_to_response('vdi/user-feedback.html',
+        {'form' : form},
+        context_instance=RequestContext(request))

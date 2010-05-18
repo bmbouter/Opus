@@ -51,7 +51,7 @@ class AppCluster(object):
         """Logs off idle users for all nodes in this cluster."""
         for node in self.active:
             try:
-                AppNode(node.ip).user_cleanup(10)
+                AppNode(node).user_cleanup(10)
             except HostNotConnectableError:
                 # Ignore this host that doesn't seem to be ssh'able, but log it as an error
                 log.warning('AppNode %s is NOT sshable and should be looked into')
@@ -74,7 +74,7 @@ class AppCluster(object):
         number_of_users = 0
         for node in self.active:
             try:
-                number_of_users += len(AppNode(node.ip).sessions)
+                number_of_users += len(AppNode(node).sessions)
             except HostNotConnectableError:
                 # Ignore this host that doesn't seem to be ssh'able, but log it as an error
                 log.warning('AppNode %s is NOT sshable and should be looked into')
@@ -133,7 +133,7 @@ class AppCluster(object):
         nodes = self.active.order_by('priority')
         for host in nodes:
             try:
-                n = AppNode(host.ip)
+                n = AppNode(host)
                 cur_users = len(n.sessions)
                 app_map.append((host,cur_users))
             except HostNotConnectableError:
@@ -143,8 +143,9 @@ class AppCluster(object):
 
 class AppNode(object):
 
-    def __init__(self,ip):
-        self.ip = ip
+    def __init__(self,instance):
+        self.instance = instance
+        self.ip = instance.ip
         self.check_user_load()
         log.debug('On ip %s there are %s sessions' % (self.ip,len(self.sessions)))
 
@@ -155,7 +156,8 @@ class AppNode(object):
     """
     def check_user_load(self):
         self.sessions = []
-        node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
+        log.debug("SSH KEY PATH " + str(settings.MEDIA_ROOT + str(self.instance.application.ssh_key)))
+        node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(self.instance.application.ssh_key))
         output = node.ssh_run_command(["Quser"])
         for line in output.split('\n'):
             fields = split("(\S+) +(\d+) +(Disc) +([none]*[\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
