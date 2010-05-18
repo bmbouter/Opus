@@ -8,7 +8,7 @@ from vdi.app_cluster_tools import AppCluster, AppNode
 from vdi.models import Instance
 
 
-def convertToDateTime(date):
+def convert_to_date_time(date):
     '''
     Assumes the date comes in the form month-day-yearThour:minute:second
     '''
@@ -22,42 +22,37 @@ def convertToDateTime(date):
     new_datetime = datetime.datetime(int(year), int(month), int(day), int(hour), int(minute), int(second))
     return new_datetime
 
-def getInstanceHoursInDateRange(start_date, end_date):
+def get_instance_hours_in_date_range(start_date, end_date):
+    instances = Instance.objects.exclude(shutdownDateTime__gt=end_date).exclude(startUpDateTime__lt=start_date)
+    total_hours = get_total_instance_hours(instances, start_date, end_date)
     
-    instances = Instance.objects.exclude(shutdownDateTime__lt=start_date).exclude(startUpDateTime__gt=end_date)
-    total_hours = get_totalInstanceHours(instances, start_date, end_date)
-
     return (total_hours)
 
-
-def get_totalInstanceHours(instances, start_date, end_date):
-    
-    hoursInTimePeriod = 0
+def get_total_instance_hours(instances, start_date, end_date):
+    hours_in_time_period = 0
 
     for instance in instances:
         if instance.state == 5:
-            hoursInTimePeriod += calculate_deletedNodeHours(instance, start_date)
+            hours_in_time_period += calculate_deleted_node_hours(instance, start_date)
         else:
-            hoursInTimePeriod += calculate_activeNodeHours(instance, start_date, end_date)
-    return hoursInTimePeriod
+            hours_in_time_period += calculate_active_node_hours(instance, start_date, end_date)
+    return hours_in_time_period
 
-def calculate_deletedNodeHours(instance, start_date):
-
+def calculate_deleted_node_hours(instance, start_date):
     if instance.startUpDateTime > start_date:
-        hoursInTimePeriod = instance.shutdownDateTime - instance.startUpDateTime
+        hours_in_time_period = instance.shutdownDateTime - instance.startUpDateTime
     else:
-        hoursInTimePeriod = instance.shutdownDateTime - start_date 
-    return convertTimeToNumberHours(hoursInTimePeriod)
+        hours_in_time_period = instance.shutdownDateTime - start_date 
+    return convert_time_to_hours(hours_in_time_period)
 
-def calculate_activeNodeHours(instance, start_date, end_date):
-
+def calculate_active_node_hours(instance, start_date, end_date):
     if instance.startUpDateTime < start_date:
-        hoursInTimePeriod = end_date - start_date
+        hours_in_time_period = end_date - start_date
     else:
-        hoursInTimePeriod = end_date - instance.startUpDateTime
-    return convertTimeToNumberHours(hoursInTimePeriod)
+        hours_in_time_period = end_date - instance.startUpDateTime
+    return convert_time_to_hours(hours_in_time_period)
 
-def convertTimeToNumberHours(time):
+def convert_time_to_hours(time):
     '''
     Time is a timedelta object.
     '''
@@ -67,7 +62,7 @@ def convertTimeToNumberHours(time):
 
     return hours
 
-def generateCost(hoursUsed):
-    perHourCharge = 0.48
-    cost = hoursUsed * perHourCharge
+def generate_cost(hours_used):
+    per_hour_charge = 0.48
+    cost = hours_used * per_hour_charge
     return cost
