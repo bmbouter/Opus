@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Application Cost{% endblock %}
+
+{% block content %}
+    <table border="1">
+        <tr>
+            <th>Today</th>
+            <th>This Week</th>
+            <th>This Billing Period</th>
+        </tr>
+        <tr>
+            <td><center>${{ day }}</center></td>
+            <td><center>${{ week }}</center></td>
+            <td><center>${{ month }}</center></td>
+        </tr>
+    </table> 
+{% endblock %}
