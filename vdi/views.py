@@ -219,12 +219,12 @@ def show_cost(request):
     log.debug('weekday = %s' % datetime.now().weekday())
     log.debug(datetime.now().isocalendar())
     yesterday_midnight = datetime.today().replace(hour=0,minute=0,second=0,microsecond=0)
-    day = cost_tools.getInstanceHoursInDateRange(yesterday_midnight,datetime.now())
+    day = cost_tools.get_instance_hours_in_date_range(yesterday_midnight,datetime.now())
     month_midnight = datetime.today().replace(day=1,hour=0,minute=0,second=0,microsecond=0)
-    month = cost_tools.getInstanceHoursInDateRange(month_midnight,datetime.now())
+    month = cost_tools.get_instance_hours_in_date_range(month_midnight,datetime.now())
     year_midnight = datetime.today().replace(month=1,day=1,hour=0,minute=0,second=0,microsecond=0)
     week_midnight = year_midnight +timedelta(weeks=datetime.today().isocalendar()[1])
-    week = cost_tools.getInstanceHoursInDateRange(week_midnight,datetime.now())
+    week = cost_tools.get_instance_hours_in_date_range(week_midnight,datetime.now())
     return render_to_response('vdi/cost_display.html',
         {'day' : day, 'week' : week, 'month' : month},
         context_instance=RequestContext(request))
