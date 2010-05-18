@@ -5,6 +5,10 @@ import select
 
 from django.conf import settings
 
+#Provide Logging
+import core
+log = core.log.getLogger()
+
 class HostNotConnectableError(Exception):
     pass
 
@@ -41,6 +45,7 @@ class NodeUtil(object):
                 self.ip,
                 ]
         command.extend(cmd)
+        log.warning(' '.join(command))
         return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
     def ssh_avail(self):

@@ -10,7 +10,6 @@ from core.ssh_tools import HostNotConnectableError , NodeUtil
 
 from subprocess import Popen, PIPE
 from random import choice, randint
-import socket
 import string
 import re
 import ldap
@@ -87,6 +86,7 @@ def connect(request,app_pk=None,conn_type=None):
         node = NodeUtil(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
         if node.ssh_avail():
             #TODO refactor this so it isn't so verbose, and a series of special cases
+            log.warning(request.session)
             output = node.ssh_run_command(["NET","USER",request.session['username'],password,"/ADD"])
             if output.find("The command completed successfully.") > -1:
                 log.debug("User %s has been created" % request.session['username'])

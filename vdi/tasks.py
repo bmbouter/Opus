@@ -2,9 +2,12 @@ from celery.task import PeriodicTask, Task
 from celery.registry import tasks
 from celery.decorators import task
 
-from vdi.models import Application
+from vdi.models import Application, Instance
 from vdi.app_cluster_tools import AppCluster
 from vdi import deltacloud_tools
+from subprocess import Popen, PIPE
+import socket
+import re
 
 from datetime import timedelta
 import core
@@ -13,7 +16,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 class Scale(PeriodicTask):
     # By default this task runs every three minutes
-    run_every = timedelta(seconds=180)
+    run_every = timedelta(seconds=30)
 
     def run(self):
         for app in Application.objects.all():
@@ -40,7 +43,7 @@ class Scale(PeriodicTask):
                         socket.create_connection((ip,3389),3)
                         socket.create_connection((ip,22),3)
                     except Exception as e:
-                        log.error("Exception: %s" % e)
+                        log.debug("Server %s is not yet available" % ip)
                         pass
                     else:
                         instance = Instance.objects.filter(instanceId=vm.id)[0]
