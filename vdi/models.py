@@ -50,9 +50,10 @@ class Instance(models.Model):
 class UserExperience(models.Model):
     user = models.ForeignKey(User)
     application = models.ForeignKey(Application)
-    file_presented = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
-    connection_closed = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
     access_date = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
+    file_presented = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
+    connection_opened = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
+    connection_closed = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
 
 class UserFeedback(models.Model):
     application = models.ForeignKey(Application)

@@ -205,7 +205,7 @@ class AppNode(object):
         Log user off from server with provided ip.  User is identified by session id.
         If user was logged off succesfully returns true. If error occured returns false.
         """
-        node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
+        node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(self.instance.application.ssh_key))
         output = node.ssh_run_command(["c:\logoff.exe",str(session_id)])
         log.debug('$#$#$#  %s'%output)
         if (len(output) == 0):
