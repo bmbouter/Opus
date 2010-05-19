@@ -17,8 +17,11 @@ log = core.log.getLogger()
 from django.http import HttpResponse, HttpResponseRedirect
 
 class Scale(PeriodicTask):
-    # By default this task runs every three minutes
-    run_every = timedelta(seconds=30)
+
+    #This property allows this periodic task frequency to be database dependant
+    @property
+    def run_every(self):
+        return 30
 
     def run(self):
         for app in Application.objects.all():
