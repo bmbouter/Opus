@@ -47,3 +47,4 @@ class UserFeedbackForm(forms.ModelForm):
 
     class Meta:
         model = UserFeedback
+        fields = ['load_time', 'responsiveness', 'comment']

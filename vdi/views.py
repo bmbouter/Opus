@@ -49,10 +49,6 @@ def connect(request,app_pk=None,conn_type=None):
 
     # Get an AppCluster instance
     cluster = AppCluster(app_pk)
-    
-    user_experience = UserExperience(user=request.user, application=app)
-    user_experience.access_date = datetime.today()
-    user_experience.save()
             
     if conn_type == None:
         # A conn_type was not explicitly requested, so let's decide which one to have the user use
@@ -64,6 +60,9 @@ def connect(request,app_pk=None,conn_type=None):
             conn_type = 'rdpweb'
 
     if request.method == 'GET':
+        user_experience = UserExperience.objects.create(user=request.user, application=app)
+        user_experience.access_date = datetime.today()
+        user_experience.save()
         try:
             # Determine which host this user should use
             host = cluster.select_host()

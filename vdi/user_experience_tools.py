@@ -66,3 +66,26 @@ def get_concurrent_users_over_date_range(application, start_date, end_date, reso
 def convert_timedelta_to_seconds(timedelta):
     seconds = timedelta.days * 86400 + timedelta.seconds
     return seconds
+
+def process_user_connections(app_node):
+    user_experience = UserExperience.objects.exclude(connection_closed__isnull=False)
+    log.debug("Users who have not closed connections and/or opened connections are: " + str(user_experience))
+    for user_exp in user_experience:
+        for session in app_node.sessions:
+            log.debug(session['username'])
+            log.debug(user_exp.user.username.split('++')[1].split('@')[0])
+            if user_exp.user.username.split('++')[1].split('@')[0] == session['username']:
+                if user_exp.connection_opened == None:
+                    log.debug("Setting the connection_opened parameter")
+                    user_exp.connection_opened = datetime.today()
+                    user_exp.save()
+                    log.debug("Connection opened after setting is: " + str(user_exp.connection_opened))
+                user_experience = user_experience.exclude(user=user_exp.user)
+        log.debug(user_experience)
+                
+    user_experience = user_experience.exclude(connection_opened__isnull=True)
+    for user_exp in user_experience:
+        user_exp.connection_closed = datetime.today()
+        user_exp.save()
+        log.debug("Connection closed was set to: " + str(user_exp.connection_closed))
+    

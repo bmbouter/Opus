@@ -2,8 +2,9 @@ from celery.task import PeriodicTask, Task
 from celery.registry import tasks
 from celery.decorators import task
 
-from vdi.models import Application, UserExperience, Instance
+from vdi.models import Application, Instance
 from vdi.app_cluster_tools import AppCluster, AppNode
+from vdi import user_experience_tools
 from vdi import deltacloud_tools
 
 import math
@@ -11,7 +12,7 @@ from subprocess import Popen, PIPE
 import re
 import socket
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 import core
 log = core.log.getLogger()
 from django.http import HttpResponse, HttpResponseRedirect
@@ -33,19 +34,10 @@ class Scale(PeriodicTask):
             cluster.logout_idle_users()
 
             log.debug("Checking for active clusters")
-            #for host in cluster.active:
-            #    an = AppNode(host)
-            #    user_experience = UserExperience.objects.all(connection_closed__isnull=True)
-            #    tmp_list = list(user_experience)
-            #    log.debug(tmp_list)
-            #    for user_exp in tmp_list:
-            #        for session in an.sessions:
-            #            if(user_exp.user.username == session['username']):
-            #                tmp_list.remove(user)
-            #    for user_exp in tmp_list:
-            #        user_exp.user.connection_closed = datetime.today()
-
-
+            for host in cluster.active:
+                log.debug("Found active host")
+                an = AppNode(host)
+                user_experience_tools.process_user_connections(an)
 
             # Handle vms we were waiting on to boot up
             booting = deltacloud_tools.get_instances(cluster.booting)
