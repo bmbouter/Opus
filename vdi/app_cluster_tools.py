@@ -156,7 +156,6 @@ class AppNode(object):
     """
     def check_user_load(self):
         self.sessions = []
-        log.debug("SSH KEY PATH " + str(settings.MEDIA_ROOT + str(self.instance.application.ssh_key)))
         node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(self.instance.application.ssh_key))
         output = node.ssh_run_command(["Quser"])
         for line in output.split('\n'):

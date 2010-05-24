@@ -15,6 +15,7 @@ from idpauth import ldap_tools
 from core import log
 log = log.getLogger()
 
+
 def determine_login(request, message=None):
     institution = authentication_tools.get_institution(request)
     institutional_idp = IdentityProvider.objects.filter(institution__iexact=str(institution))
@@ -31,8 +32,9 @@ def determine_login(request, message=None):
         authentication_type = institutional_idp[0].type
         return render_to_response('idpauth/' + str(authentication_type) + '.html',
         {'next': next,
-        'message' : message,},
+        'message' : message, },
         context_instance=RequestContext(request))
+
 
 def ldap_login(request):
     username = request.POST['username']
@@ -44,7 +46,7 @@ def ldap_login(request):
     if identityprovider:
         server = identityprovider[0]
         roles = ldap_tools.get_ldap_roles(server, username, password)
-        
+
         username = institution + "++" + username
         user = authenticate(username=username)
         roles = str(roles).strip('[').strip(']')
@@ -68,7 +70,7 @@ def ldap_login(request):
                 return HttpResponseRedirect(resource_redirect_url)
         else:
             log.debug("No user found")
-            return HttpResponseRedirect(settings.LOGIN_URL)   
+            return HttpResponseRedirect(settings.LOGIN_URL)
     else:
         message = 'There were errors retrieving the identity provider'
         return render_to_response('idpauth/ldap.html', 
@@ -82,7 +84,7 @@ def openid_login(request):
     institution = authentication_tools.get_institution(request)
     session = request.session
 
-    trust_root =  authentication_tools.get_url_host(request)
+    trust_root = authentication_tools.get_url_host(request)
     redirect_url = openid_tools.begin_openid(session, trust_root, openid_url, resource_redirect_url)
 
     if not redirect_url:
@@ -100,8 +102,7 @@ def openid_login_complete(request):
     url = openid_tools.get_return_url(host, nonce)
     
     query_dict = dict([
-        (k.encode('utf8'), v.encode('utf8')) for k, v in request.GET.items()
-    ])
+        (k.encode('utf8'), v.encode('utf8')) for k, v in request.GET.items()])
     
     status, username = openid_tools.complete_openid(session, query_dict, url)
 
@@ -132,7 +133,7 @@ def openid_login_complete(request):
         message = "An error was encountered"
         return render_to_response('idpauth/openid.html',
         {'message' : message,
-        'next' : resource_redirect_url,},
+        'next' : resource_redirect_url, },
         context_instance=RequestContext(request))
     
 def local_login(request):

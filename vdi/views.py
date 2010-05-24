@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 
 from core.ssh_tools import HostNotConnectableError , NodeUtil
+from core import osutils
 
 from subprocess import Popen, PIPE
 from random import choice, randint
@@ -29,15 +30,12 @@ import cost_tools
 
 @login_required
 def applicationLibrary(request):
-    #db_apps = get_user_apps(request)
     db_apps = Application.objects.all()
-    temp_list = list(db_apps)
-    for app in temp_list:
+    for app in db_apps:
         if not request.user.has_perm('vdi.use_%s' % app.name):
-            temp_list.remove(app)
-    #TODO: Get permissions and only display those images
+            db_apps = db_apps.exclude(pk=app.pk)
     return render_to_response('vdi/application-library.html',
-        {'app_library': temp_list},
+        {'app_library': db_apps, },
         context_instance=RequestContext(request))
 
 @login_required
@@ -85,31 +83,21 @@ def connect(request,app_pk=None,conn_type=None):
         # Implement firewall manipulation of instance
         log.debug('Found user ip of %s' % request.META["REMOTE_ADDR"])
 
-        # SSH to instance using NodeUtil
-        node = NodeUtil(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
-        if node.ssh_avail():
-            #TODO refactor this so it isn't so verbose, and a series of special cases
+        # Grab the proper osutils object
+        log.debug("before osutils get")
+        osutil_obj = osutils.get_os_object("windows", host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
+        if osutil_obj:    
             log.warning(request.session)
-            output = node.ssh_run_command(["NET","USER",request.session['username'],password,"/ADD"])
-            if output.find("The command completed successfully.") > -1:
-                log.debug("User %s has been created" % request.session['username'])
-            elif output.find("The account already exists.") > -1:
-                log.debug('User %s already exists, going to try to set the password' % request.session['username'])
-                output = node.ssh_run_command(["NET", "USER",request.session['username'],password])
-                if output.find("The command completed successfully.") > -1:
-                    log.debug('THE PASSWORD WAS RESET')
-                else:
-                    error_string = 'An unknown error occured while trying to set the password for user %s on machine %s.  The error from the machine was %s' % (request.session['username'],host.ip,output)
-                    log.error(error_string)
-                    return HttpResponse(error_string)
-            else:
-                error_string = 'An unknown error occured while trying to create user %s on machine %s.  The error from the machine was %s' % (request.session['username'],host.ip,output)
-                log.error(error_string)
+            status, error_string = osutil.add_user(request.session['username'], password)
+            if status == False:
                 return HttpResponse(error_string)
 
             # Add the created user to the Administrator group
-            output = node.ssh_run_command(["NET", "localgroup",'"Administrators"',"/add",request.session['username']])
-            log.debug("Added user %s to the 'Administrators' group" % request.session['username'])
+            status, error_string = osutil.add_administrator(request.session['username'])
+            if status == False:
+                HttpResponse(error_string)
+            else:
+                log.debug("Added user %s to the 'Administrators' group" % request.session['username'])
         else:
             return HttpResponse('Your server was not reachable')
 
