@@ -85,15 +85,15 @@ def connect(request,app_pk=None,conn_type=None):
 
         # Grab the proper osutils object
         log.debug("before osutils get")
-        osutil_obj = osutils.get_os_object("windows", host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
+        osutil_obj = osutils.get_os_object(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
         if osutil_obj:    
             log.warning(request.session)
-            status, error_string = osutil.add_user(request.session['username'], password)
+            status, error_string = osutil_obj.add_user(request.session['username'], password)
             if status == False:
                 return HttpResponse(error_string)
 
             # Add the created user to the Administrator group
-            status, error_string = osutil.add_administrator(request.session['username'])
+            status = osutil_obj.add_administrator(request.session['username'])
             if status == False:
                 HttpResponse(error_string)
             else:

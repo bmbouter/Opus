@@ -83,7 +83,7 @@ def create_application_permission(sender, instance, created, **kwargs):
         log.debug(perm)
 
 def delete_application_permission(sender, instance, **kwargs):
-    perm = Permission.objects.get(codename='vdi.use_%s' % instance.name)
+    perm = Permission.objects.get(codename='use_%s' % instance.name)
     perm.delete()
 
 ######## Signal Declarations  ############

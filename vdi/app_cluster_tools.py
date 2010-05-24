@@ -3,6 +3,7 @@ import core
 log = core.log.getLogger()
 from vdi import deltacloud_tools
 from core.ssh_tools import HostNotConnectableError, NodeUtil
+from core import osutils
 
 from django.conf import settings
 from django.db.models import Q
@@ -146,6 +147,7 @@ class AppNode(object):
     def __init__(self,instance):
         self.instance = instance
         self.ip = instance.ip
+        self.osutil_obj = osutils.get_os_object(self.ip, settings.MEDIA_ROOT + str(self.instance.application.ssh_key))
         self.check_user_load()
         log.debug('On ip %s there are %s sessions' % (self.ip,len(self.sessions)))
 
@@ -156,8 +158,9 @@ class AppNode(object):
     """
     def check_user_load(self):
         self.sessions = []
-        node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(self.instance.application.ssh_key))
-        output = node.ssh_run_command(["Quser"])
+        #node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(self.instance.application.ssh_key))
+        #output = node.ssh_run_command(["Quser"])
+        output = self.osutil_obj.check_user_load()
         for line in output.split('\n'):
             fields = split("(\S+) +(\d+) +(Disc) +([none]*[\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
             if (len(fields) > 1):
@@ -204,8 +207,9 @@ class AppNode(object):
         Log user off from server with provided ip.  User is identified by session id.
         If user was logged off succesfully returns true. If error occured returns false.
         """
-        node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(self.instance.application.ssh_key))
-        output = node.ssh_run_command(["c:\logoff.exe",str(session_id)])
+        #node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(self.instance.application.ssh_key))
+        output = self.osutil_obj.log_user_off(str(session_id))
+        #output = node.ssh_run_command(["c:\logoff.exe",str(session_id)])
         log.debug('$#$#$#  %s'%output)
         if (len(output) == 0):
             log.debug('LOGGED OFF USER')
