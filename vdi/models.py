@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.db.models import signals
 from django.contrib.auth.models import Permission, User
@@ -10,11 +12,18 @@ class Application(models.Model):
     name = models.CharField(max_length=64) # Pretty name of the application
     image_id = models.CharField(max_length=32, unique=True) # Image id of the image that the actual application lies on
     path = models.CharField(max_length=256,blank=True) # Path of the application to be run on the host
-    max_concurrent_instances = models.IntegerField()
-    users_per_small = models.IntegerField()
-    cluster_headroom = models.IntegerField()
+    max_concurrent_instances = models.IntegerField(default=0)
+    users_per_small = models.IntegerField(default=10)
+    cluster_headroom = models.IntegerField(default=0)
     icon_url = models.URLField()
     ssh_key = models.FileField("SSH Key", upload_to='vdi/sshkeys')
+    scale_interarrival = models.IntegerField(default=180)  # The interarrival time of the scale function running
+    to_be_run_at = models.DateTimeField(auto_now_add=True)
+
+    def is_time_to_run(self, last_run_at):
+        now = datetime.now()
+        return False
+        #if to_be_run_at > now
 
     def __str__(self):
         return self.name
