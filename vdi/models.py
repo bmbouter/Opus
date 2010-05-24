@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import signals
 from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 
 from core import log
 log = log.getLogger()
@@ -71,22 +72,26 @@ class UserFeedback(models.Model):
     load_time = models.IntegerField()
 
 ######## Signal Handler Functions ############
-def create_application_permission(sender, instance, created, **kwargs):
-    log.debug("App created")
-    if created:
-        log.debug('Application created')
+def create_application_permission(sender, instance, **kwargs):
+    app = sender.objects.get(pk=instance.id)
+    try:
+        perm = Permission.objects.get(codename='use_%s' % app.name)
+        if not instance.name == app.name:
+            log.debug("Application being saved - name: " + str(app.name))
+            perm.name = 'Use %s' % instance.name
+            perm.codename = 'use_%s' % instance.name
+            perm.save()
+    except ObjectDoesNotExist:
+        log.debug("No permission")
         log.debug('Use %s' % instance.name)
         log.debug('vdi.use_%s' % instance.name)
         ct = ContentType.objects.get(model='application')
-        log.debug(ct)
         perm = Permission.objects.create(name='Use %s' % instance.name, content_type = ct, codename='use_%s' % instance.name)
-        log.debug(perm)
 
 def delete_application_permission(sender, instance, **kwargs):
     perm = Permission.objects.get(codename='use_%s' % instance.name)
     perm.delete()
 
 ######## Signal Declarations  ############
-signals.post_save.connect(create_application_permission, sender=Application)
+signals.pre_save.connect(create_application_permission, sender=Application)
 signals.post_delete.connect(delete_application_permission, sender=Application)
-
