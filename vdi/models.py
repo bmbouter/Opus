@@ -73,8 +73,8 @@ class UserFeedback(models.Model):
 
 ######## Signal Handler Functions ############
 def create_application_permission(sender, instance, **kwargs):
-    app = sender.objects.get(pk=instance.id)
     try:
+        app = sender.objects.get(pk=instance.id)
         perm = Permission.objects.get(codename='use_%s' % app.name)
         if not instance.name == app.name:
             log.debug("Application being saved - name: " + str(app.name))
