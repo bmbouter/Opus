@@ -24,6 +24,7 @@ import os
 from vdi.models import Application, Instance, UserExperience
 from vdi.forms import InstanceForm, UserFeedbackForm
 from vdi.app_cluster_tools import AppCluster, NoHostException
+from vdi import connection_tools
 import core
 log = core.log.getLogger()
 import cost_tools
@@ -39,7 +40,7 @@ def applicationLibrary(request):
         context_instance=RequestContext(request))
 
 @login_required
-def connect(request,app_pk=None,conn_type=None):
+def connect(request, app_pk=None, conn_type=None):
     # Check that the user has permissions to access this
     app = Application.objects.filter(pk=app_pk)[0]
     if not request.user.has_perm('vdi.use_%s' % app.name):
@@ -140,7 +141,7 @@ def connect(request,app_pk=None,conn_type=None):
     elif request.method == 'POST':
         # Handle POST request types
         if conn_type == 'rdp':
-            return _create_rdp_conn_file(request.POST["ip"],request.session['username'],request.POST["password"],cluster.app)
+            return _create_rdp_conn_file(request.POST["ip"], request.session['username'], request.POST["password"], cluster.app)
 
     '''
 def _nxweb(ip, username, password, app):
@@ -200,6 +201,33 @@ def _create_rdp_conn_file(ip, username, password, app):
     resp['Content-Type']="application/rdp"
     resp['Content-Disposition'] = 'attachment; filename="%s.rdp"' % app.name
     return resp
+
+
+@login_required
+def nx_conn_builder(request, app_pk=None):
+    """
+    Returns a response object containing an nx session.
+    This function selects a node from the cluster.
+
+    """
+    resp = render_to_response('nxproxy/nx_single_session.html', {'nx_ip' : node.ip,
+                        'nx_username' : username,
+                        'nx_password' : connection_tools.encryptNXPass(nx_password),
+                        'conn_type' : 'windows',
+                        'dest' : request.GET["dest"],
+                        'dest_username' : request.GET["dest_user"],
+                        'dest_password' : connection_tools.encodePassword(request.GET["dest_pass"]),
+                        'app_path' : app_path})
+
+    if "nodownload" in request.GET:
+        if int(request.GET["nodownload"]) == 1:
+            return resp
+
+    resp['Content-Type']="application/nx"
+    # TODO update the hardcoded string 'connection' below to something like app.name  I'm not sure how to get that data here architecturally
+    resp['Content-Disposition'] = 'attachment; filename="%s.nxs"' % 'connection'
+    return resp
+
 
 def show_cost(request):
     log.debug('cost = ')

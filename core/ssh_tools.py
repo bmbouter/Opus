@@ -46,7 +46,7 @@ class NodeUtil(object):
                 ]
         command.extend(cmd)
         log.warning(' '.join(command))
-        return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
+        return subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
 
     def ssh_avail(self):
         """Is ssh available?

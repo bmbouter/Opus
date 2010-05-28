@@ -52,10 +52,12 @@ class AppCluster(object):
         """Logs off idle users for all nodes in this cluster."""
         for node in self.active:
             try:
-                AppNode(node).user_cleanup(10)
+                osutil_node = osutils.get_os_object(node.ip, settings.MEDIA_ROOT + str(self.app.ssh_key))
+                osutil_node.user_cleanup(10)
+                #AppNode(node).user_cleanup(10)
             except HostNotConnectableError:
                 # Ignore this host that doesn't seem to be ssh'able, but log it as an error
-                log.warning('AppNode %s is NOT sshable and should be looked into')
+                log.warning('Node %s is NOT sshable and should be looked into')
 
     def select_host(self):
         """
@@ -75,10 +77,11 @@ class AppCluster(object):
         number_of_users = 0
         for node in self.active:
             try:
-                number_of_users += len(AppNode(node).sessions)
+                osutil_node = osutils.get_os_object(node.ip, settings.MEDIA_ROOT + str(self.app.ssh_key))
+                number_of_users += len(osutil_node.sessions)
             except HostNotConnectableError:
                 # Ignore this host that doesn't seem to be ssh'able, but log it as an error
-                log.warning('AppNode %s is NOT sshable and should be looked into')
+                log.warning('Node %s is NOT sshable and should be looked into')
 
         return (number_of_users, self.avail_headroom)
 
@@ -134,120 +137,12 @@ class AppCluster(object):
         nodes = self.active.order_by('priority')
         for host in nodes:
             try:
-                n = AppNode(host)
-                cur_users = len(n.sessions)
-                app_map.append((host,cur_users))
+                osutil_node = osutils.get_os_object(host.ip, settings.MEDIA_ROOT + str(self.app.ssh_key))
+                #n = AppNode(host)
+                cur_users = len(osutil_node.sessions)
+                app_map.append((host, cur_users))
             except HostNotConnectableError:
                 # Ignore this host that doesn't seem to be ssh'able, but log it as an error
-                log.warning('AppNode %s is NOT sshable and should be looked into')
+                log.warning('Node %s is NOT sshable and should be looked into')
         return app_map
 
-class AppNode(object):
-
-    def __init__(self,instance):
-        self.instance = instance
-        self.ip = instance.ip
-        self.osutil_obj = osutils.get_os_object(self.ip, settings.MEDIA_ROOT + str(self.instance.application.ssh_key))
-        self.check_user_load()
-        log.debug('On ip %s there are %s sessions' % (self.ip,len(self.sessions)))
-
-    """
-    Create an SSH pipe to the specified ip and store all sessions information in list. 
-    Each session is stored as a dictionary containing username, sessionname, session id, idle time, 
-    logon date, logon time. The two possible states are Active and Disc (disconnected).
-    """
-    def check_user_load(self):
-        self.sessions = []
-        #node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(self.instance.application.ssh_key))
-        #output = node.ssh_run_command(["Quser"])
-        output = self.osutil_obj.check_user_load()
-        for line in output.split('\n'):
-            fields = split("(\S+) +(\d+) +(Disc) +([none]*[\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
-            if (len(fields) > 1):
-                user = dict()
-                for i,value in enumerate(fields):
-                    if(i == 1):
-                        user["username"] = string.rstrip(value)
-                    if(i == 2):
-                        user["sessionid"] = string.rstrip(value)
-                    if(i == 3):
-                        user["state"] = string.rstrip(value)
-                    if(i == 4):
-                        user["idletime"] = string.rstrip(value)
-                    if(i == 5):
-                        user["logondate"] = string.rstrip(value)
-                    if(i == 6):
-                        user["logontime"] = string.rstrip(value)
-                if (len(user) == 6):
-                    self.sessions.append(user)
-
-            else:
-                fields = split("(\S+) +(\S+) +(\d+) +(Active) +([none]*[\d+\+]*[\. ]*[\d*\:\d* ]*[\d ]*) (\d*/\d*/\d*) +(\d*\:\d* +[AM]*[PM]*)",line)
-                user = dict()
-                for i,value in enumerate(fields):
-                    if(i == 1):
-                        user["username"] = string.rstrip(value)
-                    if(i == 2):
-                        user["sessionname"] = string.rstrip(value)
-                    if(i == 3):
-                        user["sessionid"] = string.rstrip(value)
-                    if(i == 4):
-                        user["state"] = string.rstrip(value)
-                    if(i == 5):
-                        user["idletime"] = string.rstrip(value)
-                    if(i == 6):
-                        user["logondate"] = string.rstrip(value)
-                    if(i == 7):
-                        user["logontime"] = string.rstrip(value)
-                if (len(user) == 7):
-                    self.sessions.append(user)
-
-    def log_user_off(self,session_id):
-        """
-        Log user off from server with provided ip.  User is identified by session id.
-        If user was logged off succesfully returns true. If error occured returns false.
-        """
-        #node = NodeUtil(self.ip, settings.MEDIA_ROOT + str(self.instance.application.ssh_key))
-        output = self.osutil_obj.log_user_off(str(session_id))
-        #output = node.ssh_run_command(["c:\logoff.exe",str(session_id)])
-        log.debug('$#$#$#  %s'%output)
-        if (len(output) == 0):
-            log.debug('LOGGED OFF USER')
-            return True
-        else:
-            return False
-
-    def user_cleanup(self,timeout):
-        """
-        Checks idle time for all sessions on the node.  If any session is disconnected then the user   
-        is logged off.  If the idle time exceeds the timeout parameter, the user is logged off. Timeout
-        is in MINUTES.
-        """
-        log.debug(self.sessions)
-        for session in self.sessions:
-            log.debug("Reported idletime: "+session["idletime"])
-            if(session["state"] == "Disc"):
-                self.log_user_off(session["sessionid"])
-            elif((session["idletime"] == ".") or (session["idletime"] == "none")):
-                continue
-            else:
-                days = session["idletime"].split("+")
-                if(len(days) > 1):
-                    idletime = 24*60*int(days[0])
-                    for i,digit in enumerate(days[1].split(":")):
-                        if(i == 0):
-                            idletime += 60*int(digit)
-                        else:
-                            idletime += int(digit)
-                else:
-                    idletime = 0
-                    hoursandmins = days[0].split(":")
-                    if(len(hoursandmins) > 1):
-                        idletime += 60*int(hoursandmins[0])
-                        idletime += int(hoursandmins[1])
-                    else:
-                        idletime += int(hoursandmins[0])
-                log.debug("Calculated idle time: "+str(idletime))
-                if(idletime > timeout):
-                    self.log_user_off(session["sessionid"])
-        self.check_user_load()

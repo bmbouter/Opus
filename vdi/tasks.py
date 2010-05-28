@@ -3,9 +3,10 @@ from celery.registry import tasks
 from celery.decorators import task
 
 from vdi.models import Application, Instance
-from vdi.app_cluster_tools import AppCluster, AppNode
+from vdi.app_cluster_tools import AppCluster
 from vdi import user_experience_tools
 from vdi import deltacloud_tools
+from core import osutils
 
 import math
 from subprocess import Popen, PIPE
@@ -16,6 +17,7 @@ from datetime import timedelta, datetime
 import core
 log = core.log.getLogger()
 from django.http import HttpResponse, HttpResponseRedirect
+from django.conf import settings
 
 class ScaleScheduler(PeriodicTask):
 
@@ -41,10 +43,11 @@ class Scale(Task):
         cluster.logout_idle_users()
 
         log.debug("Checking for active clusters")
-        for host in cluster.active:
+        for node in cluster.active:
             log.debug("Found active host")
-            an = AppNode(host)
-            user_experience_tools.process_user_connections(an)
+            osutil_node = osutils.get_os_object(node.ip, settings.MEDIA_ROOT + str(node.application.ssh_key))
+            #an = AppNode(host)
+            user_experience_tools.process_user_connections(osutil_node)
 
         # Handle vms we were waiting on to boot up
         booting = deltacloud_tools.get_instances(cluster.booting)
@@ -59,8 +62,8 @@ class Scale(Task):
                 try:
                     # TODO: remove the hard coded '3389' & '22' below.  '3389' is for RDP and '22' is for SSH
                     # TODO: remove the arbitrary '3' second timeout below
-                    socket.create_connection((ip,3389),3)
                     socket.create_connection((ip,22),3)
+                    #socket.create_connection((ip,3389),3)
                 except Exception as e:
                     log.debug("Server %s is not yet available" % ip)
                     pass
@@ -94,15 +97,16 @@ class Scale(Task):
         for host in cluster.shutting_down:
             log.debug('ASDASDASD    %s' % host.instanceId)
             try:
-                n = AppNode(host)
-                log.debug('AppNode %s is waiting to be shut down and has %s connections' % (host.ip,n.sessions))
-                if n.sessions == []:
+                osutil_node = osutils.get_os_object(host.ip, settings.MEDIA_ROOT + str(self.host.application.ssh_key))
+                #n = AppNode(host)
+                log.debug('AppNode %s is waiting to be shut down and has %s connections' % (host.ip, osutil_node.sessions))
+                if osutil_node.sessions == []:
                     toTerminate.append(host)
                     host.shutdownDateTime = datetime.now()
                     host.save()
             except HostNotConnectableError:
                 # Ignore this host that doesn't seem to be ssh'able, but log it as an error
-                log.warning('AppNode %s is NOT sshable and should be looked into.  It is currently waiting to shutdown')
+                log.warning('Node %s is NOT sshable and should be looked into.  It is currently waiting to shutdown')
         deltacloud_tools.terminate_instances(toTerminate)
 
 

@@ -71,7 +71,6 @@ def convert_timedelta_to_seconds(timedelta):
 
 def process_user_connections(app_node):
     user_experience = UserExperience.objects.exclude(connection_closed__isnull=False)
-    log.debug("Users who have not closed connections and/or opened connections are: " + str(user_experience))
     for user_exp in user_experience:
         for session in app_node.sessions:
             log.debug(session['username'])
@@ -83,7 +82,6 @@ def process_user_connections(app_node):
                     user_exp.save()
                     log.debug("Connection opened after setting is: " + str(user_exp.connection_opened))
                 user_experience = user_experience.exclude(user=user_exp.user)
-        log.debug(user_experience)
                 
     user_experience = user_experience.exclude(connection_opened__isnull=True)
     for user_exp in user_experience:

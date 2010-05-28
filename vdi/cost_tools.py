@@ -4,7 +4,7 @@ import datetime
 
 import core
 log = core.log.getLogger()
-from vdi.app_cluster_tools import AppCluster, AppNode
+from vdi.app_cluster_tools import AppCluster
 from vdi.models import Instance
 
 
