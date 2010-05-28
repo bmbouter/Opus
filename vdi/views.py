@@ -49,20 +49,14 @@ def connect(request, app_pk=None, conn_type=None):
     # Get an AppCluster instance
     cluster = AppCluster(app_pk)
     
-    #Get proper osutils object
-    osutil_obj = osutils.get_os_object(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
-    
     if conn_type == None:
         # A conn_type was not explicitly requested, so let's decide which one to have the user use
-        if osutil_obj.__name__ == 'Linux':
-            conn_type = 'nx'
+        if request.META["HTTP_USER_AGENT"].find('MSIE') == -1:
+            # User is not running IE, give them the default connection type
+            conn_type = settings.DEFAULT_CONNECTION_PROTOCOL
         else:
-            if request.META["HTTP_USER_AGENT"].find('MSIE') == -1:
-                # User is not running IE, give them the default connection type
-                conn_type = settings.DEFAULT_CONNECTION_PROTOCOL
-            else:
-                # User is running IE, give them the rdpweb connection type
-                conn_type = 'rdpweb'
+            # User is running IE, give them the rdpweb connection type
+            conn_type = 'rdpweb'
 
     if request.method == 'GET':
         user_experience = UserExperience.objects.create(user=request.user, application=app)
@@ -91,8 +85,9 @@ def connect(request, app_pk=None, conn_type=None):
         log.debug('Found user ip of %s' % request.META["REMOTE_ADDR"])
 
         # Grab the proper osutils object
-        log.debug("before osutils get")
-        #osutil_obj = osutils.get_os_object(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
+        osutil_obj = osutils.get_os_object(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
+        if osutil_obj.__class__.__name__ == 'Linux':
+            conn_type = 'nx'
         if osutil_obj:    
             log.warning(request.session)
             status, error_string = osutil_obj.add_user(request.session['username'], password)
@@ -145,7 +140,7 @@ def connect(request, app_pk=None, conn_type=None):
                                                     'username' : request.session['username'],
                                                     'password' : password})
         elif conn_type == 'nx':
-            user_experience.file_presented() = datetime.today()
+            user_experience.file_presented = datetime.today()
             user_experience.save()
             return render_to_response('vdi/connect.html', {'username' : request.session['username'],
                                                         'password' : password,
