@@ -48,15 +48,21 @@ def connect(request, app_pk=None, conn_type=None):
 
     # Get an AppCluster instance
     cluster = AppCluster(app_pk)
-            
+    
+    #Get proper osutils object
+    osutil_obj = osutils.get_os_object(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
+    
     if conn_type == None:
         # A conn_type was not explicitly requested, so let's decide which one to have the user use
-        if request.META["HTTP_USER_AGENT"].find('MSIE') == -1:
-            # User is not running IE, give them the default connection type
-            conn_type = settings.DEFAULT_CONNECTION_PROTOCOL
+        if osutil_obj.__name__ == 'Linux':
+            conn_type = 'nx'
         else:
-            # User is running IE, give them the rdpweb connection type
-            conn_type = 'rdpweb'
+            if request.META["HTTP_USER_AGENT"].find('MSIE') == -1:
+                # User is not running IE, give them the default connection type
+                conn_type = settings.DEFAULT_CONNECTION_PROTOCOL
+            else:
+                # User is running IE, give them the rdpweb connection type
+                conn_type = 'rdpweb'
 
     if request.method == 'GET':
         user_experience = UserExperience.objects.create(user=request.user, application=app)
@@ -86,7 +92,7 @@ def connect(request, app_pk=None, conn_type=None):
 
         # Grab the proper osutils object
         log.debug("before osutils get")
-        osutil_obj = osutils.get_os_object(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
+        #osutil_obj = osutils.get_os_object(host.ip, settings.MEDIA_ROOT + str(cluster.app.ssh_key))
         if osutil_obj:    
             log.warning(request.session)
             status, error_string = osutil_obj.add_user(request.session['username'], password)
@@ -138,10 +144,20 @@ def connect(request, app_pk=None, conn_type=None):
                                                     'ip' : host.ip,
                                                     'username' : request.session['username'],
                                                     'password' : password})
+        elif conn_type == 'nx':
+            user_experience.file_presented() = datetime.today()
+            user_experience.save()
+            return render_to_response('vdi/connect.html', {'username' : request.session['username'],
+                                                        'password' : password,
+                                                        'app' : cluster.app,
+                                                        'ip' : host.ip},
+                                                        context_instance=RequestContext(request))
     elif request.method == 'POST':
         # Handle POST request types
         if conn_type == 'rdp':
             return _create_rdp_conn_file(request.POST["ip"], request.session['username'], request.POST["password"], cluster.app)
+        elif conn_type =='nx':
+            return connection_tools.nx_conn_builder(request.POST["ip"], request.session["username"], request.POST["password"], cluster.app)
 
     '''
 def _nxweb(ip, username, password, app):
@@ -200,32 +216,6 @@ def _create_rdp_conn_file(ip, username, password, app):
     resp = HttpResponse(content)
     resp['Content-Type']="application/rdp"
     resp['Content-Disposition'] = 'attachment; filename="%s.rdp"' % app.name
-    return resp
-
-
-@login_required
-def nx_conn_builder(request, app_pk=None):
-    """
-    Returns a response object containing an nx session.
-    This function selects a node from the cluster.
-
-    """
-    resp = render_to_response('nxproxy/nx_single_session.html', {'nx_ip' : node.ip,
-                        'nx_username' : username,
-                        'nx_password' : connection_tools.encryptNXPass(nx_password),
-                        'conn_type' : 'windows',
-                        'dest' : request.GET["dest"],
-                        'dest_username' : request.GET["dest_user"],
-                        'dest_password' : connection_tools.encodePassword(request.GET["dest_pass"]),
-                        'app_path' : app_path})
-
-    if "nodownload" in request.GET:
-        if int(request.GET["nodownload"]) == 1:
-            return resp
-
-    resp['Content-Type']="application/nx"
-    # TODO update the hardcoded string 'connection' below to something like app.name  I'm not sure how to get that data here architecturally
-    resp['Content-Disposition'] = 'attachment; filename="%s.nxs"' % 'connection'
     return resp
 
 

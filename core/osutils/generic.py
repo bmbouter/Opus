@@ -1,4 +1,5 @@
 class Generic(object):
+
     def __init__(self, ip, ssh_key):
         raise NotImplementedError()
 

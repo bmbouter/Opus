@@ -17,12 +17,9 @@ class Linux(Generic):
     def add_user(self, username, password):
         try:
             output = self.node.ssh_run_command(["adduser", username])
-            if output.find("user %s exists" % username) > -1:
-                log.debug('User %s already exists, going to try to set the password' % username)
-                output = self.change_user_password(username, password)
-                log.debug('THE PASSWORD WAS RESET')
-            else:
-                log.debug("Added %s" % username)
+            output = self.change_user_password(username, password)
+            log.debug('THE PASSWORD WAS SET')
+            log.debug("Added %s" % username)
             return True, ""
         except HostNotConnectableError:
             return False, ""
@@ -30,7 +27,7 @@ class Linux(Generic):
 
     def change_user_password(self, username, password):
         try:
-            output = self.node.ssh_run_command(["echo", "%s:%s" % (username, password), "|", "chpasswd"])
+            output = ssh_node.ssh_run_command(["passwd", "--stdin", username, "<<<", password])
             return output
         except HostNotConnectableError:
             return False

@@ -20,7 +20,6 @@ def get_all_user_wait_times(application):
 
 def get_user_applications_in_date_range(user, start_date, end_date):
     user_experience = UserExperience.objects.filter(user=user, access_date__gte=start_date).filter(access_date__lte=end_date)
-    log.debug(user_experience)
     apps = []
     for ue in user_experience:
         apps.append(ue.application)
@@ -47,7 +46,6 @@ def get_user_application_arrival_times(application):
 
 
 def get_concurrent_users(application, date_time):
-    log.debug("DATETIME = " + str(date_time))
     user_experience = UserExperience.objects.filter(application=application, file_presented__lte=date_time).filter(connection_closed__gt=date_time)
     return len(user_experience)
 
@@ -73,8 +71,6 @@ def process_user_connections(app_node):
     user_experience = UserExperience.objects.exclude(connection_closed__isnull=False)
     for user_exp in user_experience:
         for session in app_node.sessions:
-            log.debug(session['username'])
-            log.debug(user_exp.user.username.split('++')[1].split('@')[0])
             if user_exp.user.username.split('++')[1].split('@')[0] == session['username']:
                 if user_exp.connection_opened == None:
                     log.debug("Setting the connection_opened parameter")
