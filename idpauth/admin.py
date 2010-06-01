@@ -1,10 +1,13 @@
 from django.contrib import admin
-from django.contrib.admin import widgets
 from django.contrib.auth.models import Permission
 
 from idpauth import models
+from idpauth.forms import IdpAdminForm
 
-admin.site.register(models.IdentityProviderLocal)
-admin.site.register(models.IdentityProviderLDAP)
-admin.site.register(models.IdentityProviderOpenID)
+class IdpAdmin(admin.ModelAdmin):
+    form = IdpAdminForm
+
+admin.site.register(models.IdentityProviderLocal, IdpAdmin)
+admin.site.register(models.IdentityProviderLDAP, IdpAdmin)
+admin.site.register(models.IdentityProviderOpenID, IdpAdmin)
 admin.site.register(Permission)

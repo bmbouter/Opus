@@ -1,11 +1,10 @@
-from django.db import models, IntegrityError
+from django.db import models
 from django.db.models import signals
 from django.contrib.auth.models import Group, User
 
-from vdi.models import Application
-
 import core
 log = core.log.getLogger()
+
 
 class IdentityProvider(models.Model):
     """Identity provider base class."""
@@ -73,9 +72,6 @@ class Association(models.Model):
 ######## Signal Handler Functions ############
 def set_identityprovider_type(sender, instance, **kwargs):
     idp_type = sender.__name__.split('IdentityProvider')[1].lower()
-    
-    instance.institution = instance.institution.lower()
-
     if idp_type == 'openid':
         instance.type = 'openid'
     elif idp_type == 'local':
