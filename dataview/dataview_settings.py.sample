@@ -1,8 +1,0 @@
-DEVSTORE_ACCOUNT = "myaccount"
-DEVSTORE_SECRET_KEY = "primary key from azure account"
-
-DEVSTORE_BLOB_HOST = "127.0.0.1:10000"
-DEVSTORE_TABLE_HOST = "127.0.0.1:10002"
- 
-CLOUD_BLOB_HOST = "blob.core.windows.net"
-CLOUD_TABLE_HOST = "table.core.windows.net"
