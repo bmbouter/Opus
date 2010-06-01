@@ -1,0 +1,13 @@
+<html>
+<body>
+    <h1>Create a new Project</h1>
+    <b>Enter informatin below</b>
+    <form action="" method="POST">
+    {% csrf_token %}
+    <table>
+        {{formhtml}}
+    </table>
+    <input type="submit" value="Create" />
+    </form>
+</body>
+</html>
