@@ -6,8 +6,8 @@ import select
 from django.conf import settings
 
 #Provide Logging
-import core
-log = core.log.getLogger()
+import opus.lib.log
+log = opus.lib.log.getLogger()
 
 class HostNotConnectableError(Exception):
     pass

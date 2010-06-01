@@ -1,5 +1,5 @@
-from core.ssh_tools import NodeUtil
-from core import log
+from opus.lib.ssh_tools import NodeUtil
+from opus.lib import log
 log = log.getLogger()
 
 

@@ -1,9 +1,9 @@
 import string
 
-from core.ssh_tools import NodeUtil, HostNotConnectableError
+from opus.lib.ssh_tools import NodeUtil, HostNotConnectableError
 from generic import Generic
 
-from core import log
+from opus.lib import log
 log = log.getLogger()
 
 
