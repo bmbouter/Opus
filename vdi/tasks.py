@@ -46,7 +46,6 @@ class Scale(Task):
         for node in cluster.active:
             log.debug("Found active host")
             osutil_node = osutils.get_os_object(node.ip, settings.MEDIA_ROOT + str(node.application.ssh_key))
-            #an = AppNode(host)
             user_experience_tools.process_user_connections(osutil_node)
 
         # Handle vms we were waiting on to boot up
@@ -98,8 +97,7 @@ class Scale(Task):
             log.debug('ASDASDASD    %s' % host.instanceId)
             try:
                 osutil_node = osutils.get_os_object(host.ip, settings.MEDIA_ROOT + str(self.host.application.ssh_key))
-                #n = AppNode(host)
-                log.debug('AppNode %s is waiting to be shut down and has %s connections' % (host.ip, osutil_node.sessions))
+                log.debug('Node %s is waiting to be shut down and has %s connections' % (host.ip, osutil_node.sessions))
                 if osutil_node.sessions == []:
                     toTerminate.append(host)
                     host.shutdownDateTime = datetime.now()

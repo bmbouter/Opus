@@ -54,7 +54,6 @@ class AppCluster(object):
             try:
                 osutil_node = osutils.get_os_object(node.ip, settings.MEDIA_ROOT + str(self.app.ssh_key))
                 osutil_node.user_cleanup(10)
-                #AppNode(node).user_cleanup(10)
             except HostNotConnectableError:
                 # Ignore this host that doesn't seem to be ssh'able, but log it as an error
                 log.warning('Node %s is NOT sshable and should be looked into')
@@ -138,7 +137,6 @@ class AppCluster(object):
         for host in nodes:
             try:
                 osutil_node = osutils.get_os_object(host.ip, settings.MEDIA_ROOT + str(self.app.ssh_key))
-                #n = AppNode(host)
                 cur_users = len(osutil_node.sessions)
                 app_map.append((host, cur_users))
             except HostNotConnectableError:

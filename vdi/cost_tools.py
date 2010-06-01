@@ -62,7 +62,13 @@ def convert_time_to_hours(time):
 
     return hours
 
-def generate_cost(hours_used):
-    per_hour_charge = 0.48
+def generate_cost(hours_used, os_type='Windows', vm_size='large'):
+    os_type = str(os_type).lower()
+    if os_type == 'windows':
+        if vm_size == 'large':
+            per_hour_charge = 0.48
+    elif os_type == 'linux':
+        if vm_size == 'large':
+            per_hour_charge = 0.34
     cost = hours_used * per_hour_charge
     return cost
