@@ -30,6 +30,13 @@ class ProjectBuilder(object):
         self.projectname = projectname
 
         self.apps = []
+
+    def _check_name(self, appname):
+        if not appname.strip():
+            raise ValueError("Bad App Name")
+        for app in self.apps:
+            if appname == app.name:
+                raise ValueError("An app with name {0} already exists.".format(name))
         
     def add_app_by_path(self, path, name=None):
         """Add an app to the configuration by path. Specify the local
@@ -50,11 +57,18 @@ class ProjectBuilder(object):
         if not name:
             name = os.path.basename(path)
 
-        for app in self.apps:
-            if name == app.name:
-                raise ValueError("An app with name %s already exists." % (name,))
+        self._check_name(name)
         
         self.apps.append( App(path, name, 'file') )
+
+    def add_app_by_git(self, url, name):
+        """Add an app from a git URL. The name is required here, at least for
+        now.
+        
+        """
+        self._check_name(name)
+        self.apps.append(App(url, name, 'git'))
+
 
     def create(self, target):
         """Create a new Django project inside the given directory target,

@@ -15,15 +15,11 @@ on error.
 import shutil
 import subprocess
 
-copy_functions = {
-        'file': fromfile,
-        'git': fromgit,
-        }
-
 class CopyError(Exception):
     pass
 
-def fromfile(src, dst, appname):
+def fromfilesys(src, dst, appname):
+    """Copies an application already on the local filesystem"""
     shutil.copytree(src, os.path.join(dst, appname))
 
 def fromgit(src, dst, appname):
@@ -34,3 +30,8 @@ def fromgit(src, dst, appname):
     ret = proc.wait()
     if ret:
         raise CopyError("Could not copy. Git returned {0}".format(output))
+
+copy_functions = {
+        'file': fromfilesys,
+        'git': fromgit,
+        }
