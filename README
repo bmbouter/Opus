@@ -1,0 +1,54 @@
+====
+Opus
+====
+Welcome to Opus. The Open Source Services Management Platform.
+
+-----------
+Source Tree
+-----------
+Here's a rundown on what you've just downloaded:
+
+opus/
+    Python package containing all of the Opus Python code.
+
+opus/project/
+    The Opus Django project, which contains the primary frontend interface to
+    the project builder, deployer, and scaler.
+
+opus/lib/
+    Contains Opus supporting libraries and code for applications to use.
+
+opus/lib/builder/
+    The Django project building code.
+
+opus/lib/deployer/
+    The Django project deployment code
+
+src/
+    The supporting C code used by the deployer to do certain privileged
+    operations.
+
+----------
+Installing
+----------
+Currently there is no one set installation procedure. The opus package should
+be on your python path, and the Django project at opus/project should be
+deployed as per the Django deployment instructions.
+
+------------
+Requirements
+------------
+Opus in its current form requires:
+* Python 2.6 or greater (not 3.x)
+* Django 1.2 or greater
+
+Additional requirements are needed for the other components, as they are
+written and added. For example, the scaling code will require:
+* Deltacloud
+* Postgresql
+* Psycopg2
+* memcached
+* python-memcached
+* celery
+* RabbitMQ
+* possibly more
