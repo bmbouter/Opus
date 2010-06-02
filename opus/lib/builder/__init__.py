@@ -10,7 +10,9 @@ import subprocess
 import shutil
 import re
 
-App = namedtuple('App', ('path', 'name'))
+import opus.lib.builder.sources
+
+App = namedtuple('App', ('path', 'name', 'pathtype'))
 
 class ProjectBuilder(object):
     """ProjectBuilder class, creates and configures a Django Project
@@ -29,11 +31,6 @@ class ProjectBuilder(object):
 
         self.apps = []
         
-    def __del__(self):
-        # Remove any temporary app directories
-        # TODO
-        pass
-
     def add_app_by_path(self, path, name=None):
         """Add an app to the configuration by path. Specify the local
         filesystem path of a Django application.
@@ -57,7 +54,7 @@ class ProjectBuilder(object):
             if name == app.name:
                 raise ValueError("An app with name %s already exists." % (name,))
         
-        self.apps.append( App(path, name) )
+        self.apps.append( App(path, name, 'file') )
 
     def create(self, target):
         """Create a new Django project inside the given directory target,
@@ -101,7 +98,7 @@ class ProjectBuilder(object):
     def _copy_apps(self, projectdir):
         # Copies all the apps into the project
         for app in self.apps:
-            shutil.copytree(app.path, os.path.join(projectdir, app.name))
+            opus.lib.builder.sources[app.pathtype](app.apth, projectdir, app.name)
 
     def _configure_settings(self, settingsfile):
         # Slurp up settings.py

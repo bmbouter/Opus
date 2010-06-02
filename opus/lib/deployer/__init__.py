@@ -141,17 +141,18 @@ DATABASES['default'] = {{
                 cwd=self.projectdir)
         if ret:
             raise DeploymentException("syncdb failed")
-            # XXX Raise a better exception
 
     def _create_superuser(self, username, email, password):
-        ret = subprocess.call(["python", "manage.py", "createsuperuser",
+        proc = subprocess.Popen(["python", "manage.py", "createsuperuser",
                 "--noinput",
                 "--username", username,
                 "--email", email],
-                cwd=self.projectdir)
-        if ret:
-            raise DeploymentException("create superuser failed")
-            # XXX Raise a better exception
+                cwd=self.projectdir,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
+        output = proc.communicate()[0]
+        if proc.returncode:
+            raise DeploymentException("create superuser failed. Return val: {0}. Output: {1}".format(proc.returncode, output))
 
         # Now set the password by invoking django code to directly interface
         # with the database. Do this in a sub process so as not to have all the
@@ -196,17 +197,19 @@ user.save()
         if ret:
             raise DeploymentException("Setting super user password failed")
 
-    def secure_project(self):
+    def secure_project(self, secureops="secureops"):
         """Calling this does two things: It calls useradd to create a new Linux
         user, and it changes permissions on settings.py so only that user can
         access it. This is a necessary step before calling configure_apache()
+
+        Pass in the path to the secureops binary, otherwise PATH is searched
 
         """
         # Attempt to create a linux user, and change user permissions
         # of the settings.py and the sqlite database if any
         # Name the user after opus and the project name
         newname = "opus"+self.projectname
-        command = ["secureops", 
+        command = [secureops, 
                 "-c",
                 newname,
                 ]
@@ -221,7 +224,7 @@ user.save()
             raise DeploymentException("Could not create user and/or change file permissions")
 
 
-    def configure_apache(self, apache_conf_dir, vhostname, vhostport, pythonpath=""):
+    def configure_apache(self, apache_conf_dir, vhostname, vhostport, pythonpath="", secureops="secureops"):
         """Configures apache to serve this Django project.  apache_conf_dir
         should be apache's conf.d directory where a .conf file can be dropped
         vhostname and vhostport are the virtual host configurations that this
@@ -283,7 +286,7 @@ application = django.core.handlers.wsgi.WSGIHandler()
                     ))
 
         # Restart apache gracefully
-        ret = subprocess.call(["secureops","-r"])
+        ret = subprocess.call([secureops,"-r"])
         if ret:
             raise DeploymentException("Could not restart apache")
 

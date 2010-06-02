@@ -4,18 +4,12 @@
     <head>
         <title>{% block title %}Opus{% endblock title %}</title>
         {% block head %}{% endblock head %}
-        {% if institution %}
-            <link href="{{opus_media_dir}}identity_providers/{{institution}}/style.css"
-                  rel="stylesheet" type="text/css" />
-        {% endif %}
     </head>
     {% block body_tag %}<body>{% endblock body_tag %}
         <div id="head_bar" />
         <div id="main">
             <div id="navigation">
-                <a href="/vdi/">Application Library</a>
-                <a href="/idpauth/logout/">Logout</a>
-                    <a href="/vdi/user_feedback/">Leave Feedback</a>
+
             </div>
             {% if message %}
                 <p>{{ message }}</p>

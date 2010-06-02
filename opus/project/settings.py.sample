@@ -95,3 +95,16 @@ INSTALLED_APPS = (
     'opus.project.projectbuilder',
     'opus.project.projectdeployer',
 )
+
+##########################
+# Opus Specific Settings #
+##########################
+
+# Set this to the directory that the deployer looks for projects to deploy
+OPUS_BASE_DIR = "/var/lib/opus/base"
+
+# Configure this with the directory the deployer should drop apache configuration files
+OPUS_APACHE_CONFD = "/etc/httpd/conf.d/opus"
+
+# Path to the secureops program
+OPUS_SECUREOPS_COMMAND = "/usr/local/opus/bin/secureops"

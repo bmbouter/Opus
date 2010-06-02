@@ -24,16 +24,6 @@ class ProjectForm(forms.Form):
     projectname = IdentifierField(required=True)
     appname = IdentifierField(required=True)
     apppath = CharField(required=True)
-    dbengine = ChoiceField((
-            ('sqlite3', 'SQLite'),
-            ('postgresql_psycopg2', 'PostgreSQL', ),
-            ('mysql', 'MySQL', ),
-            ('oracle', 'Oracle', ),
-            ))
-    dbname = CharField(required=True)
-    dbpassword = CharField(required=False, widget=PasswordInput)
-    dbhost = CharField(required=False)
-    dbport = IntegerField(required=False)
 
 def createproject(request):
     if request.method == "POST":
@@ -60,3 +50,4 @@ def createproject(request):
     return render_to_response('form.html', {
         'formhtml': form
         }, context_instance=RequestContext(request))
+
