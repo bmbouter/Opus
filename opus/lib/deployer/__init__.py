@@ -137,10 +137,13 @@ DATABASES['default'] = {{
 
     def _sync_database(self):
         # Runs sync on the database
-        ret = subprocess.call(["python", "manage.py", "syncdb", "--noinput"],
-                cwd=self.projectdir)
-        if ret:
-            raise DeploymentException("syncdb failed")
+        proc = subprocess.Popen(["python", "manage.py", "syncdb", "--noinput"],
+                cwd=self.projectdir,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
+        output = proc.communicate()[0]
+        if proc.wait():
+            raise DeploymentException("syncdb failed. {0}".format(output))
 
     def _create_superuser(self, username, email, password):
         proc = subprocess.Popen(["python", "manage.py", "createsuperuser",
@@ -240,7 +243,13 @@ user.save()
 
         # Write out a wsgi config to the project dir
         wsgi_dir = os.path.join(self.projectdir, "wsgi")
-        os.mkdir(wsgi_dir)
+        try:
+            os.mkdir(wsgi_dir)
+        except OSError, e:
+            import errno
+            if e.errno != errno.EEXIST:
+                raise e
+            # Directory already exists, no big deal
         with open(os.path.join(wsgi_dir, "django.wsgi"), 'w') as wsgi:
             wsgi.write("""
 import os
@@ -248,9 +257,14 @@ import sys
 
 os.environ['DJANGO_SETTINGS_MODULE'] = '{projectname}.settings'
 
+# Needed so that apps can import their own things without having to know the
+# project name.
+sys.path.append({projectpath!r})
+
 import django.core.handlers.wsgi
 application = django.core.handlers.wsgi.WSGIHandler()
-""".format(projectname = self.projectname))
+""".format(projectname = self.projectname,
+           projectpath = self.projectdir))
 
         if vhostport != "*":
             listendirective = "Listen {0}\n".format(vhostport)

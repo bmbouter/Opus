@@ -16,6 +16,7 @@ import logging # python standard library rocks!
 import inspect
 import sys
 import os
+import os.path
 
 from django.conf import settings
 
