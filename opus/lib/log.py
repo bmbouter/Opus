@@ -16,6 +16,10 @@ is an example:
 
 This will put the message into two files: master.log and appname.log
 
+This requires one to define a LOG_DIR setting in the Django settings.py. This
+is the directory where the logs will be placed. Obviously the web server must
+have write access to this directory.
+
 """
 
 import logging # python standard library rocks!
@@ -112,19 +116,36 @@ def _init_logging():
         # mod_wsgi may raise an error if we try to access stdout
         pass
 
-    # Set logging level
-    if settings.LOG_LEVEL.upper() == "DEBUG":
-        log_level = logging.DEBUG
-    elif settings.LOG_LEVEL.upper() == "INFO":
-        log_level = logging.INFO
-    elif settings.LOG_LEVEL.upper() == "WARNING":
-        log_level = logging.WARNING
-    elif settings.LOG_LEVEL.upper() == "ERROR":
-        log_level = logging.ERROR
-    elif settings.LOG_LEVEL.upper() == "CRITICAL":
-        log_level = logging.CRITICAL
+    # Set logging level. Attempt to get settings.LOG_LEVEL and set log level to
+    # that. If it's not an int or a string matching one of the 5 standard log
+    # levels, or if LOG_LEVEL isn't defined, logging is set to DEBUG or INFO
+    # depending on settings.DEBUG
+    def fallback():
+        if settings.DEBUG:
+            log_level = logging.DEBUG
+        else:
+            log_level = logging.INFO
+        return log_level
+    try:
+        level = settings.LOG_LEVEL
+    except AttributeError:
+        log_level = fallback()
     else:
-        log_level = logging.INFO
+        if isinstance(level, basestring):
+            try:
+                log_level = {"DEBUG":logging.DEBUG,
+                            "INFO": logging.INFO,
+                            "WARNING": logging.WARNING,
+                            "ERROR": logging.ERROR,
+                            "CRITICAL": logging.CRITICAL
+                        }[level.upper()]
+            except KeyError:
+                log_level = fallback()
+        elif isinstance(level, (int,long)):
+                log_level = level
+        else:
+            log_level = fallback()
+
     root_logger.setLevel(log_level)
 
 def getLogger(appname=None):
@@ -166,3 +187,6 @@ def getLogger(appname=None):
         log.addHandler(handler)
 
     return log
+
+# A more PEP8 name:
+get_logger = getLogger

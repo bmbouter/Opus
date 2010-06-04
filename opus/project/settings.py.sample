@@ -108,3 +108,11 @@ OPUS_APACHE_CONFD = "/etc/httpd/conf.d/opus"
 
 # Path to the secureops program
 OPUS_SECUREOPS_COMMAND = "/usr/local/opus/bin/secureops"
+
+# Where should the logs go?
+LOG_DIR = "/home/andrew/opus-fh/opus/project/log"
+
+# Set this to one of the logging level strings, or one of the constants from
+# the logging module. Set to None to choose between INFO and DEBUG according to
+# settings.DEBUG automatically
+LOG_LEVEL = "DEBUG"
