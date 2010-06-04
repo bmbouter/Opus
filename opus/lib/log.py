@@ -1,14 +1,20 @@
-"""Allows applications to create a log.
+"""Provides logging capabilities for applications in a Django environment.
 
 Each application will have its own log file named "<app>.log".  In addition,
-every log messsage will also be optionally appended to "master.log".  These log
-files will be located in the directory specified by the LOG_DIR setting.
+every log messsage will also be appended to "master.log".  These log files will
+be located in the directory specified by the LOG_DIR Django setting.
 
-Each application has to get its own logger with the core.log.getLogger() function.  Here is an example:
+If stdout is a tty, for example in the Django dev server, log messages will
+also redirect to stdout using color coding for different levels.
 
->>> import core
->>> log = core.log.getLogger()
+Each application should get its own logger with the getLogger() function.  Here
+is an example:
+
+>>> import opus.lib.log
+>>> log = opus.lib.log.getLogger()
 >>> log.debug("Debug Message here!")
+
+This will put the message into two files: master.log and appname.log
 
 """
 
@@ -41,17 +47,17 @@ HIGHLIGHT = {
 
 class MyFormatter(logging.Formatter):
     """Used to format log messages all pretty like."""
-    def __init__(self, use_color = True):
+    def __init__(self, color=True):
         logging.Formatter.__init__(self,
-            '%(fileandlineno)-19s:%(funcName)s:%(pid)5s:%(asctime)s %(levelname)-8s %(message)s',
+            '%(fileandlineno)-31s:%(funcName)s:%(asctime)s %(levelname)-8s %(message)s',
             "%Y-%m-%d %H:%M:%S"
         )
-        self.use_color = use_color
+        self.use_color = color
 
     def format(self, record):
 
         record.pid = os.getpid()
-        record.fileandlineno = "%s:%s" % (record.filename, record.lineno)
+        record.fileandlineno = "%s.%s:%s" % (record.name, record.filename, record.lineno)
 
         # Set the max length for the funcName field, and left justify
         l = 10
@@ -81,26 +87,30 @@ class MyFormatter(logging.Formatter):
 
         return logging.Formatter.format(self, record)
 
-def init_logging(log_to_stdout=True):
+def _init_logging():
     """Initializes Opus's logging
 
-    This is called before any of the applications get started to set up
-    logging.  If you don't want the log to be repeated to stdout, then specify
-    log_to_stdout=False.
+    This is called the first time a logger is requested
 
     """
-
+    
+    # Configure a handler for the root logger
     root_logger = logging.getLogger()
-    stream = open(settings.LOG_DIR+"master.log", "a")
-    handler = logging.StreamHandler(stream)
-    formatter = MyFormatter()
-    handler.setFormatter(formatter)
+    handler = logging.FileHandler(
+            os.path.join(settings.LOG_DIR, "master.log"),
+            "a")
+    handler.setFormatter( MyFormatter( color=False) )
     root_logger.addHandler(handler)
 
-    if log_to_stdout:
-        stdout_handler = logging.StreamHandler(sys.stdout)
-        stdout_handler.setFormatter(formatter)
-        root_logger.addHandler(stdout_handler)
+    # Configure second handler for the root logger to stdout if it's a console
+    try:
+        if sys.stdout.isatty():
+            stdout_handler = logging.StreamHandler(sys.stdout)
+            stdout_handler.setFormatter( MyFormatter( color=True) )
+            root_logger.addHandler(stdout_handler)
+    except IOError:
+        # mod_wsgi may raise an error if we try to access stdout
+        pass
 
     # Set logging level
     if settings.LOG_LEVEL.upper() == "DEBUG":
@@ -114,42 +124,45 @@ def init_logging(log_to_stdout=True):
     elif settings.LOG_LEVEL.upper() == "CRITICAL":
         log_level = logging.CRITICAL
     else:
-        root_logger.error('LOG_LEVEL should be one of: DEBUG, INFO, WARNING, ERROR or CRITICAL.  Instead it is "%s"' % settings.LOG_LEVEL)
-        root_logger.error('Setting LOG_LEVEL to DEBUG')
-        log_level = logging.DEBUG
-        # TODO: What should be done now?
+        log_level = logging.INFO
     root_logger.setLevel(log_level)
 
-    # Ignore messages from boto that we don't care about
-    logging.getLogger('boto').setLevel(logging.WARNING)
-
-def getLogger():
+def getLogger(appname=None):
     """Returns the application's logger
 
     This is called by each application to get their logging object.  It returns
     a different logger baised on which application called it.  The application
     can then use standard python logging, for example:
-    >>> import core
-    >>> log = core.log.getLogger()
+    >>> import opus.lib.log
+    >>> log = opus.lib.log.getLogger()
     >>> log.debug("Debug Message here!")
 
+    appname, if specified, will be used for the file that the logs to to.
+    Otherwise, the appname will be determined using inspect.stack() to look up
+    one frame in the stack call.
+
     """
+    if len(logging.getLogger().handlers) == 0:
+        _init_logging()
 
     # Get the app name that is logging
-    stack = inspect.stack()
-    try:
-        app_name = stack[1][0].f_globals["__package__"].split(".")[-1]
-    finally:
-        del stack
+    if appname:
+        app_name = appname
+    else:
+        stack = inspect.stack()
+        try:
+            app_name = stack[1][0].f_globals["__package__"].split(".")[-1]
+        finally:
+            del stack
 
     log = logging.getLogger(app_name)
 
     # Add a handler if it doesn't already exist
-    if not log.handlers:
-        stream = open(settings.LOG_DIR+app_name+".log", "a")
-        handler = logging.StreamHandler(stream)
-        formatter = MyFormatter()
-        handler.setFormatter(formatter)
+    if len(log.handlers) == 0:
+        handler = logging.FileHandler(
+                os.path.join(settings.LOG_DIR, app_name+".log"),
+                'a')
+        handler.setFormatter( MyFormatter(color=False) )
         log.addHandler(handler)
 
     return log
