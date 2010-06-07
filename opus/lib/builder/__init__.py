@@ -67,18 +67,18 @@ class ProjectBuilder(object):
             raise ValueError("Given target is not a directory")
 
         # Create a Django project
-        projectdir = self._startproject(target)
+        self.projectdir = self._startproject(target)
 
         # Copy the applications into it
-        appnames = self._copy_apps(projectdir)
+        appnames = self._copy_apps()
 
         # Add settings.py directives (installed apps, database config)
-        self._configure_settings(os.path.join(projectdir, "settings.py"), appnames)
+        self._configure_settings(os.path.join(self.projectdir, "settings.py"), appnames)
 
         # Add urls.py directives
-        self._configure_urls(os.path.join(projectdir, "urls.py"), appnames)
+        self._configure_urls(os.path.join(self.projectdir, "urls.py"), appnames)
 
-        return projectdir
+        return self.projectdir
 
     def _startproject(self, target):
         # Returns a temporary directory containing a skeleton project
@@ -93,17 +93,61 @@ class ProjectBuilder(object):
             raise Exception("startproject failed. {0}".format(output))
             # XXX: handle this better? do some cleanup?
 
-        return os.path.join(target, self.projectname)
+        projectdir =  os.path.join(target, self.projectname)
+
+        # Create a template and a log directory
+        os.mkdir(os.path.join(projectdir, "log"))
+        os.mkdir(os.path.join(projectdir, "templates"))
+        os.mkdir(os.path.join(projectdir, "templates", "registration"))
+
+        # Put login.html template in place
+        with open(os.path.join(
+                projectdir, "templates", "registration", "login.html"),
+                'w') as loginfile:
+            loginfile.write("""
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Login</title>
+</head>
+<body>
+<div>
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+<form method="post" action="{% url django.contrib.auth.views.login %}">{% csrf_token %}
+<table>
+<tr>
+    <td>{{ form.username.label_tag }}</td>
+    <td>{{ form.username }}</td>
+</tr>
+<tr>
+    <td>{{ form.password.label_tag }}</td>
+    <td>{{ form.password }}</td>
+</tr>
+</table>
+
+<input type="submit" value="login" />
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+</div>
+</body>
+</html>
+""")
+
+        return projectdir
 
 
-    def _copy_apps(self, projectdir):
+    def _copy_apps(self):
         # Copies all the apps into the project
         # Returns a list of project names that were created
         # XXX are race conditions a problem here? Probably not a big deal
-        before = set(os.listdir(projectdir))
+        before = set(os.listdir(self.projectdir))
         for app in self.apps:
-            opus.lib.builder.sources.copy_functions[app.pathtype](app.path, projectdir)
-        after = set(os.listdir(projectdir))
+            opus.lib.builder.sources.copy_functions[app.pathtype](app.path, self.projectdir)
+        after = set(os.listdir(self.projectdir))
         newapps = list(after - before)
         return newapps
 
@@ -112,8 +156,20 @@ class ProjectBuilder(object):
         with open(settingsfile, 'r') as settingsobj:
             settings = settingsobj.readlines()
 
+        # Add log variables
+        # TODO: Make a parameter for log level, debug/info
+        settings.append("\n# Logging parameters for the Opus logging library\n")
+        settings.append("""# Where should the logs go?
+LOG_DIR = "{logdir}"
+
+# Set this to one of the logging level strings, or one of the constants from
+# the logging module. Set to None to choose between INFO and DEBUG according to
+# settings.DEBUG automatically
+LOG_LEVEL = "DEBUG"
+""".format(logdir=os.path.join(self.projectdir, "log")))
+
         # Edit INSTALLED_APPS
-        settings.append("\n# Automatically added applications from Project Builder\n")
+        settings.append("\n# Automatically added applications from Opus Project Builder\n")
         settings.append("INSTALLED_APPS += (\n")
         for app in appnames:
             fullname = "{0}.{1}".format(self.projectname, app)
@@ -122,8 +178,16 @@ class ProjectBuilder(object):
             settings.append("    'django.contrib.admin',\n")
         settings.append(")\n")
 
-        # XXX Need to edit things like TEMPLATE_DIRS, MEDIA_ROOT? 
+        # Add the templates directory
+        settings.append("\n# Automatically added template directory from Opus Project Builder\n")
+        settings.append("TEMPLATE_DIRS += (\n")
+        settings.append("    {0!r},\n".format(
+            os.path.join(self.projectdir, "templates")
+            ))
+        settings.append(")\n")
 
+        # XXX Need to edit things like MEDIA_ROOT? 
+        
         # Write back out the settings.py
         with open(settingsfile, 'w') as settingsobj:
             settingsobj.write("".join(settings))
@@ -136,6 +200,12 @@ class ProjectBuilder(object):
         with open(urlsfile, 'r') as fileobj:
             urls = fileobj.readlines()
 
+        if self.admin:
+            urls.append("""
+from django.contrib import admin
+admin.autodiscover()
+""")
+
         # Add in urls for the installed apps
         urls.append("\n# URLs added from the Project Builder:\n")
         urls.append("urlpatterns += patterns('',\n")
@@ -144,13 +214,13 @@ class ProjectBuilder(object):
             urls.append("    (r'^{appname}/', include('{fullname}.urls')),\n"\
                     .format(appname=app,
                             fullname=fullname))
+        # Add the login view
+        urls.append("    (r'^accounts/login/$', 'django.contrib.auth.views.login'),\n")
+        # Add the admin interface view
+        if self.admin:
+            urls.append("    (r'^admin/', include(admin.site.urls)),\n")
         urls.append(")\n")
         
-        if self.admin:
-            urls.append("""
-from django.contrib import admin
-admin.autodiscover()
-""")
 
         # Write it back out
         with open(urlsfile, 'w') as fileobj:

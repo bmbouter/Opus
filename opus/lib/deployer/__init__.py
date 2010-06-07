@@ -221,6 +221,8 @@ user.save()
         command.append(settingsfile)
         if self.dbengine == "sqlite3":
             command.append(self.dbname)
+        # Also secure log directory
+        command.append(os.path.join(self.projectdir, "log"))
 
         ret = subprocess.call(command)
         if ret:
@@ -279,7 +281,8 @@ application = django.core.handlers.wsgi.WSGIHandler()
             config.write("""
 {listendirective}
 <VirtualHost {vhostname}:{vhostport}>
-    WSGIDaemonProcess {name} threads=1 processes=8 maximum-requests=1000 user={user} {ppdirective}
+    Alias /media {adminmedia}
+    WSGIDaemonProcess {name} threads=4 processes=2 maximum-requests=1000 user={user} {ppdirective}
     WSGIProcessGroup {name}
     WSGIApplicationGroup %{{GLOBAL}}
     WSGIScriptAlias / {wsgifile}
@@ -297,6 +300,7 @@ application = django.core.handlers.wsgi.WSGIHandler()
                     wsgifile=os.path.join(wsgi_dir,"django.wsgi"),
                     listendirective=listendirective,
                     ppdirective=ppdirective,
+                    adminmedia=os.path.join(__import__("django").__path__[0], 'contrib','admin','media'),
                     ))
 
         # Restart apache gracefully

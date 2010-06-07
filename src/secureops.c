@@ -94,7 +94,19 @@ int main(int argc, char **argv)
         int failures = 0;
         for (i=3; i<argc; i++) {
             char *filename = argv[i];
-            if (chown(filename, uid, -1) || chmod(filename, 0600)) {
+            // Check for file or directory
+            struct stat fileinfo;
+            if (stat(filename, &fileinfo) != 0) {
+                failures++;
+                continue;
+            }
+            mode_t mode;
+            if (S_ISDIR(fileinfo.st_mode)) {
+                mode = 0700;
+            } else {
+                mode = 0600;
+            }
+            if (chown(filename, uid, -1) || chmod(filename, mode)) {
                 failures++;
             }
             count++;

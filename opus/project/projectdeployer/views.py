@@ -105,11 +105,19 @@ def deploy_project(request):
 
             d.secure_project(settings.OPUS_SECUREOPS_COMMAND)
 
+            # XXX This is a bit of a hack, the opus libraries should be in the
+            # path for the deployed app. TODO: Find a better way to handle
+            # this.
+            path_additions = "{0}:{1}".format(
+                    settings.OPUS_BASE_DIR,
+                    os.path.split(opus.__path__[0])[0],
+                    )
+
             d.configure_apache(settings.OPUS_APACHE_CONFD,
                     form.cleaned_data['vhost'],
                     form.cleaned_data['vport'],
                     secureops=settings.OPUS_SECUREOPS_COMMAND,
-                    pythonpath=settings.OPUS_BASE_DIR,
+                    pythonpath=path_additions,
                     )
             
             return render_to_response('deployed.html', {
