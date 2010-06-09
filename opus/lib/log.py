@@ -110,7 +110,7 @@ def _init_logging():
     try:
         if sys.stdout.isatty():
             stdout_handler = logging.StreamHandler(sys.stdout)
-            stdout_handler.setFormatter( MyFormatter( color=True) )
+            stdout_handler.setFormatter( MyFormatter(color=True) )
             root_logger.addHandler(stdout_handler)
     except IOError:
         # mod_wsgi may raise an error if we try to access stdout
@@ -152,13 +152,13 @@ def getLogger(appname=None):
     """Returns the application's logger
 
     This is called by each application to get their logging object.  It returns
-    a different logger baised on which application called it.  The application
+    a different logger based on which application called it.  The application
     can then use standard python logging, for example:
     >>> import opus.lib.log
     >>> log = opus.lib.log.getLogger()
     >>> log.debug("Debug Message here!")
 
-    appname, if specified, will be used for the file that the logs to to.
+    appname, if specified, will be used for the application log file.
     Otherwise, the appname will be determined using inspect.stack() to look up
     one frame in the stack call.
 

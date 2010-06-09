@@ -11,6 +11,7 @@ import shutil
 import re
 
 import opus.lib.builder.sources
+from opus.lib.conf import OpusConfig
 
 App = namedtuple('App', ('path', 'pathtype'))
 
@@ -69,14 +70,17 @@ class ProjectBuilder(object):
         # Create a Django project
         self.projectdir = self._startproject(target)
 
+        # Set up json configuration file
+        self._setup_config()
+
         # Copy the applications into it
         appnames = self._copy_apps()
 
         # Add settings.py directives (installed apps, database config)
-        self._configure_settings(os.path.join(self.projectdir, "settings.py"), appnames)
+        self._configure_settings(appnames)
 
         # Add urls.py directives
-        self._configure_urls(os.path.join(self.projectdir, "urls.py"), appnames)
+        self._configure_urls(appnames)
 
         return self.projectdir
 
@@ -139,11 +143,29 @@ class ProjectBuilder(object):
 
         return projectdir
 
+    def _setup_config(self):
+        # Erases the normal settings.py and creates an opussettings.json
+        # to replace it
+        self.config = OpusConfig.new_from_template(
+                os.path.join(self.projectdir, "opussettings.json"))
+        
+        with open(os.path.join(self.projectdir, "settings.py"), 'w') as s:
+            s.write("""# Opus-built Project Settings file
+# The settings for this project are not stored in this file, but rather in the
+# file opussettings.json in JSON format. You may put your own values below to
+# override Opus's configuration, but this is not recommended.
+from opus.lib.conf import load_settings
+load_settings()
+""")
+
+        # Randomizing SECRET_KEY is taken care of for us by new_from_template,
+        # but we still have to set ROOT_URLCONF
+        self.config['ROOT_URLCONF'] = "{0}.urls".format(self.projectname)
+
 
     def _copy_apps(self):
         # Copies all the apps into the project
         # Returns a list of project names that were created
-        # XXX are race conditions a problem here? Probably not a big deal
         before = set(os.listdir(self.projectdir))
         for app in self.apps:
             opus.lib.builder.sources.copy_functions[app.pathtype](app.path, self.projectdir)
@@ -151,50 +173,29 @@ class ProjectBuilder(object):
         newapps = list(after - before)
         return newapps
 
-    def _configure_settings(self, settingsfile, appnames):
-        # Slurp up settings.py
-        with open(settingsfile, 'r') as settingsobj:
-            settings = settingsobj.readlines()
-
-        # Add log variables
-        # TODO: Make a parameter for log level, debug/info
-        settings.append("\n# Logging parameters for the Opus logging library\n")
-        settings.append("""# Where should the logs go?
-LOG_DIR = "{logdir}"
-
-# Set this to one of the logging level strings, or one of the constants from
-# the logging module. Set to None to choose between INFO and DEBUG according to
-# settings.DEBUG automatically
-LOG_LEVEL = "DEBUG"
-""".format(logdir=os.path.join(self.projectdir, "log")))
+    def _configure_settings(self, appnames):
+        self.config['LOG_DIR'] = os.path.join(self.projectdir, 'log')
+        self.config['LOG_LEVEL'] = "DEBUG"
 
         # Edit INSTALLED_APPS
-        settings.append("\n# Automatically added applications from Opus Project Builder\n")
-        settings.append("INSTALLED_APPS += (\n")
+        newapps = []
         for app in appnames:
             fullname = "{0}.{1}".format(self.projectname, app)
-            settings.append("    {0!r},\n".format(fullname))
+            newapps.append(fullname)
         if self.admin:
-            settings.append("    'django.contrib.admin',\n")
-        settings.append(")\n")
+            newapps.append("django.contrib.admin")
+        self.config['INSTALLED_APPS'] += newapps
 
         # Add the templates directory
-        settings.append("\n# Automatically added template directory from Opus Project Builder\n")
-        settings.append("TEMPLATE_DIRS += (\n")
-        settings.append("    {0!r},\n".format(
-            os.path.join(self.projectdir, "templates")
-            ))
-        settings.append(")\n")
+        self.config['TEMPLATE_DIRS'] = (os.path.join(self.projectdir, "templates"),)
 
-        # XXX Need to edit things like MEDIA_ROOT? 
-        
-        # Write back out the settings.py
-        with open(settingsfile, 'w') as settingsobj:
-            settingsobj.write("".join(settings))
+        # Write back out the settings
+        self.config.save()
 
-    def _configure_urls(self, urlsfile, appnames):
+    def _configure_urls(self, appnames):
         # Configures the url.py file for the project, by adding an include()
         # line for each app. Assumes each app has a urls.py file
+        urlsfile = os.path.join(self.projectdir, "urls.py")
 
         # Slurp up urls.py
         with open(urlsfile, 'r') as fileobj:

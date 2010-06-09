@@ -98,6 +98,8 @@ int main(int argc, char **argv)
             struct stat fileinfo;
             if (stat(filename, &fileinfo) != 0) {
                 failures++;
+                count++;
+                printf("Could not stat %s\n", filename);
                 continue;
             }
             mode_t mode;
@@ -108,13 +110,17 @@ int main(int argc, char **argv)
             }
             if (chown(filename, uid, -1) || chmod(filename, mode)) {
                 failures++;
+                printf("Couldn't chown or chmod %s\n", filename);
             }
             count++;
         }
         if (count == 0 || failures == 0)
             return 0;
-        else if (failures == count)
+        else if (failures == count) {
+            printf("Failed to chmod and chown files\n");
             return 1;
+        }
+        printf("Some files failed to set permissions\n");
         return 2;
     }
     printf("Bad mode\n");

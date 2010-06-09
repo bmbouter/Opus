@@ -6,11 +6,17 @@ Apache+mod_wsgi setup. Functionality for other webservers may be added later.
 
 """
 
+import os
 import os.path
 import subprocess
 import re
 import tempfile
 import pwd
+
+import opus
+from opus.lib.conf import OpusConfig
+from opus.lib.log import get_logger
+log = get_logger()
 
 # Things the deployer needs to do:
 # - confuring the database / syncing the database / creating admin user
@@ -36,22 +42,15 @@ class ProjectDeployer(object):
 
         """
         self.projectdir = projectdir
+
+        # Find the project name by taking the last component of the path
         path = os.path.abspath(self.projectdir)
         self.projectname = os.path.basename(path)
 
-        # Database configuration
-        self.dbengine = None
-        self.dbname = ''
-        self.dbuser = ''
-        self.dbpassword = ''
-        self.dbhost = ''
-        self.dbport = ''
-
         self.uid = None
 
-    @property
-    def _settings(self):
-        return os.path.join(self.projectdir, "settings.py")
+        # Go ahead and eat up the config file into memory
+        self.config = OpusConfig(os.path.join(self.projectdir, "opussettings.json"))
 
     def configure_database(self, engine, *args):
         """Configure the Django database
@@ -63,69 +62,37 @@ class ProjectDeployer(object):
         For 'sqlite3' the next parameter should be the path
         """
 
+        dbuser = ''
+        dbpassword = ''
+        dbhost = ''
+        dbport = ''
         if engine == "sqlite3":
             if len(args) < 1:
                 raise TypeError("You must specify the database name")
-            self.dbname = args[0]
+            dbname = args[0]
         elif engine in ('postgresql_psycopg2', 'postgresql', 'mysql', 'oracle'):
             if len(args) < 3:
                 raise TypeError("You must specify the database username and password")
-            self.dbname = args[0]
-            self.dbuser = args[1]
-            self.dbpassword = args[2]
+            dbname = args[0]
+            dbuser = args[1]
+            dbpassword = args[2]
             if len(args) >= 4:
-                self.dbhost = args[3]
+                dbhost = args[3]
             if len(args) >= 5:
-                self.dbhost = args[4]
+                dbport = args[4]
         else:
             raise ValueError("Bad database engine")
 
-        self.dbengine = engine
+        defaultdb = {}
+        self.config['DATABASES'] = {'default': defaultdb}
+        defaultdb['ENGINE'] = 'django.db.backends.{0}'.format(engine)
+        defaultdb['NAME'] = dbname
+        defaultdb['USER'] = dbuser
+        defaultdb['PASSWORD'] = dbpassword
+        defaultdb['HOST'] = dbhost
+        defaultdb['PORT'] = dbport
 
-        # Actually go and edit settings.py to make the changes
-        self._do_database()
-
-    def _do_database(self):
-        # Go and edit settings.py to add the database settings
-
-        settingsfile = os.path.join(self.projectdir, "settings.py")
-        with open(settingsfile, 'r') as settingsobj:
-            settings = settingsobj.readlines()
-
-        # Find the DATABASES= line and put a comment that additional DATABASE
-        # lines are to be inserted below
-        db_start_re = re.compile(r"DATABASES\s*=")
-        for lineno, line in enumerate(settings):
-            if db_start_re.match(line):
-                settings.insert(lineno,
-                        "# Warning: More DATABASE lines are defined below.\n"
-                        "# Including lines that override 'default'\n"
-                        )
-                break
-
-        # Edit DATABASES line
-        db_lines = """# Automatically added Database configuration from the Opus Project Deployer:
-DATABASES['default'] = {{
-        'ENGINE': 'django.db.backends.{engine}',
-        'NAME': {name!r},
-        'USER': {user!r},
-        'PASSWORD': {password!r},
-        'HOST': {host!r},
-        'PORT': {port!r},
-    }}
-"""
-        db_lines = db_lines.format(
-                engine=self.dbengine,
-                name=self.dbname,
-                user=self.dbuser,
-                password=self.dbpassword,
-                host=self.dbhost,
-                port=self.dbport,
-        )
-        settings.append(db_lines)
-
-        with open(settingsfile, 'w') as settingsobj:
-            settingsobj.write("".join(settings))
+        self.config.save()
 
     def sync_database(self, username, email, password):
         """Do the initial database sync. Requires to set an admin username,
@@ -135,12 +102,21 @@ DATABASES['default'] = {{
         self._sync_database()
         self._create_superuser(username, email, password)
 
+    def _getenv(self):
+        "Gets an environment with paths set up for a manage.py subprocess"
+        env = dict(os.environ)
+        env['OPUS_SETTINGS_FILE'] = os.path.join(self.projectdir, "opussettings.json")
+        env['PYTHONPATH'] = os.path.split(opus.__path__[0])[0]
+        return env
+
     def _sync_database(self):
         # Runs sync on the database
         proc = subprocess.Popen(["python", "manage.py", "syncdb", "--noinput"],
                 cwd=self.projectdir,
                 stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT)
+                stderr=subprocess.STDOUT,
+                env=self._getenv(),
+                )
         output = proc.communicate()[0]
         if proc.wait():
             raise DeploymentException("syncdb failed. {0}".format(output))
@@ -152,7 +128,9 @@ DATABASES['default'] = {{
                 "--email", email],
                 cwd=self.projectdir,
                 stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT)
+                stderr=subprocess.STDOUT,
+                env=self._getenv(),
+                )
         output = proc.communicate()[0]
         if proc.returncode:
             raise DeploymentException("create superuser failed. Return val: {0}. Output: {1}".format(proc.returncode, output))
@@ -161,6 +139,7 @@ DATABASES['default'] = {{
         # with the database. Do this in a sub process so as not to have all the
         # Django modules loaded and configured in this interpreter, which may
         # conflict with any Django settings already imported.
+        dbconfig = self.config['DATABASES']['default']
         program = """
 import os
 try:
@@ -170,7 +149,7 @@ except KeyError:
 from django.conf import settings
 settings.configure(DATABASES = {{'default':
     {{
-        'ENGINE': 'django.db.backends.{engine}',
+        'ENGINE': '{engine}',
         'NAME': {name!r},
         'USER': {user!r},
         'PASSWORD': {password!r},
@@ -183,22 +162,24 @@ user = User.objects.get(username={suuser!r})
 user.set_password({supassword!r})
 user.save()
         """.format(
-                engine=self.dbengine,
-                name=self.dbname,
-                user=self.dbuser,
-                password=self.dbpassword,
-                host=self.dbhost,
-                port=self.dbport,
+                engine=dbconfig['ENGINE'],
+                name=dbconfig['NAME'],
+                user=dbconfig['USER'],
+                password=dbconfig['PASSWORD'],
+                host=dbconfig['HOST'],
+                port=dbconfig['PORT'],
                 suuser=username,
                 supassword=password,
                 )
 
-        process = subprocess.Popen(["python"], stdin=subprocess.PIPE)
-        process.stdin.write(program)
-        process.stdin.close()
+        process = subprocess.Popen(["python"], stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                )
+        output = process.communicate(program)[0]
         ret = process.wait()
         if ret:
-            raise DeploymentException("Setting super user password failed")
+            raise DeploymentException("Setting super user password failed. {0}".format(output))
 
     def secure_project(self, secureops="secureops"):
         """Calling this does two things: It calls useradd to create a new Linux
@@ -219,14 +200,25 @@ user.save()
         # Set sensitive files appropriately
         settingsfile = os.path.join(self.projectdir, "settings.py")
         command.append(settingsfile)
-        if self.dbengine == "sqlite3":
-            command.append(self.dbname)
+        dbconfig = self.config['DATABASES']['default']
+        if dbconfig['ENGINE'].endswith("sqlite3"):
+            command.append(dbconfig['NAME'])
         # Also secure log directory
         command.append(os.path.join(self.projectdir, "log"))
+        # And the opus settings
+        command.append(os.path.join(self.projectdir, "opussettings.json"))
 
-        ret = subprocess.call(command)
+        log.info("Calling secure operation with arguments {0!r}".format(command))
+        log.debug("cwd: {0}".format(os.getcwd()))
+        proc = subprocess.Popen(command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                )
+        output = proc.communicate()[0]
+        ret = proc.wait()
+        log.debug("Secure ops finished. Ret: {1}, Output: {0!r}".format(output, ret))
         if ret:
-            raise DeploymentException("Could not create user and/or change file permissions")
+            raise DeploymentException("Could not create user and/or change file permissions. {0}. Ret: {1}".format(output, ret))
 
 
     def configure_apache(self, apache_conf_dir, vhostname, vhostport, pythonpath="", secureops="secureops"):
@@ -258,6 +250,7 @@ import os
 import sys
 
 os.environ['DJANGO_SETTINGS_MODULE'] = '{projectname}.settings'
+os.environ['OPUS_SETTINGS_FILE'] = {settingspath!r}
 
 # Needed so that apps can import their own things without having to know the
 # project name.
@@ -266,7 +259,9 @@ sys.path.append({projectpath!r})
 import django.core.handlers.wsgi
 application = django.core.handlers.wsgi.WSGIHandler()
 """.format(projectname = self.projectname,
-           projectpath = self.projectdir))
+           projectpath = self.projectdir,
+           settingspath = os.path.join(self.projectdir, "opussettings.json"),
+           ))
 
         if vhostport != "*":
             listendirective = "Listen {0}\n".format(vhostport)
