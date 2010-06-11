@@ -104,9 +104,9 @@ int main(int argc, char **argv)
             }
             mode_t mode;
             if (S_ISDIR(fileinfo.st_mode)) {
-                mode = 0700;
+                mode = 0770;
             } else {
-                mode = 0600;
+                mode = 0660;
             }
             if (chown(filename, uid, -1) || chmod(filename, mode)) {
                 failures++;

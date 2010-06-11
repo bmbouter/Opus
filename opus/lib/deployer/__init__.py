@@ -11,7 +11,7 @@ import os.path
 import subprocess
 import re
 import tempfile
-import pwd
+import grp
 
 import opus
 from opus.lib.conf import OpusConfig
@@ -220,6 +220,16 @@ user.save()
         if ret:
             raise DeploymentException("Could not create user and/or change file permissions. {0}. Ret: {1}".format(output, ret))
 
+        # Also an important step: delete settings.pyc if it exists, which could
+        # have sensitive information in it (although not likely, the usual
+        # setup is to store settings in opussettings.json
+        settingspyc = os.path.join(self.projectdir, "settings.pyc")
+        if os.path.exists(settingspyc):
+            try:
+                os.unlink(settingspyc)
+            except IOError, e:
+                raise DeploymentException("Couldn't delete settings.pyc! {0}".format(e))
+
 
     def configure_apache(self, apache_conf_dir, vhostname, vhostport, pythonpath="", secureops="secureops"):
         """Configures apache to serve this Django project.  apache_conf_dir
@@ -271,13 +281,28 @@ application = django.core.handlers.wsgi.WSGIHandler()
             ppdirective = "python-path={0}\n".format(pythonpath)
         else:
             ppdirective = ""
+
+        # Discover the group under which to run the daemon proceses. Should be
+        # an unpriviliged group, try to discover what that is.
+        for group in ('nogroup',
+                      'nobody',
+                      ):
+            try:
+                groupinfo = grp.getgrnam(group)
+            except KeyError:
+                pass
+            else:
+                break
+        else:
+            raise DeploymentException("Couldn't guess the unprivileged group to use. Bailing")
+
         # Write out apache config
         with open(config_path, 'w') as config:
             config.write("""
 {listendirective}
 <VirtualHost {vhostname}:{vhostport}>
     Alias /media {adminmedia}
-    WSGIDaemonProcess {name} threads=4 processes=2 maximum-requests=1000 user={user} {ppdirective}
+    WSGIDaemonProcess {name} threads=4 processes=2 maximum-requests=1000 user={user} group={group} display-name={projectname} {ppdirective}
     WSGIProcessGroup {name}
     WSGIApplicationGroup %{{GLOBAL}}
     WSGIScriptAlias / {wsgifile}
@@ -287,8 +312,10 @@ application = django.core.handlers.wsgi.WSGIHandler()
     </Directory>
 </VirtualHost>
 """.format(
+                    projectname=self.projectname,
                     name="opus"+self.projectname,
-                    user= "opus"+self.projectname,
+                    user="opus"+self.projectname,
+                    group=group,
                     vhostname=vhostname,
                     vhostport=vhostport,
                     wsgidir=wsgi_dir,
