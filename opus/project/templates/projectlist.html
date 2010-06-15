@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Project deployer{% endblock %}
+
+{% block content %}
+
+    <h1>Deploy a Project</h1>
+    <form action="{% url opus.project.projectdeployer.views.deploy_project %}" method="GET">
+    <select name="project">
+        {% for p in projects %}
+            <option value="{{ p }}">{{ p }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Next Step..." />
+    </form>
+{% endblock %}

@@ -1,0 +1,123 @@
+====
+Opus
+====
+Welcome to Opus. The Open Source Services Management Platform.
+
+-----------
+Source Tree
+-----------
+Here's a rundown on what you've just downloaded:
+
+opus/
+    Python package containing all of the Opus Python code.
+
+opus/project/
+    The Opus Django project, which contains the primary frontend interface to
+    the project builder, deployer, and scaler.
+
+opus/lib/
+    Contains Opus supporting libraries and code for applications to use.
+
+opus/lib/builder/
+    The Django project building code.
+
+opus/lib/deployer/
+    The Django project deployment code
+
+opus/lib/conf/
+    The code that manipulates settings of Django projects
+
+src/
+    The supporting C code used by the deployer to do certain privileged
+    operations.
+
+------------
+Requirements
+------------
+Opus in its current form requires:
+
+ * Python 2.6 or greater (not 3.x)
+ * Django 1.2 or greater
+ * Apache
+ * mod_wsgi
+ * Linux
+
+Additional requirements are needed for the other components, as they are
+written and added. For example, the scaling code may require:
+
+ * Deltacloud
+ * Postgresql
+ * Psycopg2
+ * memcached
+ * python-memcached
+ * celery
+ * RabbitMQ
+ * possibly more
+
+----------
+Installing
+----------
+As this project is in heavy development, the installation procedure isn't set
+in stone just yet. Here are some general installation guidelines.
+
+Clone this repository somewhere. You have probably already done this unless
+you're browsing the source online.
+
+The next step is to deploy the Django project in opus/project. To do that,
+first configure it:
+
+ * Copy the settings.py.sample to settings.py
+ * Configure the necessary settings in there. At a minimum, you'll need to set:
+
+   * DATABASE parameters
+   * SECRET_KEY (set this to a random string of characters around 50 characters
+     long)
+   * Set the TEMPLATE_DIRS to the absolute path to the opus/project/templates
+     directory
+   * Set OPUS_BASE_DIR to the directory where Opus will create projects into
+     and deploy projects from. This will need to be writable by the user Opus
+     will be running as; possibly the Apache user.
+   * Set OPUS_APACHE_CONFD to the directory where Opus should drop apache
+     configuration files for the projects it deploys. It will need to be a
+     directory writable by Opus, readable by Apache, and Apache needs to be set
+     to include all conf files in it.
+   * Set LOG_DIR to the directory where Opus should put its log files. The
+     directory needs to exist and be writable by Opus.
+
+Don't forget to make the base directory, log directory, and apache conf
+directory writable by the user Opus will be running as (probably apache).
+
+Now sync the database by calling manage.py syncdb. If using an sqlite database,
+either run the sync as the Opus user, or make sure the sqlite database file is
+writable by the Opus user. Remember that sqlite uses temporary files, so write
+access to the directory is also required. You must create a directory just for
+the database and give write access to the user Opus is using to be completely
+secure.
+
+After the project is configured, you need to create a wsgi file. It should look
+like this::
+
+    import os
+    import sys
+
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'opus.project.settings'
+
+    import django.core.handlers.wsgi
+    application = django.core.handlers.wsgi.WSGIHandler()
+
+The Opus package must be on the Python path for the project to run. If Opus
+isn't installed to a system location, or if Opus isn't on your Python path some
+other way, then you'll need to add a line such as the following::
+
+    sys.path.insert(0, "/opt/opus-repository")
+
+To be clear, this is the path to the directory *containing* the "opus"
+directory, which is the Opus package. In the above example, the opus package
+would be /opt/opus-repository/opus, and /opt/opus-repository is the repository
+containing this README, the opus package, setup.py, and such.
+
+Once your wsgi file is in place, Apache must be configured to run this app.
+Follow your normal procedure for deploying a Django app with mod_wsgi, see
+the `Django Deployment Guide`_ for help.
+
+ .. _Django Deployment Guide: http://docs.djangoproject.com/en/1.2/howto/deployment/modwsgi/
