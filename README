@@ -55,17 +55,22 @@ written and added. For example, the scaling code may require:
 ----------
 Installing
 ----------
-As this project is in heavy development, the installation procedure isn't set in stone just yet. Here are some general installation guidelines.
+As this project is in heavy development, the installation procedure isn't set
+in stone just yet. Here are some general installation guidelines.
 
-Clone this repository somewhere. You have probably already done this unless you're browsing the source online.
+Clone this repository somewhere. You have probably already done this unless
+you're browsing the source online.
 
-The next step is to deploy the Django project in opus/project. To do that, first configure it:
+The next step is to deploy the Django project in opus/project. To do that,
+first configure it:
 
  * Copy the settings.py.sample to settings.py
  * Configure the necessary settings in there. At a minimum, you'll need to set:
    * DATABASE parameters
-   * SECRET_KEY (set this to a random string of characters around 50 characters long)
-   * Set the TEMPLATE_DIRS to the absolute path to the opus/project/templates directory
+   * SECRET_KEY (set this to a random string of characters around 50 characters
+     long)
+   * Set the TEMPLATE_DIRS to the absolute path to the opus/project/templates
+     directory
    * Set OPUS_BASE_DIR to the directory where Opus will create projects into
      and deploy projects from. This will need to be writable by the user Opus
      will be running as; possibly the Apache user.
@@ -76,7 +81,8 @@ The next step is to deploy the Django project in opus/project. To do that, first
    * Set LOG_DIR to the directory where Opus should put its log files. The
      directory needs to exist and be writable by Opus.
 
-Don't forget to make the base directory, log directory, and apache conf directory writable by the user Opus will be running as (probably apache).
+Don't forget to make the base directory, log directory, and apache conf
+directory writable by the user Opus will be running as (probably apache).
 
 Now sync the database by calling manage.py syncdb. If using an sqlite database,
 either run the sync as the Opus user, or make sure the sqlite database file is
@@ -86,7 +92,7 @@ the database and give write access to the user Opus is using to be completely
 secure.
 
 After the project is configured, you need to create a wsgi file. It should look
-like this:
+like this::
 
     import os
     import sys
@@ -98,7 +104,7 @@ like this:
 
 The Opus package must be on the Python path for the project to run. If Opus
 isn't installed to a system location, or if Opus isn't on your Python path some
-other way, then you'll need to add a line such as the following:
+other way, then you'll need to add a line such as the following::
 
     sys.path.insert(0, "/opt/opus-readonly")
 
