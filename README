@@ -1,6 +1,6 @@
-====
-Opus
-====
+=============
+    Opus
+=============
 Welcome to Opus. The Open Source Services Management Platform.
 
 -----------
@@ -27,6 +27,9 @@ opus/lib/deployer/
 opus/lib/conf/
     The code that manipulates settings of Django projects
 
+opus/lib/prov/
+    Provisioning related libraries
+
 src/
     The supporting C code used by the deployer to do certain privileged
     operations.
@@ -36,23 +39,23 @@ Requirements
 ------------
 Opus in its current form requires:
 
- * Python 2.6 or greater (not 3.x)
- * Django 1.2 or greater
- * Apache
- * mod_wsgi
- * Linux
+* Python 2.6 or greater (not 3.x)
+* Django 1.2 or greater
+* Apache
+* mod_wsgi
+* Linux
 
 Additional requirements are needed for the other components, as they are
 written and added. For example, the scaling code may require:
 
- * Deltacloud
- * Postgresql
- * Psycopg2
- * memcached
- * python-memcached
- * celery
- * RabbitMQ
- * possibly more
+* Deltacloud
+* Postgresql
+* Psycopg2
+* memcached
+* python-memcached
+* celery
+* RabbitMQ
+* possibly more
 
 ----------
 Installing
@@ -66,23 +69,23 @@ you're browsing the source online.
 The next step is to deploy the Django project in opus/project. To do that,
 first configure it:
 
- * Copy the settings.py.sample to settings.py
- * Configure the necessary settings in there. At a minimum, you'll need to set:
+* Copy the settings.py.sample to settings.py
+* Configure the necessary settings in there. At a minimum, you'll need to set:
 
-   * DATABASE parameters
-   * SECRET_KEY (set this to a random string of characters around 50 characters
-     long)
-   * Set the TEMPLATE_DIRS to the absolute path to the opus/project/templates
-     directory
-   * Set OPUS_BASE_DIR to the directory where Opus will create projects into
-     and deploy projects from. This will need to be writable by the user Opus
-     will be running as; possibly the Apache user.
-   * Set OPUS_APACHE_CONFD to the directory where Opus should drop apache
-     configuration files for the projects it deploys. It will need to be a
-     directory writable by Opus, readable by Apache, and Apache needs to be set
-     to include all conf files in it.
-   * Set LOG_DIR to the directory where Opus should put its log files. The
-     directory needs to exist and be writable by Opus.
+  * DATABASE parameters
+  * SECRET_KEY (set this to a random string of characters around 50 characters
+    long)
+  * Set the TEMPLATE_DIRS to the absolute path to the opus/project/templates
+    directory
+  * Set OPUS_BASE_DIR to the directory where Opus will create projects into
+    and deploy projects from. This will need to be writable by the user Opus
+    will be running as; possibly the Apache user.
+  * Set OPUS_APACHE_CONFD to the directory where Opus should drop apache
+    configuration files for the projects it deploys. It will need to be a
+    directory writable by Opus, readable by Apache, and Apache needs to be set
+    to include all conf files in it.
+  * Set LOG_DIR to the directory where Opus should put its log files. The
+    directory needs to exist and be writable by Opus.
 
 Don't forget to make the base directory, log directory, and apache conf
 directory writable by the user Opus will be running as (probably apache).
