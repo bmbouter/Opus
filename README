@@ -35,22 +35,24 @@ src/
 Requirements
 ------------
 Opus in its current form requires:
-* Python 2.6 or greater (not 3.x)
-* Django 1.2 or greater
-* Apache
-* mod_wsgi
-* Linux
+
+ * Python 2.6 or greater (not 3.x)
+ * Django 1.2 or greater
+ * Apache
+ * mod_wsgi
+ * Linux
 
 Additional requirements are needed for the other components, as they are
 written and added. For example, the scaling code may require:
-* Deltacloud
-* Postgresql
-* Psycopg2
-* memcached
-* python-memcached
-* celery
-* RabbitMQ
-* possibly more
+
+ * Deltacloud
+ * Postgresql
+ * Psycopg2
+ * memcached
+ * python-memcached
+ * celery
+ * RabbitMQ
+ * possibly more
 
 ----------
 Installing
@@ -66,6 +68,7 @@ first configure it:
 
  * Copy the settings.py.sample to settings.py
  * Configure the necessary settings in there. At a minimum, you'll need to set:
+
    * DATABASE parameters
    * SECRET_KEY (set this to a random string of characters around 50 characters
      long)
@@ -106,13 +109,15 @@ The Opus package must be on the Python path for the project to run. If Opus
 isn't installed to a system location, or if Opus isn't on your Python path some
 other way, then you'll need to add a line such as the following::
 
-    sys.path.insert(0, "/opt/opus-readonly")
+    sys.path.insert(0, "/opt/opus-repository")
 
 To be clear, this is the path to the directory *containing* the "opus"
 directory, which is the Opus package. In the above example, the opus package
-would be /opt/opus-readonly/opus, and /opt/opus-readonly is the repository
+would be /opt/opus-repository/opus, and /opt/opus-repository is the repository
 containing this README, the opus package, setup.py, and such.
 
 Once your wsgi file is in place, Apache must be configured to run this app.
 Follow your normal procedure for deploying a Django app with mod_wsgi, see
-http://docs.djangoproject.com/en/1.2/howto/deployment/modwsgi/ for help.
+the `Django Deployment Guide`_ for help.
+
+ .. _Django Deployment Guide: http://docs.djangoproject.com/en/1.2/howto/deployment/modwsgi/
