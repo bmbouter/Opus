@@ -31,8 +31,6 @@ def load_settings():
     objs = recurse_encode(objs)
     frame = inspect.stack()[1][0]
     for name, value in objs.iteritems():
-        # XXX Re-encode these unicode values as ASCII, since Django chokes with
-        # some parameters being unicode strings
         frame.f_locals[name] = value
 
 def recurse_encode(obj):
