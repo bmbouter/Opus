@@ -15,7 +15,8 @@ class IdentifierField(models.CharField):
     default_validators = [validate_identifier]
     
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = kwargs.get('max_length', 30)
+        # Set max length to 25 since usernames can only be 30 characters or so
+        kwargs['max_length'] = kwargs.get('max_length', 25)
         models.CharField.__init__(self, *args, **kwargs)
 
 class DeploymentInfo(object):
@@ -118,3 +119,5 @@ class DeployedProject(models.Model):
                 secureops=settings.OPUS_SECUREOPS_COMMAND,
                 pythonpath=path_additions,
                 )
+
+        self.save()

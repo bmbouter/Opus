@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Deployed Projects{% endblock %}
+
+{% block content %}
+    <p>Choose a Project to edit</p>
+    <ul>
+    {% for p in deployments %}
+    <li><a href="{% url opus.project.deployment.views.edit_or_create p.name %}">{{ p.name }}</a></li>
+    {% endfor %}
+    </ul>
+    <div>
+{% endblock %}

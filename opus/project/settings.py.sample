@@ -58,7 +58,8 @@ MEDIA_URL = ''
 ADMIN_MEDIA_PREFIX = '/media/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'CREATE A SECRET KEY'
+# XXX Set this to a string of length 50 containing random characters
+SECRET_KEY = None
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -81,6 +82,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    # XXX
     "INSERT PROJECT PATH HERE/opus/project/templates",
 )
 
@@ -90,10 +92,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    'opus.project.projectbuilder',
-    'opus.project.projectdeployer',
+    'django.contrib.admin',
+
+    'opus.project.deployment',
 )
 
 ##########################

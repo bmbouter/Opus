@@ -66,8 +66,8 @@ in stone just yet. Here are some general installation guidelines.
 Clone this repository somewhere. You have probably already done this unless
 you're browsing the source online.
 
-The next step is to deploy the Django project in opus/project. To do that,
-first configure it:
+The next step is to deploy the Django project located at opus/project in the
+source. To do that, first configure it:
 
 * Copy the settings.py.sample to settings.py
 * Configure the necessary settings in there. At a minimum, you'll need to set:
@@ -84,18 +84,23 @@ first configure it:
     configuration files for the projects it deploys. It will need to be a
     directory writable by Opus, readable by Apache, and Apache needs to be set
     to include all conf files in it.
+  * Set OPUS_SECUREOPS_COMMAND to the path where the secureops binary is
+    located. This is compiled from the source in the src/ directory of the Opus
+    source. It must be owned by root and have permissions 4750 and the Opus
+    user must have permissions to execute it.
   * Set LOG_DIR to the directory where Opus should put its log files. The
     directory needs to exist and be writable by Opus.
 
 Don't forget to make the base directory, log directory, and apache conf
 directory writable by the user Opus will be running as (probably apache).
 
-Now sync the database by calling manage.py syncdb. If using an sqlite database,
-either run the sync as the Opus user, or make sure the sqlite database file is
-writable by the Opus user. Remember that sqlite uses temporary files, so write
-access to the directory is also required. You must create a directory just for
-the database and give write access to the user Opus is using to be completely
-secure.
+Now sync the database by calling `manage.py syncdb`. If using an sqlite
+database, either run the sync as the Opus user (the user that the Opus project
+will be running as, probably the Apache user), or make sure the sqlite database
+file is writable by the Opus user. Remember that sqlite uses temporary files,
+so write access to the directory is also required. You must create a directory
+just for the database and give write access to the user Opus is using to be
+completely secure.
 
 After the project is configured, you need to create a wsgi file. It should look
 like this::
