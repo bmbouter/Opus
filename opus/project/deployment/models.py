@@ -91,6 +91,9 @@ class DeployedProject(models.Model):
 
         d = opus.lib.deployer.ProjectDeployer(self.projectdir)
 
+        # Do this before settings the sensitive database information
+        d.secure_project(settings.OPUS_SECUREOPS_COMMAND)
+
         d.configure_database(info.dbengine,
                 info.dbname,
                 info.dbpassword,
@@ -103,7 +106,7 @@ class DeployedProject(models.Model):
                 info.superpassword,
                 )
 
-        d.secure_project(settings.OPUS_SECUREOPS_COMMAND)
+        d.set_paths()
 
         # XXX This is a bit of a hack, the opus libraries should be in the
         # path for the deployed app. TODO: Find a better way to handle

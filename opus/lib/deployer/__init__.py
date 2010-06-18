@@ -12,6 +12,7 @@ import subprocess
 import re
 import tempfile
 import grp
+import random
 
 import opus
 from opus.lib.conf import OpusConfig
@@ -27,7 +28,6 @@ log = get_logger()
 # - configuring media directory (both setting.py and apache)
 
 # Items TODO:
-# - XXX WSGI configuration for separate user
 # - SSL configuration?
 # - Media configuration
 
@@ -51,6 +51,15 @@ class ProjectDeployer(object):
 
         # Go ahead and eat up the config file into memory
         self.config = OpusConfig(os.path.join(self.projectdir, "opussettings.json"))
+
+    def set_paths(self):
+        """Sets the paths for the TEMPLATE_DIRS and the LOG_DIR
+        settings
+        
+        """
+        self.config['TEMPLATE_DIRS'] = (os.path.join(self.projectdir, "templates"),)
+        self.config['LOG_DIR'] = os.path.join(self.projectdir, 'log')
+        self.config.save()
 
     def configure_database(self, engine, *args):
         """Configure the Django database
@@ -200,9 +209,6 @@ user.save()
         # Set sensitive files appropriately
         settingsfile = os.path.join(self.projectdir, "settings.py")
         command.append(settingsfile)
-        dbconfig = self.config['DATABASES']['default']
-        if dbconfig['ENGINE'].endswith("sqlite3"):
-            command.append(dbconfig['NAME'])
         # Also secure log directory
         command.append(os.path.join(self.projectdir, "log"))
         # And the opus settings
@@ -229,6 +235,14 @@ user.save()
                 os.unlink(settingspyc)
             except IOError, e:
                 raise DeploymentException("Couldn't delete settings.pyc! {0}".format(e))
+
+        # Generate a new secret key for the settings. One may have been set at
+        # create time, but it should be considered public knowledge since the
+        # permissions hadn't been set yet.
+        self.config["SECRET_KEY"]  = ''.join([random.choice(
+            'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)')
+            for _ in range(50)])
+        self.config.save()
 
 
     def configure_apache(self, apache_conf_dir, vhostname, vhostport, pythonpath="", secureops="secureops"):

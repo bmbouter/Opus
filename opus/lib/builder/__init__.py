@@ -174,7 +174,6 @@ load_settings()
         return newapps
 
     def _configure_settings(self, appnames):
-        self.config['LOG_DIR'] = os.path.join(self.projectdir, 'log')
         self.config['LOG_LEVEL'] = "DEBUG"
 
         # Edit INSTALLED_APPS
@@ -185,9 +184,6 @@ load_settings()
         if self.admin:
             newapps.append("django.contrib.admin")
         self.config['INSTALLED_APPS'] += newapps
-
-        # Add the templates directory
-        self.config['TEMPLATE_DIRS'] = (os.path.join(self.projectdir, "templates"),)
 
         # Write back out the settings
         self.config.save()
