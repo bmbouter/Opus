@@ -32,7 +32,7 @@ class DeploymentInfo(object):
         self.superpassword = None
 
     def validate(self):
-        if not (self.dbengine and self.dbname and self.superusername and
+        if not (self.dbengine and self.superusername and
                 self.superemail and self.superpassword):
             raise ValidationError("Deployment parameters not specified")
 

@@ -32,10 +32,28 @@ log = get_logger()
 # - Media configuration
 
 class ProjectDeployer(object):
-    """This object keeps track of all the configuration for a project until the
-    deploy() method is called, where the deployment actually happens
+    """The project deployer. Each method performs a specific deployment action.
+    The typical workflow for using the deployer is to create a deployment
+    object, and call these methods in roughly this order:
+    
+    * secure_project() should be called first to lock down the settings and set
+      permissions before any sensitive information is pushed to the
+      configuration files
+    * configure_database() which will set the database configuration
+      parameters, pushing sensitive information into config files.
+    * sync-database() which will run django's syncdb function and create the
+      admin superuser for the project. This pushes sensitive information to
+      the database.
+    * set_paths() pushes a few absolute directory paths to the configuration
+    * configure_apache() creates a wsgi entry point file and apache
+      configuration file, and restarts apache. This should be the last method
+      called, apache will start serving project files right after this returns.
+
+    If using Django, the deployment model DeployedProject's deploy() method
+    does all of the above.
 
     """
+
     def __init__(self, projectdir):
         """Initialize the Project Deployer with the directory root of the
         project to be deployed.
@@ -61,6 +79,17 @@ class ProjectDeployer(object):
         self.config['LOG_DIR'] = os.path.join(self.projectdir, 'log')
         self.config.save()
 
+    def _setup_sqlite(self):
+        # Creates a directory and empty file for the sqlite3 database
+        # Done so that permissions can be set on the database *before* the sync
+        # is done
+        os.mkdir(
+                os.path.join(self.projectdir, "sqlite")
+                )
+        d = open(os.path.join(self.projectdir, "sqlite", "database.sqlite"), 'w')
+        d.close()
+
+
     def configure_database(self, engine, *args):
         """Configure the Django database
         
@@ -68,7 +97,8 @@ class ProjectDeployer(object):
         For 'postgresql_psycopg2', 'postgresql', 'mysql', or 'oracle' the next
         five parameters should be the name, user, password, host, and port
 
-        For 'sqlite3' the next parameter should be the path
+        For 'sqlite3' no other parameters are used, an sqlite3 database is
+        created automatically.
         """
 
         dbuser = ''
@@ -76,9 +106,7 @@ class ProjectDeployer(object):
         dbhost = ''
         dbport = ''
         if engine == "sqlite3":
-            if len(args) < 1:
-                raise TypeError("You must specify the database name")
-            dbname = args[0]
+            dbname = os.path.join(self.projectdir, "sqlite", "database.sqlite")
         elif engine in ('postgresql_psycopg2', 'postgresql', 'mysql', 'oracle'):
             if len(args) < 3:
                 raise TypeError("You must specify the database username and password")
@@ -198,8 +226,13 @@ user.save()
         Pass in the path to the secureops binary, otherwise PATH is searched
 
         """
+        # Setup sqlite directory. This is done unconditionally, since we don't
+        # know at this point what database the user will choose. So this
+        # directory is created and secured anyways.
+        self._setup_sqlite()
+
         # Attempt to create a linux user, and change user permissions
-        # of the settings.py and the sqlite database if any
+        # of the settings.py and the sqlite database 
         # Name the user after opus and the project name
         newname = "opus"+self.projectname
         command = [secureops, 
@@ -213,6 +246,9 @@ user.save()
         command.append(os.path.join(self.projectdir, "log"))
         # And the opus settings
         command.append(os.path.join(self.projectdir, "opussettings.json"))
+        # And sqlite dir and file
+        command.append(os.path.join(self.projectdir, "sqlite"))
+        command.append(os.path.join(self.projectdir, "sqlite", "database.sqlite"))
 
         log.info("Calling secure operation with arguments {0!r}".format(command))
         log.debug("cwd: {0}".format(os.getcwd()))

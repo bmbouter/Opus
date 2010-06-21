@@ -1,9 +1,6 @@
 from django.conf.urls.defaults import *
 from django.views.generic.simple import direct_to_template
 
-import opus.project.projectbuilder.views
-import opus.project.projectdeployer.views
-
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()

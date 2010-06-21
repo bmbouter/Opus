@@ -47,7 +47,7 @@ class DeploymentForm(forms.Form):
             ('mysql', 'MySQL', ),
             ('oracle', 'Oracle', ),
             ))
-    dbname = CharField(required=True)
+    dbname = CharField(required=False)
     dbpassword = CharField(required=False, widget=PasswordInput)
     dbhost = CharField(required=False)
     dbport = IntegerField(required=False)
