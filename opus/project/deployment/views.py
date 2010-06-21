@@ -16,7 +16,7 @@ def render(templatename, params, request, code=200):
 
 @login_required
 def list_or_new(request):
-    """This view shoudl render a page that displays currently deployed projects
+    """This view should render a page that displays currently deployed projects
     available to edit, and a form to create+deploy a new project.
 
     It is an error to call this view with a POST method
@@ -69,17 +69,25 @@ def edit_or_create(request, projectname):
             name=projectname)
     if projectquery.exists():
         # Project does exist, we're in edit mode
-        return edit(request, projectname)
+        return edit(request, projectquery.get())
     else:
         # Project does not exist, we're in create mode
         return create(request, projectname)
 
 
-def edit(request, projectname):
+def edit(request, project):
     """Configuration editor for an already deployed project
 
     """
-    pass
+    # Check permissions
+    if not project.owner == request.user:
+        return render("error.html",
+                {"message":"Access Denied"},
+                request)
+
+    return render("deployment/edit.html",
+            {'project': project},
+            request)
 
 def create(request, projectname):
     """Create and deploy a new project. Displays the form to do so on GET, goes
