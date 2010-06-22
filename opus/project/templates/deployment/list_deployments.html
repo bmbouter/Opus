@@ -3,10 +3,14 @@
 
 {% block content %}
     <p>Choose a Project to edit</p>
-    <ul>
+    <table border="1">
     {% for p in deployments %}
-    <li><a href="{% url opus.project.deployment.views.edit_or_create p.name %}">{{ p.name }}</a></li>
+    <tr>
+        <td><a href="{% url opus.project.deployment.views.edit_or_create p.name %}">{{ p.name }}</a></td>
+        <td>{{ p.vhost }}</td>
+        <td>{{ p.vport }}</td>
+    </tr>
     {% endfor %}
-    </ul>
+    </table>
     <div>
 {% endblock %}

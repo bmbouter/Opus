@@ -1,3 +1,5 @@
+import functools
+
 from opus.project.deployment import models, forms
 import opus.lib.builder
 import opus.lib.log
@@ -7,6 +9,7 @@ from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 
 def render(templatename, params, request, code=200):
     response = render_to_response(templatename, params,
@@ -39,6 +42,7 @@ def list_or_new(request):
         }, request)
 
 
+@login_required
 def edit_or_create(request, projectname):
     """This view does four things:
     When called with a GET method and a projectname that doesn't exist,
@@ -75,6 +79,7 @@ def edit_or_create(request, projectname):
         return create(request, projectname)
 
 
+@login_required
 def edit(request, project):
     """Configuration editor for an already deployed project
 
@@ -89,18 +94,43 @@ def edit(request, project):
             {'project': project},
             request)
 
+def catch_deployerrors(f):
+    """A decorator that catches ValidationError and DeploymentExceptions on
+    views and renders error.html instead of letting the error propagate.
+
+    """
+    @functools.wraps(f)
+    def newf(request, *args, **kwargs):
+        try:
+            return f(request, *args, **kwargs)
+        except (ValidationError, models.DeploymentException), e:
+            return render("error.html",
+                    {'message': e},
+                    request)
+    return newf
+
+@login_required
+@catch_deployerrors
 def create(request, projectname):
     """Create and deploy a new project. Displays the form to do so on GET, goes
     and does a create + deploy operation on POST.
 
     """
     if request.method == "POST":
-        log.info("Creating new project %r", projectname)
         pform = forms.ProjectForm(request.POST)
         appsform = forms.AppFormSet(request.POST)
         dform = forms.DeploymentForm(request.POST)
         allforms = [pform, appsform, dform]
         if all(f.is_valid() for f in allforms):
+            log.info("Preparing to create+deploy %s", projectname)
+            # Create the deployment object to do some early validation checks
+            deployment = models.DeployedProject()
+            deployment.name = projectname
+            deployment.owner = request.user
+            deployment.vhost = dform.cleaned_data['vhost']
+            deployment.vport = dform.cleaned_data['vport']
+            deployment.verify_deploy()
+
             # Create a new project
             pdata = pform.cleaned_data
             builder = opus.lib.builder.ProjectBuilder(projectname)
@@ -118,11 +148,6 @@ def create(request, projectname):
             log.info("%r created, starting deploy process", projectname)
 
             # Deploy it
-            deployment = models.DeployedProject()
-            deployment.name = projectname
-            deployment.owner = request.user
-            deployment.vhost = dform.cleaned_data['vhost']
-            deployment.vport = dform.cleaned_data['vport']
             info = models.DeploymentInfo()
             info.dbengine = dform.cleaned_data['dbengine']
             info.dbname = dform.cleaned_data['dbname']

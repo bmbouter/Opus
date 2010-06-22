@@ -17,7 +17,7 @@ class IdentifierField(forms.CharField):
 
 class ProjectForm(forms.Form):
     """Form to ask for parameters for the project itself"""
-    admin = BooleanField()
+    admin = BooleanField(required=False)
 
 class AppForm(forms.Form):
     """Form to ask for parameters about one app within a project"""

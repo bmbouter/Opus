@@ -67,6 +67,37 @@ class DeployedProject(models.Model):
             return False
         return True
 
+    def verify_deploy(self):
+        """Does various tests to make sure the proposed project is ready to
+        deploy. This should be called on a project that isn't deployed but will
+        be soon.
+
+        This can catch some early errors so that one can bail on creating the
+        project if it won't deploy
+
+        Raises a ValidationError or DeploymentException on error
+
+        """
+        # Raise an error now if there's a problem
+        # Part of this is to check unique fields, so this should cover the
+        # check that an existing deployment with this name exists.
+        self.full_clean()
+
+        # Do some validation checks to see if the given project name points to
+        # a valid django project
+        if not self._verify_project():
+            raise DeploymentException("Sanity check failed, will not create project with that name")
+
+        # Additional check: see that the vhost and vport requested are unique
+        others = DeployedProject.objects.all()
+        if self.vhost != "*":
+            others = others.filter(vhost=self.vhost)
+        if self.vport != "*":
+            others = others.filter(vport=self.vport)
+        if others.exists():
+            raise DeploymentException("There seems to be a virtual host / port conflict")
+
+
     def deploy(self, info):
         """Call this to deploy a project. If successful, the model is saved and
         this method returns None. If something went wrong, a
@@ -79,15 +110,9 @@ class DeployedProject(models.Model):
         the model itself.
 
         """
-        # Raise an error now if there's a problem
-        # Part of this is to check unique fields, so this should cover the
-        # check that an existing deployment with this name exists.
-        self.full_clean()
-
-        # Do some validation checks to see if the given project name points to
-        # a valid django project
-        if not self._verify_project():
-            raise DeploymentException("Sanity check failed, will not create project with that name")
+        # This should have been called externally before, but do it again just
+        # to be sure nothing's changed.
+        self.verify_deploy()
 
         d = opus.lib.deployer.ProjectDeployer(self.projectdir)
 
