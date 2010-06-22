@@ -31,6 +31,8 @@ int help()
     printf("    secureops -c <username> [file] ...\n");
     printf("Restart apache:\n");
     printf("    secureops -r\n");
+    printf("Delete a user from the system:\n");
+    printf("    secureops -d <username>\n");
     return 1;
 }
 
@@ -40,6 +42,9 @@ int main(int argc, char **argv)
     // some things check real user id I suppose
     setuid( geteuid() );
     
+    /*
+     * Restart Apache
+     */
     if (argc < 2) {
         printf("Not enough arguments\n");
         return help();
@@ -49,6 +54,32 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    /*
+     * Delete a user
+     */
+    if (strcmp(argv[1], "-d") == 0) {
+        char *username = argv[2];
+        // Check that the user starts with "opus" and is at least 5 characters
+        // long
+        if (strlen(username) < 5) {
+            printf("Bad username");
+            return 1;
+        }
+        if (strncmp(username, "opus", 4) != 0) {
+            printf("Won't delete that user");
+            return 1;
+        }
+        execl("/usr/sbin/userdel", "/usr/sbin/userdel",
+                username,
+                (char *)NULL
+             );
+        printf("Launching of userdel failed. %d\n", errno);
+        return 255;
+    }
+
+    /*
+     * Create a user + set permissions on files
+     */
     if (strcmp(argv[1], "-c") == 0) {
         if (argc < 3) {
             printf("Must specify a username with -c\n");

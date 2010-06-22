@@ -13,6 +13,7 @@ import re
 import tempfile
 import grp
 import random
+import shutil
 
 import opus
 from opus.lib.conf import OpusConfig
@@ -382,3 +383,48 @@ application = django.core.handlers.wsgi.WSGIHandler()
 
 class DeploymentException(Exception):
     pass
+
+class ProjectUndeployer(object):
+    """Contains methods for destroying a deployed project.
+
+    Calling code should make an instance of this object and call these methods
+    in roughly this order:
+
+    * remove_apache_conf() should be called first, so that apache immediately
+      stops serving files.
+    * delete_user()
+    * remove_projectdir()
+
+    """
+    def __init__(self, projectdir):
+        self.projectdir = projectdir
+
+        path = os.path.abspath(self.projectdir)
+        self.projectname = os.path.basename(path)
+
+    def remove_apache_conf(self, apache_conf_dir, secureops="secureops"):
+        """Removes the apache config file and reloads apache"""
+        log.info("Removing apache config for project %s", self.projectname)
+        config_path = os.path.join(apache_conf_dir, "opus"+self.projectname+".conf")
+        if os.path.exists(config_path):
+            os.unlink(config_path)
+
+        ret = subprocess.call([secureops, "-r"])
+        if ret:
+            raise DeploymentException("Could not restart apache")
+
+    def delete_user(self, secureops="secureops"):
+        """Calls userdel to remove the system user"""
+        log.info("Deleting user for project %s", self.projectname)
+        proc = subprocess.Popen([secureops, '-d', "opus"+self.projectname],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
+        output = proc.communicate()[0]
+        ret = proc.wait()
+        if ret:
+            raise DeploymentException("userdel failed: {0}".format(output))
+
+    def remove_projectdir(self):
+        """Deletes the entire project directory off the filesystem"""
+        log.info("Removing project directory for project %s", self.projectdir)
+        shutil.rmtree(self.projectdir)
