@@ -1,0 +1,7 @@
+<api driver='opus' version='1.0'>
+  <link href='{{ entry_uri}}hardware_profiles' rel='hardware_profiles' />
+  <link href='{{ entry_uri }}instance_states' rel='instance_states' />
+  <link href='{{ entry_uri }}realms' rel='realms' />
+  <link href='{{ entry_uri }}images' rel='images' />
+  <link href='{{ entry_uri }}instances' rel='instances' />
+</api>

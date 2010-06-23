@@ -1,0 +1,5 @@
+<hardware-profiles>
+    <hardware-profile href='{{ hardware_profiles_uri }}/generic'>
+        <id>generic</id>
+    </hardware-profile>
+</hardware-profiles>
