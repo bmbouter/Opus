@@ -6,7 +6,7 @@ import opus.lib.log
 log = opus.lib.log.get_logger()
 
 from django.conf import settings
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
@@ -16,6 +16,47 @@ def render(templatename, params, request, code=200):
             context_instance=RequestContext(request))
     response.status_code = code
     return response
+
+# A few decorators that come in handy. Perhaps move these to another file for
+# organization
+def catch_deployerrors(f):
+    """A decorator that catches ValidationError and DeploymentExceptions on
+    views and renders error.html instead of letting the error propagate.
+
+    """
+    @functools.wraps(f)
+    def newf(request, *args, **kwargs):
+        try:
+            return f(request, *args, **kwargs)
+        except (ValidationError, models.DeploymentException), e:
+            return render("error.html",
+                    {'message': e},
+                    request)
+    return newf
+
+def get_project_object(f):
+    """A decorator that wraps views which takes a parameter called
+    projectname. Attempts to fetch the object from the database and calls the
+    view function with the object as the second parameter. Raises 404 if not
+    found.
+
+    Also checks access permission.
+
+    """
+    @functools.wraps(f)
+    def newf(request, projectname, *args, **kwargs):
+        obj = get_object_or_404(models.DeployedProject,
+                name=projectname)
+        if not obj.owner == request.user:
+            return render("error.html",
+                    {"message":"Access Denied"},
+                    request)
+        return f(request, obj, *args, **kwargs)
+    return newf
+
+
+# The actual views
+# ################
 
 @login_required
 def list_or_new(request):
@@ -73,41 +114,23 @@ def edit_or_create(request, projectname):
             name=projectname)
     if projectquery.exists():
         # Project does exist, we're in edit mode
-        return edit(request, projectquery.get())
+        return edit(request, projectname)
     else:
         # Project does not exist, we're in create mode
         return create(request, projectname)
 
 
 @login_required
+@get_project_object
 def edit(request, project):
     """Configuration editor for an already deployed project
 
     """
-    # Check permissions
-    if not project.owner == request.user:
-        return render("error.html",
-                {"message":"Access Denied"},
-                request)
 
     return render("deployment/edit.html",
             {'project': project},
             request)
 
-def catch_deployerrors(f):
-    """A decorator that catches ValidationError and DeploymentExceptions on
-    views and renders error.html instead of letting the error propagate.
-
-    """
-    @functools.wraps(f)
-    def newf(request, *args, **kwargs):
-        try:
-            return f(request, *args, **kwargs)
-        except (ValidationError, models.DeploymentException), e:
-            return render("error.html",
-                    {'message': e},
-                    request)
-    return newf
 
 @login_required
 @catch_deployerrors
@@ -174,3 +197,15 @@ def create(request, projectname):
             dform=dform,
             projectname=projectname,
             ), request)
+
+@login_required
+@get_project_object
+def destroy(request, project):
+    """Destroys a project"""
+    if request.method == "POST":
+        project.destroy()
+        return render("deployment/destroyed.html", {
+            'projectname': project.name
+            }, request)
+    else:
+        return redirect(project)

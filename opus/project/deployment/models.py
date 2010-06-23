@@ -49,6 +49,12 @@ class DeployedProject(models.Model):
     def projectdir(self):
         return os.path.join(settings.OPUS_BASE_DIR, self.name)
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ("opus.project.deployment.views.edit_or_create",
+                (),
+                dict(projectname=self.name))
+
     def _verify_project(self):
         """Verifies that the given project name corresponds to a real un-deployed
         project in the base dir.
@@ -149,3 +155,22 @@ class DeployedProject(models.Model):
                 )
 
         self.save()
+
+    def destroy(self):
+        """Destroys the project. Deletes it off the drive, removes the system
+        user, de-configures apache, and finally removes itself from the
+        database.
+
+        """
+
+        destroyer = opus.lib.deployer.ProjectUndeployer(self.projectdir)
+
+        destroyer.remove_apache_conf(settings.OPUS_APACHE_CONFD,
+                secureops=settings.OPUS_SECUREOPS_COMMAND)
+
+        destroyer.delete_user(
+                secureops=settings.OPUS_SECUREOPS_COMMAND)
+
+        destroyer.remove_projectdir()
+
+        self.delete()

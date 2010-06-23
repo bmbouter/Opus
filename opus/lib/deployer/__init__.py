@@ -422,6 +422,9 @@ class ProjectUndeployer(object):
         output = proc.communicate()[0]
         ret = proc.wait()
         if ret:
+            # XXX Perhaps ignore return code 6: user doesn't exist, to make
+            # this idempotent. Do we want this behavior? I'm not going to do
+            # that unless I find a reason to.
             raise DeploymentException("userdel failed: {0}".format(output))
 
     def remove_projectdir(self):
