@@ -10,7 +10,7 @@
         <div id="head_bar" />
         <div id="main">
             <div id="navigation">
-
+                <a href="{% url opus.project.deployment.views.list_or_new %}">Deployment List</a>
             </div>
             {% if message %}
                 <p>{{ message }}</p>

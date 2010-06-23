@@ -184,7 +184,7 @@ def create(request, projectname):
             deployment.deploy(info)
             log.info("Project %r successfully deployed", projectname)
 
-            return render("deployment/newsuccess.html", {}, request)
+            return redirect(deployment)
         
     else:
         pform = forms.ProjectForm()

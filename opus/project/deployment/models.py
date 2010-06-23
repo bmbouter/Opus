@@ -89,11 +89,6 @@ class DeployedProject(models.Model):
         # check that an existing deployment with this name exists.
         self.full_clean()
 
-        # Do some validation checks to see if the given project name points to
-        # a valid django project
-        if not self._verify_project():
-            raise DeploymentException("Sanity check failed, will not create project with that name")
-
         # Additional check: see that the vhost and vport requested are unique
         others = DeployedProject.objects.all()
         if self.vhost != "*":
@@ -119,6 +114,11 @@ class DeployedProject(models.Model):
         # This should have been called externally before, but do it again just
         # to be sure nothing's changed.
         self.verify_deploy()
+
+        # Do some validation checks to see if the given project name points to
+        # a valid django project
+        if not self._verify_project():
+            raise DeploymentException("Sanity check failed, will not create project with that name")
 
         d = opus.lib.deployer.ProjectDeployer(self.projectdir)
 
