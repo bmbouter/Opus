@@ -10,7 +10,7 @@ class Provider(models.Model):
     """
 
     # A human readable descriptive name
-    name = models.CharField(max_length=60)
+    name = models.CharField(max_length=60, unique=True)
 
     # A valid URI entry point for this provider
     uri = models.URLField()
@@ -25,6 +25,10 @@ class Provider(models.Model):
         """Returns a deltacloud client object configured for this provider."""
 
         return Deltacloud(self.username, self.password, self.uri)
+
+    class Meta:
+        unique_together = ("uri", "username", "password")
+
 
 class UpstreamImage(models.Model):
     """A real image provided by a Provider."""
@@ -42,6 +46,9 @@ class UpstreamImage(models.Model):
     # The DownstreamImage which will represent this UpstreamImage
     downstream_image = models.ForeignKey("DownstreamImage")
 
+    class Meta:
+        unique_together = ("provider", "image_id")
+
 class DownstreamImage(models.Model):
     """An image that is an aggregate of UpstreamImages.
 
@@ -52,13 +59,13 @@ class DownstreamImage(models.Model):
     """
 
     # A human readable descriptive name
-    name = models.CharField(max_length=60)
+    name = models.CharField(max_length=60, unique=True)
 
     # A long, pretty description of this image
     description = models.TextField()
 
     # The architecture that is presented to the end user while using this image
-    architecture = models.CharField(max_length=60)
+    architecture = models.CharField(max_length=60, unique=True)
 
 class Instance(models.Model):
     """An instance of a DownsteamImage."""
@@ -78,6 +85,9 @@ class Instance(models.Model):
     # The policy (realm) that this image was started as
     policy = models.ForeignKey("Policy")
 
+    class Meta:
+        unique_together = ("provider", "instance_id")
+
 class Policy(models.Model):
     """Base class for policies.
 
@@ -92,7 +102,21 @@ class Policy(models.Model):
     )
 
     # A human readable descriptive name
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=80, unique=True)
 
     # State will be AVAILABLE or UNAVAILABLE
     state = models.CharField(max_length=12, choices=STATE_CHOICES)
+
+class SingleProviderPolicy(Policy):
+    """A policy that maps one to one with a provider.
+
+    When an instance is started using this policy, it will always go to the
+    provider which is given for the policy.
+
+    """
+
+    # The associated provider
+    provider = models.ForeignKey("Provider")
+
+    class Meta:
+        verbose_name_plural = "SingleProviderPolicies"
