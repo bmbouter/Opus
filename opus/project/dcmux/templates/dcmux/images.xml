@@ -1,7 +1,11 @@
-<api driver='opus' version='1.0'>
-  <link href='{{ entry_uri}}hardware_profiles' rel='hardware_profiles' />
-  <link href='{{ entry_uri }}instance_states' rel='instance_states' />
-  <link href='{{ entry_uri }}realms' rel='realms' />
-  <link href='{{ entry_uri }}images' rel='images' />
-  <link href='{{ entry_uri }}instances' rel='instances' />
-</api>
+<images>
+    {% for image in images %}
+        <image href="{{ images_uri }}/{{ image.id }}">
+            <id>{{ image.id }}</id>
+            <owner_id>{{ image.owner_id }}</owner_id>
+            <name>{{ image.name }}</name>
+            <description>{{ image.description }}</description>
+            <architecture>{{ image.architecture }}</architecture>
+        </image>
+    {% endfor %}
+</images>

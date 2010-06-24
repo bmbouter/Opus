@@ -119,4 +119,5 @@ class SingleProviderPolicy(Policy):
     provider = models.ForeignKey("Provider")
 
     class Meta:
-        verbose_name_plural = "SingleProviderPolicies"
+        verbose_name = "Single provider policy"
+        verbose_name_plural = "Single provider policies"

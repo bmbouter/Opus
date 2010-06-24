@@ -1,5 +1,7 @@
-<hardware-profiles>
-    <hardware-profile href='{{ hardware_profiles_uri }}/generic'>
-        <id>generic</id>
-    </hardware-profile>
-</hardware-profiles>
+<hardware_profiles>
+    {% for hardware_profile in hardware_profiles %}
+        <hardware_profile href='{{ hardware_profiles_uri }}/{{ hardware_profile.id }}'>
+            <id>{{ hardware_profile.id }}</id>
+        </hardware_profile>
+    {% endfor %}
+</hardware_profiles>
