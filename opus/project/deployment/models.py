@@ -2,6 +2,7 @@ import os.path
 import re
 
 import opus.lib.deployer
+from opus.lib.conf import OpusConfig
 
 from django.conf import settings
 from django.db import models
@@ -45,15 +46,47 @@ class DeployedProject(models.Model):
     vhost = models.CharField(max_length=50)
     vport = models.CharField(max_length=50)
 
+    def __init__(self, *args, **kwargs):
+        super(DeployedProject, self).__init__(*args, **kwargs)
+
+        self._conf = None
+
     @property
     def projectdir(self):
         return os.path.join(settings.OPUS_BASE_DIR, self.name)
+
+    @property
+    def apache_conf(self):
+        return os.path.join(settings.OPUS_APACHE_CONFD, "opus"+self.name+".conf")
 
     @models.permalink
     def get_absolute_url(self):
         return ("opus.project.deployment.views.edit_or_create",
                 (),
                 dict(projectname=self.name))
+
+    @property
+    def config(self):
+        """Returns an opus.lib.conf.OpusConfig object for this project. This is
+        automatically saved when the model's save() method is called.
+
+        This will raise an error if the project doesn't exist (such as before
+        it's deployed for the first time
+
+        """
+        if not self._conf:
+            self._conf = OpusConfig(os.path.join(self.projectdir, "opussettings.json"))
+        return self._conf
+
+    def save(self, *args, **kwargs):
+        if self._conf:
+            self._conf.save()
+            # TODO: touch WSGI file
+        super(DeployedProject, self).save(*args, **kwargs)
+
+    def is_active(self):
+        return os.path.exists(self.apache_conf)
+    active = property(is_active)
 
     def _verify_project(self):
         """Verifies that the given project name corresponds to a real un-deployed
@@ -73,33 +106,31 @@ class DeployedProject(models.Model):
             return False
         return True
 
-    def verify_deploy(self):
+    def clean(self):
         """Does various tests to make sure the proposed project is ready to
-        deploy. This should be called on a project that isn't deployed but will
-        be soon.
+        deploy. This is called as part of full_clean, and should be called
+        before saving and before deploying this model.
 
         This can catch some early errors so that one can bail on creating the
         project if it won't deploy
 
-        Raises a ValidationError or DeploymentException on error
+        Raises a ValidationError on error
 
         """
-        # Raise an error now if there's a problem
-        # Part of this is to check unique fields, so this should cover the
-        # check that an existing deployment with this name exists.
-        self.full_clean()
 
         # Additional check: see that the vhost and vport requested are unique
         others = DeployedProject.objects.all()
+        if self.pk:
+            others = others.exclude(pk=self.pk)
         if self.vhost != "*":
             others = others.filter(vhost=self.vhost)
         if self.vport != "*":
             others = others.filter(vport=self.vport)
         if others.exists():
-            raise DeploymentException("There seems to be a virtual host / port conflict")
+            raise models.ValidationError("There seems to be a virtual host / port conflict")
 
 
-    def deploy(self, info):
+    def deploy(self, info, active=True):
         """Call this to deploy a project. If successful, the model is saved and
         this method returns None. If something went wrong, a
         DeploymentException is raised with a description of the error, and the
@@ -110,13 +141,16 @@ class DeployedProject(models.Model):
         That information is used to deploy a project, but is not stored within
         the model itself.
 
+        If active is not True, the deployment will be created inactive, and the
+        apache configuration file will not be created.
+
         """
         # This should have been called externally before, but do it again just
         # to be sure nothing's changed.
-        self.verify_deploy()
+        self.full_clean()
 
         # Do some validation checks to see if the given project name points to
-        # a valid django project
+        # a valid un-deployed django project
         if not self._verify_project():
             raise DeploymentException("Sanity check failed, will not create project with that name")
 
@@ -147,6 +181,30 @@ class DeployedProject(models.Model):
                 os.path.split(opus.__path__[0])[0],
                 )
 
+        if active:
+            d.configure_apache(settings.OPUS_APACHE_CONFD,
+                    self.vhost,
+                    self.vport,
+                    secureops=settings.OPUS_SECUREOPS_COMMAND,
+                    pythonpath=path_additions,
+                    )
+
+        self.save()
+
+    def activate(self):
+        """Activate this project. This writes out the apache config with the
+        current parameters. Also writes out the wsgi file.
+
+        This is normally done during deployment, but this is useful to call
+        after a vhost or port change so that the changes take effect. If you do
+        this, don't forget to save() too.
+
+        """
+        d = opus.lib.deployer.ProjectDeployer(self.projectdir)
+        path_additions = "{0}:{1}".format(
+                settings.OPUS_BASE_DIR,
+                os.path.split(opus.__path__[0])[0],
+                )
         d.configure_apache(settings.OPUS_APACHE_CONFD,
                 self.vhost,
                 self.vport,
@@ -154,7 +212,13 @@ class DeployedProject(models.Model):
                 pythonpath=path_additions,
                 )
 
-        self.save()
+    def deactivate(self):
+        """Removes the apache configuration file and restarts apache.
+
+        """
+        destroyer = opus.lib.deployer.ProjectUndeployer(self.projectdir)
+        destroyer.remove_apache_conf(settings.OPUS_APACHE_CONFD,
+                secureops=settings.OPUS_SECUREOPS_COMMAND)
 
     def destroy(self):
         """Destroys the project. Deletes it off the drive, removes the system

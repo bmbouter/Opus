@@ -132,13 +132,14 @@ class ProjectDeployer(object):
 
         self.config.save()
 
-    def sync_database(self, username, email, password):
-        """Do the initial database sync. Requires to set an admin username,
-        email, and password
+    def sync_database(self, username=None, email=None, password=None):
+        """Do the initial database sync. If a username, email, and password are
+        provided, a superuser is created
 
         """
         self._sync_database()
-        self._create_superuser(username, email, password)
+        if username and email and password:
+            self._create_superuser(username, email, password)
 
     def _getenv(self):
         "Gets an environment with paths set up for a manage.py subprocess"
@@ -293,8 +294,6 @@ user.save()
         """
         # Check if our dest file exists, so as not to overwrite it
         config_path = os.path.join(apache_conf_dir, "opus"+self.projectname+".conf")
-        if os.path.exists(config_path):
-            raise DeploymentException("Config exists already, aborting")
 
         # Write out a wsgi config to the project dir
         wsgi_dir = os.path.join(self.projectdir, "wsgi")
@@ -409,9 +408,9 @@ class ProjectUndeployer(object):
         if os.path.exists(config_path):
             os.unlink(config_path)
 
-        ret = subprocess.call([secureops, "-r"])
-        if ret:
-            raise DeploymentException("Could not restart apache")
+            ret = subprocess.call([secureops, "-r"])
+            if ret:
+                raise DeploymentException("Could not restart apache")
 
     def delete_user(self, secureops="secureops"):
         """Calls userdel to remove the system user"""

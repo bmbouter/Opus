@@ -37,10 +37,10 @@ class DeploymentForm(forms.Form):
     """Form to ask how to deploy a project"""
     vhost = CharField(required=True)
     vport = IntegerField(required=True)
-    superusername = CharField(required=True)
-    superpassword = CharField(required=True, widget=PasswordInput)
-    superpasswordconfirm = CharField(required=True, widget=PasswordInput)
-    superemail = CharField(required=True)
+    superusername = CharField(required=False)
+    superpassword = CharField(required=False, widget=PasswordInput)
+    superpasswordconfirm = CharField(required=False, widget=PasswordInput)
+    superemail = CharField(required=False)
     dbengine = ChoiceField((
             ('sqlite3', 'SQLite'),
             ('postgresql_psycopg2', 'PostgreSQL', ),
@@ -51,4 +51,24 @@ class DeploymentForm(forms.Form):
     dbpassword = CharField(required=False, widget=PasswordInput)
     dbhost = CharField(required=False)
     dbport = IntegerField(required=False)
+    active = BooleanField(required=False, initial=True)
 
+    def clean(self):
+        if self.cleaned_data['superusername']:
+            error = 0
+            required = ('superpassword', 'superpasswordconfirm', 'superemail')
+            for f in required:
+                if not self.cleaned_data[f]:
+                    self._errors[f] = self.error_class(["This field is required when adding a super user"])
+                    error = 1
+
+            if self.cleaned_data['superpassword'] != \
+                    self.cleaned_data['superpasswordconfirm']:
+                        self._errors['superpasswordconfirm'] = \
+                                self.error_class(["Passwords did not match"])
+                        error = 1
+
+            if error:
+                raise forms.ValidationError("There was a problem adding a super user")
+        
+        return self.cleaned_data
