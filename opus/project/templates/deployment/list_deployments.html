@@ -13,4 +13,9 @@
     {% endfor %}
     </table>
     <div>
+        <form action="{% url opus.project.deployment.views.list_or_new %}" method="post">
+            {% csrf_token %}
+            <input name="name" />
+            <input type="submit" value="New" />
+        </form>
 {% endblock %}

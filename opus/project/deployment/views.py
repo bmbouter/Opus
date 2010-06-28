@@ -86,12 +86,15 @@ def list_or_new(request):
     It is an error to call this view with a POST method
 
     """
+    message = ""
     if request.method == "POST":
-        return render("error.html", {
-            'message': "Method Not Allowed",
-            },
-            code=405
-            )
+        if 'name' in request.POST:
+            if not models.id_re.match(request.POST['name']):
+                message = "Bad project name. Project names must consist of only letters, numbers, and the underscore character. They must not begin with a number. And they must be less than 30 characters long."
+            else:
+                return redirect("opus.project.deployment.views.edit_or_create",
+                        projectname=request.POST['name'])
+
 
     # Get existing projects and list them
     deployments = models.DeployedProject.objects.all()
@@ -100,6 +103,7 @@ def list_or_new(request):
 
     return render("deployment/list_deployments.html", {
         'deployments': deployments,
+        'message': message,
         }, request)
 
 
