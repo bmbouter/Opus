@@ -139,7 +139,7 @@ class ProjectDeployer(object):
         """
         self._sync_database()
         if username and email and password:
-            self._create_superuser(username, email, password)
+            self.create_superuser(username, email, password)
 
     def _getenv(self):
         "Gets an environment with paths set up for a manage.py subprocess"
@@ -160,7 +160,7 @@ class ProjectDeployer(object):
         if proc.wait():
             raise DeploymentException("syncdb failed. {0}".format(output))
 
-    def _create_superuser(self, username, email, password):
+    def create_superuser(self, username, email, password):
         proc = subprocess.Popen(["python", "manage.py", "createsuperuser",
                 "--noinput",
                 "--username", username,

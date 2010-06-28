@@ -3,6 +3,8 @@ import json
 
 from opus.project.deployment import models, forms
 import opus.lib.builder
+import opus.lib.deployer
+from opus.lib.deployer import DeploymentException
 import opus.lib.log
 log = opus.lib.log.get_logger()
 
@@ -30,7 +32,7 @@ def catch_deployerrors(f):
     def newf(request, *args, **kwargs):
         try:
             return f(request, *args, **kwargs)
-        except (ValidationError, models.DeploymentException), e:
+        except (ValidationError, DeploymentException), e:
             return render("error.html",
                     {'message': e},
                     request)
@@ -102,7 +104,6 @@ def list_or_new(request):
 
 
 @login_required
-#@csrf_exempt # TODO Take this out after testing is done!!! XXX
 #@debug_view
 def edit_or_create(request, projectname):
     """This view does four things:
@@ -197,6 +198,9 @@ def edit(request, project):
             except ValidationError, e:
                 log.info("Project model didn't clean. %s", e)
                 messages.extend(e.messages)
+                # Re-load the project object with the old data, for the "Info"
+                # section
+                project = models.DeployedProject.objects.get(pk=project.pk)
             else:
                 log.info("Model cleaned, saving")
                 # save model and config, activate/deactivate if requested,
@@ -214,8 +218,29 @@ def edit(request, project):
                         project.deactivate()
                         messages.append("Project deactivated")
                 if "superusername" in form.changed_data:
-                    # TODO
+                    # Should this code be offloaded to a method in the model?
                     log.debug("Adding new superuser")
+                    deployer = opus.lib.deployer.ProjectDeployer(project.projectdir)
+                    try:
+                        deployer.create_superuser(cd['superusername'],
+                                cd['superemail'],
+                                cd['superpassword'],
+                                )
+                    except DeploymentException, e:
+                        if "column username is not unique" in e.message:
+                            messages.append("User with that name already exists!")
+                        else:
+                            raise e
+                    else:
+                        messages.append("New superuser created")
+                        # Don't re-render the username and password in the form
+                        # First make it mutable
+                        form.data = form.data.copy()
+                        # Then delete these properties
+                        del form.data['superusername']
+                        del form.data['superemail']
+                        del form.data['superpassword']
+                        del form.data['superpasswordconfirm']
             return render("deployment/edit.html",
                     {'project': project,
                         'form': form,

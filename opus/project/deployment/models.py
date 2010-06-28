@@ -2,6 +2,7 @@ import os.path
 import re
 
 import opus.lib.deployer
+from opus.lib.deployer import DeploymentException
 from opus.lib.conf import OpusConfig
 
 from django.conf import settings
@@ -36,9 +37,6 @@ class DeploymentInfo(object):
         if not (self.dbengine and self.superusername and
                 self.superemail and self.superpassword):
             raise ValidationError("Deployment parameters not specified")
-
-class DeploymentException(Exception):
-    pass
 
 class DeployedProject(models.Model):
     name = IdentifierField(unique=True)
@@ -107,12 +105,13 @@ class DeployedProject(models.Model):
         return True
 
     def clean(self):
-        """Does various tests to make sure the proposed project is ready to
-        deploy. This is called as part of full_clean, and should be called
-        before saving and before deploying this model.
+        """Does various tests to make sure the model is consistent. This is
+        called as part of full_clean, which should be called before saving and
+        before deploying this model.
 
         This can catch some early errors so that one can bail on creating the
-        project if it won't deploy
+        project if it won't deploy (to avoid having a half deployed project
+        that has failed somewhere along the way)
 
         Raises a ValidationError on error
 
@@ -127,7 +126,7 @@ class DeployedProject(models.Model):
         if self.vport != "*":
             others = others.filter(vport=self.vport)
         if others.exists():
-            raise models.ValidationError("There seems to be a virtual host / port conflict")
+            raise ValidationError("There seems to be a virtual host / port conflict")
 
 
     def deploy(self, info, active=True):
