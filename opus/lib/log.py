@@ -48,6 +48,8 @@ HIGHLIGHT = {
     'WARNING': YELLOW,
 }
 
+# Assume true until _init_logging tries to do the import
+django_context = True
 
 class MyFormatter(logging.Formatter):
     """Used to format log messages all pretty like."""
@@ -97,14 +99,22 @@ def _init_logging():
     This is called the first time a logger is requested
 
     """
-    
+    global django_context
+    try:
+        settings.LOG_DIR
+    except ImportError:
+        # Not running in a Django context, can't set up the master log file.
+        django_context = False
+
+
     # Configure a handler for the root logger
     root_logger = logging.getLogger()
-    handler = logging.FileHandler(
-            os.path.join(settings.LOG_DIR, "master.log"),
-            "a")
-    handler.setFormatter( MyFormatter( color=False) )
-    root_logger.addHandler(handler)
+    if django_context:
+        handler = logging.FileHandler(
+                os.path.join(settings.LOG_DIR, "master.log"),
+                "a")
+        handler.setFormatter( MyFormatter( color=False) )
+        root_logger.addHandler(handler)
 
     # Configure second handler for the root logger to stdout if it's a console
     try:
@@ -115,6 +125,11 @@ def _init_logging():
     except IOError:
         # mod_wsgi may raise an error if we try to access stdout
         pass
+
+    if not django_context:
+        # Just set it to debug and be done with it
+        root_logger.setLevel(logging.DEBUG)
+        return
 
     # Set logging level. Attempt to get settings.LOG_LEVEL and set log level to
     # that. If it's not an int or a string matching one of the 5 standard log
@@ -179,7 +194,7 @@ def getLogger(appname=None):
     log = logging.getLogger(app_name)
 
     # Add a handler if it doesn't already exist
-    if len(log.handlers) == 0:
+    if len(log.handlers) == 0 and django_context:
         handler = logging.FileHandler(
                 os.path.join(settings.LOG_DIR, app_name+".log"),
                 'a')
