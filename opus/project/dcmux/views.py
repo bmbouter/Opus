@@ -129,3 +129,22 @@ def instances(request, id=None):
         },
         mimetype="text/xml",
     )
+
+def instance_action(request, id, action):
+    """Perform an action on an instance.
+
+    Valid actions are: "reboot", "start" or "stop".  The Deltacloud api says
+    that these actions should be performed by using a POST request on this uri.
+    We let any request type through here, assuming that it's POST.
+
+    """
+
+    if action.lower() == "reboot":
+        raise NotImplementedError()
+    elif action.lower() == "start":
+        raise NotImplementedError()
+    elif action.lower() == "stop":
+        raise NotImplementedError()
+    else:
+        #TODO
+        pass

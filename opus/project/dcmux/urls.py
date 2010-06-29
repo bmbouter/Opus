@@ -13,5 +13,7 @@ urlpatterns = patterns('opus.project.dcmux.views',
     url(r'^images/(.+)$', 'images', name='opus.project.dcmux.image'),
 
     url(r'^instances/?$', 'instances', name='opus.project.dcmux.instances'),
+    # Instance actions (start, stop, reboot...)
+    url(r'^instances/(.+)/(.+)/$', 'instance_action', name='opus.project.dcmux.instance_actions'),
     url(r'^instances/(.+)$', 'instances', name='opus.project.dcmux.instance'),
 )

@@ -7,6 +7,11 @@
             <hardware_profile href="{{ instance.hardware_profile }}"/>
             <realm href="{{ instance.policy }}" />
             <state>{{ instance.state }}</state>
+            <actions>
+                {% for actions in instance.actions %}
+                    <link rel="{{ action.name }}" href="{{ action.uri }}" />
+                {% endfor %}
+            </actions>
             <public_addresses>
                 {% for address in instance.public_addresses %}
                     <address>{{ address }}</address>
