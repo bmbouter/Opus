@@ -62,13 +62,27 @@ class DeployedProject(models.Model):
                 dict(projectname=self.name))
 
     @property
-    def serve_url(self):
-        vhost, vport = settings.OPUS_APACHE_NAMEVIRTUALHOST.split(":")
-        if vport and vport != "*":
-            portline = ":"+vport
+    def serve_http(self):
+        port = settings.OPUS_HTTP_PORT
+        if not port:
+            return
+        if port != 80:
+            portline = ":"+str(port)
         else:
             portline = ""
         return "http://{0}{1}{2}/".format(
+                self.name, settings.OPUS_APACHE_SERVERNAME_SUFFIX,
+                portline)
+    @property
+    def serve_https(self):
+        port = settings.OPUS_HTTPS_PORT
+        if not port:
+            return
+        if port != 80:
+            portline = ":"+str(port)
+        else:
+            portline = ""
+        return "https://{0}{1}{2}/".format(
                 self.name, settings.OPUS_APACHE_SERVERNAME_SUFFIX,
                 portline)
 
@@ -156,6 +170,8 @@ class DeployedProject(models.Model):
 
         d.set_paths()
 
+        d.gen_cert(settings.OPUS_APACHE_SERVERNAME_SUFFIX)
+
         if active:
             self.activate(d)
 
@@ -182,7 +198,8 @@ class DeployedProject(models.Model):
                 os.path.split(opus.__path__[0])[0],
                 )
         d.configure_apache(settings.OPUS_APACHE_CONFD,
-                settings.OPUS_APACHE_NAMEVIRTUALHOST,
+                settings.OPUS_HTTP_PORT,
+                settings.OPUS_HTTPS_PORT,
                 settings.OPUS_APACHE_SERVERNAME_SUFFIX,
                 secureops=settings.OPUS_SECUREOPS_COMMAND,
                 pythonpath=path_additions,

@@ -118,9 +118,13 @@ LOG_DIR = "/PATH_TO_LOG_DIR/log"
 # settings.DEBUG automatically
 LOG_LEVEL = "DEBUG"
 
-# This is the apache NameVirtualHost line that will be serving the projects. A
-# NameVirtualHost line must be in your apache configuration that has this value
-OPUS_APACHE_NAMEVIRTUALHOST = "*:80"
+# These are the directives that tell Opus what VirtualHost Opus should deploy
+# its projects to. They will be passed into the <VirtualHost> directive in the
+# apache config, and Opus expects Apache to have an "NameVirtualHost *:80" line
+# (for port 80, e.g.) in its config.
+# You can set these to None to disable serving altogether on that protocol
+OPUS_HTTP_PORT = 80
+OPUS_HTTPS_PORT = 443
 
 # This is the domain where projects will be served from. Project names go as a
 # subdomain of this domain. Don't forget the leading dot.

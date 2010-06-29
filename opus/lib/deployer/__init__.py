@@ -18,6 +18,7 @@ import shutil
 import opus
 from opus.lib.conf import OpusConfig
 from opus.lib.log import get_logger
+import opus.lib.deployer.ssl
 log = get_logger()
 
 # Things the deployer needs to do:
@@ -29,8 +30,10 @@ log = get_logger()
 # - configuring media directory (both setting.py and apache)
 
 # Items TODO:
-# - SSL configuration?
 # - Media configuration
+
+class DeploymentException(Exception):
+    pass
 
 class ProjectDeployer(object):
     """The project deployer. Each method performs a specific deployment action.
@@ -79,16 +82,6 @@ class ProjectDeployer(object):
         self.config['TEMPLATE_DIRS'] = (os.path.join(self.projectdir, "templates"),)
         self.config['LOG_DIR'] = os.path.join(self.projectdir, 'log')
         self.config.save()
-
-    def _setup_sqlite(self):
-        # Creates a directory and empty file for the sqlite3 database
-        # Done so that permissions can be set on the database *before* the sync
-        # is done
-        os.mkdir(
-                os.path.join(self.projectdir, "sqlite")
-                )
-        d = open(os.path.join(self.projectdir, "sqlite", "database.sqlite"), 'w')
-        d.close()
 
 
     def configure_database(self, engine, *args):
@@ -220,6 +213,20 @@ user.save()
         if ret:
             raise DeploymentException("Setting super user password failed. {0}".format(output))
 
+    def _pre_secure(self):
+        # Creates a directory and empty file for the sqlite3 database,
+        # and touches empty files for the ssl certificates and keyfiles.
+        # Done so that permissions can be set on these items *before* sensitive
+        # information is put into them
+        os.mkdir(
+                os.path.join(self.projectdir, "sqlite")
+                )
+        d = open(os.path.join(self.projectdir, "sqlite", "database.sqlite"), 'w')
+        d.close()
+
+        open(os.path.join(self.projectdir, "ssl.crt"), 'w').close()
+        open(os.path.join(self.projectdir, "ssl.key"), 'w').close()
+
     def secure_project(self, secureops="secureops"):
         """Calling this does two things: It calls useradd to create a new Linux
         user, and it changes permissions on settings.py so only that user can
@@ -228,10 +235,9 @@ user.save()
         Pass in the path to the secureops binary, otherwise PATH is searched
 
         """
-        # Setup sqlite directory. This is done unconditionally, since we don't
-        # know at this point what database the user will choose. So this
-        # directory is created and secured anyways.
-        self._setup_sqlite()
+        # Touch certian files and directories so they can be secured before
+        # they're filled with sensitive information
+        self._pre_secure()
 
         # Attempt to create a linux user, and change user permissions
         # of the settings.py and the sqlite database 
@@ -251,6 +257,8 @@ user.save()
         # And sqlite dir and file
         command.append(os.path.join(self.projectdir, "sqlite"))
         command.append(os.path.join(self.projectdir, "sqlite", "database.sqlite"))
+        command.append(os.path.join(self.projectdir, "ssl.crt"))
+        command.append(os.path.join(self.projectdir, "ssl.key"))
 
         log.info("Calling secure operation with arguments {0!r}".format(command))
         log.debug("cwd: {0}".format(os.getcwd()))
@@ -283,12 +291,14 @@ user.save()
         self.config.save()
 
 
-    def configure_apache(self, apache_conf_dir, namevirtualhost, servername_suffix, pythonpath="", secureops="secureops"):
-        """Configures apache to serve this Django project.  apache_conf_dir
-        should be apache's conf.d directory where a .conf file can be dropped
-        namevirtualhost is the virtual host configurations that this project
-        should be served under (the value of apache's NameVirtualHost directive
-        which will be used for the <VirtualHost declaration).
+    def configure_apache(self, apache_conf_dir, httpport, sslport, servername_suffix, pythonpath="", secureops="secureops"):
+        """Configures apache to serve this Django project.
+        apache_conf_dir should be apache's conf.d directory where a .conf file
+        can be dropped
+
+        httpport and sslport are used in the port part of the <VirtualHost>
+        directive in the apache config file. These can be None to omit serving
+        on that port/protocol.
 
         servername_suffix is a string that will be appended to the end of the
         project name for the apache ServerName directive
@@ -345,30 +355,50 @@ application = django.core.handlers.wsgi.WSGIHandler()
             raise DeploymentException("Couldn't guess the unprivileged group to use. Bailing")
 
         # Write out apache config
+        # I know the following lines are confusing. Perhaps a TODO later would
+        # be to push most of the templates out of the code
         with open(config_path, 'w') as config:
-            config.write("""
-<VirtualHost {namevirtualhost}>
-    ServerName {projectname}{servername_suffix}
-    Alias /media {adminmedia}
-    WSGIDaemonProcess {name} threads=4 processes=2 maximum-requests=1000 user={user} group={group} display-name={projectname} {ppdirective}
-    WSGIProcessGroup {name}
-    WSGIApplicationGroup %{{GLOBAL}}
-    WSGIScriptAlias / {wsgifile}
-    <Directory {wsgidir}>
-        Order allow,deny
-        Allow from all
-    </Directory>
-</VirtualHost>
-""".format(
-                    projectname=self.projectname,
-                    servername_suffix=servername_suffix,
+            config.write("""WSGIDaemonProcess {name} threads=4 processes=2 maximum-requests=1000 user={user} group={group} display-name={projectname} {ppdirective}
+            """.format(
                     name="opus"+self.projectname,
                     user="opus"+self.projectname,
                     group=group,
-                    namevirtualhost=namevirtualhost,
+                    projectname=self.projectname,
+                    ppdirective=ppdirective,
+                ))
+            for port in (httpport, sslport):
+                if not port: continue
+                if port == sslport:
+                    ssllines = """
+                        SSLEngine On
+                        SSLCertificateFile {0}
+                        SSLCertificateKeyFile {1}
+                        """.format(os.path.join(self.projectdir, "ssl.crt"),
+                        os.path.join(self.projectdir, "ssl.key"))
+                else:
+                    ssllines = ""
+                config.write("""
+                    <VirtualHost {namevirtualhost}>
+                        {ssllines}
+                        ServerName {projectname}{servername_suffix}
+                        Alias /media {adminmedia}
+                        WSGIProcessGroup {name}
+                        WSGIApplicationGroup %{{GLOBAL}}
+                        WSGIScriptAlias / {wsgifile}
+                        <Directory {wsgidir}>
+                            Order allow,deny
+                            Allow from all
+                        </Directory>
+                    </VirtualHost>
+                    \n""".format(
+                    port=port,
+                    ssllines=ssllines,
+                    projectname=self.projectname,
+                    servername_suffix=servername_suffix,
+                    name="opus"+self.projectname,
+                    namevirtualhost="*:{0}".format(port),
                     wsgidir=wsgi_dir,
                     wsgifile=os.path.join(wsgi_dir,"django.wsgi"),
-                    ppdirective=ppdirective,
                     adminmedia=os.path.join(__import__("django").__path__[0], 'contrib','admin','media'),
                     ))
 
@@ -377,8 +407,9 @@ application = django.core.handlers.wsgi.WSGIHandler()
         if ret:
             raise DeploymentException("Could not restart apache")
 
-class DeploymentException(Exception):
-    pass
+    def gen_cert(self, suffix):
+        opus.lib.deployer.ssl.gen_cert("ssl", self.projectdir,
+                self.projectname+suffix)
 
 class ProjectUndeployer(object):
     """Contains methods for destroying a deployed project.
