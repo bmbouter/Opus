@@ -31,6 +31,8 @@ class Provider(models.Model):
     class Meta:
         unique_together = ("uri", "username", "password")
 
+    def __str__(self):
+        return self.name
 
 class UpstreamImage(models.Model):
     """A real image provided by a Provider."""
@@ -51,6 +53,9 @@ class UpstreamImage(models.Model):
     class Meta:
         unique_together = ("provider", "image_id")
 
+    def __str__(self):
+        return 'image_id %s on provider "%s"' % (self.image_id, self.provider)
+
 class DownstreamImage(models.Model):
     """An image that is an aggregate of UpstreamImages.
 
@@ -70,6 +75,9 @@ class DownstreamImage(models.Model):
 
     # The architecture that is presented to the end user while using this image
     architecture = models.CharField(max_length=60, unique=True)
+
+    def __str__(self):
+        return self.name
 
 class Instance(models.Model):
     """An instance of a DownsteamImage."""
@@ -95,7 +103,10 @@ class Instance(models.Model):
 
     class Meta:
         unique_together = ("provider", "instance_id")
-        
+
+    def __str__(self):
+        return self.name
+
     ###### Virtual Attributes ######
     # These attributes are recieved from the instance's provider
 
@@ -109,7 +120,7 @@ class Instance(models.Model):
             self._cached_instance_object = client.instance(self.instance_id)
 
         return self._cached_instance_object
-    
+
     @property
     def state(self):
         return self._instance_object.state
@@ -144,6 +155,9 @@ class Policy(models.Model):
 
     # State will be AVAILABLE or UNAVAILABLE
     state = models.CharField(max_length=12, choices=STATE_CHOICES)
+
+    def __str__(self):
+        return self.name
 
 class SingleProviderPolicy(Policy):
     """A policy that maps one to one with a provider.
