@@ -41,8 +41,6 @@ class DeploymentInfo(object):
 class DeployedProject(models.Model):
     name = IdentifierField(unique=True)
     owner = models.ForeignKey(django.contrib.auth.models.User)
-    vhost = models.CharField(max_length=50)
-    vport = models.CharField(max_length=50)
 
     def __init__(self, *args, **kwargs):
         super(DeployedProject, self).__init__(*args, **kwargs)
@@ -62,6 +60,17 @@ class DeployedProject(models.Model):
         return ("opus.project.deployment.views.edit_or_create",
                 (),
                 dict(projectname=self.name))
+
+    @property
+    def serve_url(self):
+        vhost, vport = settings.OPUS_APACHE_NAMEVIRTUALHOST.split(":")
+        if vport and vport != "*":
+            portline = ":"+vport
+        else:
+            portline = ""
+        return "http://{0}{1}{2}/".format(
+                self.name, settings.OPUS_APACHE_SERVERNAME_SUFFIX,
+                portline)
 
     @property
     def config(self):
@@ -103,31 +112,6 @@ class DeployedProject(models.Model):
         if not os.path.exists(os.path.join(fullpath, "settings.py")):
             return False
         return True
-
-    def clean(self):
-        """Does various tests to make sure the model is consistent. This is
-        called as part of full_clean, which should be called before saving and
-        before deploying this model.
-
-        This can catch some early errors so that one can bail on creating the
-        project if it won't deploy (to avoid having a half deployed project
-        that has failed somewhere along the way)
-
-        Raises a ValidationError on error
-
-        """
-
-        # Additional check: see that the vhost and vport requested are unique
-        others = DeployedProject.objects.all()
-        if self.pk:
-            others = others.exclude(pk=self.pk)
-        if self.vhost != "*":
-            others = others.filter(vhost=self.vhost)
-        if self.vport != "*":
-            others = others.filter(vport=self.vport)
-        if others.exists():
-            raise ValidationError("There seems to be a virtual host / port conflict")
-
 
     def deploy(self, info, active=True):
         """Call this to deploy a project. If successful, the model is saved and
@@ -172,6 +156,24 @@ class DeployedProject(models.Model):
 
         d.set_paths()
 
+        if active:
+            self.activate(d)
+
+        self.save()
+
+    def activate(self, d=None):
+        """Activate this project. This writes out the apache config with the
+        current parameters. Also writes out the wsgi file.
+
+        This is normally done during deployment, but this is useful to call
+        after any change that affects the apache config so that the changes
+        take effect. If you do this, don't forget to save() too.
+
+        Pass in a deployer object, otherwise one will be created.
+
+        """
+        if not d:
+            d = opus.lib.deployer.ProjectDeployer(self.projectdir)
         # XXX This is a bit of a hack, the opus libraries should be in the
         # path for the deployed app. TODO: Find a better way to handle
         # this.
@@ -179,34 +181,9 @@ class DeployedProject(models.Model):
                 settings.OPUS_BASE_DIR,
                 os.path.split(opus.__path__[0])[0],
                 )
-
-        if active:
-            d.configure_apache(settings.OPUS_APACHE_CONFD,
-                    self.vhost,
-                    self.vport,
-                    secureops=settings.OPUS_SECUREOPS_COMMAND,
-                    pythonpath=path_additions,
-                    )
-
-        self.save()
-
-    def activate(self):
-        """Activate this project. This writes out the apache config with the
-        current parameters. Also writes out the wsgi file.
-
-        This is normally done during deployment, but this is useful to call
-        after a vhost or port change so that the changes take effect. If you do
-        this, don't forget to save() too.
-
-        """
-        d = opus.lib.deployer.ProjectDeployer(self.projectdir)
-        path_additions = "{0}:{1}".format(
-                settings.OPUS_BASE_DIR,
-                os.path.split(opus.__path__[0])[0],
-                )
         d.configure_apache(settings.OPUS_APACHE_CONFD,
-                self.vhost,
-                self.vport,
+                settings.OPUS_APACHE_NAMEVIRTUALHOST,
+                settings.OPUS_APACHE_SERVERNAME_SUFFIX,
                 secureops=settings.OPUS_SECUREOPS_COMMAND,
                 pythonpath=path_additions,
                 )

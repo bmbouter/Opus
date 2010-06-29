@@ -117,3 +117,12 @@ LOG_DIR = "/PATH_TO_LOG_DIR/log"
 # the logging module. Set to None to choose between INFO and DEBUG according to
 # settings.DEBUG automatically
 LOG_LEVEL = "DEBUG"
+
+# This is the apache NameVirtualHost line that will be serving the projects. A
+# NameVirtualHost line must be in your apache configuration that has this value
+OPUS_APACHE_NAMEVIRTUALHOST = "*:80"
+
+# This is the domain where projects will be served from. Project names go as a
+# subdomain of this domain. Don't forget the leading dot.
+# This example serves a projectname "myproject" from myproject.example.com
+OPUS_APACHE_SERVERNAME_SUFFIX = ".example.com"

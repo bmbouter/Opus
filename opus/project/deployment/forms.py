@@ -35,8 +35,6 @@ AppFormSet = formset_factory(AppForm, extra=2)
 
 class DeploymentForm(forms.Form):
     """Form to ask how to deploy a project"""
-    vhost = CharField(required=True)
-    vport = IntegerField(required=True)
     superusername = CharField(required=False)
     superpassword = CharField(required=False, widget=PasswordInput)
     superpasswordconfirm = CharField(required=False, widget=PasswordInput)
@@ -54,8 +52,13 @@ class DeploymentForm(forms.Form):
     active = BooleanField(required=False, initial=True)
 
     def clean(self):
+        """Does some extra checks:
+        If superusername is filled in, makes sure the rest of the superuser
+        fields are filled in and the passwords match.
+
+        """
+        error = 0
         if self.cleaned_data['superusername']:
-            error = 0
             required = ('superpassword', 'superpasswordconfirm', 'superemail')
             for f in required:
                 if not self.cleaned_data[f]:
@@ -68,7 +71,8 @@ class DeploymentForm(forms.Form):
                                 self.error_class(["Passwords did not match"])
                         error = 1
 
-            if error:
-                raise forms.ValidationError("There was a problem adding a super user")
+        if error:
+            raise forms.ValidationError("There was a problem adding a super user")
         
         return self.cleaned_data
+

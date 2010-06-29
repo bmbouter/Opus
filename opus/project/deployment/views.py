@@ -90,7 +90,7 @@ def list_or_new(request):
     if request.method == "POST":
         if 'name' in request.POST:
             if not models.id_re.match(request.POST['name']):
-                message = "Bad project name. Project names must consist of only letters, numbers, and the underscore character. They must not begin with a number. And they must be less than 30 characters long."
+                message = "Bad project name. Project names must consist of only letters, numbers, and the underscore character. They must not begin with a number. And they must be less than 25 characters long."
             else:
                 return redirect("opus.project.deployment.views.edit_or_create",
                         projectname=request.POST['name'])
@@ -104,6 +104,7 @@ def list_or_new(request):
     return render("deployment/list_deployments.html", {
         'deployments': deployments,
         'message': message,
+        'suffix': settings.OPUS_APACHE_SERVERNAME_SUFFIX,
         }, request)
 
 
@@ -155,8 +156,6 @@ def edit(request, project):
     # the user submits it
     database = project.config['DATABASES']['default']
     initial = {}
-    initial['vhost'] = project.vhost
-    initial['vport'] = project.vport
     initial['dbname'] = database['NAME']
     initial['dbengine'] = database['ENGINE'].rsplit(".",1)[1]
     initial['dbpassword'] = "12345" # Nobody would use this password
@@ -170,17 +169,8 @@ def edit(request, project):
             log.info("Edit form submitted and is valid. Editing project parameters")
             cd = form.cleaned_data
             # Go and modify the project/config parameters. Don't save yet
-            reactivate = False
             for field in form.changed_data:
-                if field == "vhost":
-                    project.vhost = cd['vhost']
-                    reactivate = True
-                    log.debug("vhost changed to %s", cd['vhost'])
-                elif field == "vport":
-                    project.vport = cd['vport']
-                    reactivate = True
-                    log.debug("vport changed to %s", cd['vport'])
-                elif field == "dbengine":
+                if field == "dbengine":
                     database['ENGINE'] = cd['dbengine']
                     log.debug("dbengine changed to %s", cd['dbengine'])
                 elif field == "dbpassword":
@@ -210,9 +200,7 @@ def edit(request, project):
                 # save model and config, activate/deactivate if requested,
                 # add new superuser if requested
                 project.save()
-                if 'active' in form.changed_data or reactivate:
-                    # If the vhost or vport changed, re-write the config file
-                    # regardless
+                if 'active' in form.changed_data:
                     if cd['active']:
                         log.debug("Activating")
                         project.activate()
@@ -277,8 +265,6 @@ def create(request, projectname):
             deployment = models.DeployedProject()
             deployment.name = projectname
             deployment.owner = request.user
-            deployment.vhost = dform.cleaned_data['vhost']
-            deployment.vport = dform.cleaned_data['vport']
             deployment.full_clean()
 
             # Create a new project

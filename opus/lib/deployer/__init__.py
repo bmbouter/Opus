@@ -283,13 +283,15 @@ user.save()
         self.config.save()
 
 
-    def configure_apache(self, apache_conf_dir, vhostname, vhostport, pythonpath="", secureops="secureops"):
+    def configure_apache(self, apache_conf_dir, namevirtualhost, servername_suffix, pythonpath="", secureops="secureops"):
         """Configures apache to serve this Django project.  apache_conf_dir
         should be apache's conf.d directory where a .conf file can be dropped
-        vhostname and vhostport are the virtual host configurations that this
-        project should be served under. One or both of these could be *, but
-        make sure you know what you're doing. Those parameters are passed into
-        apache's VirtualHost directive.
+        namevirtualhost is the virtual host configurations that this project
+        should be served under (the value of apache's NameVirtualHost directive
+        which will be used for the <VirtualHost declaration).
+
+        servername_suffix is a string that will be appended to the end of the
+        project name for the apache ServerName directive
 
         """
         # Check if our dest file exists, so as not to overwrite it
@@ -323,10 +325,6 @@ application = django.core.handlers.wsgi.WSGIHandler()
            settingspath = os.path.join(self.projectdir, "opussettings.json"),
            ))
 
-        if vhostport != "*":
-            listendirective = "Listen {0}\n".format(vhostport)
-        else:
-            listendirective = ""
         if pythonpath:
             ppdirective = "python-path={0}\n".format(pythonpath)
         else:
@@ -349,8 +347,8 @@ application = django.core.handlers.wsgi.WSGIHandler()
         # Write out apache config
         with open(config_path, 'w') as config:
             config.write("""
-{listendirective}
-<VirtualHost {vhostname}:{vhostport}>
+<VirtualHost {namevirtualhost}>
+    ServerName {projectname}{servername_suffix}
     Alias /media {adminmedia}
     WSGIDaemonProcess {name} threads=4 processes=2 maximum-requests=1000 user={user} group={group} display-name={projectname} {ppdirective}
     WSGIProcessGroup {name}
@@ -363,14 +361,13 @@ application = django.core.handlers.wsgi.WSGIHandler()
 </VirtualHost>
 """.format(
                     projectname=self.projectname,
+                    servername_suffix=servername_suffix,
                     name="opus"+self.projectname,
                     user="opus"+self.projectname,
                     group=group,
-                    vhostname=vhostname,
-                    vhostport=vhostport,
+                    namevirtualhost=namevirtualhost,
                     wsgidir=wsgi_dir,
                     wsgifile=os.path.join(wsgi_dir,"django.wsgi"),
-                    listendirective=listendirective,
                     ppdirective=ppdirective,
                     adminmedia=os.path.join(__import__("django").__path__[0], 'contrib','admin','media'),
                     ))

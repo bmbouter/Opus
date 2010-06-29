@@ -7,15 +7,13 @@
     {% for p in deployments %}
     <tr>
         <td><a href="{% url opus.project.deployment.views.edit_or_create p.name %}">{{ p.name }}</a></td>
-        <td>{{ p.vhost }}</td>
-        <td>{{ p.vport }}</td>
     </tr>
     {% endfor %}
     </table>
     <div>
         <form action="{% url opus.project.deployment.views.list_or_new %}" method="post">
             {% csrf_token %}
-            <input name="name" />
+            <input name="name" />{{ suffix }}
             <input type="submit" value="New" />
         </form>
 {% endblock %}
