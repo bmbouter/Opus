@@ -21,10 +21,12 @@ class Provider(models.Model):
     # Password to use with this provider
     password = models.CharField(max_length=60)
 
-    def get_dc_client(self):
+    def get_deltacloud_client(self):
         """Returns a deltacloud client object configured for this provider."""
 
-        return Deltacloud(self.username, self.password, self.uri)
+        d = Deltacloud(self.username, self.password, self.uri)
+        d.connect()
+        return d
 
     class Meta:
         unique_together = ("uri", "username", "password")
@@ -61,6 +63,8 @@ class DownstreamImage(models.Model):
     # A human readable descriptive name
     name = models.CharField(max_length=60, unique=True)
 
+    # owner_id not implemented
+
     # A long, pretty description of this image
     description = models.TextField()
 
@@ -76,6 +80,10 @@ class Instance(models.Model):
     # The user who started up this instance
     owner_id = models.CharField(max_length=60)
 
+    name = models.CharField(max_length=80)
+
+    hardware_profile = "generic"
+
     # The provider that the image was started up on
     provider = models.ForeignKey("Provider")
 
@@ -87,11 +95,41 @@ class Instance(models.Model):
 
     class Meta:
         unique_together = ("provider", "instance_id")
+        
+    ###### Virtual Attributes ######
+    # These attributes are recieved from the instance's provider
+
+    _cached_instance_object = None
+    @property
+    def _instance_object(self):
+        """Get the deltacloud client instance object for this instance."""
+
+        if self._cached_instance_object == None:
+            client = self.provider.get_deltacloud_client()
+            self._cached_instance_object = client.instance(self.instance_id)
+
+        return self._cached_instance_object
+    
+    @property
+    def state(self):
+        return self._instance_object.state
+
+    @property
+    def actions(self):
+        return self._instance_object.actions
+
+    @property
+    def public_addresses(self):
+        return self._instance_object.public_addresses
+
+    @property
+    def private_addresses(self):
+        return self._instance_object.private_addresses
 
 class Policy(models.Model):
     """Base class for policies.
 
-    This will be represented on the front end as a realm.  Policies allow of
+    This will be represented on the front end as a realm.  Policies allow
     intelligent decisions to be made about which Provider a DownsteamImage is
     deployed on.
 

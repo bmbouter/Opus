@@ -40,9 +40,9 @@ def primary_entry_point(request):
     )
 
 def hardware_profiles(request, name=None):
-    """Lists all hardware profiles.
+    """Lists all hardware profiles, or the given one if id!=None.
 
-    In dcmux, there will be one hardware profile.  The real hardware profile
+    In dcmux, there is one hardware profile.  The real hardware profile
     that will be used is specified in the UpstreamImage.
 
     """
@@ -62,11 +62,7 @@ def hardware_profiles(request, name=None):
     )
 
 def realms(request, id=None):
-    """List all realms.
-
-    Realms are derived from Policies.
-
-    """
+    """List all realms, or the given realm if id!=None."""
 
     if id == None:
         realms = Policy.objects.all()
@@ -89,7 +85,7 @@ def realms(request, id=None):
     )
 
 def images(request, id=None):
-    """List all downstream images."""
+    """List all downstream images, or the given image if id!=None."""
 
     if id == None:
         images = DownstreamImage.objects.all()
@@ -112,6 +108,7 @@ def images(request, id=None):
     )
 
 def instances(request, id=None):
+    """List all instances, or the given instance if id!=None."""
 
     if id == None:
         instances = Instance.objects.all()

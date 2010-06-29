@@ -4,8 +4,19 @@
             <id>{{ instance.id }}</id>
             <owner_id>{{ instance.owner_id }}</owner_id>
             <name>{{ instance.name }}</name>
-            <hardware_profile href="{{ instance.image.hardware_profile }}"/>
-            <realm href="{{ instance.realm }}" />
+            <hardware_profile href="{{ instance.hardware_profile }}"/>
+            <realm href="{{ instance.policy }}" />
+            <state>{{ instance.state }}</state>
+            <public_addresses>
+                {% for address in instance.public_addresses %}
+                    <address>{{ address }}</address>
+                {% endfor %}
+            </public_addresses>
+            <private_addresses>
+                {% for address in instance.private_addresses %}
+                    <address>{{ address }}</address>
+                {% endfor %}
+            </private_addresses>
         </instance>
     {% endfor %}
 </instances>
