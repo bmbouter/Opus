@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Opus Project Editor{% endblock %}
+
+{% block content %}
+<h1>Project {{ project.name }}</h1>
+{% if message %}
+<div style="color: #FF0000; font-weight: bold;">
+    {{ message }}
+</div>
+{% endif %}
+Info:
+<ul>
+    {% if project.serve_http %}
+    <li>Serving at <a href="{{ project.serve_http }}">{{ project.serve_http }}</a></li>
+    {% endif %}
+    {% if project.serve_https %}
+    <li>Serving at <a href="{{ project.serve_https }}">{{ project.serve_https }}</a></li>
+    {% endif %}
+    <li>Deployed at {{ project.projectdir }}</li>
+</ul>
+
+<div>
+    <h2>Change deployment parameters</h2>
+    <b>Note: Filling in the Super User information will create a <i>new</i> super user</b>
+    <form action="{% url opus.project.deployment.views.edit_or_create project.name %}" method="post">
+        {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Submit" />
+    </form>
+</div>
+<hr />
+<hr />
+<hr />
+
+<form action="{% url opus.project.deployment.views.destroy project.name %}"
+    method="post">
+    {% csrf_token %}
+    <input style="color: #000000;background-color: #FF0000" type="submit" value="DESTROY THIS PROJECT CAREFUL DON'T PUSH THIS
+    BUTTON UNLESS YOU REALLY REALLY MEAN IT!" />
+</form>
+
+{% endblock %}
