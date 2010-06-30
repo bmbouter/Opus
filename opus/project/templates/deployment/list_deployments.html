@@ -11,8 +11,7 @@
     {% endfor %}
     </table>
     <div>
-        <form action="{% url opus.project.deployment.views.list_or_new %}" method="post">
-            {% csrf_token %}
+        <form action="{% url opus.project.deployment.views.list_or_new %}" method="get">
             <input name="name" />{{ suffix }}
             <input type="submit" value="New" />
         </form>

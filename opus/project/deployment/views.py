@@ -1,5 +1,6 @@
 import functools
 import json
+import urllib2
 
 from opus.project.deployment import models, forms
 import opus.lib.builder
@@ -87,13 +88,12 @@ def list_or_new(request):
 
     """
     message = ""
-    if request.method == "POST":
-        if 'name' in request.POST:
-            if not models.id_re.match(request.POST['name']):
-                message = "Bad project name. Project names must consist of only letters, numbers, and the underscore character. They must not begin with a number. And they must be less than 25 characters long."
-            else:
-                return redirect("opus.project.deployment.views.edit_or_create",
-                        projectname=request.POST['name'])
+    if 'name' in request.GET:
+        if not models.id_re.match(request.GET['name']):
+            message = "Bad project name. Project names must consist of only letters, numbers, and the underscore character. They must not begin with a number. And they must be less than 25 characters long."
+        else:
+            return redirect("opus.project.deployment.views.edit_or_create",
+                    projectname=request.GET['name'])
 
 
     # Get existing projects and list them
@@ -254,7 +254,7 @@ def create(request, projectname):
     and does a create + deploy operation on POST.
 
     """
-    if request.method == "POST" and "json" not in request.POST:
+    if request.method == "POST":
         pform = forms.ProjectForm(request.POST)
         appsform = forms.AppFormSet(request.POST)
         dform = forms.DeploymentForm(request.POST)
@@ -300,15 +300,18 @@ def create(request, projectname):
             return redirect(deployment)
         
     else:
-        jsoncontent = request.POST.get("json", False)
-        if jsoncontent:
-            # Request came from a GWT submit with applications filled in
-            selectedapps = json.loads(jsoncontent)
+        token = request.GET.get("token", False)
+        if token:
+            metadata = urllib2.urlopen(opus.COMMUNITY_URL + "/metadata/" + token)
+            metaobj = json.load(metadata)
             # Fill the app form set with this initial data
-            appsform = forms.AppFormSet(initial=selectedapps)
+            appsform = forms.AppFormSet(initial=metaobj['applist'])
+            pform = forms.ProjectForm(initial={'admin': 
+                metaobj.get('admin', False)})
         else:
+            # Blank form
             appsform = forms.AppFormSet()
-        pform = forms.ProjectForm()
+            pform = forms.ProjectForm()
         dform = forms.DeploymentForm()
 
     return render("deployment/newform.html", dict(
