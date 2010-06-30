@@ -149,7 +149,7 @@ def edit_or_create(request, projectname):
 @login_required
 @get_project_object
 def edit(request, project):
-    """Configuration editor for an already deployed project
+    """Configuration editor view for an already deployed project
 
     """
     # Get the initial values for this form, so we can tell what changed when
@@ -171,7 +171,7 @@ def edit(request, project):
             # Go and modify the project/config parameters. Don't save yet
             for field in form.changed_data:
                 if field == "dbengine":
-                    database['ENGINE'] = cd['dbengine']
+                    database['ENGINE'] = 'django.db.backends.' + cd['dbengine']
                     log.debug("dbengine changed to %s", cd['dbengine'])
                 elif field == "dbpassword":
                     database['PASSWORD'] = cd['dbpassword']
@@ -252,13 +252,20 @@ def edit(request, project):
 def create(request, projectname):
     """Create and deploy a new project. Displays the form to do so on GET, goes
     and does a create + deploy operation on POST.
+    Also has the feature to pre-fill out the form from an incomming JSON spec.
 
     """
-    if request.method == "POST":
+    if request.method == "POST" and request.META['CONTENT_TYPE'] == \
+            "application/x-www-form-urlencoded":
+        # If the submitted type is not form encoded data, it's probably a json
+        # spec of applications, which should instead go to populate and display
+        # the forms.
         pform = forms.ProjectForm(request.POST)
         appsform = forms.AppFormSet(request.POST)
         dform = forms.DeploymentForm(request.POST)
         allforms = [pform, appsform, dform]
+        # If forms aren't valid, fall through and display the (invalid) forms
+        # with error text
         if all(f.is_valid() for f in allforms):
             log.info("Preparing to create+deploy %s", projectname)
             # Create the deployment object to do some early validation checks
@@ -300,6 +307,14 @@ def create(request, projectname):
             return redirect(deployment)
         
     else:
+        # Request was either a GET, or was a POST with non-form data
+        # Display blank forms
+        appsform = forms.AppFormSet()
+        pform = forms.ProjectForm()
+        dform = forms.DeploymentForm()
+
+        # If a token was passed in to the GET params, try and use it to
+        # populate the app list formset
         token = request.GET.get("token", False)
         if token:
             metadata = urllib2.urlopen(opus.COMMUNITY_URL + "/metadata/" + token)
@@ -308,11 +323,6 @@ def create(request, projectname):
             appsform = forms.AppFormSet(initial=metaobj['applist'])
             pform = forms.ProjectForm(initial={'admin': 
                 metaobj.get('admin', False)})
-        else:
-            # Blank form
-            appsform = forms.AppFormSet()
-            pform = forms.ProjectForm()
-        dform = forms.DeploymentForm()
 
     return render("deployment/newform.html", dict(
             pform=pform,

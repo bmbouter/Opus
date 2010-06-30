@@ -102,7 +102,9 @@ class DeployedProject(models.Model):
     def save(self, *args, **kwargs):
         if self._conf:
             self._conf.save()
-            # TODO: touch WSGI file
+            # Touch wsgi file, indicating to mod_wsgi to re-load modules and
+            # therefore any changed configuration parameters
+            os.utime(os.path.join(self.projectdir, "wsgi", 'django.wsgi'), None)
         super(DeployedProject, self).save(*args, **kwargs)
 
     def is_active(self):
