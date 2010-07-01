@@ -1,5 +1,7 @@
-"""Contains routines for copying applications from various sources
+"""Contains routines for manipulating applications from various sources
 
+Copy functions
+--------------
 Each method takes two parameters, a source, and a destination.
 The source string is source specific, probably a URL of some sort.
 The destination string is a local directory path, where the destination app
@@ -11,11 +13,28 @@ contents in it
 The functions should not return anything, they should raise a CopyError
 on error.
 
+To choose the right copy function, consult the copy_functions mapping
+
+Upgrade functions
+-----------------
+These functions take a source directory, and some parameter specifying the
+version to upgrade to. This parameter is source specific. For example, with git
+it will be a revision identifier.
+
+To choose the right upgrade function, consult the upgrade_functions mapping
+
+Introspection Functions
+-----------------------
+Use the introspect_source function to attempt to determine what kind of app it
+is.
+
 """
 
 import shutil
 import subprocess
 import os.path
+
+import opus.lib.builder
 
 class CopyError(Exception):
     pass
@@ -43,3 +62,55 @@ copy_functions = {
         'file': fromfilesys,
         'git': fromgit,
         }
+
+###################
+# Upgrade functions
+###################
+
+def upgradefile(path, to):
+    raise NotImplementedError()
+
+def upgradegit(path, to):
+    proc = subprocess.Popen(["git", "fetch"],
+            cwd=path,
+            stdout=subproccess.PIPE,
+            stderr=subprocess.STDOUT,
+            )
+    output = proc.communicate()[0]
+    ret = proc.wait()
+    if ret:
+        raise opus.lib.builder.BuildException("git fetch failed. Ret: {0}, Output: {1}"\
+                .format(ret, output))
+
+    proc = subprocess.Popen(['git', 'reset', '--hard', to],
+            cwd=path,
+            stdout=subproccess.PIPE,
+            stderr=subprocess.STDOUT,
+            )
+    output = proc.communicate()[0]
+    ret = proc.wait()
+    if ret:
+        raise opus.lib.builder.BuildException("git reset failed. Ret: {0}, Output: {1}"\
+                .format(ret, output))
+
+upgrade_functions = {
+        'file': upgradefile,
+        'git': upgradegit,
+        }
+
+#########################
+# Introspection functions
+#########################
+
+def is_git(apppath):
+    return os.path.exists(os.path.join(apppath, ".git"))
+
+def introspect_source(apppath):
+    """Attempts to determine the source of the given application.
+
+    """
+    if is_git(apppath):
+        return 'git'
+
+    return 'file'
+    

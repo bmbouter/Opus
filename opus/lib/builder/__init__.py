@@ -9,11 +9,15 @@ import tempfile
 import subprocess
 import shutil
 import re
+import shutil
 
 import opus.lib.builder.sources
 from opus.lib.conf import OpusConfig
 
 App = namedtuple('App', ('path', 'pathtype'))
+
+class BuildException(object):
+    """Something went wrong when assembling a project"""
 
 class ProjectBuilder(object):
     """ProjectBuilder class, creates and configures a Django Project
@@ -94,8 +98,7 @@ class ProjectBuilder(object):
                 stderr=subprocess.STDOUT)
         output = proc.communicate()[0]
         if proc.wait():
-            raise Exception("startproject failed. {0}".format(output))
-            # XXX: handle this better? do some cleanup?
+            raise BuildException("startproject failed. {0}".format(output))
 
         projectdir =  os.path.join(target, self.projectname)
 
@@ -222,3 +225,109 @@ admin.autodiscover()
         # Write it back out
         with open(urlsfile, 'w') as fileobj:
             fileobj.write("".join(urls))
+
+class ProjectEditor(object):
+    """Contains routines for editing a project itself, not its deployment
+    parameters. Contains routines for adding, removing, and upgrading
+    applications.
+
+    """
+    def __init__(self, projectdir):
+        self.projectdir = projectdir
+
+        # Find the project name by taking the last component of the path
+        path = os.path.abspath(self.projectdir)
+        self.projectname = os.path.basename(path)
+
+    def _get_config(self):
+        return OpusConfig(os.path.join(self.projectdir, "opussettings.json"))
+
+    def _touch_wsgi(self):
+        # Reloads the project
+        os.utime(os.path.join(self.projectdir, "wsgi", 'django.wsgi'), None)
+
+    def add_app(self, apppath, apptype):
+        """Adds an application to the project and touches the wsgi file. This
+        takes effect immediately.
+
+        """
+        before = set(os.listdir(self.projectdir))
+        opus.lib.builder.sources.copy_functions[apptype](apppath, self.projectdir)
+        after = set(os.listdir(self.projectdir))
+        newapps = list(after - before)
+        if len(newapps) != 1:
+            raise BuildException("Project dir changed when adding the app. Bailing")
+
+        newapp = newapps[0]
+
+        # Now add the app to installed apps
+        config = self._get_config()
+        config["INSTALLED_APPS"].append("{0}.{1}".format(
+                self.projectname, newapp))
+        config.save()
+
+        # Add a line in urls.py for it
+        with open(os.path.join(self.projectdir, "urls.py"), 'a') as urls:
+            fullname = "{0}.{1}".format(self.projectname, newapp)
+            urls.write("urlpatterns += "\
+                    "patterns('', url(r'^{appname}/', "\
+                    "include('{fullname}.urls'))),\n"\
+                    .format(appname=newapp,
+                            fullname=fullname))
+
+        # reload
+        self._touch_wsgi()
+
+    def del_app(self, appname):
+        """Removes an application from the project. This takes effect
+        immediately.
+
+        appname should be just the application name, not the path or project
+        path (such as projectname.appname)
+
+        Raises ValueError if the project is not in INSTALLED_APPS
+
+        """
+        if "/" in appname or "\\" in appname:
+            raise ValueError("Bad app name")
+
+        # Remove from INSTALLED_APPS
+        config = self._get_config()
+        config["INSTALLED_APPS"].remove("{0}.{1}".format(
+                self.projectname, newapp))
+        config.save()
+
+        # Removes the urls.py line
+        with open(os.path.join(self.projectdir, "urls.py"), 'r') as urlfile:
+            urllines = urlfile.readlines()
+        match = re.compile(r"include\('{projectname}\.{appname}\.urls'\)"\
+                .format(projectname=self.projectname,
+                        appname=appname))
+        for linenum, line in enumerate(urllines):
+            if match.search(line):
+                del urllines[linenum]
+                break
+        else:
+            raise BuildException("No lines in urls.py matched for removal")
+        with open(os.path.join(self.projectdir, "urls.py"), 'w') as urlfile:
+            for line in urllines:
+                urlfile.write(line)
+
+        # Touch wsgi file
+        self._touch_wsgi()
+
+        # Deletes the app dir
+        appdir = os.path.join(self.projectdir, appname)
+        shutil.rmtree(appdir)
+
+    def upgrade_app(self, appname, to):
+        """Upgrades the given app to the given version."""
+        if "/" in appname or "\\" in appname:
+            raise ValueError("Bad app name")
+
+        apppath = os.path.join(self.projectdir, appname)
+        apptype = opus.lib.builder.sources.introspect_source(apppath)
+
+        os.lib.builder.sources.upgrade_functions[apptype](apppath, to)
+
+        self._touch_wsgi()
