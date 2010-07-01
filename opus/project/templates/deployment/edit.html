@@ -31,6 +31,20 @@ Info:
         <input type="submit" value="Submit" />
     </form>
 </div>
+<h2>Applications</h2>
+<form method="post">
+<table border="1"><tr><td>App Name</td><td>Delete?</td></tr>
+
+</table>
+<input type="submit" value="Delete Selected" />
+</form>
+
+<form method="post" action="">
+    <h2>Add new application</h2>
+    {{ appform.as_p }}
+    <input type="submit" value="Add" />
+</form>
+
 <hr />
 <hr />
 <hr />

@@ -28,6 +28,13 @@ Introspection Functions
 Use the introspect_source function to attempt to determine what kind of app it
 is.
 
+Version Functions
+-----------------
+These attempt to retrieve the version information from an app.
+
+Use the version_functions mapping to choose the right version function for the
+app type.
+
 """
 
 import shutil
@@ -114,3 +121,27 @@ def introspect_source(apppath):
 
     return 'file'
     
+
+#######################
+# Get Version Functions
+#######################
+
+def file_version(apppath):
+    return "N/A"
+
+def git_version(apppath):
+    proc = subprocess.Popen(["git", "rev-parse", "HEAD"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=apppath,
+            )
+    output = proc.communicate()[0]
+    ret = proc.wait()
+    if ret:
+        raise opus.lib.builder.BuildException("git rev-parse failed. Ret: {0}, Output: {1}".format(ret, output))
+    return output
+
+version_functions = {
+        'file': file_version,
+        'git': git_version,
+        }

@@ -241,9 +241,12 @@ def edit(request, project):
     else:
         form = forms.DeploymentForm(initial=initial)
 
+    newappform = forms.AppForm()
     return render("deployment/edit.html",
             {'project': project,
-                'form': form},
+                'form': form,
+                'appform': newappform,
+                },
             request)
 
 
