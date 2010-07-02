@@ -145,13 +145,7 @@ def edit_or_create(request, projectname):
         # Project does not exist, we're in create mode
         return create(request, projectname)
 
-
-@login_required
-@get_project_object
-def edit(request, project):
-    """Configuration editor view for an already deployed project
-
-    """
+def _get_initial_edit_data(project):
     # Get the initial values for this form, so we can tell what changed when
     # the user submits it
     database = project.config['DATABASES']['default']
@@ -162,6 +156,16 @@ def edit(request, project):
     initial['dbhost'] = database['HOST']
     initial['dbport'] = database['PORT']
     initial['active'] = project.active
+    return initial
+
+
+@login_required
+@get_project_object
+def edit(request, project):
+    """Configuration editor view for an already deployed project
+
+    """
+    initial = _get_initial_edit_data(project)
 
     if request.method == "POST":
         form = forms.DeploymentForm(request.POST, initial=initial)
@@ -248,7 +252,6 @@ def edit(request, project):
                 'appform': newappform,
                 },
             request)
-
 
 @login_required
 @catch_deployerrors
@@ -357,18 +360,18 @@ def addapp(request, project):
             editor = opus.lib.builder.ProjectEditor(project.projectdir)
             editor.add_app(appform.cleaned_data['apppath'],
                     appform.cleaned_data['apptype'])
-            return render("deployment/edit.html", dict(
+            return render("deployment/addappform.html", dict(
                 message='Application added',
                 appform=forms.AppForm(),
                 project=project,
                 ), request)
+    else:
+        appform = forms.AppForm()
 
 
 
-        return render("deployment/edit.html", dict(
-            message='There was a problem adding the app. See below',
-            appform=appform,
-            project=project,
-            ), request)
+    return render("deployment/addappform.html", dict(
+        appform=appform,
+        project=project,
+        ), request)
 
-    return redirect(project)
