@@ -255,7 +255,7 @@ def edit(request, project):
 def create(request, projectname):
     """Create and deploy a new project. Displays the form to do so on GET, goes
     and does a create + deploy operation on POST.
-    Also has the feature to pre-fill out the form from an incomming JSON spec.
+    Also has the feature to pre-fill out the form from an incomming JSON token.
 
     """
     if request.method == "POST" and request.META['CONTENT_TYPE'] == \
@@ -345,3 +345,30 @@ def destroy(request, project):
             }, request)
     else:
         return redirect(project)
+
+@login_required
+@get_project_object
+def addapp(request, project):
+    """Adds an application on submission of an app form"""
+    if request.method == "POST":
+        appform = forms.AppForm(request.POST)
+        if appform.is_valid():
+            # Go and add an app
+            editor = opus.lib.builder.ProjectEditor(project.projectdir)
+            editor.add_app(appform.cleaned_data['apppath'],
+                    appform.cleaned_data['apptype'])
+            return render("deployment/edit.html", dict(
+                message='Application added',
+                appform=forms.AppForm(),
+                project=project,
+                ), request)
+
+
+
+        return render("deployment/edit.html", dict(
+            message='There was a problem adding the app. See below',
+            appform=appform,
+            project=project,
+            ), request)
+
+    return redirect(project)

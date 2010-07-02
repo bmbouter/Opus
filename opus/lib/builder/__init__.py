@@ -271,7 +271,7 @@ class ProjectEditor(object):
             fullname = "{0}.{1}".format(self.projectname, newapp)
             urls.write("urlpatterns += "\
                     "patterns('', url(r'^{appname}/', "\
-                    "include('{fullname}.urls'))),\n"\
+                    "include('{fullname}.urls')))\n"\
                     .format(appname=newapp,
                             fullname=fullname))
 

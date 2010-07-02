@@ -39,7 +39,8 @@ Info:
 <input type="submit" value="Delete Selected" />
 </form>
 
-<form method="post" action="">
+<form method="post" action="{% url opus.project.deployment.views.addapp project.name %}">
+    {% csrf_token %}
     <h2>Add new application</h2>
     {{ appform.as_p }}
     <input type="submit" value="Add" />
