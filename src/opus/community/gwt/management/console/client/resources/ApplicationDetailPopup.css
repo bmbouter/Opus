@@ -1,0 +1,13 @@
+.appInfoPopup { 
+	background: white;
+	border: 5px solid #707070;
+	border-radius: 2px;
+	box-shadow: 10px 10px 10px #333333;
+}
+.appFlexTable {
+	background: blue;	
+}
+
+.appCell {
+	background: orange;
+}

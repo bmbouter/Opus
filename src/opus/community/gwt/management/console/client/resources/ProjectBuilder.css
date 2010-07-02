@@ -1,0 +1,214 @@
+.innerSubMainPanel {
+	/*border: 4px inset #E8E8E8;*/
+	border: 4px solid orange;
+	margin-left: 0%;
+	margin-top: 0.5%;
+	margin-right: 0.5%;
+	magin-bottom: 0.5%;
+	height: 90%; 
+	width: 95%;
+	background: white;
+	border-radius: 10px;
+	-webkt-border-radius: 10px;
+	-moz-border-radius: 10px;
+	padding: 0% 1% 1% 1%;
+}
+.topSubMainPanel {
+	background: white;
+	height: 100%;
+	width: 100%;
+	border-radius: 10px;
+}
+.topPagePanel {
+	width: 100%;
+	height: 100%;
+	margin: 0.1% 0.1% 0.1% 0.1%;
+}
+.pageSteps{
+	color: gray;
+	text-shadow: 1px 1px 0em #000000;
+	font-family: "Droid Serif";
+	font-size: 2em;
+	padding: 0.2em 0 0 0.1em;	
+	float: left;
+}
+.pageTitle {
+	color: #E87B33;
+	text-shadow: 1px 1px 0em #000000;
+	font-family: "Droid Serif";
+	font-size: 2em;
+	padding: 0.2em 0 0 0.3em;
+	float: left;	
+}
+.filterPanel {
+	/*border: 2px inset black;*/
+	background: white;
+	margin-top: 20%;
+	magin-bottom: 0%;
+	margin-right: 0%;
+	margin-left: 0%;
+}
+.listBox {
+	height: 75%;
+	width: 90%;
+	vertical-align:middle;
+}
+.filterMenu {
+}
+.searchPanel {
+	vertical-align:middle;
+	margin-top:5px;
+	margin-bottom: 5px;
+	height: 60%;
+}
+.searchBox {	
+	/*border: 2px solid #4D4D4D;*/
+	color: black;
+	background: #DBDBDB;
+	margin-top: 0%;
+	margin-left: 0%;
+	border-radius: 2px;
+	padding: 2px 1px 2px 5px;
+	width: 75%;
+	height: 60%;
+}
+.searchButton {
+	/*-webkit-box-shadow: 2px 2px 2px #121212;
+    -moz-box-shadow: 2px 2px 2px #121212;
+    box-shadow: 2px 2px 2px #121212;*/
+	border-radius: 2px;
+	width: 20%;
+	cursor: pointer;
+	cursor: hand;	
+	font-family: "Droid Serif";
+	font-size: 125%;
+	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF))');
+	/*position: relative; direction: ltr; left: 0px; right: auto;*/
+	color: black;
+	height: 80%;
+}
+.fieldButton {
+	border-right: 0.5px solid #A8A8A8;
+	border-left: none;
+	border-top: 1px solid #A8A8A8;
+	border-bottom: 1px solid #A8A8A8;
+	border-top-right-radius: 15px;
+	border-bottom-right-radius: 15px;
+	cursor: pointer;
+	cursor: hand;	
+	background: #00CC33;
+	float: right;
+	position: relative; direction: ltr; left: -865px; right: auto; top: 2px;
+	padding: 2px 6px 2px 2px;
+	color: white;
+	height: 15px;
+	width: 15px;
+}
+.leftScrollPanel {
+	border: 2px solid #4D4D4D;
+	padding: 6px 2px 2px 2px;
+	border-radius: 5px;
+	height: 98%;
+	width: 98%;
+	background: white;
+	color: black;
+}
+.vertPanel {
+	margin-bottom: 0;
+	margin-right: 0;
+	margin-top: 0;
+	height: 100%;
+	widht: 100%;
+	/*border: 2px solid #4D4D4D;*/
+}
+.rightScrollPanel {
+	border: 2px solid #4D4D4D;
+	border-radius: 5px; 
+	background: white;
+	height: 98%;
+	widht: 80%;
+	margin-right: 10% 
+}
+.menuItem {
+	cursor: pointer;
+	cursor: hand;	
+	font-family: "Droid Serif";
+	border: 2px outset #E8E8E8;
+	border-radius: 2px;
+	width: 6em;
+	text-align: center;	
+	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF))');
+	color: black;
+	height: 1.67em;
+}
+.menuBar {
+	border-radius: 5px;
+	background: white;
+	cursor: pointer;
+	cursor: hand;
+}
+.flexTable {
+	height: 100%;
+	width: 100%;
+	position: relative;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+.appCell {
+	background: #D1D1D1;
+	border: 2px solid #D1D1D1;
+	height: 60px;
+	border-radius: 5px;
+	-webkit-box-shadow: 3px 3px 3px #121212;
+    -moz-box-shadow: 3px 3px 3px #121212;
+    box-shadow: 3px 3px 3px #121212;
+    margin-bottom: 0.5%;
+    margin-right: 1%;
+    margin-left: 1%
+}
+.cellHTMLPanel {
+	background: red;
+	border: 2px solid black;
+	font-weight: bold;
+}
+.addAppPanel {
+	background: white;
+	width: 100%;
+	height: 100%;
+	margin-top: 10%;	
+}
+.addAppButton {
+	border-radius: 20px;
+	position: absolute;
+	width: 90%;
+	height: 70%;
+	-webkit-box-shadow: 5px 5px 5px #121212;
+    -moz-box-shadow: 5px 5px 5px #121212;
+    box-shadow: 5px 5px 5px #121212;
+}
+.buttonPanel{
+	width: 80%;
+	height: 70%;	
+}
+.stepsButton {
+	border-radius: 5px;
+	cursor: pointer;
+	cursor: hand;	
+	font-family: "Droid Serif";
+	font-size: 1em;
+	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF))');
+	color: black;
+	width: 100%;
+	-webkit-box-shadow: 5px 5px 5px #121212;
+    -moz-box-shadow: 5px 5px 5px #121212;
+    box-shadow: 5px 5px 5px #121212;
+}
+.configParameter{
+	float: left;
+	padding: 0 0.5em 0 0;
+}
+.form{
+	margin: 1em 1em 1em 1em;
+}

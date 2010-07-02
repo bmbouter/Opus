@@ -1,0 +1,68 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="../resources/ProjectBuilder.css"/>
+	<g:HTMLPanel styleName="{style.innerSubMainPanel}">
+		<g:DockLayoutPanel unit='PCT' styleName="{style.topSubMainPanel}">
+			<g:north size='6'>
+				<g:FlowPanel>
+					<g:Label  styleName="{style.pageSteps}">
+						Step 4 of 5:
+					</g:Label>
+					<g:Label  styleName="{style.pageTitle}">
+						Deployment Options
+					</g:Label>
+				</g:FlowPanel>
+			</g:north>
+			<g:west size='75'>
+				<g:ScrollPanel ui:field="appListScrollPanel" styleName="{style.leftScrollPanel}">
+					<g:DockLayoutPanel unit='EM' styleName="{style.form}">
+						<g:north size='2'>
+							<g:HTML>
+								<u>Deployment Location Options</u>
+							</g:HTML>
+						</g:north>
+						<g:north size='2'>
+							<g:FlowPanel>
+								<g:Label styleName="{style.configParameter}">Deploy as:</g:Label>
+								<g:TextBox ui:field='vhostTextBox' styleName="{style.configParameter}"></g:TextBox>
+								<g:Label ui:field='baseUrlLabel' styleName="{style.configParameter}"></g:Label>
+							</g:FlowPanel>
+						</g:north>
+						<g:north size='2'>
+							<g:FlowPanel>
+								<g:Label styleName="{style.configParameter}">Activate Project on Launch?</g:Label>
+								<g:RadioButton name='activate' styleName="{style.configParameter}">Yes</g:RadioButton>
+								<g:RadioButton name='activate' styleName="{style.configParameter}">No</g:RadioButton>
+							</g:FlowPanel>
+						</g:north>
+					</g:DockLayoutPanel>	
+				</g:ScrollPanel>
+			</g:west>
+			<g:east size='20'>
+				<g:DockLayoutPanel styleName="{style.vertPanel}" unit='PCT'>
+					<g:north size='90'>
+						<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.rightScrollPanel}">
+							<g:FlowPanel>
+							<g:HTML>
+								<p>VHost - </p>
+								<p>VPort - </p>
+							</g:HTML>
+							</g:FlowPanel>
+						</g:ScrollPanel>
+					</g:north>
+					<g:south size='8'>
+						<g:DockLayoutPanel unit='PCT' styleName="{style.buttonPanel}">
+							<g:west size='50'>
+								<g:Button ui:field="previousButton" text="Previous" styleName="{style.stepsButton}"/>
+							</g:west>
+							<g:east size='45'>
+								<g:Button ui:field="nextButton" text="Next" styleName="{style.stepsButton}"/>
+							</g:east>
+						</g:DockLayoutPanel>
+					</g:south>			
+				</g:DockLayoutPanel>
+			</g:east>
+		</g:DockLayoutPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

@@ -1,0 +1,15 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:style src="../resources/Deployer.css" type="opus.community.gwt.management.console.client.resources.Deployer.DeployerStyle"/>
+	<g:RootLayoutPanel styleName="{style.mainPanel}">
+		<g:layer>
+			<g:HTML>
+				<link href=' http://fonts.googleapis.com/css?family=Droid+Serif' rel='stylesheet' type='text/css'/>
+			</g:HTML>
+		</g:layer>
+		<g:layer>
+			<g:DockLayoutPanel ui:field='subMainPanel' styleName="{style.subMainPanel}" unit='PCT'>		
+			</g:DockLayoutPanel>
+		</g:layer>
+	</g:RootLayoutPanel></ui:UiBinder> 

@@ -1,0 +1,63 @@
+.mainPanel {
+  	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E3E3E3), to(#8F8F8F), color-stop(.6,#999999))');
+  	background: literal('-moz-linear-gradient(0% 0% 90deg, #E3E3E3, #8F8F8F, #999999 60%)');
+  	position: absolute;
+    top: 0; 
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+.subMainPanel {
+	width: 95%;
+	height: 94%;	
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    margin-top: 2.5%;
+    margin-bottom: 2.5%;
+    background:	literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#575757), to(#121212), color-stop(.4,#333333))');
+	border-radius: 10px;
+	-webkt-border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-box-shadow: 7px 7px 7px #121212;
+    -moz-box-shadow: 7px 7px 7px #121212;
+    box-shadow: 7px 7px 7px #121212;
+}
+.titleBar {
+	padding: 0.5% 0% 0% 1%;
+    color: white;
+    font-size: 3.4em;
+    width: 100%;
+    height: 100%;
+    margin: 0%;
+    text-shadow:10px 10px 5px #0F0F0F;
+    font-family: "Droid Serif";
+}
+.navigationMenu {
+	width: 84%;
+	height: 100%;
+	margin-top: 2%;
+	margin-left: 12%;
+	margin-right: auto;
+	margin-bottom: auto;
+}
+.navigationLabel {
+	width: 100%;
+	color: white;
+	padding: 0.45em 0.45em 0.45em 0.3em;
+	font-size: 1em;
+	word-wrap: break-word;
+}
+.navigationLabelActive {
+	width: 100%;
+	color: white;
+	background: orange;
+	padding: 0.45em 0.45em 0.45em 0.3em;
+	font-size: 1em;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	word-wrap: break-word;
+}
+.mainDeckPanel{
+	width: 97.50%;
+	height: 96.50%;
+}
