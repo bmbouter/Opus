@@ -32,9 +32,18 @@ Info:
     </form>
 </div>
 <h2>Applications</h2>
-<form method="post">
+<form method="post" action="{% url opus.project.deployment.views.delapp project.name %}">
+    {% csrf_token %}
 <table border="1"><tr><td>App Name</td><td>Delete?</td></tr>
-
+    {% for app in applist %}
+    <tr>
+        <td>{{ app }}</td>
+        <td
+            style="background: #FF0000"
+            ><input type="checkbox" name="delete-{{ app }}"
+            /></td>
+    </tr>
+    {% endfor %}
 </table>
 <input type="submit" value="Delete Selected" />
 </form>

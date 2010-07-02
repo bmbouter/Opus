@@ -13,6 +13,7 @@ import shutil
 
 import opus.lib.builder.sources
 from opus.lib.conf import OpusConfig
+import opus.lib.deployer
 
 App = namedtuple('App', ('path', 'pathtype'))
 
@@ -249,6 +250,7 @@ class ProjectEditor(object):
     def add_app(self, apppath, apptype):
         """Adds an application to the project and touches the wsgi file. This
         takes effect immediately.
+        Also invokes the project deployer's syncdb routine
 
         """
         before = set(os.listdir(self.projectdir))
@@ -275,6 +277,10 @@ class ProjectEditor(object):
                     .format(appname=newapp,
                             fullname=fullname))
 
+        # Sync db
+        deployer = opus.lib.deployer.ProjectDeployer(self.projectdir)
+        deployer.sync_database()
+
         # reload
         self._touch_wsgi()
 
@@ -294,7 +300,7 @@ class ProjectEditor(object):
         # Remove from INSTALLED_APPS
         config = self._get_config()
         config["INSTALLED_APPS"].remove("{0}.{1}".format(
-                self.projectname, newapp))
+                self.projectname, appname))
         config.save()
 
         # Removes the urls.py line

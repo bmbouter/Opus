@@ -158,6 +158,12 @@ def _get_initial_edit_data(project):
     initial['active'] = project.active
     return initial
 
+def _get_apps(project):
+    apps = []
+    for potential in project.config['INSTALLED_APPS']:
+        if potential.startswith(project.name + "."):
+            apps.append(potential)
+    return apps
 
 @login_required
 @get_project_object
@@ -240,7 +246,9 @@ def edit(request, project):
             return render("deployment/edit.html",
                     {'project': project,
                         'form': form,
-                        'message': "<br />".join(messages)
+                        'message': "<br />".join(messages),
+                        'applist': _get_apps(project),
+                        'appform': forms.AppForm(),
                         }, request)
     else:
         form = forms.DeploymentForm(initial=initial)
@@ -250,6 +258,7 @@ def edit(request, project):
             {'project': project,
                 'form': form,
                 'appform': newappform,
+                'applist': _get_apps(project),
                 },
             request)
 
@@ -375,3 +384,30 @@ def addapp(request, project):
         project=project,
         ), request)
 
+
+@login_required
+@get_project_object
+def delapp(request, project):
+    if request.method == "POST":
+        editor = opus.lib.builder.ProjectEditor(project.projectdir)
+        count = 0
+        for name, value in request.POST.iteritems():
+            if name.startswith("delete-") and value:
+                app = name[7:]
+                if app.startswith(project.name + "."):
+                    app = app[len(project.name)+1:]
+                    count += 1
+                    editor.del_app(app)
+
+        if count == 0:
+            return redirect(project)
+        elif count == 1:
+            message = "Application deleted"
+        else:
+            message = "Applications deleted"
+        return render("deployment/delsuccess.html", dict(
+            message=message,
+            project=project
+            ), request)
+    else:
+        return redirect(project)
