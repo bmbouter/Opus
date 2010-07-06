@@ -95,6 +95,8 @@ public class ManagementConsole extends Composite {
 			int left = dashboardsButton.getAbsoluteLeft();
 			int top = dashboardsButton.getAbsoluteTop() + dashboardsButton.getOffsetHeight();
 			pp.setPopupPosition(left, top);
+			int width = dashboardsButton.getOffsetWidth();
+			pp.setWidth(Integer.toString(width) + "px");
 			pp.show();
 		}
 	}
