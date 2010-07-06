@@ -35,20 +35,18 @@ public class ManagementConsole extends Composite {
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
 		appTypeFlag = 1;
-		appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel);
-		appDeployer.setVisible(false);
-		projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel);
-		appDeployer.setVisible(true);
 		if(appTypeFlag == 0){
+			appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel);
 		}
 		else {
-			
+			projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel);
 		}
 	}
 	
 	@UiHandler("deployNewProjectLabel")
 	void handleDeployNewProjectClick(ClickEvent event){
 		appDeployer.setVisible(true);
-		projectDashboard.setVisible(false); 
+		projectDashboard.setVisible(false);
+		 
 	}
 }
