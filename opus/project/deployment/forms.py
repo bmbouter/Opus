@@ -33,6 +33,12 @@ class AppForm(forms.Form):
 
 AppFormSet = formset_factory(AppForm, extra=2)
 
+class EditAppForm(forms.Form):
+    appname = CharField(widget=HiddenInput)
+    upgradever = CharField(required=False)
+
+EditAppFormSet = formset_factory(EditAppForm, extra=0, can_delete=True)
+
 class DeploymentForm(forms.Form):
     """Form to ask how to deploy a project"""
     superusername = CharField(required=False)

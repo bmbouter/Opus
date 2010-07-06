@@ -80,7 +80,7 @@ def upgradefile(path, to):
 def upgradegit(path, to):
     proc = subprocess.Popen(["git", "fetch"],
             cwd=path,
-            stdout=subproccess.PIPE,
+            stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             )
     output = proc.communicate()[0]
@@ -91,7 +91,7 @@ def upgradegit(path, to):
 
     proc = subprocess.Popen(['git', 'reset', '--hard', to],
             cwd=path,
-            stdout=subproccess.PIPE,
+            stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             )
     output = proc.communicate()[0]

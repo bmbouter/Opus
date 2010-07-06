@@ -84,8 +84,6 @@ def list_or_new(request):
     """This view should render a page that displays currently deployed projects
     available to edit, and a form to create+deploy a new project.
 
-    It is an error to call this view with a POST method
-
     """
     message = ""
     if 'name' in request.GET:
@@ -157,13 +155,6 @@ def _get_initial_edit_data(project):
     initial['dbport'] = database['PORT']
     initial['active'] = project.active
     return initial
-
-def _get_apps(project):
-    apps = []
-    for potential in project.config['INSTALLED_APPS']:
-        if potential.startswith(project.name + "."):
-            apps.append(potential)
-    return apps
 
 @login_required
 @get_project_object
@@ -385,29 +376,72 @@ def addapp(request, project):
         ), request)
 
 
+def _get_apps(project):
+    apps = []
+    for potential in project.config['INSTALLED_APPS']:
+        if potential.startswith(project.name + "."):
+            apps.append(dict(appname=potential))
+    return apps
+
 @login_required
 @get_project_object
-def delapp(request, project):
+def editapp(request, project):
     if request.method == "POST":
-        editor = opus.lib.builder.ProjectEditor(project.projectdir)
-        count = 0
-        for name, value in request.POST.iteritems():
-            if name.startswith("delete-") and value:
-                app = name[7:]
-                if app.startswith(project.name + "."):
-                    app = app[len(project.name)+1:]
-                    count += 1
-                    editor.del_app(app)
+        form = forms.EditAppFormSet(request.POST, initial=_get_apps(project))
+        if form.is_valid():
+            editor = opus.lib.builder.ProjectEditor(project.projectdir)
+            deletecount = 0
+            upgradecount = 0
+            failures = []
+            for appform in form.forms:
 
-        if count == 0:
-            return redirect(project)
-        elif count == 1:
-            message = "Application deleted"
-        else:
-            message = "Applications deleted"
-        return render("deployment/delsuccess.html", dict(
-            message=message,
-            project=project
-            ), request)
+                if appform in form.deleted_forms:
+                    # So that cleaned_data gets populated
+                    appform.full_clean()
+                    try:
+                        editor.del_app(appform.cleaned_data['appname'])
+                    except opus.lib.builder.BuildException, e:
+                        failures.append((appform.cleaned_data['appname'], 'delete', e))
+                    else:
+                        deletecount += 1
+                        # Remove the app from the installed app in the config.
+                        # This is also done by the call to del_app(), but since
+                        # the config has been loaded into memory already by the
+                        # model object, that data becomes stale. This line is
+                        # mostly just a hack so the next call to _get_apps()
+                        # returns correct data. This change isn't saved, since
+                        # there's no reason to. The change was already saved by
+                        # del_app()
+                        project.config['INSTALLED_APPS'].remove(
+                                appform.cleaned_data['appname'])
+                elif appform.cleaned_data['upgradever']:
+                    try:
+                        editor.upgrade_app(appform.cleaned_data['appname'],
+                                appform.cleaned_data['upgradever'])
+                    except opus.lib.builder.BuildException, e:
+                        failures.append((appform.cleaned_data['appname'], 'upgrade', e))
+                    else:
+                        upgradecount += 1
+
+            message = "{upcnt} {upproj} upgraded successfully. {delcnt} {delproj} deleted successfully.".format(
+                    upcnt = upgradecount,
+                    upproj = "projects" if upgradecount != 1 else "project",
+                    delcnt = deletecount,
+                    delproj = "projects" if deletecount != 1 else "project",
+                    )
+
+            # Render a new formset, to get the upgraded info and to not render
+            # any recently deleted projects
+            form = forms.EditAppFormSet(initial=_get_apps(project))
+            return render("deployment/appedit.html", dict(
+                form=form,
+                project=project,
+                message=message,
+                failures=failures,
+                ), request)
     else:
-        return redirect(project)
+        form = forms.EditAppFormSet(initial=_get_apps(project))
+    return render("deployment/appedit.html", dict(
+        form=form,
+        project=project,
+        ), request)

@@ -14,10 +14,12 @@ import shutil
 import opus.lib.builder.sources
 from opus.lib.conf import OpusConfig
 import opus.lib.deployer
+import opus.lib.log
+log = opus.lib.log.get_logger()
 
 App = namedtuple('App', ('path', 'pathtype'))
 
-class BuildException(object):
+class BuildException(Exception):
     """Something went wrong when assembling a project"""
 
 class ProjectBuilder(object):
@@ -288,14 +290,13 @@ class ProjectEditor(object):
         """Removes an application from the project. This takes effect
         immediately.
 
-        appname should be just the application name, not the path or project
-        path (such as projectname.appname)
-
         Raises ValueError if the project is not in INSTALLED_APPS
 
         """
         if "/" in appname or "\\" in appname:
             raise ValueError("Bad app name")
+
+        appname = self._strip_appname(appname)
 
         # Remove from INSTALLED_APPS
         config = self._get_config()
@@ -331,9 +332,24 @@ class ProjectEditor(object):
         if "/" in appname or "\\" in appname:
             raise ValueError("Bad app name")
 
+        appname = self._strip_appname(appname)
+
+        log.info("Upgrading {0}.{1} to version {2}".format(
+            self.projectname, appname, to))
         apppath = os.path.join(self.projectdir, appname)
         apptype = opus.lib.builder.sources.introspect_source(apppath)
+        log.debug("apppath is %s", apppath)
+        log.debug("apptype is %s", apptype)
 
-        os.lib.builder.sources.upgrade_functions[apptype](apppath, to)
+        opus.lib.builder.sources.upgrade_functions[apptype](apppath, to)
 
         self._touch_wsgi()
+
+    def _strip_appname(self, appname):
+        # appnames are given as projectname.appname
+        if not appname.startswith(self.projectname + "."):
+            raise BuildException("Bad app name")
+        newappname = appname[len(self.projectname)+1:]
+        if not os.path.exists(os.path.join(self.projectdir, newappname)):
+            raise BuildException("App doesn't exist")
+        return newappname
