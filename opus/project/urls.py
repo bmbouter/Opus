@@ -11,5 +11,6 @@ urlpatterns = patterns('',
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
 
     (r'^deployments/', include('opus.project.deployment.urls')),
+    (r'^json/', include('opus.project.deployment.jsonurls')),
     (r'^dcmux/', include("opus.project.dcmux.urls")),
 )
