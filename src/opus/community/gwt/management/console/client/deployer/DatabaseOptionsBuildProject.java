@@ -1,5 +1,7 @@
 package opus.community.gwt.management.console.client.deployer;
 
+import opus.community.gwt.management.console.client.deployer.applicationDeployer;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -17,6 +19,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -34,10 +37,14 @@ public class DatabaseOptionsBuildProject extends Composite {
 
 	@UiField DockLayoutPanel dboptionsPanel;
 	@UiField TextBox nameTextBox;
+	@UiField TextBox passwordTextBox;
+	@UiField TextBox hostTextBox;
+	@UiField TextBox portTextBox;
 	@UiField ListBox dbengineListBox;
 	@UiField Button nextButton;
 	@UiField Button previousButton;	
-
+	@UiField ScrollPanel databaseOptionsScrollPanel;
+	
 	public DatabaseOptionsBuildProject(FormPanel deployerForm, applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.deployerForm = deployerForm;

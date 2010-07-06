@@ -15,7 +15,7 @@
 				</g:FlowPanel>
 			</g:north>
 			<g:west size='75'>
-				<g:ScrollPanel ui:field="appListScrollPanel" styleName="{style.leftScrollPanel}">
+				<g:ScrollPanel ui:field="deploymentOptionsScrollPanel" styleName="{style.leftScrollPanel}">
 					<g:DockLayoutPanel unit='EM' styleName="{style.form}">
 						<g:north size='2'>
 							<g:HTML>
@@ -25,15 +25,14 @@
 						<g:north size='2'>
 							<g:FlowPanel>
 								<g:Label styleName="{style.configParameter}">Deploy as:</g:Label>
-								<g:TextBox ui:field='vhostTextBox' styleName="{style.configParameter}"></g:TextBox>
+								<g:TextBox ui:field='projectNameTextBox' styleName="{style.configParameter}"></g:TextBox>
 								<g:Label ui:field='baseUrlLabel' styleName="{style.configParameter}"></g:Label>
 							</g:FlowPanel>
 						</g:north>
 						<g:north size='2'>
 							<g:FlowPanel>
 								<g:Label styleName="{style.configParameter}">Activate Project on Launch?</g:Label>
-								<g:RadioButton name='activate' styleName="{style.configParameter}">Yes</g:RadioButton>
-								<g:RadioButton name='activate' styleName="{style.configParameter}">No</g:RadioButton>
+								<g:CheckBox name='active' styleName="{style.configParameter}"></g:CheckBox>
 							</g:FlowPanel>
 						</g:north>
 					</g:DockLayoutPanel>	

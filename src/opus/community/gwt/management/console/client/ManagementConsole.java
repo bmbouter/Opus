@@ -34,7 +34,7 @@ public class ManagementConsole extends Composite {
 	
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
-		appTypeFlag = 1;
+		appTypeFlag = 0;
 		if(appTypeFlag == 0){
 			appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel);
 		}

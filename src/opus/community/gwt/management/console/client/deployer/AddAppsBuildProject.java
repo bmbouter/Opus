@@ -318,6 +318,10 @@ public class AddAppsBuildProject extends Composite {
 		  return paths;
 	  }
 	  
+	  public ArrayList<String> getApps(){
+		  return apps;
+	  }
+	  
 	  public void doPost(String url, String postData) {
 		    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, url);
 		    Window.alert(postData);

@@ -24,14 +24,14 @@ public class ConfirmBuildProject extends Composite {
 	private FormPanel deployerForm;
 	private applicationDeployer appDeployer;
 	
-	@UiField ScrollPanel appListScrollPanel;
+	@UiField ScrollPanel confirmationScrollPanel;
 	@UiField Button previousButton;
 	
 	public ConfirmBuildProject(FormPanel deployerForm, applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.deployerForm = deployerForm;
 		this.appDeployer = appDeployer;
-		appListScrollPanel.add(deployerForm);
+/*		confirmationScrollPanel.add(deployerForm);
 		AddAppsBuildProject addApps = appDeployer.getAddApps();
 		ProjectOptionsBuildProject projectOptions = appDeployer.getProjectOptions();
 		DatabaseOptionsBuildProject databaseOptions = appDeployer.getDatabaseOptions();
@@ -44,11 +44,16 @@ public class ConfirmBuildProject extends Composite {
 		String database = databaseOptions.dbengineListBox.getItemText(databaseOptions.dbengineListBox.getSelectedIndex());
 		databaseOptions.nameTextBox.getValue();
 		//databaseOptions.
-		
+*/		
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
 		appDeployer.handleDeploymentOptionsLabel();
+	}
+	
+	@UiHandler("confirmButton")
+	void handleConfirmButton(ClickEvent event){
+		appDeployer.handleConfirmDeployProject();
 	}
 }
