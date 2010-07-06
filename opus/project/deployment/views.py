@@ -28,12 +28,17 @@ def catch_deployerrors(f):
     """A decorator that catches ValidationError and DeploymentExceptions on
     views and renders error.html instead of letting the error propagate.
 
+    I think this is unnecessary. Django has error handling built in, we should
+    be using that outside of debug, and its built in error pages when
+    debugging.
+
     """
     @functools.wraps(f)
     def newf(request, *args, **kwargs):
         try:
             return f(request, *args, **kwargs)
         except (ValidationError, DeploymentException), e:
+            log.warning("Caught an error while running view %s, rendering error.html. %s", f.__name__, e)
             return render("error.html",
                     {'message': e},
                     request)
@@ -106,6 +111,7 @@ def list_or_new(request):
         }, request)
 
 
+@csrf_exempt # XXX XXX REMOVE ME
 @login_required
 #@debug_view
 def edit_or_create(request, projectname):
@@ -254,7 +260,6 @@ def edit(request, project):
             request)
 
 @login_required
-@catch_deployerrors
 def create(request, projectname):
     """Create and deploy a new project. Displays the form to do so on GET, goes
     and does a create + deploy operation on POST.
@@ -311,10 +316,14 @@ def create(request, projectname):
             log.info("Project %r successfully deployed", projectname)
 
             return redirect(deployment)
+
+        else:
+            log.debug("Create view called, but forms didn't validate")
         
     else:
         # Request was either a GET, or was a POST with non-form data
         # Display blank forms
+        log.debug("create view called, displaying form")
         appsform = forms.AppFormSet()
         pform = forms.ProjectForm()
         dform = forms.DeploymentForm()
