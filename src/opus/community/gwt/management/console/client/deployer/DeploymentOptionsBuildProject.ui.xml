@@ -32,7 +32,7 @@
 						<g:north size='2'>
 							<g:FlowPanel>
 								<g:Label styleName="{style.configParameter}">Activate Project on Launch?</g:Label>
-								<g:CheckBox name='active' styleName="{style.configParameter}"></g:CheckBox>
+								<g:CheckBox ui:field="activeCheckBox" name='active' styleName="{style.configParameter}"></g:CheckBox>
 							</g:FlowPanel>
 						</g:north>
 					</g:DockLayoutPanel>	

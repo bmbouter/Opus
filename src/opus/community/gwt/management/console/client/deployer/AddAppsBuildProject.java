@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import opus.community.gwt.management.console.client.JSONCommunication;
 
 public class AddAppsBuildProject extends Composite {
 
@@ -44,6 +45,7 @@ public class AddAppsBuildProject extends Composite {
 	private String selectedAppPath = "";
 	private ArrayList<String> paths = new ArrayList<String>();
 	private ArrayList<String> apps = new ArrayList<String>();
+	private JSONCommunication jsonCom;
 
 	private static AddAppsBuildProjectUiBinder uiBinder = GWT
 			.create(AddAppsBuildProjectUiBinder.class);
@@ -69,15 +71,18 @@ public class AddAppsBuildProject extends Composite {
 
 	public AddAppsBuildProject(applicationDeployer appDeployer, FormPanel form) {
 		initWidget(uiBinder.createAndBindUi(this));
+		this.jsonCom = new JSONCommunication((Object)this);
 		this.deployerForm = form;
 		this.refreshAppListFlexTable(JSON_URL);
 		this.populateFieldList("https://opus-dev.cnl.ncsu.edu:9004/opus_community/model/fields/application/?a");
-		this.appDeployer = appDeployer;
-		
+		this.appDeployer = appDeployer;	
 		
 
 	}
 
+	public Object asObject(AddAppsBuildProject a){
+		return a;
+	}
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		appDeployer.handleProjectOptionsLabel();
@@ -94,7 +99,7 @@ public class AddAppsBuildProject extends Composite {
 	    url = URL.encode(url) + "&callback=";
 
 	    // Send request to server by replacing RequestBuilder code with a call to a JSNI method.
-	    getJson(jsonRequestId++, url, this,1);
+	    jsonCom.getJson(jsonRequestId++, url, jsonCom,1);
 	  }
 	  
 	  /**
@@ -104,7 +109,7 @@ public class AddAppsBuildProject extends Composite {
 	  private void populateFieldList(String url) {
 		  
 		  url = URL.encode(url) + "&callback=";
-		  getJson(jsonRequestId++, url, this, 2);
+		  jsonCom.getJson(jsonRequestId++, url, jsonCom, 2);
 	  }
 	  
 	  
@@ -150,75 +155,23 @@ public class AddAppsBuildProject extends Composite {
 	    errorMsgLabel.setVisible(true);
 	  }
 	  
-	  /**
-	   * Make call to remote server.
-	   */
-	  public native static void getJson(int requestId, String url,
-	      AddAppsBuildProject handler, int queryType) /*-{
-	   
-	   var callback = "callback" + requestId;
-	   
-	   // [1] Create a script element.
-	   var script = document.createElement("script");
-	   script.setAttribute("src", url+callback);
-	   script.setAttribute("type", "text/javascript");
 
-	   // [2] Define the callback function on the window object.
-	   window[callback] = function(jsonObj) {
-	   // [3]
-	     handler.@opus.community.gwt.management.console.client.deployer.AddAppsBuildProject::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;I)(jsonObj, queryType);
-	     window[callback + "done"] = true;
-	   }
-
-	   // [4] JSON download has 1-second timeout.
-	   setTimeout(function() {
-	     if (!window[callback + "done"]) {
-	       handler.@opus.community.gwt.management.console.client.deployer.AddAppsBuildProject::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;I)(null);
-	     }
-
-	     // [5] Cleanup. Remove script and callback elements.
-	     document.body.removeChild(script);
-	     delete window[callback];
-	     delete window[callback + "done"];
-	   }, 1000);
-
-	   // [6] Attach the script element to the document body.
-	   document.body.appendChild(script);
-	  }-*/;
-	  
-	  /**
-	   * Handle the response to the request for stock data from a remote server.
-	   */
-	  public void handleJsonResponse(JavaScriptObject jso, int queryType) {
-	    if (jso == null) {
-	      displayError("Couldn't retrieve JSON");
-	      return;
-	    }
-	    //Window.alert(Integer.toString(queryType));
-	    if (queryType == 1) {
-	    	updateTable(asArrayOfAppData (jso));
-	    } else if (queryType == 2) {
-	    	updateFieldList(asModelProperties(jso));
-	    } else if (queryType == 3) {
-	    	handleVersions(asArrayOfVersionData(jso));
-	    }
-	  }
 	
 	  /**
 	   * Update the Price and Change fields all the rows in the stock table.
 	   *
 	   * @param prices Stock data for all rows.
 	   */
-	  private void updateTable(JsArray<AppData> prices) {
+	  public void updateTable(JsArray<AppData> prices) {
 	    for (int i = 0; i < prices.length(); i++) {
-	      updateTable(prices.get(i), this);
+	      updateTable(prices.get(i), jsonCom);
 	    }
 
 	    // Clear any errors.
 	    errorMsgLabel.setVisible(false);
 	  }
 	  
-	  private void updateTable(AppData app, final AddAppsBuildProject handler) {
+	  public void updateTable(AppData app, final JSONCommunication handler) {
 		// Add the app to the table.
 		  int row = appListFlexTable.getRowCount();
 		  final String description = app.getDescription();
@@ -240,11 +193,13 @@ public class AddAppsBuildProject extends Composite {
 		  addAppButton.addClickHandler(new ClickHandler() {
 		      public void onClick(ClickEvent event) {
 		    	  selectedApp = name;
-		    	  int row = appInfoDialog.versionsFlexTable.getRowCount();
+		    	  appInfoDialog.versionsFlexTable.clear(true);
 		    	  appInfoDialog.versionsFlexTable.removeAllRows();
+		    	  int row = appInfoDialog.versionsFlexTable.getRowCount();
+		    	  //Window.alert(String.valueOf(row));
 		    	  appInfoDialog.versionsFlexTable.setHTML(row, 0, "<div><b>" + name + "</b> -" + description + "</div>");
 		    	  //appInfoDialog.versionsFlexTable.setText(row, 0, "hello");
-		    	  AddAppsBuildProject.getJson(jsonRequestId++,url,handler,3);
+		    	  jsonCom.getJson(jsonRequestId++,url,handler,3);
 		    	  
 		    	  
 	//	    	  appInfoDialog.versionsFlexTable.setWidget(row, 0, new HTMLPanel("<div><b>" + name + "</b> -" + description + "</div>"));
@@ -256,7 +211,7 @@ public class AddAppsBuildProject extends Composite {
 	  
 	  
 	  
-	  private void updateFieldList(ModelProperties properties) {
+	  public void updateFieldList(ModelProperties properties) {
 		  String fields = properties.getFields().toString();
 		  //Window.alert(fields);
 		  String[] fieldArray  = fields.split(",");
@@ -267,7 +222,7 @@ public class AddAppsBuildProject extends Composite {
 
 	  }
 	  
-	  private void handleVersions(JsArray<VersionData> versions){
+	  public void handleVersions(JsArray<VersionData> versions){
 		  
 		  for (int i = 0; i < versions.length(); i++){
 			  final String appString = selectedApp + versions.get(i).getVersion();
@@ -346,18 +301,18 @@ public class AddAppsBuildProject extends Composite {
 	  /**
 	   * Cast JavaScriptObject as JsArray of StockData.
 	   */
-	  private final native JsArray<AppData> asArrayOfAppData(JavaScriptObject jso) /*-{
+	  public final native JsArray<AppData> asArrayOfAppData(JavaScriptObject jso) /*-{
 	    return jso;
 	  }-*/;
 	  
 	  /**
 	   * Cast JavaScriptObject as ModelProperties.
 	   */
-	  private final native ModelProperties asModelProperties(JavaScriptObject jso) /*-{
+	  public final native ModelProperties asModelProperties(JavaScriptObject jso) /*-{
 	    return jso;
 	  }-*/;
 	  
-	  private final native JsArray<VersionData> asArrayOfVersionData(JavaScriptObject jso) /*-{
+	  public final native JsArray<VersionData> asArrayOfVersionData(JavaScriptObject jso) /*-{
 	  	return jso;
 	  }-*/;
 

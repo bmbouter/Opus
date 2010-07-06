@@ -256,6 +256,7 @@ public class applicationDeployer extends Composite {
 		  
 		  //Add all Database fields to the form for submissions
 		  */
+		  formContainerPanel.add(deploymentOptions.activeCheckBox);
 		  deployerForm.setAction("https://opus-dev.cnl.ncsu.edu:9007/deployments/"+deploymentOptions.projectNameTextBox.getText()+ "/");
 		  //Hidden csrf = new Hidden();
 		  //csrf.setName("csrfmiddlewaretoken");
