@@ -15,7 +15,7 @@
 				</g:FlowPanel>
 			</g:north>
 			<g:west size='75'>
-				<g:ScrollPanel ui:field="appListScrollPanel" styleName="{style.leftScrollPanel}">
+				<g:ScrollPanel ui:field="projectOptionsScrollPanel" styleName="{style.leftScrollPanel}">
 					<g:DockLayoutPanel unit='EM' styleName="{style.form}">
 						<g:north size ='3'>
 							<g:HTMLPanel>

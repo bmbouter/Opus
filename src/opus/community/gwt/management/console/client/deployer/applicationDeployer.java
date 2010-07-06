@@ -29,9 +29,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
@@ -152,6 +155,113 @@ public class applicationDeployer extends Composite {
 			  activeLabel = confirmBPLabel;
 			  navigationMenuFocusFlag = 4;
 		  }
+	  }
+	  
+	  void handleConfirmBuildProjectLoad() {
+			
+			
+			String username = projectOptions.usernameTextBox.getValue();
+			String email = projectOptions.emailTextBox.getValue();
+			Boolean admin = projectOptions.adminCheckBox.getValue();
+			
+			String databaseEngine = databaseOptions.dbengineListBox.getItemText(databaseOptions.dbengineListBox.getSelectedIndex());
+			String databaseName = databaseOptions.nameTextBox.getValue();
+			String databasePassword = databaseOptions.passwordTextBox.getValue();
+			String databaseHost = databaseOptions.hostTextBox.getValue();
+			String databasePort = databaseOptions.portTextBox.getValue();
+			
+			String projectName = deploymentOptions.projectNameTextBox.getText() + deploymentOptions.baseUrlLabel.getText();
+			ArrayList<String> apps = addApps.getApps();
+			String html = "<p><b>List of Applications:</b> <ul>";
+			
+			for (int i = 0; i < apps.size(); i++){
+				html += "<li>" + apps.get(i) + "</li>";
+			}
+			
+			html += "</ul></p>";
+			
+			if (username.length() > 0 ) {
+				html += "<p><b>Super Username:</b> " + username + "</p>";
+			}
+			if (email.length() > 0) {
+				html += "<p><b>Email:</b> " + email + "</p>";
+			}
+			
+			html += "<p><b>Django Admin Interface:</b>";
+
+			if (admin == true) {
+				html += "Yes</p>";
+			} else {
+				html += "No</p>";
+			}
+			
+			if (!databaseEngine.contains("sqlite")){
+				html += "<p><b>Database Engine:</b> " + databaseEngine + "</p>";
+				html += "<p><b>DB Name:</b> " + databaseName +"</p>";
+				html += "<p><b>DB Password:</b> " + databasePassword + "</p>";
+				html += "<p><b>DB Host:</b> " + databaseHost + "</p>";
+				html += "<p><b>DB Port:</b> " + databasePort + "</p>";
+			} else {
+				html += "<p><b>Database Engine:</b> " + databaseEngine + "</p>";
+			}
+			
+			html += "<p><b>Deploy as: </b>" + projectName + "</p>";
+			confirmBP.confirmationScrollPanel.clear();
+			confirmBP.confirmationScrollPanel.add(new HTML(html,true));
+	  }
+	  
+	  void handleConfirmDeployProject(){
+		  
+		  deployerForm.setMethod(FormPanel.METHOD_POST);
+		  deployerForm.getElement().setAttribute("target", "_self");
+		  
+		  VerticalPanel formContainerPanel = new VerticalPanel();
+		  this.deployerForm.add(formContainerPanel);
+		  ArrayList<String> paths = addApps.getAppPaths();
+		  Hidden numApps = new Hidden();
+		  numApps.setName("form-TOTAL_FORMS");
+		  numApps.setValue(String.valueOf(paths.size()));
+		  formContainerPanel.add(numApps);
+		  Hidden numInitialForms = new Hidden();
+		  numInitialForms.setName("form-INITIAL_FORMS");
+		  numInitialForms.setValue("0");
+		  Hidden numMaxForms = new Hidden();
+		  numMaxForms.setName("form-MAX_NUM_FORMS");
+		  formContainerPanel.add(numInitialForms);
+		  formContainerPanel.add(numMaxForms);
+		  for(int i=0; i < paths.size(); i++) {
+			  RadioButton pathtype = new RadioButton("form-" + i + "-apptype");
+			  pathtype.setFormValue("git");
+			  pathtype.setValue(true);
+			  TextBox path = new TextBox();
+			  path.setName("form-" + i +"-apppath");
+			  path.setValue(paths.get(i));
+			  formContainerPanel.add(pathtype);
+			  formContainerPanel.add(path);
+		  }
+		  
+		  //Add all project options fields to the form for submission
+		  formContainerPanel.add(projectOptions.projectOptionsScrollPanel);
+		  
+		  //Add all database options fields to the form for submission
+		  formContainerPanel.add(databaseOptions.databaseOptionsScrollPanel);
+		  
+	/*	  //Add all deployment options fields to the form for submission
+		  formContainerPanel.add(deploymentOptions.deploymentOptionsScrollPanel);
+		  formContainerPanel.add(projectOptions.usernameTextBox);
+		  formContainerPanel.add(projectOptions.passwordTextBox);
+		  formContainerPanel.add(projectOptions.passwordConfirmTextBox);
+		  formContainerPanel.add(projectOptions.emailTextBox);
+		  formContainerPanel.add(projectOptions.adminCheckBox);
+		  
+		  //Add all Database fields to the form for submissions
+		  */
+		  deployerForm.setAction("https://opus-dev.cnl.ncsu.edu:9007/deployments/"+deploymentOptions.projectNameTextBox.getText()+ "/");
+		  //Hidden csrf = new Hidden();
+		  //csrf.setName("csrfmiddlewaretoken");
+		  //csrf.setValue("2bb5a34987ea2ea2d597fe1cbf2b0aca");
+		  //formContainerPanel.add(csrf);
+		  this.deployerForm.submit();
 	  }
 
 	  ProjectOptionsBuildProject getProjectOptions() {

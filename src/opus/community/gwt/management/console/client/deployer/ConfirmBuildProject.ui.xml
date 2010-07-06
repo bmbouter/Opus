@@ -15,7 +15,7 @@
 				</g:FlowPanel>
 			</g:north>
 			<g:west size='75'>
-				<g:ScrollPanel ui:field="appListScrollPanel" styleName="{style.leftScrollPanel}">
+				<g:ScrollPanel ui:field="confirmationScrollPanel" styleName="{style.leftScrollPanel}">
 				</g:ScrollPanel>
 			</g:west>
 			<g:east size='20'>
@@ -33,6 +33,9 @@
 						<g:DockLayoutPanel unit='PCT' styleName="{style.buttonPanel}">
 							<g:west size='50'>
 								<g:Button ui:field="previousButton" text="Previous" styleName="{style.stepsButton}"/>
+							</g:west>
+							<g:west size='50'>
+								<g:Button ui:field="confirmButton" text="Confirm" styleName="{style.stepsButton}"/>
 							</g:west>
 						</g:DockLayoutPanel>
 					</g:south>			

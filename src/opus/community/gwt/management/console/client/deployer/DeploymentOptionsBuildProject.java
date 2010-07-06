@@ -9,6 +9,8 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DeploymentOptionsBuildProject extends Composite {
@@ -26,7 +28,9 @@ public class DeploymentOptionsBuildProject extends Composite {
 	@UiField Button nextButton;
 	@UiField Button previousButton;
 	@UiField Label baseUrlLabel;
-	
+	@UiField TextBox projectNameTextBox;
+	@UiField ScrollPanel deploymentOptionsScrollPanel;
+
 	public DeploymentOptionsBuildProject(FormPanel deployerForm, applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.deployerForm = deployerForm;
@@ -37,6 +41,7 @@ public class DeploymentOptionsBuildProject extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		appDeployer.handleConfirmBPLabel();
+		appDeployer.handleConfirmBuildProjectLoad();
 	}
 	
 	@UiHandler("previousButton")
