@@ -1,10 +1,11 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="../resources/Deployer.css" type="opus.community.gwt.management.console.client.resources.Deployer.DeployerStyle"/>
+	<ui:style src="../resources/ProjectDashboard.css" type="opus.community.gwt.management.console.client.resources.ProjectDashboardCss.ProjectDashboardStyle"/>
 	<g:HTMLPanel>
 		<g:Label ui:field="dashboardLabel" styleName="{style.navigationLabel}">Dashboard</g:Label>
-		<g:Label ui:field="addAppsLabel" styleName="{style.navigationLabel}">Add Applications</g:Label>
 		<g:Label ui:field="editAppsLabel" styleName="{style.navigationLabel}">Edit Applications</g:Label>
+		<g:Label ui:field="editProjectLabel" styleName="{style.navigationLabel}">Edit Project Configuration</g:Label>
+		<g:Label ui:field="deleteProjectLabel" styleName="{style.navigationLabel}">Delete Project</g:Label>
 	</g:HTMLPanel>
 </ui:UiBinder> 

@@ -1,0 +1,21 @@
+.navigationLabel {
+	width: 100%;
+	color: white;
+	padding: 0.45em 0.45em 0.45em 0.3em;
+	font-size: 1em;
+	word-wrap: break-word;
+	cursor: pointer;
+	cursor: hand;
+}
+.navigationLabelActive {
+	width: 100%;
+	color: white;
+	background: orange;
+	padding: 0.45em 0.45em 0.45em 0.3em;
+	font-size: 1em;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	word-wrap: break-word;
+	cursor: pointer;
+	cursor: hand;
+}

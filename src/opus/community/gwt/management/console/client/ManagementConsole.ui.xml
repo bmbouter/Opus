@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="resources/ManagementConsole.css"/>
+	<ui:style src="resources/ManagementConsole.css" type="opus.community.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle"/>
 	<g:RootLayoutPanel styleName="{style.mainPanel}">
 		<g:layer>
 			<g:HTML>
@@ -11,19 +11,12 @@
 		<g:layer>
 			<g:DockLayoutPanel ui:field='subMainPanel' styleName="{style.subMainPanel}" unit='PCT'>
 				<g:north size='3'>
-					<g:FlowPanel styleName="{style.topBarPanel}">
-							<g:Label styleName="{style.topBarLink}">
-								My Dashboards
-							</g:Label>
-							<g:Label styleName="{style.topBarLink}">
-								|
-							</g:Label>
-							<g:Label ui:field="deployNewProjectLabel" styleName="{style.topBarLink}">
-								Deploy New Project
-							</g:Label>
+					<g:FlowPanel ui:field="topMenuFlowPanel" styleName="{style.topMenuPanel}">
+						<g:Button ui:field="dashboardsButton" styleName="{style.topDashboardButton}">My Dashboards</g:Button>
+						<g:Button ui:field="deployNewButton" styleName="{style.topDeployNewButton}">Deploy New Project</g:Button>
 					</g:FlowPanel>
 				</g:north>
-				<g:north size='9'>
+				<g:north size='8'>
 					<g:Label ui:field='titleBarLabel' styleName="{style.titleBar}"> 
 					</g:Label>
 				</g:north>
