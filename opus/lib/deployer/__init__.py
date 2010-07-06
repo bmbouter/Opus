@@ -448,13 +448,13 @@ class ProjectUndeployer(object):
                 stderr=subprocess.STDOUT)
         output = proc.communicate()[0]
         ret = proc.wait()
-        if ret:
-            # XXX Perhaps ignore return code 6: user doesn't exist, to make
-            # this idempotent. Do we want this behavior? I'm not going to do
-            # that unless I find a reason to.
+        if ret not in (0, 6):
+            # ignore return code 6: user doesn't exist, to make this
+            # idempotent.
             raise DeploymentException("userdel failed: {0}".format(output))
 
     def remove_projectdir(self):
         """Deletes the entire project directory off the filesystem"""
         log.info("Removing project directory for project %s", self.projectdir)
-        shutil.rmtree(self.projectdir)
+        if os.path.exists(self.projectdir):
+            shutil.rmtree(self.projectdir)

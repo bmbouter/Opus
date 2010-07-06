@@ -10,11 +10,12 @@
 {% endif %}
 Info:
 <ul>
-    {% if project.serve_http %}
-    <li>Serving at <a href="{{ project.serve_http }}">{{ project.serve_http }}</a></li>
-    {% endif %}
-    {% if project.serve_https %}
-    <li>Serving at <a href="{{ project.serve_https }}">{{ project.serve_https }}</a></li>
+    {% if project.active %}
+        {% for u in project.get_urls %}
+            <li>Serving at <a href="{{ u }}">{{ u }}</a></li>
+        {% endfor %}
+    {% else %}
+        <li>Not serving, project de-activated</li>
     {% endif %}
     <li>Deployed at {{ project.projectdir }}</li>
     <li>Owned by {{ project.owner }}</li>

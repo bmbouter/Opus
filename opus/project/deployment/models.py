@@ -63,6 +63,8 @@ class DeployedProject(models.Model):
 
     @property
     def serve_http(self):
+        if not self.active:
+            return
         port = settings.OPUS_HTTP_PORT
         if not port:
             return
@@ -75,16 +77,31 @@ class DeployedProject(models.Model):
                 portline)
     @property
     def serve_https(self):
+        if not self.active:
+            return
         port = settings.OPUS_HTTPS_PORT
         if not port:
             return
-        if port != 80:
+        if port != 443:
             portline = ":"+str(port)
         else:
             portline = ""
         return "https://{0}{1}{2}/".format(
                 self.name, settings.OPUS_APACHE_SERVERNAME_SUFFIX,
                 portline)
+
+    def get_urls(self):
+        """Gets the urls that this project is being served from. This list is
+        populated even if active is False.
+        """
+        urls = []
+        http = self.serve_http
+        if http:
+            urls.append(http)
+        https = self.serve_https
+        if https:
+            urls.append(https)
+        return urls
 
     @property
     def config(self):
@@ -220,6 +237,16 @@ class DeployedProject(models.Model):
         user, de-configures apache, and finally removes itself from the
         database.
 
+        This method is idempotent, it can be called on a non-existant project
+        or project in an inconsistant or intermediate state.
+
+        This method will still error in these cases (not necessarily
+        exaustive)
+
+        * Apache can't be restarted
+        * There's an error removing the user other than "user doesn't exist"
+        * The project dir exists but cannot be removed
+
         """
 
         destroyer = opus.lib.deployer.ProjectUndeployer(self.projectdir)
@@ -232,4 +259,5 @@ class DeployedProject(models.Model):
 
         destroyer.remove_projectdir()
 
-        self.delete()
+        if self.id is not None:
+            self.delete()

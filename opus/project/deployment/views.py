@@ -298,21 +298,33 @@ def create(request, projectname):
                 log.debug(" ... and the admin app")
                 builder.set_admin_app()
             log.debug("Executing create action on %r...", projectname)
-            projectdir = builder.create(settings.OPUS_BASE_DIR)
-            log.info("%r created, starting deploy process", projectname)
+            try:
+                projectdir = builder.create(settings.OPUS_BASE_DIR)
+                log.info("%r created, starting deploy process", projectname)
 
-            # Deploy it
-            info = models.DeploymentInfo()
-            info.dbengine = dform.cleaned_data['dbengine']
-            info.dbname = dform.cleaned_data['dbname']
-            info.dbpassword = dform.cleaned_data['dbpassword']
-            info.dbhost = dform.cleaned_data['dbhost']
-            info.dbport = dform.cleaned_data['dbport']
-            info.superusername = dform.cleaned_data['superusername']
-            info.superemail = dform.cleaned_data['superemail']
-            info.superpassword = dform.cleaned_data['superpassword']
+                # Deploy it
+                info = models.DeploymentInfo()
+                info.dbengine = dform.cleaned_data['dbengine']
+                info.dbname = dform.cleaned_data['dbname']
+                info.dbpassword = dform.cleaned_data['dbpassword']
+                info.dbhost = dform.cleaned_data['dbhost']
+                info.dbport = dform.cleaned_data['dbport']
+                info.superusername = dform.cleaned_data['superusername']
+                info.superemail = dform.cleaned_data['superemail']
+                info.superpassword = dform.cleaned_data['superpassword']
 
-            deployment.deploy(info, active=dform.cleaned_data['active'])
+                deployment.deploy(info, active=dform.cleaned_data['active'])
+            except Exception, e:
+                # The project didn't deploy for whatever reason. Delete the
+                # project directory and re-raise the exception
+                # Careful that this method isn't called on an existing project,
+                # since it could be tricked into deleting an existing project.
+                # edit_or_create() ought to check that for us, this function
+                # shouldn't be called on an existing project.
+                log.warning("Project didn't fully create or deploy, rolling back deployment. %s", e)
+                deployment.destroy()
+                raise
+
             log.info("Project %r successfully deployed", projectname)
 
             return redirect(deployment)
