@@ -5,12 +5,15 @@ import opus.community.gwt.management.console.client.deployer.applicationDeployer
 import opus.community.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -31,15 +34,13 @@ public class ManagementConsole extends Composite {
 
 	private applicationDeployer appDeployer;
 	private ProjectDashboard projectDashboard;
+	private JSONCommunication jsonCom;
 	private int appTypeFlag;
 	private PopupPanel pp;
-	private Label testLabel;
 	
 	@UiField Label titleBarLabel;
 	@UiField FlowPanel navigationMenuPanel;
 	@UiField DeckPanel mainDeckPanel;
-	//@UiField Label deployNewProjectLabel;
-	//@UiField Label myDashboardsLabel;
 	@UiField ManagementConsoleStyle style;
 	@UiField Button deployNewButton;
 	@UiField Button dashboardsButton;
@@ -47,6 +48,7 @@ public class ManagementConsole extends Composite {
 	
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
+		jsonCom = new JSONCommunication((Object)this);
 		appTypeFlag = 0;
 		pp = new PopupPanel();
 		if(appTypeFlag == 0){
@@ -55,27 +57,13 @@ public class ManagementConsole extends Composite {
 		else {
 			projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, "Project Dashboard");
 		}
-		testLabel = new Label("Test");
-		testLabel.addClickHandler(new ClickHandler() {
-	        public void onClick(ClickEvent event) {
-	        	mainDeckPanel.clear();
-	    		navigationMenuPanel.clear();
-	        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText()); 
-	        	if(pp.isShowing()){
-	    			dashboardsButton.setStyleName(style.topDashboardButton());
-	    			pp.hide();
-	    		}   	
-	        }
-	     });
+		
 		createDashboardsPopup();
 	}
 	
 	private void createDashboardsPopup(){
-		FlowPanel FP = new FlowPanel();
-		FP.add(testLabel);
-		pp.add(FP);
-		pp.setStyleName(style.dashboardsPopup());
-		testLabel.setStyleName(style.popupLabel());	
+		String url = "https://opus-dev.cnl.ncsu.edu:9007/json/";
+		jsonCom.getJson(url, jsonCom, 4);	
 	}
 	
 	@UiHandler("deployNewButton")
@@ -100,4 +88,31 @@ public class ManagementConsole extends Composite {
 			pp.show();
 		}
 	}
+	
+	public void handleProjectNames(JsArray<ProjectNames> ProjectNames){
+		FlowPanel FP = new FlowPanel();
+		for(int i = 0; i < ProjectNames.length(); i++){
+			final Label testLabel = new Label(ProjectNames.get(i).getName());
+			testLabel.setStyleName(style.popupLabel());
+			Window.alert(ProjectNames.get(i).getName());
+			/*testLabel.addClickHandler(new ClickHandler() {
+		        public void onClick(ClickEvent event) {
+		        	mainDeckPanel.clear();
+		    		navigationMenuPanel.clear();
+		        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText()); 
+		        	if(pp.isShowing()){
+		    			dashboardsButton.setStyleName(style.topDashboardButton());
+		    			pp.hide();
+		    		}   	
+		        }
+		     });*/
+			FP.add(testLabel);		
+		}
+		pp.add(FP);
+		pp.setStyleName(style.dashboardsPopup());
+	}
+	
+	public final native JsArray<ProjectNames> asArrayOfProjectNames(JavaScriptObject jso) /*-{
+    	return jso;
+  	}-*/;
 }

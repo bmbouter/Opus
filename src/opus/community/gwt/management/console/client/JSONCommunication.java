@@ -9,14 +9,22 @@ public class JSONCommunication {
 	private Object parent;
 	private JavaScriptObject data;
 	private String error;
+	private int requestId;
 	
 	public JSONCommunication(Object parent) {
 		this.parent = parent;
+		this.requestId = 0;
 	}
 	  /**
 	   * Make call to remote server.
 	   */
-	  public native static void getJson(int requestId, String url,
+	
+	public void getJson(String url, JSONCommunication handler, int queryType){
+		requestId++;
+		requestJson(requestId, url, handler, queryType);
+	}
+	
+	  public native static void requestJson(int requestId, String url,
 	      JSONCommunication handler, int queryType) /*-{
 	   
 	   var callback = "callback" + requestId;
@@ -70,6 +78,9 @@ public class JSONCommunication {
 	    } else if (queryType == 3) {
 	    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
 	    	p.handleVersions(p.asArrayOfVersionData(jso));
+	    } else if (queryType == 4) {
+	    	ManagementConsole mc = (ManagementConsole)parent;
+	    	mc.handleProjectNames(mc.asArrayOfProjectNames(jso));
 	    }
 	    
 	  }
