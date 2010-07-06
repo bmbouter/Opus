@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -52,33 +53,55 @@ public class applicationDeployer extends Composite {
 	private Label activeLabel;
 	private int navigationMenuFocusFlag;
 	private FormPanel deployerForm;
+	private DeckPanel mainDeckPanel;
+	private FlowPanel navigationMenuPanel;
+	private Label titleBarLabel;
 		
 	@UiField Label addAppsLabel;
 	@UiField Label projectOptionsLabel;
 	@UiField Label databaseOptionsLabel;
 	@UiField Label deploymentOptionsLabel;
 	@UiField Label confirmBPLabel;
-	@UiField DeckPanel mainDeckPanel;
 	@UiField DeployerStyle style;
 	
-	public applicationDeployer() {
+	public applicationDeployer(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
+		this.mainDeckPanel = mainDeckPanel;
+		this.navigationMenuPanel = navigationMenuPanel;
+		this.titleBarLabel = titleBarLabel;
 		this.deployerForm = new FormPanel();
+		this.addApps = new AddAppsBuildProject(this, this.deployerForm);
 		this.projectOptions = new ProjectOptionsBuildProject(deployerForm, this);
 		this.databaseOptions = new DatabaseOptionsBuildProject(deployerForm, this);
 		this.deploymentOptions = new DeploymentOptionsBuildProject(deployerForm, this);
 		this.confirmBP = new ConfirmBuildProject(deployerForm, this);
 		this.activeLabel = addAppsLabel;
-		this.projectOptions =  new ProjectOptionsBuildProject(deployerForm, this);
-		this.addApps = new AddAppsBuildProject(this,this.deployerForm);
+		this.navigationMenuFocusFlag = 0;
+		activeLabel.setStyleName(style.navigationLabelActive());
+		setupMainDeckPanel();
+		setupNavigationMenuPanel();
+		setupTitleBarLabel();
+	}
+	
+	private void setupMainDeckPanel(){
 		mainDeckPanel.add(addApps);
 		mainDeckPanel.add(projectOptions);
 		mainDeckPanel.add(databaseOptions);
 		mainDeckPanel.add(deploymentOptions);
 		mainDeckPanel.add(confirmBP);
-		this.navigationMenuFocusFlag = 0;
 		mainDeckPanel.showWidget(0);
-		activeLabel.setStyleName(style.navigationLabelActive());
+	}
+	
+	private void setupNavigationMenuPanel(){
+		navigationMenuPanel.add(addAppsLabel);
+		navigationMenuPanel.add(projectOptionsLabel);
+		navigationMenuPanel.add(databaseOptionsLabel);
+		navigationMenuPanel.add(deploymentOptionsLabel);
+		navigationMenuPanel.add(confirmBPLabel);
+	}
+	
+	private void setupTitleBarLabel(){
+		titleBarLabel.setText("Deploy New Project");
 	}
 	
 	 void handleAddAppsLabel(){

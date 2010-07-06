@@ -1,6 +1,41 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<g:RootLayoutPanel ui:field='root'>
+	<ui:style src="resources/ManagementConsole.css"/>
+	<g:RootLayoutPanel styleName="{style.mainPanel}">
+		<g:layer>
+			<g:HTML>
+				<link href=' http://fonts.googleapis.com/css?family=Droid+Serif' rel='stylesheet' type='text/css'/>
+			</g:HTML>
+		</g:layer>
+		<g:layer>
+			<g:DockLayoutPanel ui:field='subMainPanel' styleName="{style.subMainPanel}" unit='PCT'>
+				<g:north size='3'>
+					<g:FlowPanel styleName="{style.topBarPanel}">
+							<g:Label styleName="{style.topBarLink}">
+								My Dashboards
+							</g:Label>
+							<g:Label styleName="{style.topBarLink}">
+								|
+							</g:Label>
+							<g:Label ui:field="deployNewProjectLabel" styleName="{style.topBarLink}">
+								Deploy New Project
+							</g:Label>
+					</g:FlowPanel>
+				</g:north>
+				<g:north size='9'>
+					<g:Label ui:field='titleBarLabel' styleName="{style.titleBar}"> 
+					</g:Label>
+				</g:north>
+				<g:west size ='10.1'>
+					<g:FlowPanel ui:field='navigationMenuPanel' styleName="{style.navigationMenu}">
+					</g:FlowPanel>
+				</g:west>
+				<g:east size='90'>	
+					<g:DeckPanel ui:field="mainDeckPanel" styleName="{style.mainDeckPanel}">
+					</g:DeckPanel>
+				</g:east>		
+			</g:DockLayoutPanel>
+		</g:layer>
 	</g:RootLayoutPanel>
 </ui:UiBinder> 
