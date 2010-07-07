@@ -7,6 +7,5 @@ class ProjectNames extends JavaScriptObject {                              // [1
 	  // Overlay types always have protected, zero argument constructors.
 	  protected ProjectNames() {}
 
-	  // JSNI methods to get stock data.
 	  public final native String getName() /*-{ return this.name; }-*/;  
 } 
