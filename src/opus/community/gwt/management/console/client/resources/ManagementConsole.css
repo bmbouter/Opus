@@ -1,20 +1,22 @@
 .mainPanel {
   	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E3E3E3), to(#8F8F8F), color-stop(.6,#999999))');
-  	background: literal('-moz-linear-gradient(0% 0% 90deg, #E3E3E3, #8F8F8F, #999999 60%)');
+  	background-image: literal('-moz-linear-gradient(0% 0% 90deg, #E3E3E3, #8F8F8F, #999999 60%)');
   	position: absolute;
     top: 0; 
     bottom: 0;
     right: 0;
     left: 0;
+    margin: 0;
 }
 .subMainPanel {
 	width: 95%;
 	height: 94%;	
     margin-left: 2.5%;
     margin-right: 2.5%;
-    margin-top: 2.5%;
-    margin-bottom: 2.5%;
+    margin-top: 2%;
+    /*margin-bottom: 2.5%;*/
     background:	literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#575757), to(#121212), color-stop(.4,#333333))');
+    background:	literal('-moz-linear-gradient(0% 0% 90deg, #575757, #121212, #333333 40%)');
 	border-radius: 10px;
 	-webkt-border-radius: 10px;
 	-moz-border-radius: 10px;
@@ -24,8 +26,9 @@
 }
 .topBarPanel {
 	background: black;	
-	border-top-left-radius: 10px;
-	border-top-right-radius: 10px;
+	border-radius: 10px 10px 0 0;
+	-moz-border-radius: 10px 10px 0 0;
+	-webkit-border-radius: 10px 10px 0 0;
 	padding: 0.2% 0% 0% 1%;
 }
 .topBarLink {
@@ -47,20 +50,18 @@
 }
 .navigationMenu {
 	width: 84%;
-	height: 100%;
-	margin-top: 2%;
-	margin-left: 12%;
-	margin-right: auto;
-	margin-bottom: auto;
+	height: 98%;
+	padding: 10% 0 0 12%;
 }
 .mainDeckPanel{
-	width: 97.50%;
-	height: 96.50%;
+	width: 97.5%;
+	height: 97%;
+	padding: 0 0 15% 0;
 }
 .topMenuPanel{
 	background: black;
-	border-top-left-radius: 10px;
-	border-top-right-radius: 10px;
+	border-radius: 10px 10px 0 0;
+	-moz-border-radius: 10px 10px 0 0;
 	border-bottom: 1px solid gray;
 }
 .topDashboardButton{
@@ -85,8 +86,8 @@
 	border-top: 1px solid gray;
 	border-left: 1px solid gray;
 	border-right: 1px solid gray;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
+	border-radius: 5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
 	margin-left: 0.75%;
 	margin-top: 0.3%;
 	font-family: "Droid Serif";
@@ -107,9 +108,8 @@
 	border-right: 1px solid gray;
 	border-bottom: 1px solid gray;
 	background: white;
-	border-bottom-left-radius: 5px;
-	border-bottom-right-radius: 5px;
-	border-top-right-radius: 5px;
+	-moz-border-radius: 0 5px 5px 5px;
+	border-radius: 0 5px 5px 5px;
 	padding: 0.5% 0.5% 0.5% 0.5%;
 }
 .popupLabel {
