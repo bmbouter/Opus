@@ -10,6 +10,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -48,11 +49,11 @@ public class ManagementConsole extends Composite {
 	
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
-		jsonCom = new JSONCommunication((Object)this);
+		jsonCom = new JSONCommunication();
 		appTypeFlag = 0;
 		pp = new PopupPanel();
 		if(appTypeFlag == 0){
-			appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel);
+			appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel,jsonCom);
 		}
 		else {
 			projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, "Project Dashboard");
@@ -62,15 +63,15 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void createDashboardsPopup(){
-		String url = "https://opus-dev.cnl.ncsu.edu:9007/json/";
-		jsonCom.getJson(url, jsonCom, 4);	
+		final String url = URL.encode("https://opus-dev.cnl.ncsu.edu:9007/json/?a&callback=");
+		jsonCom.getJson(url, jsonCom, 4, (Object)this);	
 	}
 	
 	@UiHandler("deployNewButton")
 	void handleDeployNewProjectClick(ClickEvent event){
 		mainDeckPanel.clear();
 		navigationMenuPanel.clear();
-		appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel);
+		appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel, jsonCom);
 	}
 	
 	@UiHandler("dashboardsButton")
@@ -90,11 +91,11 @@ public class ManagementConsole extends Composite {
 	}
 	
 	public void handleProjectNames(JsArray<ProjectNames> ProjectNames){
+
 		FlowPanel FP = new FlowPanel();
 		for(int i = 0; i < ProjectNames.length(); i++){
 			final Label testLabel = new Label(ProjectNames.get(i).getName());
 			testLabel.setStyleName(style.popupLabel());
-			Window.alert(ProjectNames.get(i).getName());
 			/*testLabel.addClickHandler(new ClickHandler() {
 		        public void onClick(ClickEvent event) {
 		        	mainDeckPanel.clear();

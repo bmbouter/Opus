@@ -3,6 +3,7 @@ package opus.community.gwt.management.console.client.deployer;
 import java.util.ArrayList;
 import java.util.List;
 
+import opus.community.gwt.management.console.client.JSONCommunication;
 import opus.community.gwt.management.console.client.resources.Deployer.DeployerStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -67,13 +68,13 @@ public class applicationDeployer extends Composite {
 	@UiField Label confirmBPLabel;
 	@UiField DeployerStyle style;
 	
-	public applicationDeployer(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel) {
+	public applicationDeployer(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, JSONCommunication jsonCom) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.mainDeckPanel = mainDeckPanel;
 		this.navigationMenuPanel = navigationMenuPanel;
 		this.titleBarLabel = titleBarLabel;
 		this.deployerForm = new FormPanel();
-		this.addApps = new AddAppsBuildProject(this, this.deployerForm);
+		this.addApps = new AddAppsBuildProject(this, this.deployerForm, jsonCom);
 		this.projectOptions = new ProjectOptionsBuildProject(deployerForm, this);
 		this.databaseOptions = new DatabaseOptionsBuildProject(deployerForm, this);
 		this.deploymentOptions = new DeploymentOptionsBuildProject(deployerForm, this);

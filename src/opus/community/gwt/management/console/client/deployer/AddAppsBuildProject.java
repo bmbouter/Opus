@@ -69,9 +69,9 @@ public class AddAppsBuildProject extends Composite {
 	@UiField ScrollPanel infoScrollPanel;
 
 
-	public AddAppsBuildProject(applicationDeployer appDeployer, FormPanel form) {
+	public AddAppsBuildProject(applicationDeployer appDeployer, FormPanel form, JSONCommunication jsonCom) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.jsonCom = new JSONCommunication((Object)this);
+		this.jsonCom = jsonCom;
 		this.deployerForm = form;
 		this.refreshAppListFlexTable(JSON_URL);
 		this.populateFieldList("https://opus-dev.cnl.ncsu.edu:9004/opus_community/model/fields/application/?a");
@@ -99,7 +99,7 @@ public class AddAppsBuildProject extends Composite {
 	    url = URL.encode(url) + "&callback=";
 
 	    // Send request to server by replacing RequestBuilder code with a call to a JSNI method.
-	    jsonCom.getJson(url, jsonCom,1);
+	    jsonCom.getJson(url, jsonCom,1,(Object)this);
 	  }
 	  
 	  /**
@@ -109,7 +109,7 @@ public class AddAppsBuildProject extends Composite {
 	  private void populateFieldList(String url) {
 		  
 		  url = URL.encode(url) + "&callback=";
-		  jsonCom.getJson(url, jsonCom, 2);
+		  jsonCom.getJson(url, jsonCom, 2, (Object)this);
 	  }
 	  
 	  
@@ -172,6 +172,7 @@ public class AddAppsBuildProject extends Composite {
 	  }
 	  
 	  public void updateTable(AppData app, final JSONCommunication handler) {
+		  final AddAppsBuildProject p = this;
 		// Add the app to the table.
 		  int row = appListFlexTable.getRowCount();
 		  final String description = app.getDescription();
@@ -199,7 +200,7 @@ public class AddAppsBuildProject extends Composite {
 		    	  //Window.alert(String.valueOf(row));
 		    	  appInfoDialog.versionsFlexTable.setHTML(row, 0, "<div><b>" + name + "</b> -" + description + "</div>");
 		    	  //appInfoDialog.versionsFlexTable.setText(row, 0, "hello");
-		    	  jsonCom.getJson(url,handler,3);
+		    	  jsonCom.getJson(url,handler,3,(Object)p);
 		    	  
 		    	  
 	//	    	  appInfoDialog.versionsFlexTable.setWidget(row, 0, new HTMLPanel("<div><b>" + name + "</b> -" + description + "</div>"));
