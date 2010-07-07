@@ -35,7 +35,7 @@ public class ManagementConsole extends Composite {
 
 	private applicationDeployer appDeployer;
 	private ProjectDashboard projectDashboard;
-	private JSONCommunication jsonCom;
+	private ServerCommunicator ServerComm;
 	private int appTypeFlag;
 	private PopupPanel pp;
 	
@@ -49,14 +49,14 @@ public class ManagementConsole extends Composite {
 	
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
-		jsonCom = new JSONCommunication();
+		ServerComm = new ServerCommunicator();
 		appTypeFlag = 0;
 		pp = new PopupPanel();
 		if(appTypeFlag == 0){
-			appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel,jsonCom);
+			appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel, ServerComm);
 		}
 		else {
-			projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, "Project Dashboard");
+			projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, "Project Dashboard", ServerComm);
 		}
 		
 		createDashboardsPopup();
@@ -64,14 +64,14 @@ public class ManagementConsole extends Composite {
 	
 	private void createDashboardsPopup(){
 		final String url = URL.encode("https://opus-dev.cnl.ncsu.edu:9007/json/?a&callback=");
-		jsonCom.getJson(url, jsonCom, 4, (Object)this);	
+		ServerComm.getJson(url, ServerComm, 4, (Object)this);	
 	}
 	
 	@UiHandler("deployNewButton")
 	void handleDeployNewProjectClick(ClickEvent event){
 		mainDeckPanel.clear();
 		navigationMenuPanel.clear();
-		appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel, jsonCom);
+		appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel, ServerComm);
 	}
 	
 	@UiHandler("dashboardsButton")
@@ -96,17 +96,17 @@ public class ManagementConsole extends Composite {
 		for(int i = 0; i < ProjectNames.length(); i++){
 			final Label testLabel = new Label(ProjectNames.get(i).getName());
 			testLabel.setStyleName(style.popupLabel());
-			/*testLabel.addClickHandler(new ClickHandler() {
+			testLabel.addClickHandler(new ClickHandler() {
 		        public void onClick(ClickEvent event) {
 		        	mainDeckPanel.clear();
 		    		navigationMenuPanel.clear();
-		        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText()); 
+		        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText(), ServerComm); 
 		        	if(pp.isShowing()){
 		    			dashboardsButton.setStyleName(style.topDashboardButton());
 		    			pp.hide();
 		    		}   	
 		        }
-		     });*/
+		     });
 			FP.add(testLabel);		
 		}
 		pp.add(FP);

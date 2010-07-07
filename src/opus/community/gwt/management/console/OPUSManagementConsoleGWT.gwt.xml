@@ -12,7 +12,9 @@
 
   <!-- Other module inherits                                      -->
 
-  <!-- Specify the app entry point class.                         -->
+  <!-- Specify the app entry point class.                    -->     
+  <inherits name="com.google.gwt.json.JSON" />
+  <inherits name="com.google.gwt.http.HTTP" />
   <entry-point class='opus.community.gwt.management.console.client.OPUSManagementConsoleGWT'/>
 
   <!-- Specify the paths for translatable code                    -->
