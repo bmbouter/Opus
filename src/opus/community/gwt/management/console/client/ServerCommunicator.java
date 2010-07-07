@@ -3,9 +3,14 @@ package opus.community.gwt.management.console.client;
 import opus.community.gwt.management.console.client.deployer.AddAppsBuildProject;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
 
-public class JSONCommunication {
+public class ServerCommunicator {
 	
 	private JavaScriptObject data;
 	private String error;
@@ -13,7 +18,7 @@ public class JSONCommunication {
 	private Object[] queue;
 	private int[] queryTypes;
 	
-	public JSONCommunication() {
+	public ServerCommunicator() {
 		this.queue = new Object[20];
 		this.queryTypes = new int[20];
 		this.requestId = 0;
@@ -22,7 +27,7 @@ public class JSONCommunication {
 	   * Make call to remote server.
 	   */
 	
-	public void getJson(String url, JSONCommunication handler, int queryType, Object parent){
+	public void getJson(String url, ServerCommunicator handler, int queryType, Object parent){
 		//Window.alert(String.valueOf(queryType));
 		queue[requestId] = parent;
 		queryTypes[requestId] = queryType;
@@ -31,7 +36,7 @@ public class JSONCommunication {
 	}
 	
 	  public native static void requestJson(int requestId, String url,
-	      JSONCommunication handler, int queryType) /*-{
+	      ServerCommunicator handler, int queryType) /*-{
 	   var callback = "callback" + requestId;
 
 	   // [1] Create a script element.
@@ -42,7 +47,7 @@ public class JSONCommunication {
 	   // [2] Define the callback function on the window object.
 	   window[callback] = function(jsonObj) {
 	   // [3]		
-	     handler.@opus.community.gwt.management.console.client.JSONCommunication::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;I)(jsonObj, requestId);
+	     handler.@opus.community.gwt.management.console.client.ServerCommunicator::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;I)(jsonObj, requestId);
 
 	     window[callback + "done"] = true;
 	   }
@@ -50,7 +55,7 @@ public class JSONCommunication {
 	   // [4] JSON download has 1-second timeout.
 	   setTimeout(function() {
 	     if (!window[callback + "done"]) {
-	       handler.@opus.community.gwt.management.console.client.JSONCommunication::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;I)(null);
+	       handler.@opus.community.gwt.management.console.client.ServerCommunicator::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;I)(null);
 	     }
 	     // [5] Cleanup. Remove script and callback elements.
 	     document.body.removeChild(script);
@@ -97,4 +102,26 @@ public class JSONCommunication {
 	  public JavaScriptObject getData(){
 		  return data;
 	  }
+	  
+	  public void doPost(String url, String postData) {
+		    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, url);
+		    Window.alert("Posted data = " + postData);
+		    try {
+		      Request response = builder.sendRequest(postData, new RequestCallback() {
+
+		        public void onError(Request request, Throwable exception) {
+		          Window.alert("Post Exception: " + exception.getLocalizedMessage());
+		        }
+
+		        public void onResponseReceived(Request request, Response response) {
+		        	Window.alert("Post response = " + response.toString());
+		        	Window.alert("Post response status =" + response.getStatusCode());
+		        }
+		      });
+		      
+		    } catch (RequestException e) {
+		      Window.alert("Failed to send the request: " + e.getMessage());
+		    }   
+	  }
+
 }

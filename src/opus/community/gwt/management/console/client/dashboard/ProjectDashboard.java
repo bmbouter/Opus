@@ -1,5 +1,6 @@
 package opus.community.gwt.management.console.client.dashboard;
 
+import opus.community.gwt.management.console.client.ServerCommunicator;
 import opus.community.gwt.management.console.client.resources.ProjectDashboardCss.ProjectDashboardStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -24,6 +25,7 @@ public class ProjectDashboard extends Composite {
 			UiBinder<Widget, ProjectDashboard> {}
 
 	private Dashboard dashboard;
+	private DeleteProject deleteProject;
 	private int navigationMenuFocusFlag;
 	private Label activeLabel;
 	
@@ -37,12 +39,13 @@ public class ProjectDashboard extends Composite {
 	@UiField Label deleteProjectLabel;
 	@UiField ProjectDashboardStyle style;
 	
-	public ProjectDashboard(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, String projectTitle){
+	public ProjectDashboard(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, String projectTitle, ServerCommunicator ServerComm){
 		initWidget(uiBinder.createAndBindUi(this));
 		this.titleBarLabel = titleBarLabel;
 		this.navigationMenuPanel = navigationMenuPanel;
 		this.mainDeckPanel = mainDeckPanel;
 		dashboard = new Dashboard();
+		deleteProject = new DeleteProject(ServerComm, projectTitle);
 		setupTitleBarLabel(projectTitle);
 		setupNavigationMenuPanel();
 		setupMainDeckPanel();
@@ -65,9 +68,11 @@ public class ProjectDashboard extends Composite {
 	
 	private void setupMainDeckPanel(){
 		mainDeckPanel.add(dashboard);
-		mainDeckPanel.insert(dashboard, 0);
-		mainDeckPanel.insert(dashboard, 0);
-		mainDeckPanel.insert(dashboard, 0);
+		Dashboard a = new Dashboard();
+		Dashboard b = new Dashboard();
+		mainDeckPanel.add(a);
+		mainDeckPanel.add(b);
+		mainDeckPanel.add(deleteProject);
 	}
 	
 	@UiHandler("dashboardLabel")

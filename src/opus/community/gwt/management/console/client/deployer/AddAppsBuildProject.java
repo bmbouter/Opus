@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import opus.community.gwt.management.console.client.JSONCommunication;
+import opus.community.gwt.management.console.client.ServerCommunicator;
 
 public class AddAppsBuildProject extends Composite {
 
@@ -45,7 +45,7 @@ public class AddAppsBuildProject extends Composite {
 	private String selectedAppPath = "";
 	private ArrayList<String> paths = new ArrayList<String>();
 	private ArrayList<String> apps = new ArrayList<String>();
-	private JSONCommunication jsonCom;
+	private ServerCommunicator jsonCom;
 
 	private static AddAppsBuildProjectUiBinder uiBinder = GWT
 			.create(AddAppsBuildProjectUiBinder.class);
@@ -69,7 +69,7 @@ public class AddAppsBuildProject extends Composite {
 	@UiField ScrollPanel infoScrollPanel;
 
 
-	public AddAppsBuildProject(applicationDeployer appDeployer, FormPanel form, JSONCommunication jsonCom) {
+	public AddAppsBuildProject(applicationDeployer appDeployer, FormPanel form, ServerCommunicator jsonCom) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.jsonCom = jsonCom;
 		this.deployerForm = form;
@@ -171,7 +171,7 @@ public class AddAppsBuildProject extends Composite {
 	    errorMsgLabel.setVisible(false);
 	  }
 	  
-	  public void updateTable(AppData app, final JSONCommunication handler) {
+	  public void updateTable(AppData app, final ServerCommunicator handler) {
 		  final AddAppsBuildProject p = this;
 		// Add the app to the table.
 		  int row = appListFlexTable.getRowCount();
@@ -277,28 +277,7 @@ public class AddAppsBuildProject extends Composite {
 	  public ArrayList<String> getApps(){
 		  return apps;
 	  }
-	  
-	  public void doPost(String url, String postData) {
-		    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, url);
-		    Window.alert(postData);
-		    try {
-		      Request response = builder.sendRequest(postData, new RequestCallback() {
-
-		        public void onError(Request request, Throwable exception) {
-		          Window.alert(exception.getLocalizedMessage());
-		        }
-
-		        public void onResponseReceived(Request request, Response response) {
-		        	Window.alert(response.toString());
-		        	Window.alert(response.getStatusText());
-		        }
-		      });
-		      
-		    } catch (RequestException e) {
-		      Window.alert("Failed to send the request: " + e.getMessage());
-		    }   
-	  }
-	  
+	  	  
 	  /**
 	   * Cast JavaScriptObject as JsArray of StockData.
 	   */

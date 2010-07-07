@@ -3,7 +3,9 @@ package opus.community.gwt.management.console.client.deployer;
 import java.util.ArrayList;
 import java.util.List;
 
-import opus.community.gwt.management.console.client.JSONCommunication;
+import opus.community.gwt.management.console.client.JSVariableHandler;
+import opus.community.gwt.management.console.client.ManagementConsole;
+import opus.community.gwt.management.console.client.ServerCommunicator;
 import opus.community.gwt.management.console.client.resources.Deployer.DeployerStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -37,6 +39,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 
 public class applicationDeployer extends Composite {
@@ -47,6 +50,7 @@ public class applicationDeployer extends Composite {
 	private DatabaseOptionsBuildProject databaseOptions;
 	private DeploymentOptionsBuildProject deploymentOptions;
 	private ConfirmBuildProject confirmBP;
+	private ManagementConsole managementCon;
 
 	private static applicationDeployerUiBinder uiBinder = GWT
 			.create(applicationDeployerUiBinder.class);
@@ -60,6 +64,7 @@ public class applicationDeployer extends Composite {
 	private DeckPanel mainDeckPanel;
 	private FlowPanel navigationMenuPanel;
 	private Label titleBarLabel;
+	private JSVariableHandler JSVarHandler;
 		
 	@UiField Label addAppsLabel;
 	@UiField Label projectOptionsLabel;
@@ -68,7 +73,7 @@ public class applicationDeployer extends Composite {
 	@UiField Label confirmBPLabel;
 	@UiField DeployerStyle style;
 	
-	public applicationDeployer(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, JSONCommunication jsonCom) {
+	public applicationDeployer(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, ServerCommunicator jsonCom) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.mainDeckPanel = mainDeckPanel;
 		this.navigationMenuPanel = navigationMenuPanel;
@@ -82,6 +87,7 @@ public class applicationDeployer extends Composite {
 		this.activeLabel = addAppsLabel;
 		this.navigationMenuFocusFlag = 0;
 		activeLabel.setStyleName(style.navigationLabelActive());
+		JSVarHandler = new JSVariableHandler();
 		setupMainDeckPanel();
 		setupNavigationMenuPanel();
 		setupTitleBarLabel();
@@ -258,12 +264,23 @@ public class applicationDeployer extends Composite {
 		  //Add all Database fields to the form for submissions
 		  */
 		  formContainerPanel.add(deploymentOptions.activeCheckBox);
-		  deployerForm.setAction("https://opus-dev.cnl.ncsu.edu:9007/deployments/"+deploymentOptions.projectNameTextBox.getText()+ "/");
+		  deployerForm.setAction(JSVarHandler.getDeployerBaseURL() + deploymentOptions.projectNameTextBox.getText() + "/");
 		  //Hidden csrf = new Hidden();
 		  //csrf.setName("csrfmiddlewaretoken");
 		  //csrf.setValue("2bb5a34987ea2ea2d597fe1cbf2b0aca");
 		  //formContainerPanel.add(csrf);
-		  this.deployerForm.submit();
+		  
+		  deployerForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+		      public void onSubmitComplete(SubmitCompleteEvent event) {
+		        // When the form submission is successfully completed, this event is
+		        // fired. Assuming the service returned a response of type text/html,
+		        // we can get the result text here (see the FormPanel documentation for
+		        // further explanation).
+		        Window.alert(event.getResults());
+		      }
+		    });
+
+		  deployerForm.submit();
 	  }
 
 	  ProjectOptionsBuildProject getProjectOptions() {
@@ -283,8 +300,6 @@ public class applicationDeployer extends Composite {
 	  }
 	  
 	  public native String getBaseURL()/*-{
-
-	  return $wnd.baseURL;
-
+	  	return $wnd.baseURL;
 	  }-*/;
 }
