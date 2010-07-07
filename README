@@ -45,7 +45,7 @@ Opus in its current form requires:
 * mod_wsgi
 * Linux
 
-Additional requirements are needed for the other components, as they are
+Additional requirements will be needed for the other components, as they are
 written and added. For example, the scaling code may require:
 
 * Deltacloud

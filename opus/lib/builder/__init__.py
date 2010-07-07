@@ -10,6 +10,7 @@ import subprocess
 import shutil
 import re
 import shutil
+import keyword
 
 import opus.lib.builder.sources
 from opus.lib.conf import OpusConfig
@@ -35,6 +36,8 @@ class ProjectBuilder(object):
         methods.
 
         """
+        if keyword.iskeyword(projectname):
+            raise BuildException("Project names cannot be keywords")
         self.projectname = projectname
 
         self.apps = []
@@ -185,6 +188,8 @@ load_settings()
         # Edit INSTALLED_APPS
         newapps = []
         for app in appnames:
+            if keyword.iskeyword(app):
+                raise BuildException("App name cannot be a keyword")
             fullname = "{0}.{1}".format(self.projectname, app)
             newapps.append(fullname)
         if self.admin:
@@ -263,6 +268,9 @@ class ProjectEditor(object):
             raise BuildException("Project dir changed when adding the app. Bailing")
 
         newapp = newapps[0]
+
+        if keyword.iskeyword(newapp):
+            raise BuildException("App name cannot be a keyword")
 
         # Now add the app to installed apps
         config = self._get_config()

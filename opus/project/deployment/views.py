@@ -20,6 +20,7 @@ def render(templatename, params, request, code=200):
     response = render_to_response(templatename, params,
             context_instance=RequestContext(request))
     response.status_code = code
+    response['Content-Type'] = "text/html"
     return response
 
 # A few decorators that come in handy. Perhaps move these to another file for
@@ -77,7 +78,7 @@ def debug_view(f):
         log.debug(request.POST)
         log.debug(pprint.pformat(request.META))
         ret = f(request, *args, **kwargs)
-        log.debug(ret)
+        log.debug(str(ret))
         return ret
     return newf
 
@@ -112,8 +113,8 @@ def list_or_new(request):
 
 
 @csrf_exempt # XXX XXX REMOVE ME
+@debug_view
 @login_required
-#@debug_view
 def edit_or_create(request, projectname):
     """This view does four things:
     When called with a GET method and a projectname that doesn't exist,
@@ -327,7 +328,8 @@ def create(request, projectname):
 
             log.info("Project %r successfully deployed", projectname)
 
-            return redirect(deployment)
+            return render("deployment/success.html", dict(
+                project=deployment), request)
 
         else:
             log.debug("Create view called, but forms didn't validate")
@@ -358,6 +360,7 @@ def create(request, projectname):
             projectname=projectname,
             ), request)
 
+@csrf_exempt
 @login_required
 @get_project_object
 def destroy(request, project):
@@ -466,3 +469,8 @@ def editapp(request, project):
         form=form,
         project=project,
         ), request)
+
+def gwt(request):
+    return render("OPUSManagementConsoleGWT.html",
+            dict(mediaprefix = settings.OPUS_GWT_MEDIA),
+            request)
