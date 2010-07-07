@@ -37,6 +37,10 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
+import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 
 
 public class applicationDeployer extends Composite {
@@ -263,6 +267,10 @@ public class applicationDeployer extends Composite {
 		  //csrf.setName("csrfmiddlewaretoken");
 		  //csrf.setValue("2bb5a34987ea2ea2d597fe1cbf2b0aca");
 		  //formContainerPanel.add(csrf);
+		 
+		  //Window.alert(deployerForm.toString());
+	
+
 		  this.deployerForm.submit();
 	  }
 
