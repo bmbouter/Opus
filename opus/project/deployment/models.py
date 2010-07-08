@@ -63,8 +63,6 @@ class DeployedProject(models.Model):
 
     @property
     def serve_http(self):
-        if not self.active:
-            return
         port = settings.OPUS_HTTP_PORT
         if not port:
             return
@@ -77,8 +75,6 @@ class DeployedProject(models.Model):
                 portline)
     @property
     def serve_https(self):
-        if not self.active:
-            return
         port = settings.OPUS_HTTPS_PORT
         if not port:
             return

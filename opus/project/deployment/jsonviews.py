@@ -39,6 +39,7 @@ def projectlist(request):
         info['href'] = reverse('opus.project.deployment.views.edit_or_create',
                 kwargs=dict(projectname=d.name))
         info['urls'] = d.get_urls()
+        info['active'] = d.active
 
         ret.append(info)
 
@@ -58,6 +59,7 @@ def projectinfo(request, project):
     info['href'] = reverse('opus.project.deployment.views.edit_or_create',
             kwargs=dict(projectname=project.name))
     info['urls'] = project.get_urls()
+    info['active'] = project.active
 
     info['apps'] = []
     for app in project.config['INSTALLED_APPS']:

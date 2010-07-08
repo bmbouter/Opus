@@ -14,7 +14,6 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.views.decorators.csrf import csrf_exempt
 
 def render(templatename, params, request, code=200):
     response = render_to_response(templatename, params,
@@ -112,7 +111,6 @@ def list_or_new(request):
         }, request)
 
 
-@csrf_exempt # XXX XXX REMOVE ME
 @debug_view
 @login_required
 def edit_or_create(request, projectname):
@@ -360,7 +358,7 @@ def create(request, projectname):
             projectname=projectname,
             ), request)
 
-@csrf_exempt
+@debug_view
 @login_required
 @get_project_object
 def destroy(request, project):
@@ -470,6 +468,7 @@ def editapp(request, project):
         project=project,
         ), request)
 
+@login_required
 def gwt(request):
     return render("OPUSManagementConsoleGWT.html",
             dict(mediaprefix = settings.OPUS_GWT_MEDIA),
