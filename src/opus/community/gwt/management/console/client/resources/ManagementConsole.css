@@ -52,7 +52,6 @@
 }
 .navigationMenu {
 	width: 84%;
-	min-width: 90%;
 	height: 98%;
 	padding: 10% 0 0 12%;
 }
@@ -101,9 +100,11 @@
 	background: black;
 	border: none;
 	color: white;
-	margin-left: 0.2%;
-	height: 100%;
+	float: left;
+	border-right: 0px solid gray;
+	margin-left: 0.75%;
 	font-family: "Droid Serif";
+	height: 100%;
 }
 .loggedInAsLabel{
 	background: black;
@@ -145,4 +146,15 @@
 	margin-left: 5%;
 	cursor: pointer;
 	cursor: hand;
+}
+.loginPanel{
+	border: 2px solid white;
+	color: black;
+	padding: 2% 2% 2% 2%;
+	height: 25%;
+	width: 25%;
+}
+.loginElement{
+	float: left;
+	color: orange;
 }
