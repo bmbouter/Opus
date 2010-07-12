@@ -1,5 +1,6 @@
 package opus.community.gwt.management.console.client;
 
+import opus.community.gwt.management.console.client.dashboard.Dashboard;
 import opus.community.gwt.management.console.client.deployer.AddAppsBuildProject;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -95,8 +96,13 @@ public class ServerCommunicator {
 	    } else if (queryType == 4) {
 	    	ManagementConsole mc = (ManagementConsole)parent;
 	    	mc.handleProjectNames(mc.asArrayOfProjectNames(jso));
+	    } else if (queryType == 5) {
+	    	Dashboard db = (Dashboard)parent;
+	    	db.handleProjectInformation(db.asJSOProjectInformation(jso));
+	    } else if (queryType == 6) {
+	    	ManagementConsole mc = (ManagementConsole)parent;
+	    	mc.handleUserInformation(mc.asJSOUserInformation(jso));
 	    }
-	    
 	  }
 	  
 	  public JavaScriptObject getData(){
@@ -123,5 +129,23 @@ public class ServerCommunicator {
 		      Window.alert("Failed to send the request: " + e.getMessage());
 		    }   
 	  }
+	  
+	  public void doGet(String url) {
+		    RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
+
+		    try {
+		      Request response = builder.sendRequest(null, new RequestCallback() {
+		        public void onError(Request request, Throwable exception) {
+		          // Code omitted for clarity
+		        }
+
+		        public void onResponseReceived(Request request, Response response) {
+		          // Code omitted for clarity
+		        }
+		      });
+		    } catch (RequestException e) {
+		      // Code omitted for clarity
+		    }
+		  }
 
 }

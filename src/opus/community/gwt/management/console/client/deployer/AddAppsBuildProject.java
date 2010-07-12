@@ -2,6 +2,8 @@ package opus.community.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
 
+import opus.community.gwt.management.console.client.ServerCommunicator;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -9,16 +11,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -26,23 +22,17 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import opus.community.gwt.management.console.client.ServerCommunicator;
 
 public class AddAppsBuildProject extends Composite {
 
 	private static final String JSON_URL = "https://opus-dev.cnl.ncsu.edu:9004/opus_community/search/application/json/?a";
 	private Label errorMsgLabel = new Label();
-	private int jsonRequestId = 0;
 	private String selectedApp = "";
-	private String selectedAppPath = "";
 	private ArrayList<String> paths = new ArrayList<String>();
 	private ArrayList<String> apps = new ArrayList<String>();
 	private ServerCommunicator jsonCom;
@@ -56,7 +46,7 @@ public class AddAppsBuildProject extends Composite {
 	interface AddAppsBuildProjectUiBinder extends
 			UiBinder<Widget, AddAppsBuildProject> {
 	}
-	private FormPanel deployerForm;
+
 	private applicationDeployer appDeployer;
 	
 	@UiField Button searchButton;
@@ -72,12 +62,9 @@ public class AddAppsBuildProject extends Composite {
 	public AddAppsBuildProject(applicationDeployer appDeployer, FormPanel form, ServerCommunicator jsonCom) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.jsonCom = jsonCom;
-		this.deployerForm = form;
 		this.refreshAppListFlexTable(JSON_URL);
 		this.populateFieldList("https://opus-dev.cnl.ncsu.edu:9004/opus_community/model/fields/application/?a");
 		this.appDeployer = appDeployer;	
-		
-
 	}
 
 	public Object asObject(AddAppsBuildProject a){
@@ -107,7 +94,6 @@ public class AddAppsBuildProject extends Composite {
 	   * @param e
 	   */
 	  private void populateFieldList(String url) {
-		  
 		  url = URL.encode(url) + "&callback=";
 		  jsonCom.getJson(url, jsonCom, 2, (Object)this);
 	  }
@@ -147,17 +133,6 @@ public class AddAppsBuildProject extends Composite {
 	  }
 
 	  /**
-	   * If can't get JSON, display error message.
-	   * @param error
-	   */
-	  private void displayError(String error) {
-	    errorMsgLabel.setText("Error: " + error);
-	    errorMsgLabel.setVisible(true);
-	  }
-	  
-
-	
-	  /**
 	   * Update the Price and Change fields all the rows in the stock table.
 	   *
 	   * @param prices Stock data for all rows.
@@ -173,7 +148,7 @@ public class AddAppsBuildProject extends Composite {
 	  
 	  public void updateTable(AppData app, final ServerCommunicator handler) {
 		  final AddAppsBuildProject p = this;
-		// Add the app to the table.
+		  //Add the app to the table.
 		  int row = appListFlexTable.getRowCount();
 		  final String description = app.getDescription();
 		  final String name = app.getName();

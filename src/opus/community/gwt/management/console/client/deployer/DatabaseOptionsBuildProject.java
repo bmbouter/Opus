@@ -1,24 +1,17 @@
 package opus.community.gwt.management.console.client.deployer;
 
-import opus.community.gwt.management.console.client.deployer.applicationDeployer;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -49,30 +42,54 @@ public class DatabaseOptionsBuildProject extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.deployerForm = deployerForm;
 		this.appDeployer = appDeployer;
-		this.dbengineListBox.addItem("postgresql_psycopg2");
-		this.dbengineListBox.addItem("mysql");
-		this.dbengineListBox.addItem("oracle");
-		this.dbengineListBox.addItem("sqlite3");
+		this.dbengineListBox.addItem("Sqlite3");
+		this.dbengineListBox.addItem("Postgresql");
+		this.dbengineListBox.addItem("Mysql");
+		this.dbengineListBox.addItem("Oracle");
+		setDBOptionParams();
 	}
 	
 	@UiHandler("dbengineListBox")
 	void handleDBEngineListBox(ChangeEvent event){
+		setDBOptionParams();	
+	}
+	
+	private void setDBOptionParams(){
 		int index = dbengineListBox.getSelectedIndex();
-		if(index == 3){
+		if(index == 0){
 			dboptionsPanel.setVisible(false);
 		} else {
 			dboptionsPanel.setVisible(true);
-		}
+		}	
 	}
 		
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
-		appDeployer.handleDeploymentOptionsLabel();
+		if(validateFields()){
+			appDeployer.handleDeploymentOptionsLabel();
+		}
+		
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
 		appDeployer.handleProjectOptionsLabel();
+	}
+	
+	private boolean validateFields(){
+		if(!dbengineListBox.isItemSelected(0)){
+			if(nameTextBox.getText().isEmpty() 
+					|| passwordTextBox.getText().isEmpty() 
+					|| hostTextBox.getText().isEmpty()
+					|| portTextBox.getText().isEmpty()){
+				Window.alert("All fields must be filled out.");
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return true;
+		}
 	}
 }
 

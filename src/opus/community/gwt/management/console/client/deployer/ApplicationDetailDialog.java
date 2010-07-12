@@ -1,5 +1,8 @@
 package opus.community.gwt.management.console.client.deployer;
 
+import opus.community.gwt.management.console.client.resources.ApplicationPopupCss;
+import opus.community.gwt.management.console.client.resources.ApplicationPopupCss.ApplicationPopupStyle;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -20,6 +23,7 @@ public class ApplicationDetailDialog extends Composite {
 
 	 @UiField PopupPanel applicationPopup;
 	 @UiField FlexTable versionsFlexTable;
+	 @UiField ApplicationPopupStyle style;
 	  
 	 
 	  public ApplicationDetailDialog() {
@@ -27,6 +31,8 @@ public class ApplicationDetailDialog extends Composite {
 	    uiBinder.createAndBindUi(this);
 	    applicationPopup.setAutoHideEnabled(true);
 	    applicationPopup.hide();
+	    applicationPopup.setGlassEnabled(true);
+	    applicationPopup.setGlassStyleName(style.applicationPopupGlass());
 	  }
 
 	  public void show() {
