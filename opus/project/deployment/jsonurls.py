@@ -9,6 +9,7 @@ from django.conf.urls.defaults import *
 projectpattern = "[a-zA-Z_][a-zA-Z0-9_]*"
 
 urlpatterns = patterns('opus.project.deployment.jsonviews',
+        url(r'^username', 'get_user'),
         url(r'^$', 'projectlist'),
         url(r'^(?P<projectname>{0})/$'.format(projectpattern), 'projectinfo'),
 )

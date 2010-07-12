@@ -21,12 +21,11 @@ def render(struct, request):
         json.dump(struct, response)
     return response
 
-#@login_required
-@debug_view
+@login_required
 def projectlist(request):
     deployments = models.DeployedProject.objects.all()
-    #if not request.user.is_superuser:
-    #    deployments = deployments.filter(owner=request.user)
+    if not request.user.is_superuser:
+        deployments = deployments.filter(owner=request.user)
 
     ret = []
     for d in deployments:
@@ -45,9 +44,8 @@ def projectlist(request):
 
     return render(ret, request)
 
-#@login_required
+@login_required
 @get_project_object
-@debug_view
 def projectinfo(request, project):
     
     info = {}
@@ -75,3 +73,10 @@ def projectinfo(request, project):
     info['active'] = project.active
 
     return render(info, request)
+
+def get_user(request):
+    # No login required here
+    r = {}
+    r['authenticated'] = request.user.is_authenticated()
+    r['username'] = request.user.username
+    return render(r, request)
