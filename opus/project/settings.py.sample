@@ -82,7 +82,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    # XXX
+    # XXX set the path to the opus template diretory here
     "INSERT PROJECT PATH HERE/opus/project/templates",
 )
 
@@ -101,16 +101,24 @@ INSTALLED_APPS = (
 # Opus Specific Settings #
 ##########################
 
-# Set this to the directory that the deployer looks for projects to deploy
+# Set this to the directory where projects will be placed upon deployment. This
+# must be a directory that both exists, and the Opus user has write access to.
 OPUS_BASE_DIR = "/var/lib/opus/base"
 
-# Configure this with the directory the deployer should drop apache configuration files
+# Configure this with the directory the deployer should drop apache
+# configuration files. This directory must be writable by the Opus user, and
+# readable by apache. Apache must be configured to include every *.conf file in
+# this directory.
 OPUS_APACHE_CONFD = "/etc/httpd/conf.d/opus"
 
-# Path to the secureops program
+# This should point to the path where the secureops binary is located. This is
+# compiled from the source files in the src/ directory of the Opus source. It
+# must be owned by root and have permissions 4750 (setuid root) and the Opus
+# user must have permissions to execute it.
 OPUS_SECUREOPS_COMMAND = "/usr/local/opus/bin/secureops"
 
-# Where should the logs go?
+# Directory where log files should go. This directory must exist, and be
+# writable by the Opus user.
 LOG_DIR = "/PATH_TO_LOG_DIR/log"
 
 # Set this to one of the logging level strings, or one of the constants from
@@ -118,15 +126,20 @@ LOG_DIR = "/PATH_TO_LOG_DIR/log"
 # settings.DEBUG automatically
 LOG_LEVEL = "DEBUG"
 
-# These are the directives that tell Opus what VirtualHost Opus should deploy
-# its projects to. They will be passed into the <VirtualHost> directive in the
-# apache config, and Opus expects Apache to have an "NameVirtualHost *:80" line
-# (for port 80, e.g.) in its config.
+# These are the directives that tell Opus what VirtualHost it should deploy
+# projects to. They will be passed into the <VirtualHost> directive in the
+# apache config, and Opus expects Apache to have an e.g. "NameVirtualHost *:80" line
+# (for port 80) in its config.
 # You can set these to None to disable serving altogether on that protocol
 OPUS_HTTP_PORT = 80
 OPUS_HTTPS_PORT = 443
 
-# This is the domain where projects will be served from. Project names go as a
-# subdomain of this domain. Don't forget the leading dot.
+# This is the domain where projects will be served from. Project names are
+# prefixed to this string and used as the apache ServerName directive inside a
+# <VirtualHost> block.
+# Don't forget the leading dot.
 # This example serves a projectname "myproject" from myproject.example.com
 OPUS_APACHE_SERVERNAME_SUFFIX = ".example.com"
+
+# Location that is serving the opus community media
+OPUS_GWT_MEDIA = "/gwt"

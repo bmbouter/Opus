@@ -73,6 +73,7 @@ def debug_view(f):
     def newf(request, *args, **kwargs):
         import pprint
         log.debug("{0} view called".format(f.__name__))
+        log.debug("Method was {0}".format(request.method))
         log.debug(request.raw_post_data)
         log.debug(request.POST)
         log.debug(pprint.pformat(request.META))
@@ -468,8 +469,10 @@ def editapp(request, project):
         project=project,
         ), request)
 
-@login_required
 def gwt(request):
+    """GWT view. Login is not required, the GWT interface handles that itself.
+
+    """
     return render("OPUSManagementConsoleGWT.html",
             dict(mediaprefix = settings.OPUS_GWT_MEDIA),
             request)
