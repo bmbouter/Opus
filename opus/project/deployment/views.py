@@ -112,7 +112,6 @@ def list_or_new(request):
         }, request)
 
 
-@debug_view
 @login_required
 def edit_or_create(request, projectname):
     """This view does four things:
@@ -359,7 +358,6 @@ def create(request, projectname):
             projectname=projectname,
             ), request)
 
-@debug_view
 @login_required
 @get_project_object
 def destroy(request, project):
