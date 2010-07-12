@@ -41,7 +41,7 @@ public class AddAppsBuildProject extends Composite {
 			.create(AddAppsBuildProjectUiBinder.class);
 
 	private ApplicationDetailDialog appInfoDialog = new ApplicationDetailDialog();
-
+	private AddOtherApplication addOtherDialog = new AddOtherApplication(this);
 	
 	interface AddAppsBuildProjectUiBinder extends
 			UiBinder<Widget, AddAppsBuildProject> {
@@ -57,7 +57,7 @@ public class AddAppsBuildProject extends Composite {
 	@UiField Button nextButton;
 	//@UiField PopupPanel fieldPopup;
 	@UiField ScrollPanel infoScrollPanel;
-
+	@UiField Button addOtherButton;
 
 	public AddAppsBuildProject(applicationDeployer appDeployer, FormPanel form, ServerCommunicator jsonCom) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -75,6 +75,10 @@ public class AddAppsBuildProject extends Composite {
 		appDeployer.handleProjectOptionsLabel();
 	}
 
+	@UiHandler("addOtherButton")
+	void handleAddOtherButton(ClickEvent event){
+		addOtherDialog.show();
+	}
 	/**
 	   * Generate random stock prices.
 	   */
@@ -252,7 +256,9 @@ public class AddAppsBuildProject extends Composite {
 	  public ArrayList<String> getApps(){
 		  return apps;
 	  }
-	  	  
+	  public FlexTable getDeployListFlexTable(){
+		  return deployListFlexTable;
+	  }
 	  /**
 	   * Cast JavaScriptObject as JsArray of StockData.
 	   */

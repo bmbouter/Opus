@@ -40,9 +40,16 @@
 								</g:ScrollPanel>
 							</g:west>
 							<g:east size='20'>
-								<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.rightScrollPanel}">
-									<g:FlexTable ui:field="deployListFlexTable"></g:FlexTable>
-								</g:ScrollPanel>		
+								<g:DockLayoutPanel unit='PCT'> 
+									<g:north size='90'>
+										<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.rightScrollPanel}">
+											<g:FlexTable ui:field="deployListFlexTable"></g:FlexTable>
+										</g:ScrollPanel>
+									</g:north>
+									<g:north size='10'>
+										<g:Button ui:field="addOtherButton" text="Add Other Application" styleName="{style.stepsButton}"/>				
+									</g:north>
+								</g:DockLayoutPanel>
 							</g:east>
 						</g:DockLayoutPanel>
 					</g:north>
