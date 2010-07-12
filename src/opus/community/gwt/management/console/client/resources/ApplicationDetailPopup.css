@@ -7,7 +7,10 @@
 .appFlexTable {
 	background: blue;	
 }
-
 .appCell {
 	background: orange;
+}
+.applicationPopupGlass{
+	background: black;
+	opacity: 0.75;
 }

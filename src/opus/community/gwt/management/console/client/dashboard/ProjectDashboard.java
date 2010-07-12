@@ -1,6 +1,6 @@
 package opus.community.gwt.management.console.client.dashboard;
 
-import opus.community.gwt.management.console.client.ServerCommunicator;
+import opus.community.gwt.management.console.client.ManagementConsole;
 import opus.community.gwt.management.console.client.resources.ProjectDashboardCss.ProjectDashboardStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -8,11 +8,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -26,31 +25,35 @@ public class ProjectDashboard extends Composite {
 
 	private Dashboard dashboard;
 	private DeleteProject deleteProject;
+	private ManageApps manageApps;
+	
 	private int navigationMenuFocusFlag;
 	private Label activeLabel;
+	private enum DeckPanels{DASHBOARDPANEL, DELETEPROJECTPANEL};
 	
 	private DeckPanel mainDeckPanel;
 	private FlowPanel navigationMenuPanel;
 	private Label titleBarLabel;
 	
 	@UiField Label dashboardLabel;
-	@UiField Label editAppsLabel;
+	@UiField Label manageAppsLabel;
 	@UiField Label editProjectLabel;
 	@UiField Label deleteProjectLabel;
 	@UiField ProjectDashboardStyle style;
 	
-	public ProjectDashboard(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, String projectTitle, ServerCommunicator ServerComm){
+	public ProjectDashboard(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, String projectTitle, ManagementConsole managementCon){
 		initWidget(uiBinder.createAndBindUi(this));
 		this.titleBarLabel = titleBarLabel;
 		this.navigationMenuPanel = navigationMenuPanel;
 		this.mainDeckPanel = mainDeckPanel;
-		dashboard = new Dashboard();
-		deleteProject = new DeleteProject(ServerComm, projectTitle);
+		dashboard = new Dashboard(projectTitle, managementCon.getServerCommunicator());
+		deleteProject = new DeleteProject(projectTitle, managementCon);
+		manageApps = new ManageApps();
 		setupTitleBarLabel(projectTitle);
 		setupNavigationMenuPanel();
 		setupMainDeckPanel();
-		mainDeckPanel.showWidget(0);
-		navigationMenuFocusFlag = 0;
+		mainDeckPanel.showWidget(DeckPanels.DASHBOARDPANEL.ordinal());
+		navigationMenuFocusFlag = DeckPanels.DASHBOARDPANEL.ordinal();
 		activeLabel = dashboardLabel;
 		activeLabel.setStyleName(style.navigationLabelActive());
 	}
@@ -61,38 +64,36 @@ public class ProjectDashboard extends Composite {
 	
 	private void setupNavigationMenuPanel(){
 		navigationMenuPanel.add(dashboardLabel);
-		navigationMenuPanel.add(editAppsLabel);
-		navigationMenuPanel.add(editProjectLabel);
+		//navigationMenuPanel.add(manageAppsLabel);
+		//navigationMenuPanel.add(editProjectLabel);
 		navigationMenuPanel.add(deleteProjectLabel);
 	}
 	
 	private void setupMainDeckPanel(){
 		mainDeckPanel.add(dashboard);
-		Dashboard a = new Dashboard();
-		Dashboard b = new Dashboard();
-		mainDeckPanel.add(a);
-		mainDeckPanel.add(b);
+		//mainDeckPanel.add(manageApps);
+		//mainDeckPanel.add(new HTML());
 		mainDeckPanel.add(deleteProject);
 	}
 	
 	@UiHandler("dashboardLabel")
 	void handleDashboardLabel(ClickEvent event){
-		  if(navigationMenuFocusFlag != 0){
+		  if(navigationMenuFocusFlag != DeckPanels.DASHBOARDPANEL.ordinal()){
 			  dashboardLabel.setStyleName(style.navigationLabelActive());
-			  mainDeckPanel.showWidget(0);
+			  mainDeckPanel.showWidget(DeckPanels.DASHBOARDPANEL.ordinal());
 			  activeLabel.setStyleName(style.navigationLabel());
 			  activeLabel = dashboardLabel;
-			  navigationMenuFocusFlag = 0;
+			  navigationMenuFocusFlag = DeckPanels.DASHBOARDPANEL.ordinal();
 		  }
 	 }
 	
-	@UiHandler("editAppsLabel")
-	void handleEditAppsLabel(ClickEvent event){
+	@UiHandler("manageAppsLabel")
+	void handlemanageAppsLabel(ClickEvent event){
 		  if(navigationMenuFocusFlag != 1){
-			  editAppsLabel.setStyleName(style.navigationLabelActive());
+			  manageAppsLabel.setStyleName(style.navigationLabelActive());
 			  mainDeckPanel.showWidget(1);
 			  activeLabel.setStyleName(style.navigationLabel());
-			  activeLabel = editAppsLabel;
+			  activeLabel = manageAppsLabel;
 			  navigationMenuFocusFlag = 1;
 		  }
 	 }
@@ -110,12 +111,12 @@ public class ProjectDashboard extends Composite {
 	
 	@UiHandler("deleteProjectLabel")
 	void handleDeleteProjectLabel(ClickEvent event){
-		  if(navigationMenuFocusFlag != 3){
+		  if(navigationMenuFocusFlag != DeckPanels.DELETEPROJECTPANEL.ordinal()){
 			  deleteProjectLabel.setStyleName(style.navigationLabelActive());
-			  mainDeckPanel.showWidget(3);
+			  mainDeckPanel.showWidget(DeckPanels.DELETEPROJECTPANEL.ordinal());
 			  activeLabel.setStyleName(style.navigationLabel());
 			  activeLabel = deleteProjectLabel;
-			  navigationMenuFocusFlag = 3;
+			  navigationMenuFocusFlag = DeckPanels.DELETEPROJECTPANEL.ordinal();
 		  }
 	 }
 }

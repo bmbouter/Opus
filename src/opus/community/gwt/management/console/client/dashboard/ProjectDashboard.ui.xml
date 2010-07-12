@@ -4,7 +4,7 @@
 	<ui:style src="../resources/ProjectDashboard.css" type="opus.community.gwt.management.console.client.resources.ProjectDashboardCss.ProjectDashboardStyle"/>
 	<g:HTMLPanel>
 		<g:Label ui:field="dashboardLabel" styleName="{style.navigationLabel}">Dashboard</g:Label>
-		<g:Label ui:field="editAppsLabel" styleName="{style.navigationLabel}">Edit Applications</g:Label>
+		<g:Label ui:field="manageAppsLabel" styleName="{style.navigationLabel}">Manage Applications</g:Label>
 		<g:Label ui:field="editProjectLabel" styleName="{style.navigationLabel}">Edit Project Configuration</g:Label>
 		<g:Label ui:field="deleteProjectLabel" styleName="{style.navigationLabel}">Delete Project</g:Label>
 	</g:HTMLPanel>

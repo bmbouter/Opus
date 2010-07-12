@@ -15,23 +15,26 @@
 	margin-left: 12%;
 	margin-right: auto;
 	margin-bottom: auto;
+	min-width: 90%;
 }
 .navigationLabel {
 	width: 100%;
 	color: white;
-	padding: 0.45em 0.45em 0.45em 0.3em;
+	padding: 0.45em 0.45em 0.45em 0.5em;
 	font-size: 1em;
 	word-wrap: break-word;
+	min-width: 90%;
 }
 .navigationLabelActive {
 	width: 100%;
 	color: white;
 	background: orange;
-	padding: 0.45em 0.45em 0.45em 0.3em;
+	padding: 0.45em 0.45em 0.45em 0.5em;
 	font-size: 1em;
 	border-radius: 5px 0 0 5px;
 	-moz-border-radius: 5px 0 0 5px;
 	word-wrap: break-word;
+	min-width: 80%;
 }
 .mainDeckPanel{
 	width: 97.50%;

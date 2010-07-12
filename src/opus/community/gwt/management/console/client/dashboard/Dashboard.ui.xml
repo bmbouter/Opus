@@ -1,20 +1,54 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="../resources/ProjectBuilder.css"/>
+	<ui:style src="../resources/ProjectDashboard.css"/>
 	<g:HTMLPanel styleName="{style.innerSubMainPanel}">
 		<g:DockLayoutPanel unit='PCT' styleName="{style.topSubMainPanel}">
-			<g:north size='6'>
-				<g:FlowPanel>
-					<g:Label  styleName="{style.pageTitle}">
+			<g:north size='5'>
+				<g:FlowPanel styleName="{style.dashboardTitlePanel}">
+					<g:Label styleName="{style.pageTitle}">
 						Dashboard
 					</g:Label>
 				</g:FlowPanel>
 			</g:north>
-			<g:west size='100'>
-				<g:ScrollPanel ui:field="appListScrollPanel" styleName="{style.leftScrollPanel}">
-				</g:ScrollPanel>
-			</g:west>
+			<g:north size='94'>
+				<g:DockLayoutPanel unit='PCT'>
+					<g:north size='8'>
+						<g:FlowPanel>
+							<g:Label styleName="{style.currentAppsLabel}">
+								Current Applications:
+							</g:Label>
+							<g:FlowPanel ui:field='applicationsFlowPanel' styleName="{style.currentAppsLabel}">
+							</g:FlowPanel>
+						</g:FlowPanel>
+					</g:north>
+					<g:north size='3'>
+						<g:FlowPanel>
+							<g:Label styleName='{style.projInfoItem}'>DBName:</g:Label>
+							<g:Label ui:field='dbnameLabel' styleName='{style.projInfoItem}'/>
+						</g:FlowPanel>
+					</g:north>
+					<g:north size='3'>
+						<g:FlowPanel>
+							<g:Label styleName='{style.projInfoItem}'>DBEngine:</g:Label>
+							<g:Label ui:field='dbengineLabel' styleName='{style.projInfoItem}'/>
+						</g:FlowPanel>
+					</g:north>
+					<g:north size='3'>
+						<g:FlowPanel>
+							<g:Label styleName='{style.projInfoItem}'>Active:</g:Label>
+							<g:Label ui:field='activeLabel' styleName='{style.projInfoItem}'/>
+						</g:FlowPanel>
+					</g:north>
+					<g:north size='8'>
+						<g:FlowPanel>
+							<g:Label styleName='{style.projInfoItem}'>Deployed At:</g:Label>
+							<g:FlowPanel ui:field='urlsFlowPanel' styleName="{style.currentAppsLabel}">
+							</g:FlowPanel>
+						</g:FlowPanel>
+					</g:north>
+				</g:DockLayoutPanel>
+			</g:north>
 		</g:DockLayoutPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

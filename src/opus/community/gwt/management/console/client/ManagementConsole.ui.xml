@@ -12,8 +12,10 @@
 			<g:DockLayoutPanel ui:field='subMainPanel' styleName="{style.subMainPanel}" unit='PCT'>
 				<g:north size='3'>
 					<g:FlowPanel ui:field="topMenuFlowPanel" styleName="{style.topMenuPanel}">
-						<g:Button ui:field="dashboardsButton" styleName="{style.topDashboardButton}">My Dashboards</g:Button>
+						<g:Button ui:field="dashboardsButton" styleName="{style.topDashboardButton}">My Projects</g:Button>
 						<g:Button ui:field="deployNewButton" styleName="{style.topDeployNewButton}">Deploy New Project</g:Button>
+						<g:Button ui:field="authenticationButton" styleName="{style.authenticationButton}">Logout</g:Button>
+						<g:Button ui:field="loggedInUserButton" styleName="{style.loggedInAsLabel}"></g:Button>
 					</g:FlowPanel>
 				</g:north>
 				<g:north size='8'>
@@ -26,6 +28,12 @@
 				</g:west>
 				<g:east size='90'>	
 					<g:DeckPanel ui:field="mainDeckPanel" styleName="{style.mainDeckPanel}">
+						<g:FormPanel>
+							<g:HTMLPanel>
+								<g:TextBox>Username:</g:TextBox>
+								<g:PasswordTextBox>Password:</g:PasswordTextBox>
+							</g:HTMLPanel>
+						</g:FormPanel>
 					</g:DeckPanel>
 				</g:east>		
 			</g:DockLayoutPanel>

@@ -1,48 +1,38 @@
 package opus.community.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import opus.community.gwt.management.console.client.JSVariableHandler;
 import opus.community.gwt.management.console.client.ManagementConsole;
-import opus.community.gwt.management.console.client.ServerCommunicator;
 import opus.community.gwt.management.console.client.resources.Deployer.DeployerStyle;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 
 
 public class applicationDeployer extends Composite {
+	private static applicationDeployerUiBinder uiBinder = GWT
+		.create(applicationDeployerUiBinder.class);
+
+	interface applicationDeployerUiBinder extends
+		UiBinder<Widget, applicationDeployer> {}
+
 		
 	private ApplicationDetailDialog appInfoDialog = new ApplicationDetailDialog();
 	private ProjectOptionsBuildProject projectOptions;
@@ -50,16 +40,12 @@ public class applicationDeployer extends Composite {
 	private DatabaseOptionsBuildProject databaseOptions;
 	private DeploymentOptionsBuildProject deploymentOptions;
 	private ConfirmBuildProject confirmBP;
-	private ManagementConsole managementCon;
 
-	private static applicationDeployerUiBinder uiBinder = GWT
-			.create(applicationDeployerUiBinder.class);
-		
-	interface applicationDeployerUiBinder extends
-			UiBinder<Widget, applicationDeployer> {}
-
-	private Label activeLabel;
 	private int navigationMenuFocusFlag;
+	private String createdProjectName;
+	private ManagementConsole managementCon;
+	
+	private Label activeLabel;
 	private FormPanel deployerForm;
 	private DeckPanel mainDeckPanel;
 	private FlowPanel navigationMenuPanel;
@@ -73,13 +59,15 @@ public class applicationDeployer extends Composite {
 	@UiField Label confirmBPLabel;
 	@UiField DeployerStyle style;
 	
-	public applicationDeployer(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, ServerCommunicator jsonCom) {
+	public applicationDeployer(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, ManagementConsole managementCon) {
 		initWidget(uiBinder.createAndBindUi(this));
+		this.managementCon = managementCon;
+		createdProjectName = "";
 		this.mainDeckPanel = mainDeckPanel;
 		this.navigationMenuPanel = navigationMenuPanel;
 		this.titleBarLabel = titleBarLabel;
 		this.deployerForm = new FormPanel();
-		this.addApps = new AddAppsBuildProject(this, this.deployerForm, jsonCom);
+		this.addApps = new AddAppsBuildProject(this, this.deployerForm, managementCon.getServerCommunicator());
 		this.projectOptions = new ProjectOptionsBuildProject(deployerForm, this);
 		this.databaseOptions = new DatabaseOptionsBuildProject(deployerForm, this);
 		this.deploymentOptions = new DeploymentOptionsBuildProject(deployerForm, this);
@@ -91,6 +79,7 @@ public class applicationDeployer extends Composite {
 		setupMainDeckPanel();
 		setupNavigationMenuPanel();
 		setupTitleBarLabel();
+		setupDeployerForm();
 	}
 	
 	private void setupMainDeckPanel(){
@@ -99,6 +88,7 @@ public class applicationDeployer extends Composite {
 		mainDeckPanel.add(databaseOptions);
 		mainDeckPanel.add(deploymentOptions);
 		mainDeckPanel.add(confirmBP);
+		mainDeckPanel.add(deployerForm);
 		mainDeckPanel.showWidget(0);
 	}
 	
@@ -112,6 +102,20 @@ public class applicationDeployer extends Composite {
 	
 	private void setupTitleBarLabel(){
 		titleBarLabel.setText("Deploy New Project");
+	}
+	
+	private void setupDeployerForm(){
+		 deployerForm.setMethod(FormPanel.METHOD_POST);
+		  deployerForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+		      public void onSubmitComplete(SubmitCompleteEvent event) {
+		        // When the form submission is successfully completed, this event is
+		        // fired. Assuming the service returned a response of type text/html,
+		        // we can get the result text here (see the FormPanel documentation for
+		        // further explanation).
+		        Window.alert(event.getResults());
+		        managementCon.onDeployNewProject(createdProjectName);
+		      }
+		    });
 	}
 	
 	 void handleAddAppsLabel(){
@@ -218,12 +222,12 @@ public class applicationDeployer extends Composite {
 	  }
 	  
 	  void handleConfirmDeployProject(){
-		  
-		  deployerForm.setMethod(FormPanel.METHOD_POST);
-		  deployerForm.getElement().setAttribute("target", "_self");
+		  deployerForm.setAction(JSVarHandler.getDeployerBaseURL() + "/deployments/" + deploymentOptions.projectNameTextBox.getText() + "/"); 
+		  createdProjectName = deploymentOptions.projectNameTextBox.getText();
 		  
 		  VerticalPanel formContainerPanel = new VerticalPanel();
 		  this.deployerForm.add(formContainerPanel);
+		  
 		  ArrayList<String> paths = addApps.getAppPaths();
 		  Hidden numApps = new Hidden();
 		  numApps.setName("form-TOTAL_FORMS");
@@ -252,34 +256,11 @@ public class applicationDeployer extends Composite {
 		  
 		  //Add all database options fields to the form for submission
 		  formContainerPanel.add(databaseOptions.databaseOptionsScrollPanel);
-		  
-	/*	  //Add all deployment options fields to the form for submission
-		  formContainerPanel.add(deploymentOptions.deploymentOptionsScrollPanel);
-		  formContainerPanel.add(projectOptions.usernameTextBox);
-		  formContainerPanel.add(projectOptions.passwordTextBox);
-		  formContainerPanel.add(projectOptions.passwordConfirmTextBox);
-		  formContainerPanel.add(projectOptions.emailTextBox);
-		  formContainerPanel.add(projectOptions.adminCheckBox);
-		  
-		  //Add all Database fields to the form for submissions
-		  */
+		 
+		  //Add all Database fields to the form for submissionsd
 		  formContainerPanel.add(deploymentOptions.activeCheckBox);
-		  deployerForm.setAction(JSVarHandler.getDeployerBaseURL() + deploymentOptions.projectNameTextBox.getText() + "/");
-		  //Hidden csrf = new Hidden();
-		  //csrf.setName("csrfmiddlewaretoken");
-		  //csrf.setValue("2bb5a34987ea2ea2d597fe1cbf2b0aca");
-		  //formContainerPanel.add(csrf);
+		  formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 		  
-		  deployerForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        // When the form submission is successfully completed, this event is
-		        // fired. Assuming the service returned a response of type text/html,
-		        // we can get the result text here (see the FormPanel documentation for
-		        // further explanation).
-		        Window.alert(event.getResults());
-		      }
-		    });
-
 		  deployerForm.submit();
 	  }
 
