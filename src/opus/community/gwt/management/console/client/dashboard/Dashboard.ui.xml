@@ -4,14 +4,14 @@
 	<ui:style src="../resources/ProjectDashboard.css"/>
 	<g:HTMLPanel styleName="{style.innerSubMainPanel}">
 		<g:DockLayoutPanel unit='PCT' styleName="{style.topSubMainPanel}" >
-			<g:north size='5'>
+			<g:north size='6.5'>
 				<g:FlowPanel>
 					<g:Label styleName="{style.pageTitle}">
 						Dashboard
 					</g:Label>
 				</g:FlowPanel>
 			</g:north>
-			<g:north size='93.5'>
+			<g:south size='93'>
 				<g:DockLayoutPanel unit='EM' styleName="{style.contentPanel}">
 					<g:north size='8'>
 						<g:FlowPanel>
@@ -48,7 +48,7 @@
 						</g:FlowPanel>
 					</g:north>
 				</g:DockLayoutPanel>
-			</g:north>
+			</g:south>
 		</g:DockLayoutPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
