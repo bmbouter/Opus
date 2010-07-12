@@ -1,13 +1,30 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
-		.important {
-			font-weight: bold;
-		}
-	</ui:style>
+	<ui:style src="resources/ManagementConsole.css" />
 	<g:HTMLPanel>
-		Hello,
-		<g:Button styleName="{style.important}" ui:field="button" />
+	<g:DockLayoutPanel ui:field='loginPanel' unit='EM' styleName="{style.loginPanel}">
+		<g:north size='2'>
+				<g:Label styleName="{style.loginElement}">Login</g:Label>
+		</g:north>
+		<g:north size='2'>
+			<g:FlowPanel>
+				<g:Label styleName="{style.loginElement}">Username:</g:Label>
+				<g:TextBox ui:field="usernameTextBox" name='username' styleName="{style.loginElement}"></g:TextBox>
+			</g:FlowPanel>
+		</g:north>
+		<g:north size='2'>
+			<g:FlowPanel>
+				<g:Label styleName="{style.loginElement}">Password:</g:Label>
+				<g:PasswordTextBox ui:field="passwordTextBox" name='password' styleName="{style.loginElement}"></g:PasswordTextBox>
+			</g:FlowPanel>
+		</g:north>
+		<g:north size='2'>
+			<g:Button ui:field="loginButton">Login</g:Button>
+		</g:north>
+		<g:north size='2'>
+			<g:Hidden ui:field="csrftoken"></g:Hidden>
+		</g:north>
+	</g:DockLayoutPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

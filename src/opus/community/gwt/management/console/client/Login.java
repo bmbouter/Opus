@@ -5,10 +5,18 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 public class Login extends Composite {
 
@@ -17,17 +25,48 @@ public class Login extends Composite {
 	interface LoginUiBinder extends UiBinder<Widget, Login> {
 	}
 
-	@UiField
-	Button button;
+	private FormPanel loginForm; 
+	private DeckPanel mainDeckPanel;
+	private JSVariableHandler JSVarHandler;
+	private ManagementConsole managementCon;
+	
+	@UiField Hidden csrftoken;
+	@UiField Button loginButton;
+	@UiField TextBox usernameTextBox;
+	@UiField PasswordTextBox passwordTextBox;
+	@UiField DockLayoutPanel loginPanel;
 
-	public Login(String firstName) {
+	public Login(DeckPanel mainDeckPanel, ManagementConsole managementCon) {
 		initWidget(uiBinder.createAndBindUi(this));
-		button.setText(firstName);
+		this.managementCon = managementCon;
+		loginForm = new FormPanel();
+		this.mainDeckPanel = mainDeckPanel;
+		JSVarHandler = new JSVariableHandler();
+		setupLoginForm();
 	}
 
-	@UiHandler("button")
+	private void setupLoginForm(){
+		loginForm.setMethod(FormPanel.METHOD_POST);
+		loginForm.setVisible(false);
+		loginForm.setAction(JSVarHandler.getDeployerBaseURL()+ "accounts/login");
+		loginForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+		      public void onSubmitComplete(SubmitCompleteEvent event) {
+		        managementCon.loginComplete();
+		      }
+		 });
+	}
+	
+	@UiHandler("loginButton")
 	void onClick(ClickEvent e) {
-		Window.alert("Hello!");
+		FlowPanel formHandler = new FlowPanel();
+		loginForm.add(formHandler);
+		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
+        csrftoken.setName("csrfmiddlewaretoken");
+        formHandler.add(csrftoken);
+        formHandler.add(usernameTextBox);
+        formHandler.add(passwordTextBox);
+        mainDeckPanel.add(loginForm);
+		loginForm.submit();
 	}
 
 }

@@ -39,6 +39,7 @@ public class ManagementConsole extends Composite {
 
 	private applicationDeployer appDeployer;
 	private ProjectDashboard projectDashboard;
+	private Login loginPanel;
 	private ServerCommunicator ServerComm;
 	private ManagementConsole managementCon;
 	private JSVariableHandler JSVarHandler;
@@ -57,17 +58,22 @@ public class ManagementConsole extends Composite {
 	
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
+		loginPanel = new Login(mainDeckPanel, this);
 		JSVarHandler = new JSVariableHandler();
-		managementCon = this;
-		ServerComm = new ServerCommunicator();
-		checkLogin();
 		pp = new PopupPanel();
-		createDashboardsPopup();
+		ServerComm = new ServerCommunicator();
+		managementCon = this;
+		checkLogin();
+		//createDashboardsPopup();
 	}
 	
 	public void checkLogin(){
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + "/json/username/?a&callback=");
 		ServerComm.getJson(url, ServerComm, 6, (Object)this);
+	}
+	
+	public void loginComplete(){
+		checkLogin();
 	}
 	
 	private void createDashboardsPopup(){
@@ -162,24 +168,26 @@ public class ManagementConsole extends Composite {
 		if(userInfo.isAuthenticated()){
 			loggedInUserButton.setText("Logged in as: " + userInfo.getUsername());
 			loggedInUserButton.setVisible(true);
+			deployNewButton.setVisible(true);
+			dashboardsButton.setVisible(true);
+			authenticationButton.setVisible(true);
+			createDashboardsPopup();
 		} else {
 			showLoginPanel();
 		}
 	}
 	
 	private void showLoginPanel(){
-		authenticationButton.setText("Login");
-		FlowPanel formHolder = new FlowPanel();
-		TextBox usernameTextBox = new TextBox();
-		PasswordTextBox passwordTextBox = new PasswordTextBox();
-		formHolder.add(usernameTextBox);
-		formHolder.add(passwordTextBox);
-		FormPanel loginForm = new FormPanel();
-		loginForm.add(formHolder);
-		formHolder.add(new Button("Login"));
-		mainDeckPanel.add(formHolder);
+		mainDeckPanel.clear();
+		titleBarLabel.setText("");
+		navigationMenuPanel.clear();
+		loginPanel = new Login(mainDeckPanel, this);
+		mainDeckPanel.add(loginPanel);
 		mainDeckPanel.showWidget(0);
 		loggedInUserButton.setVisible(false);
+		authenticationButton.setVisible(false);
+		dashboardsButton.setVisible(false);
+		deployNewButton.setVisible(false);
 	}
 	
 	public final native JsArray<ProjectNames> asArrayOfProjectNames(JavaScriptObject jso) /*-{
