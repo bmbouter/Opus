@@ -66,10 +66,10 @@
 						<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.rightScrollPanel}">
 							<g:FlowPanel>
 							<g:HTML>
-								<p>Name - Enter valid username for Database User</p>
-								<p>Password - Creates a valid password for Database User</p>
-								<p>Host - </p>
-								<p>Port - </p>
+								<p>Name - Valid user name for database.</p>
+								<p>Password - Password for Database user name</p>
+								<p>Host - Host name for database.  'localhost' if on same server as Webserver</p>
+								<p>Port - Port number for database. </p>
 							</g:HTML>
 							</g:FlowPanel>
 						</g:ScrollPanel>

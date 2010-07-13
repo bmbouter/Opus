@@ -8,6 +8,8 @@ import opus.community.gwt.management.console.client.resources.ApplicationPopupCs
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -53,10 +55,14 @@ public class AddOtherApplication extends Composite {
 	    otherApplicationPopup.hide();
 	    otherApplicationPopup.setGlassEnabled(true);
 	    otherApplicationPopup.setGlassStyleName(style.applicationPopupGlass());
-	    
+	    otherApplicationPopup.addCloseHandler(new CloseHandler<PopupPanel>(){
+	    	@Override
+	    	public void onClose(CloseEvent<PopupPanel> event) {
+	    		applicationNameTextBox.setText("");
+	    		applicationURLTextBox.setText("");
+	    	}
+	    });
 	    this.appBuilder = appBuilder;
-		
-		//	button.setText(firstName);
 	}
 	
 	public void show() {
@@ -74,8 +80,6 @@ public class AddOtherApplication extends Composite {
 		final String appString = applicationNameTextBox.getText();
 		final String appPath = applicationURLTextBox.getText();
 		appBuilder.addApp(appString, appPath);
-		applicationNameTextBox.setText("");
-		applicationURLTextBox.setText("");
     	this.hide();
 	  
 	}

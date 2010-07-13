@@ -44,8 +44,8 @@
 						<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.rightScrollPanel}">
 							<g:FlowPanel>
 							<g:HTML>
-								<p>VHost - </p>
-								<p>VPort - </p>
+								<p>Name used for deployment will serve as subdomain.</p>
+								
 							</g:HTML>
 							</g:FlowPanel>
 						</g:ScrollPanel>

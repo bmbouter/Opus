@@ -10,12 +10,14 @@
 				<g:FlowPanel>
 					<g:Label text="Name:" styleName="{style.floatChild}"></g:Label>
 					<g:TextBox ui:field="applicationNameTextBox" styleName="{style.floatChild}"></g:TextBox>
+					<g:HTML>e.g. "Application name"</g:HTML>
 				</g:FlowPanel>
 			</g:north>
 			<g:north size="40">
 				<g:FlowPanel>
 					<g:Label text="URL:" styleName="{style.floatChild}"></g:Label>
 					<g:TextBox ui:field="applicationURLTextBox" styleName="{style.floatChild}"></g:TextBox>
+					<g:HTML>e.g. "git://github.com/bmbouter/worklog.git"</g:HTML>
 				</g:FlowPanel>
 			</g:north>
 			<g:north size="20">

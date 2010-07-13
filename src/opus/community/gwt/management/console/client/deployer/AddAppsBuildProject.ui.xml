@@ -55,21 +55,25 @@
 					</g:north>
 				</g:DockLayoutPanel>
 			</g:west>
-			<g:east size='20'>
+			<g:west size='20'>
 				<g:DockLayoutPanel styleName="{style.vertPanel}" unit='PCT'>
 					<g:north size='90'>
 						<g:ScrollPanel ui:field='infoScrollPanel' styleName="{style.rightScrollPanel}">
+						<g:HTML>
+						<p>Please use the list on the left to select which applications you wish to include in your project.</p>
+						<p>If an application you wish to include does not appear in the list, use "Add Other Application" button to add an application from a GIT repository.</p>
+						</g:HTML>
 						</g:ScrollPanel>
 					</g:north>
-					<g:south size='8'>
+					<g:north size='8'>
 						<g:DockLayoutPanel unit='PCT' styleName="{style.buttonPanel}">
 							<g:east size='45'>
 								<g:Button ui:field="nextButton" text="Next" styleName="{style.stepsButton}"/>
 							</g:east>
 						</g:DockLayoutPanel>
-					</g:south>			
+					</g:north>			
 				</g:DockLayoutPanel>
-			</g:east>
+			</g:west>
 		</g:DockLayoutPanel>
 	</g:HTMLPanel>			
 </ui:UiBinder> 
