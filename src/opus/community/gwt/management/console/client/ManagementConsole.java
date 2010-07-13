@@ -9,22 +9,23 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
@@ -61,15 +62,20 @@ public class ManagementConsole extends Composite {
 		loginPanel = new Login(mainDeckPanel, this);
 		JSVarHandler = new JSVariableHandler();
 		pp = new PopupPanel();
+		pp.setAutoHideEnabled(true);
 		ServerComm = new ServerCommunicator();
 		managementCon = this;
 		checkLogin();
-		//createDashboardsPopup();
+		pp.addCloseHandler(new CloseHandler<PopupPanel>(){
+			public void onClose(CloseEvent<PopupPanel> event){
+				dashboardsButton.setStyleName(style.topDashboardButton());
+			}
+		});
 	}
 	
-	public void checkLogin(){
+	private void checkLogin(){
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + "/json/username/?a&callback=");
-		ServerComm.getJson(url, ServerComm, 6, (Object)this);
+		ServerComm.getJson(url, ServerComm, 6, this);
 	}
 	
 	public void loginComplete(){
@@ -78,7 +84,7 @@ public class ManagementConsole extends Composite {
 	
 	private void createDashboardsPopup(){
 		final String url = URL.encode("https://opus-dev.cnl.ncsu.edu:9007/json/?a&callback=");
-		ServerComm.getJson(url, ServerComm, 4, (Object)this);	
+		ServerComm.getJson(url, ServerComm, 4, this);	
 	}
 	
 	public void onDeployNewProject(String projectName){
@@ -108,9 +114,19 @@ public class ManagementConsole extends Composite {
 	}
 	
 	@UiHandler("dashboardsButton")
-	void handleDashboardsButton(ClickEvent event){
+	void handleDashboardsButtonMouseOver(MouseOverEvent event){
+		dashboardsButton.setStyleName(style.topDashboardButtonActive());
+		int left = dashboardsButton.getAbsoluteLeft();
+		int top = dashboardsButton.getAbsoluteTop() + dashboardsButton.getOffsetHeight();
+		pp.setPopupPosition(left, top);
+		int width = dashboardsButton.getOffsetWidth();
+		pp.setWidth(Integer.toString(width) + "px");
+		pp.show();
+	}
+	
+	@UiHandler("dashboardsButton")
+	void handleDashboardsButtonClick(ClickEvent event){
 		if(pp.isShowing()){
-			dashboardsButton.setStyleName(style.topDashboardButton());
 			pp.hide();
 		} else {
 			dashboardsButton.setStyleName(style.topDashboardButtonActive());
@@ -142,11 +158,24 @@ public class ManagementConsole extends Composite {
 	}
 	
 	public void handleProjectNames(JsArray<ProjectNames> ProjectNames){
+		mainDeckPanel.clear();
+		navigationMenuPanel.clear();
+		titleBarLabel.setText("");
 		pp.clear();
 		FlowPanel FP = new FlowPanel();
 		for(int i = 0; i < ProjectNames.length(); i++){
 			final Label testLabel = new Label(ProjectNames.get(i).getName());
 			testLabel.setStyleName(style.popupLabel());
+			testLabel.addMouseOverHandler(new MouseOverHandler(){
+				public void onMouseOver(MouseOverEvent event){
+					testLabel.setStyleName(style.popupLabelActive());
+				}
+			});
+			testLabel.addMouseOutHandler(new MouseOutHandler(){
+				public void onMouseOut(MouseOutEvent event){
+					testLabel.setStyleName(style.popupLabel());
+				}
+			});
 			testLabel.addClickHandler(new ClickHandler() {
 		        public void onClick(ClickEvent event) {
 		        	mainDeckPanel.clear();

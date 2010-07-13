@@ -76,7 +76,7 @@ public class ServerCommunicator {
 	    //Window.alert(String.valueOf(queryType));
 
 		if (jso == null) {
-			Window.alert("no json returned");
+			//Window.alert("no json returned");
 			this.error = "Error occured while retrieving JSON.";
 	      return;
 	    }
@@ -116,17 +116,17 @@ public class ServerCommunicator {
 		      Request response = builder.sendRequest(postData, new RequestCallback() {
 
 		        public void onError(Request request, Throwable exception) {
-		          Window.alert("Post Exception: " + exception.getLocalizedMessage());
+		          //Window.alert("Post Exception: " + exception.getLocalizedMessage());
 		        }
 
 		        public void onResponseReceived(Request request, Response response) {
-		        	Window.alert("Post response = " + response.toString());
-		        	Window.alert("Post response status =" + response.getStatusCode());
+		        	//Window.alert("Post response = " + response.toString());
+		        	//Window.alert("Post response status =" + response.getStatusCode());
 		        }
 		      });
 		      
 		    } catch (RequestException e) {
-		      Window.alert("Failed to send the request: " + e.getMessage());
+		      //Window.alert("Failed to send the request: " + e.getMessage());
 		    }   
 	  }
 	  

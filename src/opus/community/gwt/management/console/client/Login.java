@@ -2,6 +2,8 @@ package opus.community.gwt.management.console.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -9,7 +11,6 @@ import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
@@ -34,14 +35,14 @@ public class Login extends Composite {
 	@UiField Button loginButton;
 	@UiField TextBox usernameTextBox;
 	@UiField PasswordTextBox passwordTextBox;
-	@UiField DockLayoutPanel loginPanel;
+
 
 	public Login(DeckPanel mainDeckPanel, ManagementConsole managementCon) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.managementCon = managementCon;
-		loginForm = new FormPanel();
 		this.mainDeckPanel = mainDeckPanel;
 		JSVarHandler = new JSVariableHandler();
+		loginForm = new FormPanel();
 		setupLoginForm();
 	}
 
@@ -57,7 +58,32 @@ public class Login extends Composite {
 	}
 	
 	@UiHandler("loginButton")
-	void onClick(ClickEvent e) {
+	void onLoginClick(ClickEvent event) {
+		handleLoginButton();
+	}
+
+	@UiHandler("loginButton")
+	void onKeyPressLogin(KeyPressEvent event){
+		if(event.getCharCode() == KeyCodes.KEY_ENTER){
+			loginButton.click();
+		}
+	}
+	
+	@UiHandler("usernameTextBox")
+	void onKeyPressUsername(KeyPressEvent event){
+		if(event.getCharCode() == KeyCodes.KEY_ENTER){
+			loginButton.click();
+		}
+	}
+	
+	@UiHandler("passwordTextBox")
+	void onKeyPressPassword(KeyPressEvent event){
+		if(event.getCharCode() == KeyCodes.KEY_ENTER){
+			loginButton.click();
+		}
+	}
+
+	private void handleLoginButton(){
 		FlowPanel formHandler = new FlowPanel();
 		loginForm.add(formHandler);
 		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
@@ -68,5 +94,5 @@ public class Login extends Composite {
         mainDeckPanel.add(loginForm);
 		loginForm.submit();
 	}
-
+	
 }

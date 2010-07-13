@@ -7,6 +7,7 @@ public class ManagementConsoleCss extends Widget {
 	  public interface ManagementConsoleStyle extends CssResource {
 	    String dashboardsPopup();
 	    String popupLabel();
+	    String popupLabelActive();
 	    String topDashboardButtonActive();
 	    String topDashboardButton();
 	  }

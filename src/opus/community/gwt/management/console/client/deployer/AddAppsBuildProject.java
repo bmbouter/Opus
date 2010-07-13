@@ -90,7 +90,7 @@ public class AddAppsBuildProject extends Composite {
 	    url = URL.encode(url) + "&callback=";
 
 	    // Send request to server by replacing RequestBuilder code with a call to a JSNI method.
-	    jsonCom.getJson(url, jsonCom,1,(Object)this);
+	    jsonCom.getJson(url, jsonCom,1,this);
 	  }
 	  
 	  /**
@@ -99,7 +99,7 @@ public class AddAppsBuildProject extends Composite {
 	   */
 	  private void populateFieldList(String url) {
 		  url = URL.encode(url) + "&callback=";
-		  jsonCom.getJson(url, jsonCom, 2, (Object)this);
+		  jsonCom.getJson(url, jsonCom, 2, this);
 	  }
 	  
 	  
@@ -179,7 +179,7 @@ public class AddAppsBuildProject extends Composite {
 		    	  //Window.alert(String.valueOf(row));
 		    	  appInfoDialog.versionsFlexTable.setHTML(row, 0, "<div><b>" + name + "</b> -" + description + "</div>");
 		    	  //appInfoDialog.versionsFlexTable.setText(row, 0, "hello");
-		    	  jsonCom.getJson(url,handler,3,(Object)p);
+		    	  jsonCom.getJson(url,handler,3,p);
 		    	  
 		    	  
 	//	    	  appInfoDialog.versionsFlexTable.setWidget(row, 0, new HTMLPanel("<div><b>" + name + "</b> -" + description + "</div>"));

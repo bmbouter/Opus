@@ -42,10 +42,10 @@ public class DatabaseOptionsBuildProject extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.deployerForm = deployerForm;
 		this.appDeployer = appDeployer;
-		this.dbengineListBox.addItem("Sqlite3");
-		this.dbengineListBox.addItem("Postgresql");
-		this.dbengineListBox.addItem("Mysql");
-		this.dbengineListBox.addItem("Oracle");
+		this.dbengineListBox.addItem("Sqlite3", "sqlite3");
+		this.dbengineListBox.addItem("Postgresql", "postgresql_psycopg2");
+		this.dbengineListBox.addItem("Mysql", "mysql");
+		this.dbengineListBox.addItem("Oracle", "oracle");
 		setDBOptionParams();
 	}
 	
