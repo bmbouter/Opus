@@ -330,6 +330,7 @@ def create(request, projectname):
                 project=deployment), request)
 
         else:
+            log.debug(request.POST)
             log.debug("Create view called, but forms didn't validate")
         
     else:
@@ -472,5 +473,8 @@ def gwt(request):
 
     """
     return render("OPUSManagementConsoleGWT.html",
-            dict(mediaprefix = settings.OPUS_GWT_MEDIA),
+            dict(mediaprefix = settings.OPUS_GWT_MEDIA,
+                baseurl = settings.OPUS_APACHE_SERVERNAME_SUFFIX,
+                repourl = opus.COMMUNITY_URL
+                ),
             request)

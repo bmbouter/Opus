@@ -126,7 +126,7 @@ need to either modify the Makefile or compile it yourself.
 Once the binary is compiled and working, take note of where it's installed to.
 It doesn't need to be installed to a system-wide location, but it does need to
 be where the opus user can execute it. You will enter in the path to the
-executable below in the settings.py OPUS_SECUREOPS_COMMAND option.
+executable in the next step in the settings.py OPUS_SECUREOPS_COMMAND option.
 
 Settings
 --------
@@ -240,7 +240,7 @@ anything about a project except its name.
 
 App Formats
 ```````````
-New projects currently have two mechanisms for importing applications. Opus can
+Projects currently have two mechanisms for importing applications. Opus can
 either copy an application from a location on the local filesystem, or use Git
 to clone a remote repository. In both cases, the directory or Git repository
 must have a layout just like created by `django-admin.py startapp`. That is,
