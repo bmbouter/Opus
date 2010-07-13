@@ -203,7 +203,7 @@ public class AddAppsBuildProject extends Composite {
 	  }
 	  
 	  public void handleVersions(JsArray<VersionData> versions){
-		  
+		  final AddAppsBuildProject appBuilder = this;
 		  for (int i = 0; i < versions.length(); i++){
 			  final String appString = selectedApp + versions.get(i).getVersion();
 			  final String appPath = versions.get(i).getPath();
@@ -221,28 +221,8 @@ public class AddAppsBuildProject extends Composite {
 			  addButton.setText("Add");
 			  addButton.addClickHandler(new ClickHandler() {
 		      public void onClick(ClickEvent event) {
-		    	  if (!apps.contains(appString)){
-		    		  apps.add(appString);
-		    		  paths.add(appPath);
-		    		  final int row = deployListFlexTable.getRowCount();
-			    	  deployListFlexTable.setHTML(row, 0, "<div><b>" + selectedApp+ "</b></div>");
-			    	  Button removeButton = new Button();
-			    	  removeButton.setText("Remove");
-			    	  removeButton.addClickHandler(new ClickHandler() {
-			    		 public void onClick(ClickEvent event) {
-			    			 if (apps.contains(appString)){
-			    				 int removedIndex = apps.indexOf(appString);
-			    				 apps.remove(appString);
-			    				 paths.remove(appPath);
-			    				 deployListFlexTable.removeRow(removedIndex);
-			    			 }
-			    		 }
-			    	  });
-			    	  deployListFlexTable.setWidget(row, 1, removeButton);
-			    	  selectedApp = "";
-			    	  appInfoDialog.hide();
-		    	  }
-		        }
+		    	  appBuilder.addApp(appString, appPath);
+		      	}
 		      });
 			  appInfoDialog.versionsFlexTable.setWidget(row, 1, addButton);
 		  }
@@ -251,6 +231,32 @@ public class AddAppsBuildProject extends Composite {
 	  
 	  public ArrayList<String> getAppPaths(){
 		  return paths;
+	  }
+	  
+	  public void addApp(String name, String path){
+		  final String nameString = name;
+		  final String pathString = path;
+    	  if (!apps.contains(nameString)){
+    		  apps.add(nameString);
+    		  paths.add(pathString);
+    		  final int row = deployListFlexTable.getRowCount();
+	    	  deployListFlexTable.setHTML(row, 0, "<div><b>" + nameString+ "</b></div>");
+	    	  Button removeButton = new Button();
+	    	  removeButton.setText("Remove");
+	    	  removeButton.addClickHandler(new ClickHandler() {
+	    		 public void onClick(ClickEvent event) {
+	    			 if (apps.contains(nameString)){
+	    				 int removedIndex = apps.indexOf(nameString);
+	    				 apps.remove(nameString);
+	    				 paths.remove(pathString);
+	    				 deployListFlexTable.removeRow(removedIndex);
+	    			 }
+	    		 }
+	    	  });
+	    	  deployListFlexTable.setWidget(row, 1, removeButton);
+	    	  selectedApp = "";
+	    	  appInfoDialog.hide();
+    	  }
 	  }
 	  
 	  public ArrayList<String> getApps(){
