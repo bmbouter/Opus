@@ -4,16 +4,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
@@ -38,7 +35,7 @@ public class Login extends Composite {
 	@UiField Button loginButton;
 	@UiField TextBox usernameTextBox;
 	@UiField PasswordTextBox passwordTextBox;
-	@UiField DockLayoutPanel loginPanel;
+
 
 	public Login(DeckPanel mainDeckPanel, ManagementConsole managementCon) {
 		initWidget(uiBinder.createAndBindUi(this));

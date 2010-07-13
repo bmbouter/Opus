@@ -1,43 +1,40 @@
 .innerSubMainPanel {
 	border: 4px solid orange;
-	height: 90%; 
-	width: 95%;
+	height: 100%; 
+	width: 100%;
 	background: white;
 	border-radius: 10px;
 	-webkt-border-radius: 10px;
 	-moz-border-radius: 10px;
-	padding: 0% 1% 1% 1%;
+	padding: 0% 0.5% 0.5% 0.5%;
 }
 .topSubMainPanel {
 	background: white;
 	height: 100%;
 	width: 100%;
 	border-radius: 10px;
-	min-height: 99%;
 }
-.topPagePanel {
-	width: 100%;
-	height: 100%;
-	min-height: 99%;
-	margin: 0.1% 0.1% 0% 0.1%;
+.pagePanel{
+	/*border-bottom: 2px solid black;*/
+	padding: 0.45% 0.5% 0.25% 0.5%;
+	/*min-height: 100%;*/	
 }
 .pageSteps{
 	color: gray;
 	text-shadow: 1px 1px 0em #000000;
 	font-family: "Droid Serif";
-	font-size: 1.7em;
-	padding: 0.2em 0 0 0.1em;	
+	font-size: 1.7em;	
 	float: left;
-	min-height: 99%;
+	/*min-height: 1.8em;*/
 }
 .pageTitle {
 	color: #E87B33;
 	text-shadow: 1px 1px 0em #000000;
 	font-family: "Droid Serif";
 	font-size: 1.7em;
-	padding: 0.2em 0 0 0.3em;
 	float: left;
-	min-height: 99%;	
+	/*min-height: 1.8em;*/
+	margin-left: 0.5%;	
 }
 .filterPanel {
 	/*border: 2px inset black;*/
@@ -104,9 +101,6 @@
 	width: 15px;
 }
 .leftScrollPanel {
-	border: 2px solid #4D4D4D;
-	padding: 6px 2px 2px 2px;
-	border-radius: 5px;
 	height: 98%;
 	width: 98%;
 	background: white;
@@ -116,15 +110,15 @@
 	margin-bottom: 0;
 	margin-right: 0;
 	margin-top: 0;
-	height: 100%;
+	height: 95%;
 	widht: 100%;
-	/*border: 2px solid #4D4D4D;*/
+	border: 2px solid #4D4D4D;
 }
 .rightScrollPanel {
-	border: 2px solid #4D4D4D;
+	/*border: 2px solid #4D4D4D;*/
 	border-radius: 5px; 
 	background: white;
-	height: 98%;
+	height: 80%;
 	widht: 80%;
 	margin-right: 10% 
 }

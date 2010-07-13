@@ -4,7 +4,6 @@ import opus.community.gwt.management.console.client.dashboard.ProjectDashboard;
 import opus.community.gwt.management.console.client.deployer.applicationDeployer;
 import opus.community.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
 
-import com.gargoylesoftware.htmlunit.javascript.host.Event;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -13,6 +12,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.http.client.URL;
@@ -22,7 +22,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -72,7 +71,6 @@ public class ManagementConsole extends Composite {
 				dashboardsButton.setStyleName(style.topDashboardButton());
 			}
 		});
-		//createDashboardsPopup();
 	}
 	
 	private void checkLogin(){
@@ -168,6 +166,16 @@ public class ManagementConsole extends Composite {
 		for(int i = 0; i < ProjectNames.length(); i++){
 			final Label testLabel = new Label(ProjectNames.get(i).getName());
 			testLabel.setStyleName(style.popupLabel());
+			testLabel.addMouseOverHandler(new MouseOverHandler(){
+				public void onMouseOver(MouseOverEvent event){
+					testLabel.setStyleName(style.popupLabelActive());
+				}
+			});
+			testLabel.addMouseOutHandler(new MouseOutHandler(){
+				public void onMouseOut(MouseOutEvent event){
+					testLabel.setStyleName(style.popupLabel());
+				}
+			});
 			testLabel.addClickHandler(new ClickHandler() {
 		        public void onClick(ClickEvent event) {
 		        	mainDeckPanel.clear();

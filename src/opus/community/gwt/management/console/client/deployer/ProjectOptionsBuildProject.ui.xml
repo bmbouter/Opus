@@ -4,8 +4,8 @@
 	<ui:style src="../resources/ProjectBuilder.css"/>
 	<g:HTMLPanel styleName="{style.innerSubMainPanel}">
 		<g:DockLayoutPanel unit='PCT' styleName="{style.topSubMainPanel}">
-			<g:north size='6'>
-				<g:FlowPanel>
+			<g:north size='5.25'>
+				<g:FlowPanel styleName="{style.pagePanel}">
 					<g:Label  styleName="{style.pageSteps}">
 						Step 2 of 5:
 					</g:Label>

@@ -8,7 +8,7 @@
     left: 0;
     margin: 0;
     min-width: 800px;
-    min-height: 600px;
+    min-height: 700px;
     font-size: 1em;
 }
 .subMainPanel {
@@ -56,8 +56,8 @@
 	padding: 10% 0 0 12%;
 }
 .mainDeckPanel{
-	width: 97.5%;
-	height: 97%;
+	width: 98.5%;
+	height: 97.5%;
 	padding: 0 0 15% 0;
 }
 .topMenuPanel{
@@ -145,14 +145,36 @@
 	cursor: pointer;
 	cursor: hand;
 }
+.popupLabelActive{
+	color: white;	
+	text-align: center;
+	border-bottom: 1px solid gray;
+	width: 90%;
+	margin-right: 5%;
+	margin-left: 5%;
+	cursor: pointer;
+	cursor: hand;
+	background: orange;	
+}
 .loginPanel{
-	border: 2px solid white;
 	color: black;
-	padding: 2% 2% 2% 2%;
-	height: 25%;
-	width: 25%;
+	margin: 15% 0% 0% 30%;
 }
 .loginElement{
 	float: left;
 	color: orange;
+	font-size: 1.25em;
+}
+.loginTextBox{
+	float: left;
+	color: black;
+}
+.loginButton{
+	width: 8%;
+	margin: 0 0 0 5.25%;
+	border-radius: 5px;
+	border: #F08000;
+	box-shadow:2px 2px 10px #B86200;
+	background:	literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F08000), to(#F08000), color-stop(.5,#B86200))');
+    background:	literal('-moz-linear-gradient(0% 0% 90deg, #F08000, #F08000, #B86200 50%)'); 
 }
