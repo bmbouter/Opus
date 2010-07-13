@@ -56,7 +56,6 @@ public class DeleteProject extends Composite {
 		 });
 		deleteForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        Window.alert(event.getResults());
 		        managementCon.onProjectDelete();
 		      }
 		 });

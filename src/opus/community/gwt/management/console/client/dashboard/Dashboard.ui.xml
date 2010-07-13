@@ -13,7 +13,7 @@
 			</g:north>
 			<g:south size='93'>
 				<g:DockLayoutPanel unit='EM' styleName="{style.contentPanel}">
-					<g:north size='8'>
+					<g:north size='4'>
 						<g:FlowPanel>
 							<g:Label styleName="{style.currentAppsLabel}">
 								Current Applications:
@@ -22,25 +22,25 @@
 							</g:FlowPanel>
 						</g:FlowPanel>
 					</g:north>
-					<g:north size='3'>
+					<g:north size='2'>
 						<g:FlowPanel>
 							<g:Label styleName='{style.projInfoItem}'>DBName:</g:Label>
 							<g:Label ui:field='dbnameLabel' styleName='{style.projInfoItem}'/>
 						</g:FlowPanel>
 					</g:north>
-					<g:north size='3'>
+					<g:north size='2'>
 						<g:FlowPanel>
 							<g:Label styleName='{style.projInfoItem}'>DBEngine:</g:Label>
 							<g:Label ui:field='dbengineLabel' styleName='{style.projInfoItem}'/>
 						</g:FlowPanel>
 					</g:north>
-					<g:north size='3'>
+					<g:north size='2'>
 						<g:FlowPanel>
 							<g:Label styleName='{style.projInfoItem}'>Active:</g:Label>
 							<g:Label ui:field='activeLabel' styleName='{style.projInfoItem}'/>
 						</g:FlowPanel>
 					</g:north>
-					<g:north size='8'>
+					<g:north size='4'>
 						<g:FlowPanel>
 							<g:Label styleName='{style.projInfoItem}'>Deployed At:</g:Label>
 							<g:FlowPanel ui:field='urlsFlowPanel' styleName="{style.currentAppsLabel}">

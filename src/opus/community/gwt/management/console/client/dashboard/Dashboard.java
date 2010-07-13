@@ -5,15 +5,12 @@ import opus.community.gwt.management.console.client.ServerCommunicator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -43,7 +40,7 @@ public class Dashboard extends Composite {
 	
 	private void getProjectInfo(String projectName){
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + "json/" + projectName + "/?a&callback=");
-		serverComm.getJson(url, serverComm, 5, (Object)this);
+		serverComm.getJson(url, serverComm, 5, this);
 	}
 	
 	public void handleProjectInformation(ProjectInformation projInfo){

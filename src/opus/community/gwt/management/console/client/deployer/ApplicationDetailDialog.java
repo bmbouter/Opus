@@ -1,6 +1,5 @@
 package opus.community.gwt.management.console.client.deployer;
 
-import opus.community.gwt.management.console.client.resources.ApplicationPopupCss;
 import opus.community.gwt.management.console.client.resources.ApplicationPopupCss.ApplicationPopupStyle;
 
 import com.google.gwt.core.client.GWT;
