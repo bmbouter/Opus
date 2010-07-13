@@ -70,33 +70,14 @@ public class AddOtherApplication extends Composite {
 
 	@UiHandler("addApplicationButton")
 	void onClick(ClickEvent e) {
+		
 		final String appString = applicationNameTextBox.getText();
 		final String appPath = applicationURLTextBox.getText();
-		final FlexTable deployListFlexTable = appBuilder.getDeployListFlexTable();
-		final ArrayList <String> apps = appBuilder.getApps();
-		final ArrayList <String> paths = appBuilder.getAppPaths();
-  	  if (!apps.contains(appString)){
-		  apps.add(appString);
-		  paths.add(appPath);
-		  final int row = deployListFlexTable.getRowCount();
-    	  deployListFlexTable.setHTML(row, 0, "<div><b>" + appString+ "</b></div>");
-    	  Button removeButton = new Button();
-    	  removeButton.setText("Remove");
-    	  removeButton.addClickHandler(new ClickHandler() {
-    		 public void onClick(ClickEvent event) {
-    			 if (apps.contains(appString)){
-    				 int removedIndex = apps.indexOf(appString);
-    				 apps.remove(appString);
-    				 paths.remove(appPath);
-    				 deployListFlexTable.removeRow(removedIndex);
-    			 }
-    		 }
-    	  });
-    	  deployListFlexTable.setWidget(row, 1, removeButton);
-    	  applicationNameTextBox.setText("");
-    	  applicationURLTextBox.setText("");
-    	  this.hide();
-	  }
+		appBuilder.addApp(appString, appPath);
+		applicationNameTextBox.setText("");
+		applicationURLTextBox.setText("");
+    	this.hide();
+	  
 	}
 
 }
