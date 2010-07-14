@@ -49,7 +49,7 @@ public class Login extends Composite {
 	private void setupLoginForm(){
 		loginForm.setMethod(FormPanel.METHOD_POST);
 		loginForm.setVisible(false);
-		loginForm.setAction(JSVarHandler.getDeployerBaseURL()+ "accounts/login");
+		loginForm.setAction(JSVarHandler.getDeployerBaseURL()+ "/accounts/login");
 		loginForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
 		        managementCon.loginComplete();

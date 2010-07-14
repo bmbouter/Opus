@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -34,7 +35,7 @@ public class ProjectOptionsBuildProject extends Composite {
 	@UiField CheckBox adminCheckBox;
 	@UiField Button nextButton;
 	@UiField Button previousButton;
-	@UiField ScrollPanel projectOptionsScrollPanel;
+	@UiField DockLayoutPanel projectOptionsPanel;
 	
 	public ProjectOptionsBuildProject(FormPanel deployerForm, applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));

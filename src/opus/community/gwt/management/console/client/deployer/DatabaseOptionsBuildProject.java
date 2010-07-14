@@ -36,7 +36,7 @@ public class DatabaseOptionsBuildProject extends Composite {
 	@UiField ListBox dbengineListBox;
 	@UiField Button nextButton;
 	@UiField Button previousButton;	
-	@UiField ScrollPanel databaseOptionsScrollPanel;
+	@UiField DockLayoutPanel databaseOptionsPanel;
 	
 	public DatabaseOptionsBuildProject(FormPanel deployerForm, applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));

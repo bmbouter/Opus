@@ -52,6 +52,7 @@ public class AddAppsBuildProject extends Composite {
 	}
 
 	private applicationDeployer appDeployer;
+	private JSVariableHandler JSVarHandler;
 	
 	@UiField Button searchButton;
 	@UiField TextBox searchBox;

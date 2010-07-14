@@ -40,6 +40,7 @@ public class DeploymentOptionsBuildProject extends Composite {
 		this.appDeployer = appDeployer;
 		baseUrlLabel.setText(appDeployer.getBaseURL());
 		activeCheckBox.setValue(true);
+		projectNameTextBox.setFocus(true);
 	}
 	
 	private boolean validateFields(){

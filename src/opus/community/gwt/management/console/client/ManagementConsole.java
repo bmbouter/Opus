@@ -83,7 +83,7 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void createDashboardsPopup(){
-		final String url = URL.encode("https://opus-dev.cnl.ncsu.edu:9007/json/?a&callback=");
+		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + "/json/?a&callback=");
 		ServerComm.getJson(url, ServerComm, 4, this);	
 	}
 	
@@ -158,9 +158,6 @@ public class ManagementConsole extends Composite {
 	}
 	
 	public void handleProjectNames(JsArray<ProjectNames> ProjectNames){
-		mainDeckPanel.clear();
-		navigationMenuPanel.clear();
-		titleBarLabel.setText("");
 		pp.clear();
 		FlowPanel FP = new FlowPanel();
 		for(int i = 0; i < ProjectNames.length(); i++){
@@ -200,6 +197,9 @@ public class ManagementConsole extends Composite {
 			deployNewButton.setVisible(true);
 			dashboardsButton.setVisible(true);
 			authenticationButton.setVisible(true);
+			mainDeckPanel.clear();
+			navigationMenuPanel.clear();
+			titleBarLabel.setText("");
 			createDashboardsPopup();
 		} else {
 			showLoginPanel();

@@ -14,77 +14,80 @@
 					</g:Label>
 				</g:FlowPanel>
 			</g:north>
-			<g:west size='75'>
-				<g:ScrollPanel ui:field="databaseOptionsScrollPanel" styleName="{style.leftScrollPanel}">
-					<g:DockLayoutPanel unit='EM' styleName="{style.form}">
-						<g:north size ='2'>
-							<g:HTML>
-								<u>Database Options</u>
-							</g:HTML>
-						</g:north>
-						<g:north size='2'>
-							<g:FlowPanel>
-								<g:Label styleName='{style.configParameter}'>DB Engine</g:Label>
-								<g:ListBox name="dbengine" ui:field='dbengineListBox' styleName='{style.configParameter}'>
-								</g:ListBox>
-							</g:FlowPanel>
-						</g:north>
-						<g:north size ='10'>
-							<g:DockLayoutPanel ui:field='dboptionsPanel' unit='EM'>
-								<g:north size='2'>
+			<g:north size='94.75'>
+				<g:DockLayoutPanel unit='PCT' styleName="{style.addAppsMainPanel}"> 
+					<g:west size='70'>
+						<g:DockLayoutPanel unit='EM' ui:field='databaseOptionsPanel' styleName="{style.form}">
+							<g:north size ='2'>
+								<g:HTML>
+									<u>Database Options</u>
+								</g:HTML>
+							</g:north>
+							<g:north size='2'>
+								<g:FlowPanel>
+									<g:Label styleName='{style.configParameter}'>DB Engine</g:Label>
+									<g:ListBox name="dbengine" ui:field='dbengineListBox' styleName='{style.configParameter}'>
+									</g:ListBox>
+								</g:FlowPanel>
+							</g:north>
+							<g:north size ='10'>
+								<g:DockLayoutPanel ui:field='dboptionsPanel' unit='EM'>
+									<g:north size='2'>
+										<g:FlowPanel>
+											<g:Label styleName='{style.configParameter}'>Name</g:Label>
+											<g:TextBox name="dbname" ui:field='nameTextBox' styleName='{style.configParameter}'/>
+										</g:FlowPanel>
+									</g:north>
+									<g:north size='2'>
+										<g:FlowPanel>
+											<g:Label styleName='{style.configParameter}'>Password</g:Label>
+											<g:PasswordTextBox name="dbpassword" ui:field='passwordTextBox' styleName='{style.configParameter}'/>
+										</g:FlowPanel>
+									</g:north>
+									<g:north size='2'>
+										<g:FlowPanel>
+											<g:Label styleName='{style.configParameter}'>Host</g:Label>
+											<g:TextBox name="dbhost" ui:field='hostTextBox' styleName='{style.configParameter}'/>
+										</g:FlowPanel>
+									</g:north>
+									<g:north size='2'>
+										<g:FlowPanel>
+											<g:Label styleName='{style.configParameter}'>Port</g:Label>
+											<g:TextBox name="dbport" ui:field='portTextBox' styleName='{style.configParameter}'/>
+										</g:FlowPanel>
+									</g:north>
+								</g:DockLayoutPanel>
+							</g:north>
+						</g:DockLayoutPanel>	
+					</g:west>
+					<g:east size='30'>
+						<g:DockLayoutPanel styleName="{style.infoPanel}" unit='PCT'>
+							<g:north size='90'>
+								<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.infoScrollPanel}">
 									<g:FlowPanel>
-										<g:Label styleName='{style.configParameter}'>Name</g:Label>
-										<g:TextBox name="dbname" ui:field='nameTextBox' styleName='{style.configParameter}'/>
+									<g:HTML>
+										<p>Name - Valid user name for database.</p>
+										<p>Password - Password for Database user name</p>
+										<p>Host - Host name for database.  'localhost' if on same server as Webserver</p>
+										<p>Port - Port number for database. </p>
+									</g:HTML>
 									</g:FlowPanel>
-								</g:north>
-								<g:north size='2'>
-									<g:FlowPanel>
-										<g:Label styleName='{style.configParameter}'>Password</g:Label>
-										<g:PasswordTextBox name="dbpassword" ui:field='passwordTextBox' styleName='{style.configParameter}'/>
-									</g:FlowPanel>
-								</g:north>
-								<g:north size='2'>
-									<g:FlowPanel>
-										<g:Label styleName='{style.configParameter}'>Host</g:Label>
-										<g:TextBox name="dbhost" ui:field='hostTextBox' styleName='{style.configParameter}'/>
-									</g:FlowPanel>
-								</g:north>
-								<g:north size='2'>
-									<g:FlowPanel>
-										<g:Label styleName='{style.configParameter}'>Port</g:Label>
-										<g:TextBox name="dbport" ui:field='portTextBox' styleName='{style.configParameter}'/>
-									</g:FlowPanel>
-								</g:north>
-							</g:DockLayoutPanel>
-						</g:north>
-					</g:DockLayoutPanel>	
-				</g:ScrollPanel>
-			</g:west>
-			<g:east size='20'>
-				<g:DockLayoutPanel styleName="{style.vertPanel}" unit='PCT'>
-					<g:north size='90'>
-						<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.rightScrollPanel}">
-							<g:FlowPanel>
-							<g:HTML>
-								<p>Name - Valid user name for database.</p>
-								<p>Password - Password for Database user name</p>
-								<p>Host - Host name for database.  'localhost' if on same server as Webserver</p>
-								<p>Port - Port number for database. </p>
-							</g:HTML>
-							</g:FlowPanel>
-						</g:ScrollPanel>
-					</g:north>
-					<g:south size='8'>
+								</g:ScrollPanel>
+							</g:north>
+						</g:DockLayoutPanel>
+					</g:east>
+					<g:south size='10'>
 						<g:DockLayoutPanel unit='PCT' styleName="{style.buttonPanel}">
-							<g:west size='50'>
-								<g:Button ui:field="previousButton" text="Previous" styleName="{style.stepsButton}"/>
-							</g:west>
-							<g:east size='45'>
-								<g:Button ui:field="nextButton" text="Next" styleName="{style.stepsButton}"/>
-							</g:east>
-						</g:DockLayoutPanel>					</g:south>			
+							<g:center size='50'>
+								<g:FlowPanel>
+									<g:Button ui:field="previousButton" text="Previous" styleName="{style.stepsButton}"/>
+									<g:Button ui:field="nextButton" text="Next" styleName="{style.stepsButton}"/>
+								</g:FlowPanel>
+							</g:center>
+						</g:DockLayoutPanel>
+					</g:south>
 				</g:DockLayoutPanel>
-			</g:east>
+			</g:north>
 		</g:DockLayoutPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
