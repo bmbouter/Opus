@@ -1,5 +1,7 @@
 package opus.community.gwt.management.console.client;
 
+import java.util.Date;
+
 import opus.community.gwt.management.console.client.dashboard.Dashboard;
 import opus.community.gwt.management.console.client.deployer.AddAppsBuildProject;
 
