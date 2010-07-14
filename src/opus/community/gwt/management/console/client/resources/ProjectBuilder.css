@@ -36,69 +36,7 @@
 	/*min-height: 1.8em;*/
 	margin-left: 0.5%;	
 }
-.filterPanel {
-	/*border: 2px inset black;*/
-	background: white;
-	margin-top: 20%;
-	magin-bottom: 0%;
-	margin-right: 0%;
-	margin-left: 0%;
-}
-.listBox {
-	height: 75%;
-	width: 90%;
-	vertical-align:middle;
-}
 .filterMenu {
-}
-.searchPanel {
-	vertical-align:middle;
-	margin-top:5px;
-	margin-bottom: 5px;
-	height: 60%;
-}
-.searchBox {	
-	/*border: 2px solid #4D4D4D;*/
-	color: black;
-	background: #DBDBDB;
-	margin-top: 0%;
-	margin-left: 0%;
-	border-radius: 2px;
-	padding: 2px 1px 2px 5px;
-	width: 75%;
-	height: 60%;
-}
-.searchButton {
-	/*-webkit-box-shadow: 2px 2px 2px #121212;
-    -moz-box-shadow: 2px 2px 2px #121212;
-    box-shadow: 2px 2px 2px #121212;*/
-	border-radius: 2px;
-	width: 20%;
-	cursor: pointer;
-	cursor: hand;	
-	font-family: "Droid Serif";
-	font-size: 125%;
-	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF))');
-	/*position: relative; direction: ltr; left: 0px; right: auto;*/
-	color: black;
-	height: 80%;
-}
-.fieldButton {
-	border-right: 0.5px solid #A8A8A8;
-	border-left: none;
-	border-top: 1px solid #A8A8A8;
-	border-bottom: 1px solid #A8A8A8;
-	border-top-right-radius: 15px;
-	border-bottom-right-radius: 15px;
-	cursor: pointer;
-	cursor: hand;	
-	background: #00CC33;
-	float: right;
-	position: relative; direction: ltr; left: -865px; right: auto; top: 2px;
-	padding: 2px 6px 2px 2px;
-	color: white;
-	height: 15px;
-	width: 15px;
 }
 .leftScrollPanel {
 	height: 98%;
@@ -183,7 +121,7 @@
 }
 .buttonPanel{
 	width: 80%;
-	height: 70%;	
+	height: 100%;	
 }
 .stepsButton {
 	border-radius: 5px;
@@ -202,6 +140,80 @@
 	float: left;
 	padding: 0 0.5em 0 0;
 }
+.infoPanel {
+	height: 98%;
+	width: 94%;
+	margin-left: 4%;
+	margin-top: 2%;
+}
+
+/******** Add Applications Panel **************/
+.addAppsMainPanel{
+	background: #E3DFC3;
+	border-radius: 5px;
+}
 .form{
 	margin: 1em 1em 1em 1em;
+	min-width: 50%;
+}
+.searchPanel{
+	margin-left: 2%;
+	min-width: 98%;
+	height: 95%;
+}
+.searchBox {	
+	color: black;
+	border-radius: 2px;
+	min-width: 65%;
+	margin-top: 1.5%;
+	height: 55%;
+	padding: 0 0 0 1%;
+}
+.searchButton {
+	height: 70%;
+	border-radius: 2px;
+	min-width: 30%;
+	cursor: pointer;
+	cursor: hand;	
+	font-family: "Droid Serif";
+	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF))');
+	color: black;
+}
+.listBox{
+	height: 65%;
+	margin-top: 15%;
+}
+.leftAppScrollPanel {
+	height: 98%;
+	width: 98%;
+	background: white;
+	color: black;
+	margin-left: 1%;
+	border: 2px inset white;
+}
+.appFlexTable {
+	height: 100%;
+	width: 100%;
+	position: relative;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+.addedAppsPanel{ 
+	background: white;
+	height: 100%;
+	width: 99%;
+	margin-left: 1%;
+	border: 2px inset white;
+}
+.addAppsInfoPanel {
+	height: 100%;
+	width: 94%;
+	margin-left: 4%;
+}
+.infoScrollPanel { 
+	/*background: white;*/
+	padding: 1em 1em 1em 1em;
+	/*border: 2px inset white;*/
 }

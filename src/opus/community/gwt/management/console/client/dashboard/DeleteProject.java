@@ -46,7 +46,7 @@ public class DeleteProject extends Composite {
 	private void setupDeleteForm(String projectTitle){
 		deleteForm.setMethod(FormPanel.METHOD_POST);
 		deleteForm.setVisible(false);
-		deleteForm.setAction(JSVarHandler.getDeployerBaseURL()+ "deployments/" + projectTitle + "/destroy");
+		deleteForm.setAction(JSVarHandler.getDeployerBaseURL()+ "/deployments/" + projectTitle + "/destroy");
 		titlePanel.add(deleteForm);
 		deleteForm.addSubmitHandler(new FormPanel.SubmitHandler() {
 		      public void onSubmit(SubmitEvent event) {

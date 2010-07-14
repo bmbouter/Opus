@@ -2,6 +2,7 @@ package opus.community.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
 
+import opus.community.gwt.management.console.client.JSVariableHandler;
 import opus.community.gwt.management.console.client.ServerCommunicator;
 
 import com.google.gwt.core.client.GWT;
@@ -48,6 +49,7 @@ public class AddAppsBuildProject extends Composite {
 	}
 
 	private applicationDeployer appDeployer;
+	private JSVariableHandler JSVarHandler;
 	
 	@UiField Button searchButton;
 	@UiField TextBox searchBox;
@@ -63,7 +65,8 @@ public class AddAppsBuildProject extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.jsonCom = jsonCom;
 		this.refreshAppListFlexTable(JSON_URL);
-		this.populateFieldList("https://opus-dev.cnl.ncsu.edu:9004/opus_community/model/fields/application/?a");
+		JSVarHandler = new JSVariableHandler();
+		this.populateFieldList(JSVarHandler.getRepoBaseURL() + "/opus_community/model/fields/application/?a");
 		this.appDeployer = appDeployer;	
 	}
 
@@ -169,7 +172,7 @@ public class AddAppsBuildProject extends Composite {
 		  Button addAppButton = new Button();
 		  addAppButton.addStyleName("addAppButton");
 		  addAppButton.setText("Add to List");
-		  final String url = URL.encode("https://opus-dev.cnl.ncsu.edu:9004/opus_community/" + name + "/versions/?a") + "&callback=";
+		  final String url = URL.encode(JSVarHandler.getRepoBaseURL() + "/opus_community/" + name + "/versions/?a") + "&callback=";
 		  addAppButton.addClickHandler(new ClickHandler() {
 		      public void onClick(ClickEvent event) {
 		    	  selectedApp = name;

@@ -245,10 +245,10 @@ public class applicationDeployer extends Composite {
 		  }
 		  
 		  //Add all project options fields to the form for submission
-		  formContainerPanel.add(projectOptions.projectOptionsScrollPanel);
+		  formContainerPanel.add(projectOptions.projectOptionsPanel);
 		  
 		  //Add all database options fields to the form for submission
-		  formContainerPanel.add(databaseOptions.databaseOptionsScrollPanel);
+		  formContainerPanel.add(databaseOptions.databaseOptionsPanel);
 		 
 		  //Add all Database fields to the form for submissionsd
 		  formContainerPanel.add(deploymentOptions.activeCheckBox);
