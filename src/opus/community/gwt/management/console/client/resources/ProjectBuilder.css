@@ -117,7 +117,14 @@
 .buttonPanel{
 	width: 80%;
 	height: 100%;
+	
 }
+.addAppsButtonPanel{
+	width: 80%;
+	height: 100%;
+	margin-bottom: 1%;
+}
+
 .stepsButton {
 	border-radius: 5px;
 	cursor: pointer;
@@ -131,7 +138,8 @@
 	-webkit-box-shadow: 5px 5px 5px #121212;
     -moz-box-shadow: 5px 5px 5px #121212;
     box-shadow: 5px 5px 5px #121212;
-    margin-bottom:10px;
+    
+    
 }
 .configParameter{
 	float: left;
