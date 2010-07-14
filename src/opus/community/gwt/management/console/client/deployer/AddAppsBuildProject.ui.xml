@@ -16,9 +16,9 @@
 			</g:north>
 			<g:north size='94.5'>
 				<g:DockLayoutPanel unit='PCT' styleName='{style.addAppsMainPanel}'>
-					<g:north size='5'>
+					<g:north size='8'>
 						<g:DockLayoutPanel unit='PCT'>
-							<g:west size="25">
+							<g:west size="30">
 								<g:FlowPanel styleName="{style.searchPanel}">
 									<g:TextBox ui:field="searchBox" styleName="{style.searchBox}"></g:TextBox>
 									<g:Button ui:field="searchButton" text="Search" styleName="{style.searchButton}" />
@@ -32,13 +32,17 @@
 					<g:west size='70'>
 						<g:DockLayoutPanel unit='PCT'>
 							<g:west size='80'>
-								<g:ScrollPanel ui:field="appListScrollPanel" styleName="{style.leftAppScrollPanel}">
-									<g:FlexTable ui:field="appListFlexTable" styleName="{style.appFlexTable}"></g:FlexTable>	
-								</g:ScrollPanel>
-							</g:west>
-							<g:east size='25'>
 								<g:DockLayoutPanel unit='PCT'> 
 									<g:north size='90'>
+										<g:ScrollPanel ui:field="appListScrollPanel" styleName="{style.leftAppScrollPanel}">
+											<g:FlexTable ui:field="appListFlexTable" styleName="{style.appFlexTable}"></g:FlexTable>	
+										</g:ScrollPanel>
+									</g:north>
+								</g:DockLayoutPanel>
+							</g:west>
+							<g:east size='20'>
+								<g:DockLayoutPanel unit='PCT'> 
+									<g:north size='82'>
 										<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.addedAppsPanel}">
 											<g:FlexTable ui:field="deployListFlexTable"></g:FlexTable>
 										</g:ScrollPanel>
@@ -59,18 +63,24 @@
 								<p>If an application you wish to include does not appear in the list, use "Add Other Application" button to add an application from a GIT repository.</p>
 								</g:HTML>
 								</g:ScrollPanel>
-							</g:north>
-							<g:north size='8'>
-								<g:DockLayoutPanel unit='PCT' styleName="{style.buttonPanel}">
-									<g:east size='45'>
-										<g:Button ui:field="nextButton" text="Next" styleName="{style.stepsButton}"/>
-									</g:east>
+							</g:north>		
 								</g:DockLayoutPanel>
-							</g:north>			
+							</g:west>						
 						</g:DockLayoutPanel>
-					</g:west>
-				</g:DockLayoutPanel>
 			</g:north>
-		</g:DockLayoutPanel>
-	</g:HTMLPanel>			
+					<g:south size='8'>
+						<g:DockLayoutPanel unit='PCT' styleName="{style.buttonPanel}">
+							<g:west size='20'>
+								<g:HTML></g:HTML>
+							</g:west>
+							<g:west size='30'>
+								<g:Button ui:field="previousButton" text="Previous" styleName="{style.stepsButton}"/>
+							</g:west>
+							<g:west size='30'>
+								<g:Button ui:field="nextButton" text="Next" styleName="{style.stepsButton}"/>
+							</g:west>
+						</g:DockLayoutPanel>
+					</g:south>					
+				</g:DockLayoutPanel>
+	</g:HTMLPanel>
 </ui:UiBinder> 

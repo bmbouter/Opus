@@ -18,6 +18,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -33,7 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AddAppsBuildProject extends Composite {
 	
-	private static JSVariableHandler JSVarHandler;
+	//private static JSVariableHandler JSVarHandler;
 	private String JSON_URL;
 	private Label errorMsgLabel = new Label();
 	private String selectedApp = "";
@@ -177,7 +178,7 @@ public class AddAppsBuildProject extends Composite {
 		  Button addAppButton = new Button();
 		  addAppButton.addStyleName("addAppButton");
 		  addAppButton.setText("Add to List");
-		  final String url = URL.encode(JSVarHandler.getRepoBaseURL() + "/" + name + "/versions/?a") + "&callback=";
+		  final String url = URL.encode(JSVarHandler.getRepoBaseURL() + "/opus_community/" + name + "/versions/?a") + "&callback=";
 		  addAppButton.addClickHandler(new ClickHandler() {
 		      public void onClick(ClickEvent event) {
 		    	  selectedApp = name;
@@ -188,7 +189,7 @@ public class AddAppsBuildProject extends Composite {
 		    	  appInfoDialog.versionsFlexTable.setHTML(row, 0, "<div><b>" + name + "</b> -" + description + "</div>");
 		    	  //appInfoDialog.versionsFlexTable.setText(row, 0, "hello");
 		    	  jsonCom.getJson(url,handler,3,p);
-		    	  
+		    	  //Window.alert(url);
 		    	  
 	//	    	  appInfoDialog.versionsFlexTable.setWidget(row, 0, new HTMLPanel("<div><b>" + name + "</b> -" + description + "</div>"));
 		        }
@@ -196,6 +197,7 @@ public class AddAppsBuildProject extends Composite {
 		  appListFlexTable.setWidget(row, 0, appInfoPanel);
 		  appListFlexTable.setWidget(row, 1, addAppButton);
 		  appListFlexTable.getCellFormatter().addStyleName(row, 0, style.appCell());
+		  appListFlexTable.getCellFormatter().addStyleName(row, 1, style.appCell());
 		  //appInfoPanel.addStyleName("appCell");
 	  }
 	  

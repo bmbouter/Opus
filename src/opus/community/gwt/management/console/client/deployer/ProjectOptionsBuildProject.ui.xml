@@ -14,78 +14,87 @@
 					</g:Label>
 				</g:FlowPanel>
 			</g:north>
-			<g:north size='94'>
+			<g:north size='94.75'>
 				<g:DockLayoutPanel unit='PCT' styleName="{style.addAppsMainPanel}"> 
-					<g:west size='80'>
-						<g:DockLayoutPanel unit='EM' ui:field='projectOptionsPanel' styleName="{style.form}">
-							<g:north size ='3'>
-								<g:HTMLPanel>
-									<u>Superuser Setup</u>
-									<br>Superuser setup is not required.  Please see notes in the right hand panel.</br>
-								</g:HTMLPanel>
-							</g:north>
-							<g:north size='2'>
-								<g:FlowPanel>
-									<g:Label styleName='{style.configParameter}'>Username</g:Label>
-									<g:TextBox name='superusername' ui:field='usernameTextBox' styleName='{style.configParameter}'/>
-								</g:FlowPanel>
-							</g:north>
-							<g:north size='2'>
-								<g:FlowPanel>
-									<g:Label styleName='{style.configParameter}'>Password</g:Label>
-									<g:PasswordTextBox name='superpassword' ui:field='passwordTextBox' styleName='{style.configParameter}'/>
-								</g:FlowPanel>
-							</g:north>
-							<g:north size='2'>
-								<g:FlowPanel>
-									<g:Label styleName='{style.configParameter}'>Password Confirm</g:Label>
-									<g:PasswordTextBox name='superpasswordconfirm' ui:field='passwordConfirmTextBox' styleName='{style.configParameter}'/>
-								</g:FlowPanel>
-							</g:north>
-							<g:north size='2'>
-								<g:FlowPanel>
-									<g:Label styleName='{style.configParameter}'>Email</g:Label>
-									<g:TextBox name ='superemail' ui:field='emailTextBox' styleName='{style.configParameter}'/>
-								</g:FlowPanel>
-							</g:north>
-							<g:north size='2'>
-								<g:FlowPanel>
-									<g:Label styleName="{style.configParameter}">Django Admin Interface?</g:Label>
-									<g:CheckBox name='admin' ui:field="adminCheckBox" styleName="{style.configParameter}"></g:CheckBox>
-								</g:FlowPanel>
-							</g:north>
-						</g:DockLayoutPanel>
-					</g:west>
-					<g:west size='20'>
-						<g:DockLayoutPanel styleName="{style.infoPanel}" unit='PCT'>
-							<g:north size='90'>
-								<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.infoScrollPanel}">
-									<g:FlowPanel>
-									<g:HTML>
-										<font color='red'>NOTE: Creating a Superuser will bypass all permission checks.</font>
-										<p><font color='red'>NOTE: Django Admin Interface requires the creation of a superuser.</font></p>
-										<p>Username - Enter valid username for DJango Admin Superuser</p>
-										<p>Password - valid password for Superuser</p>
-										<p>Email - contact email address for Superuser</p>
-										<p>Django Admin Interface - Choose 'Yes' to enable the Django Admin interface</p>
-									</g:HTML>
-									</g:FlowPanel>
-								</g:ScrollPanel>
-							</g:north>
-							<g:south size='8'>
-								<g:DockLayoutPanel unit='PCT' styleName="{style.buttonPanel}">
-									<g:west size='50'>
-										<g:Button ui:field="previousButton" text="Previous" styleName="{style.stepsButton}"/>
-									</g:west>
-									<g:east size='45'>
-										<g:Button ui:field="nextButton" text="Next" styleName="{style.stepsButton}"/>
-									</g:east>
+					<g:north size="90">
+						<g:DockLayoutPanel unit='PCT'>
+							<g:west size='75'>
+								<g:DockLayoutPanel unit='EM' ui:field='projectOptionsPanel' styleName="{style.form}">
+									<g:north size ='3'>
+										<g:HTMLPanel>
+											<u>Superuser Setup</u>
+											<br>Superuser setup is not required.  Please see notes in the right hand panel.</br>
+										</g:HTMLPanel>
+									</g:north>
+									<g:north size='2'>
+										<g:FlowPanel>
+											<g:Label styleName='{style.configParameter}'>Username</g:Label>
+											<g:TextBox name='superusername' ui:field='usernameTextBox' styleName='{style.configParameter}'/>
+										</g:FlowPanel>
+									</g:north>
+									<g:north size='2'>
+										<g:FlowPanel>
+											<g:Label styleName='{style.configParameter}'>Password</g:Label>
+											<g:PasswordTextBox name='superpassword' ui:field='passwordTextBox' styleName='{style.configParameter}'/>
+										</g:FlowPanel>
+									</g:north>
+									<g:north size='2'>
+										<g:FlowPanel>
+											<g:Label styleName='{style.configParameter}'>Password Confirm</g:Label>
+											<g:PasswordTextBox name='superpasswordconfirm' ui:field='passwordConfirmTextBox' styleName='{style.configParameter}'/>
+										</g:FlowPanel>
+									</g:north>
+									<g:north size='2'>
+										<g:FlowPanel>
+											<g:Label styleName='{style.configParameter}'>Email</g:Label>
+											<g:TextBox name ='superemail' ui:field='emailTextBox' styleName='{style.configParameter}'/>
+										</g:FlowPanel>
+									</g:north>
+									<g:north size='2'>
+										<g:FlowPanel>
+											<g:Label styleName="{style.configParameter}">Django Admin Interface?</g:Label>
+											<g:CheckBox name='admin' ui:field="adminCheckBox" styleName="{style.configParameter}"></g:CheckBox>
+										</g:FlowPanel>
+									</g:north>
 								</g:DockLayoutPanel>
-							</g:south>			
+							</g:west>
+							<g:west size='25'>
+								<g:DockLayoutPanel styleName="{style.infoPanel}" unit='PCT'>
+									<g:north size='90'>
+										<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.infoScrollPanel}">
+											<g:FlowPanel>
+											<g:HTML>
+												<font color='red'>NOTE: Creating a Superuser will bypass all permission checks.</font>
+												<p><font color='red'>NOTE: Django Admin Interface requires the creation of a superuser.</font></p>
+												<p>Username - Enter valid username for DJango Admin Superuser</p>
+												<p>Password - valid password for Superuser</p>
+												<p>Email - contact email address for Superuser</p>
+												<p>Django Admin Interface - Choose 'Yes' to enable the Django Admin interface</p>
+											</g:HTML>
+											</g:FlowPanel>
+										</g:ScrollPanel>
+									</g:north>		
+								</g:DockLayoutPanel>
+							</g:west>						
 						</g:DockLayoutPanel>
-					</g:west>
+					</g:north>
+					<g:south size='8'>
+						<g:DockLayoutPanel unit='PCT' styleName="{style.buttonPanel}">
+							<g:west size='20'>
+								<g:HTML></g:HTML>
+							</g:west>
+							<g:west size='30'>
+								<g:Button ui:field="previousButton" text="Previous" styleName="{style.stepsButton}"/>
+							</g:west>
+							<g:west size='30'>
+								<g:Button ui:field="nextButton" text="Next" styleName="{style.stepsButton}"/>
+							</g:west>
+						</g:DockLayoutPanel>
+					</g:south>					
 				</g:DockLayoutPanel>
 			</g:north>
+
+			
 		</g:DockLayoutPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
