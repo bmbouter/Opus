@@ -139,6 +139,7 @@ class ProjectDeployer(object):
         env = dict(os.environ)
         env['OPUS_SETTINGS_FILE'] = os.path.join(self.projectdir, "opussettings.json")
         env['PYTHONPATH'] = os.path.split(opus.__path__[0])[0]
+        env['OPUS_LOGGING_DISABLE'] = "1"
         return env
 
     def _sync_database(self):

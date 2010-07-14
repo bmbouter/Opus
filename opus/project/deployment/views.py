@@ -320,7 +320,7 @@ def create(request, projectname):
                 # since it could be tricked into deleting an existing project.
                 # edit_or_create() ought to check that for us, this function
                 # shouldn't be called on an existing project.
-                log.warning("Project didn't fully create or deploy, rolling back deployment. %s", e)
+                log.error("Project didn't fully create or deploy, rolling back deployment. %s", e)
                 deployment.destroy()
                 raise
 

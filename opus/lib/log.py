@@ -100,9 +100,21 @@ def _init_logging():
 
     """
     global django_context
+
+    if "OPUS_LOGGING_DISABLE" in os.environ:
+        # Private hook so Opus can disable logging in situations where logging
+        # would fail, such as when Opus calls syncdb on a project.
+        root_logger = logging.getLogger()
+        class NullHandler(logging.Handler):
+            def emit(self, record):
+                pass
+        root_logger.addHandler(NullHandler)
+        django_context = False
+        return
+
     try:
         settings.LOG_DIR
-    except ImportError:
+    except AttributeError:
         # Not running in a Django context, can't set up the master log file.
         django_context = False
 
