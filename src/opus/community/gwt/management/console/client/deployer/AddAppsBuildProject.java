@@ -7,6 +7,8 @@ import java.util.GregorianCalendar;
 
 import opus.community.gwt.management.console.client.JSVariableHandler;
 import opus.community.gwt.management.console.client.ServerCommunicator;
+import opus.community.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
+import opus.community.gwt.management.console.client.resources.ProjectBuilderCss.ProjectBuilderStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -34,8 +36,9 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AddAppsBuildProject extends Composite {
-
-	private static final String JSON_URL = "https://opus-dev.cnl.ncsu.edu:9004/opus_community/search/application/json/?a";
+	
+	//private static JSVariableHandler JSVarHandler;
+	private String JSON_URL;
 	private Label errorMsgLabel = new Label();
 	private String selectedApp = "";
 	private ArrayList<String> paths = new ArrayList<String>();
@@ -64,13 +67,15 @@ public class AddAppsBuildProject extends Composite {
 	//@UiField PopupPanel fieldPopup;
 	@UiField ScrollPanel infoScrollPanel;
 	@UiField Button addOtherButton;
-
+	@UiField ProjectBuilderStyle style;
+	
 	public AddAppsBuildProject(applicationDeployer appDeployer, FormPanel form, ServerCommunicator jsonCom) {
+		JSVarHandler = new JSVariableHandler();
+		JSON_URL = URL.encode(JSVarHandler.getRepoBaseURL() + "/opus_community/search/application/json/?a");
 		initWidget(uiBinder.createAndBindUi(this));
 		this.jsonCom = jsonCom;
 		this.refreshAppListFlexTable(JSON_URL);
-		JSVarHandler = new JSVariableHandler();
-		this.populateFieldList(JSVarHandler.getRepoBaseURL() + "/opus_community/model/fields/application/?a");
+		this.populateFieldList(URL.encode(JSVarHandler.getRepoBaseURL() + "/opus_community/model/fields/application/?a"));
 		this.appDeployer = appDeployer;	
 	}
 
@@ -135,7 +140,7 @@ public class AddAppsBuildProject extends Composite {
 	  private void search() {
 		  String query = searchBox.getText().trim();
 		  if (!query.isEmpty()) {
-			  String url = JSON_URL+"&field=" + fieldList.getValue(fieldList.getSelectedIndex()) + "&query="+query;
+			  String url = URL.encode(JSON_URL+"&field=" + fieldList.getValue(fieldList.getSelectedIndex()) + "&query="+query);
 			  this.refreshAppListFlexTable(url);
 		  } else {
 			  this.refreshAppListFlexTable(JSON_URL);
@@ -172,7 +177,7 @@ public class AddAppsBuildProject extends Composite {
 			  //		  appListFlexTable.setText(row, 0, appinfo);
 		  
 		  HTMLPanel appInfoPanel = new HTMLPanel(("<b>" + name + "</b> -" + shortDescription));
-		  appInfoPanel.addStyleName("style.cellHTMLPanel");
+		  //appInfoPanel.addStyleName("style.cellHTMLPanel");
 		  Button addAppButton = new Button();
 		  addAppButton.addStyleName("addAppButton");
 		  addAppButton.setText("Add to List");
@@ -187,13 +192,16 @@ public class AddAppsBuildProject extends Composite {
 		    	  appInfoDialog.versionsFlexTable.setHTML(row, 0, "<div><b>" + name + "</b> -" + description + "</div>");
 		    	  //appInfoDialog.versionsFlexTable.setText(row, 0, "hello");
 		    	  jsonCom.getJson(url,handler,3,p);
-		    	  
+		    	  //Window.alert(url);
 		    	  
 	//	    	  appInfoDialog.versionsFlexTable.setWidget(row, 0, new HTMLPanel("<div><b>" + name + "</b> -" + description + "</div>"));
 		        }
 		      });
 		  appListFlexTable.setWidget(row, 0, appInfoPanel);
 		  appListFlexTable.setWidget(row, 1, addAppButton);
+		  appListFlexTable.getCellFormatter().addStyleName(row, 0, style.appCell());
+		  appListFlexTable.getCellFormatter().addStyleName(row, 1, style.appCell());
+		  //appInfoPanel.addStyleName("appCell");
 	  }
 	  
 	  

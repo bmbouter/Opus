@@ -32,7 +32,7 @@ public class DeploymentOptionsBuildProject extends Composite {
 	@UiField Label baseUrlLabel;
 	@UiField TextBox projectNameTextBox;
 	@UiField CheckBox activeCheckBox;
-	@UiField ScrollPanel deploymentOptionsScrollPanel;
+//	@UiField ScrollPanel deploymentOptionsScrollPanel;
 
 	public DeploymentOptionsBuildProject(FormPanel deployerForm, applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));

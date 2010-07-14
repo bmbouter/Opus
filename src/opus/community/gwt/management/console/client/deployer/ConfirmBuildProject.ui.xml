@@ -4,7 +4,7 @@
 	<ui:style src="../resources/ProjectBuilder.css"/>
 	<g:HTMLPanel styleName="{style.innerSubMainPanel}">
 		<g:DockLayoutPanel unit='PCT' styleName="{style.topSubMainPanel}">
-			<g:north size='5.25'>
+			<g:north size='7'>
 				<g:FlowPanel styleName="{style.pagePanel}">
 					<g:Label  styleName="{style.pageSteps}">
 						Step 5 of 5:
@@ -14,33 +14,58 @@
 					</g:Label>
 				</g:FlowPanel>
 			</g:north>
-			<g:west size='75'>
-				<g:ScrollPanel ui:field="confirmationScrollPanel" styleName="{style.leftScrollPanel}">
-				</g:ScrollPanel>
-			</g:west>
-			<g:east size='20'>
-				<g:DockLayoutPanel styleName="{style.vertPanel}" unit='PCT'>
-					<g:north size='90'>
-						<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.rightScrollPanel}">
-							<g:FlowPanel>
-							<g:HTML>
-								<p>Please check all values to ensure correctness before submitting.</p>
-							</g:HTML>
-							</g:FlowPanel>
-						</g:ScrollPanel>
+			<g:north size='93'>
+				<g:DockLayoutPanel unit='PCT' styleName="{style.addAppsMainPanel}"> 
+					<g:north size="94">
+						<g:DockLayoutPanel unit='PCT'>
+							<g:west size='80'>
+								<g:DockLayoutPanel unit='EM' ui:field='projectOptionsPanel' styleName="{style.form}">
+									<g:north size ='2'>
+										<g:HTML>
+											<u>Confirmation</u>
+										</g:HTML>
+									</g:north>
+									<g:north size ='98'>
+										<g:ScrollPanel ui:field="confirmationScrollPanel" styleName="{style.configParameter}">
+										</g:ScrollPanel>
+									</g:north>
+								</g:DockLayoutPanel>
+							</g:west>
+							<g:west size='20'>
+								<g:DockLayoutPanel styleName="{style.infoPanel}" unit='PCT'>
+									<g:north size='90'>
+										<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.infoScrollPanel}">
+											<g:FlowPanel>
+											<g:HTML>
+												<p>Please check all values to ensure correctness before submitting.</p>
+											</g:HTML>
+											</g:FlowPanel>
+										</g:ScrollPanel>
+									</g:north>		
+								</g:DockLayoutPanel>
+							</g:west>						
+						</g:DockLayoutPanel>
 					</g:north>
-					<g:south size='8'>
+					<g:north size='5'>
 						<g:DockLayoutPanel unit='PCT' styleName="{style.buttonPanel}">
-							<g:west size='50'>
+							<g:west size='45'>
+								<g:HTML></g:HTML>
+							</g:west>
+							<g:west size='15'>
 								<g:Button ui:field="previousButton" text="Previous" styleName="{style.stepsButton}"/>
 							</g:west>
-							<g:west size='50'>
+							<g:west size='2'>
+								<g:HTML></g:HTML>
+							</g:west>
+							<g:west size='15'>
 								<g:Button ui:field="confirmButton" text="Confirm" styleName="{style.stepsButton}"/>
 							</g:west>
 						</g:DockLayoutPanel>
-					</g:south>			
+					</g:north>					
 				</g:DockLayoutPanel>
-			</g:east>
+			</g:north>
+
+			
 		</g:DockLayoutPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
