@@ -329,8 +329,11 @@ os.environ['OPUS_SETTINGS_FILE'] = {settingspath!r}
 # project name.
 sys.path.append({projectpath!r})
 
-import django.core.handlers.wsgi
-application = django.core.handlers.wsgi.WSGIHandler()
+#import django.core.handlers.wsgi
+#application = django.core.handlers.wsgi.WSGIHandler()
+
+import opus.lib.profile
+application = opus.lib.profile.OpusWSGIHandler()
 """.format(projectname = self.projectname,
            projectpath = self.projectdir,
            settingspath = os.path.join(self.projectdir, "opussettings.json"),

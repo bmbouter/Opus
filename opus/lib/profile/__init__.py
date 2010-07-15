@@ -14,10 +14,8 @@ class OpusWSGIHandler(WSGIHandler):
     call to __call__ returns an iterator object (django.http.HttpResponse)
     where each item in the iterator is a string.
 
-    Also as per the WSGI protocol, the web server must call close() after the
-    response has finished. Since Django uses a persistant object for every
-    request, we cannot guarantee the order in which the __call__() and close()
-    methods are called if the server is threaded.
+    Use this instead of the Django WSGIHandler in the wsgi entry point file to
+    log each request and response time.
 
     """
     def __init__(self, *args, **kwargs):
