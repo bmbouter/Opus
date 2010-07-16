@@ -196,6 +196,9 @@ load_settings()
             newapps.append("django.contrib.admin")
         self.config['INSTALLED_APPS'] += newapps
 
+        # Install stock opus related apps
+        self.config['INSTALLED_APPS'].append("opus.lib.profile.profilerapp")
+
         # Write back out the settings
         self.config.save()
 

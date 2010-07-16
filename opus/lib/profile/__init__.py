@@ -3,7 +3,7 @@ related data.
 
 """
 
-import time
+import datetime
 import os.path
 
 from django.core.handlers.wsgi import WSGIHandler
@@ -22,26 +22,24 @@ class OpusWSGIHandler(WSGIHandler):
         super(OpusWSGIHandler, self).__init__(*args, **kwargs)
 
     def __call__(self, environ, start_response):
-        timestamp = time.time()
-        request_uri = environ['PATH_INFO']
-        request_method = environ['REQUEST_METHOD']
+        from opus.lib.profile.profilerapp.models import Request
+        request_info = Request()
+        request_info.timestamp = datetime.datetime.now()
+        request_info.uri = environ['PATH_INFO']
+        request_info.method = environ['REQUEST_METHOD']
         
-        result = super(OpusWSGIHandler, self).__call__(environ, start_response)
+        response = super(OpusWSGIHandler, self).__call__(environ, start_response)
 
-        # Insert a close method for the response object
-        origclose = result.close
-        def close():
+        # Insert our own close method into the response object
+        origclose = response.close
+        def newclose():
             origclose()
-            response_time = time.time() - timestamp
-            from django.conf import settings
-            with open(os.path.join(settings.LOG_DIR, "request.log"), 'a') as f:
-                f.write("{0}:{1}:{2}:{3}\n".format(
-                    timestamp,
-                    response_time,
-                    request_method,
-                    request_uri,
-                    ))
+            response_time = datetime.datetime.now() - request_info.timestamp
+            request_info.responsetime = \
+                    response_time.seconds + response_time.microseconds * 1e-6
+            request_info.save()
 
-        result.close = close
-        return result
+
+        response.close = newclose
+        return response
 
