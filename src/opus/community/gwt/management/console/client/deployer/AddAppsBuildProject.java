@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -69,7 +68,7 @@ public class AddAppsBuildProject extends Composite {
 	@UiField Button addOtherButton;
 	@UiField ProjectBuilderStyle style;
 	
-	public AddAppsBuildProject(applicationDeployer appDeployer, FormPanel form, ServerCommunicator jsonCom) {
+	public AddAppsBuildProject(applicationDeployer appDeployer, ServerCommunicator jsonCom) {
 		JSVarHandler = new JSVariableHandler();
 		JSON_URL = URL.encode(JSVarHandler.getRepoBaseURL() + "/opus_community/search/application/json/?a");
 		initWidget(uiBinder.createAndBindUi(this));
