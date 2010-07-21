@@ -222,3 +222,13 @@
 	padding: 1em 1em 1em 1em;
 	/*border: 2px inset white;*/
 }
+.addExistingProjectButton {
+	height: 70%;
+	border-radius: 2px;
+	min-width: 30%;
+	cursor: pointer;
+	cursor: hand;	
+	font-family: "Droid Serif";
+	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF))');
+	color: black;
+}

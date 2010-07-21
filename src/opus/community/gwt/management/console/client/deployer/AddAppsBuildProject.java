@@ -49,7 +49,7 @@ public class AddAppsBuildProject extends Composite {
 
 	private ApplicationDetailDialog appInfoDialog = new ApplicationDetailDialog();
 	private AddOtherApplication addOtherDialog = new AddOtherApplication(this);
-	
+	private AddProjectFromURL addProject = new AddProjectFromURL(this);
 	interface AddAppsBuildProjectUiBinder extends
 			UiBinder<Widget, AddAppsBuildProject> {
 	}
@@ -66,7 +66,9 @@ public class AddAppsBuildProject extends Composite {
 	//@UiField PopupPanel fieldPopup;
 	@UiField ScrollPanel infoScrollPanel;
 	@UiField Button addOtherButton;
+	@UiField Button addExistingProjectButton;
 	@UiField ProjectBuilderStyle style;
+
 	
 	public AddAppsBuildProject(applicationDeployer appDeployer, ServerCommunicator jsonCom) {
 		JSVarHandler = new JSVariableHandler();
@@ -126,6 +128,10 @@ public class AddAppsBuildProject extends Composite {
 	      }
 	  }
 	  
+	  @UiHandler("addExistingProjectButton")
+	  void handleURLClick(ClickEvent e) {
+		  addProject.show();
+	  }
 	  /*@UiHandler("nextButton")
 	  void handleSubmitClick(ClickEvent eve) {
 		  ArrayList<String> postData = new ArrayList<String>();
@@ -273,6 +279,28 @@ public class AddAppsBuildProject extends Composite {
     	  }
 	  }
 	  
+	  public void addProject(String url){
+		  jsonCom.getJson(url, jsonCom, 7, this);
+	  }
+	  
+	  public void importAppList(JsArray<ProjectData> projectDataArray) {
+		  ProjectData projectData = projectDataArray.get(0);
+		  Window.alert(projectData.getName());
+		  ProjectFieldData fields = projectData.getFields();
+		  JsArray<ProjectManualApplication>manualApps = fields.getAsArrayOfManualApps();
+		  JsArray<ProjectCommunityApplication>communityApps = fields.getAsArrayOfCommunityApps();
+		  apps.clear();
+		  paths.clear();
+		  
+		  for (int i=0; i < communityApps.length(); i++){
+			  this.addApp(communityApps.get(i).getName(), communityApps.get(i).getPath());
+		  }
+		  
+		  for (int i=0; i < manualApps.length(); i++){
+			  this.addApp(manualApps.get(i).getName(), manualApps.get(i).getPath());
+		  }
+	  }
+	  
 	  public ArrayList<String> getApps(){
 		  return apps;
 	  }
@@ -296,7 +324,19 @@ public class AddAppsBuildProject extends Composite {
 	  public final native JsArray<VersionData> asArrayOfVersionData(JavaScriptObject jso) /*-{
 	  	return jso;
 	  }-*/;
-
-
-	
+	  
+	  public final native JsArray<ProjectData> asArrayOfProjectData(JavaScriptObject jso) /*-{
+ 		return jso;
+	  }-*/;
+	  public final native JsArray<ProjectFieldData> asArrayOfProjectFieldData(JavaScriptObject jso) /*-{
+	  	return jso;
+	  }-*/;
+	  
+	  public final native JsArray<ProjectManualApplication> asArrayOfProjectManualApplications(JavaScriptObject jso) /*-{
+	  	return jso;
+	  }-*/;	
+	  
+	  public final native JsArray<ProjectCommunityApplication> asArrayOfProjectCommunityApplications(JavaScriptObject jso) /*-{
+	  	return jso;
+	  }-*/;
 }

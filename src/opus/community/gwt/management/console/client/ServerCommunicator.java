@@ -104,6 +104,11 @@ public class ServerCommunicator {
 	    } else if (queryType == 6) {
 	    	ManagementConsole mc = (ManagementConsole)parent;
 	    	mc.handleUserInformation(mc.asJSOUserInformation(jso));
+	    } else if (queryType == 7) {
+	    	
+	    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
+	    	p.importAppList(p.asArrayOfProjectData(jso));
+	    	//Window.alert(jso.toString());
 	    }
 	  }
 	  
