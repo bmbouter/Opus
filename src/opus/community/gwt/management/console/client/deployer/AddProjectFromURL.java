@@ -2,6 +2,7 @@ package opus.community.gwt.management.console.client.deployer;
 
 import opus.community.gwt.management.console.client.deployer.AddOtherApplication.AddOtherApplicationUiBinder;
 import opus.community.gwt.management.console.client.resources.ApplicationPopupCss.ApplicationPopupStyle;
+import opus.community.gwt.management.console.client.resources.ProjectURLPopupCss.ProjectURLPopupStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -27,7 +28,7 @@ public class AddProjectFromURL extends Composite {
 			UiBinder<Widget, AddProjectFromURL> {
 	}
 	@UiField 
-	ApplicationPopupStyle style;
+	ProjectURLPopupStyle style;
 	@UiField
 	Button addProjectFromURLButton;
 	@UiField

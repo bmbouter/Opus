@@ -6,6 +6,6 @@ public class ProjectCommunityApplication extends JavaScriptObject{
 	protected ProjectCommunityApplication() {}
 	
 	public final native String getPath() /*-{ return this.path }-*/;
-	public final native String getName() /*-{ return this.name }-*/;
+	public final native String getName() /*-{ return this.name + " " + this.version_number }-*/;
 		
 }

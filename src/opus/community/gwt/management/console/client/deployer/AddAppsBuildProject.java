@@ -225,7 +225,7 @@ public class AddAppsBuildProject extends Composite {
 	  public void handleVersions(JsArray<VersionData> versions){
 		  final AddAppsBuildProject appBuilder = this;
 		  for (int i = 0; i < versions.length(); i++){
-			  final String appString = selectedApp + versions.get(i).getVersion();
+			  final String appString = selectedApp + " " + versions.get(i).getVersion();
 			  final String appPath = versions.get(i).getPath();
 			  DisclosurePanel versionPanel = new DisclosurePanel("Version " + versions.get(i).getVersion());
 			  versionPanel.setAnimationEnabled(true);
@@ -285,13 +285,13 @@ public class AddAppsBuildProject extends Composite {
 	  
 	  public void importAppList(JsArray<ProjectData> projectDataArray) {
 		  ProjectData projectData = projectDataArray.get(0);
-		  Window.alert(projectData.getName());
+
 		  ProjectFieldData fields = projectData.getFields();
 		  JsArray<ProjectManualApplication>manualApps = fields.getAsArrayOfManualApps();
 		  JsArray<ProjectCommunityApplication>communityApps = fields.getAsArrayOfCommunityApps();
 		  apps.clear();
 		  paths.clear();
-		  
+		  deployListFlexTable.removeAllRows();
 		  for (int i=0; i < communityApps.length(); i++){
 			  this.addApp(communityApps.get(i).getName(), communityApps.get(i).getPath());
 		  }

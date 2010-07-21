@@ -1,16 +1,15 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="../resources/OtherApplicationPopup.css" type="opus.community.gwt.management.console.client.resources.ApplicationPopupCss.ApplicationPopupStyle"/>
+	<ui:style src="../resources/ProjectURLPopup.css" type="opus.community.gwt.management.console.client.resources.ProjectURLPopupCss.ProjectURLPopupStyle"/>
   	<g:PopupPanel ui:field="addProjectFromURLPopup" modal="true" 
   							glassEnabled="true" animationEnabled="true"
   							styleName="{style.otherAppPopup}">
 		<g:DockLayoutPanel unit='PCT' ui:field="addProjectFromURLLayoutPanel" styleName="{style.otherAppDockLayoutPanel}">
-			<g:north size="40">
+			<g:north size="20">
 				<g:FlowPanel>
-					<g:Label text="Name:" styleName="{style.floatChild}"></g:Label>
+					<g:Label text="URL:" styleName="{style.floatChild}"></g:Label>
 					<g:TextBox ui:field="projectURLTextBox" styleName="{style.floatChild}"></g:TextBox>
-					<g:HTML>e.g. "Application name"</g:HTML>
 				</g:FlowPanel>
 			</g:north>
 			<g:north size="20">
