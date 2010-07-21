@@ -44,6 +44,12 @@ class Windows(Generic):
         except HostNotConnectableError:
             return False
 
+    def enable_rdp_for_user(self, username):
+        try:
+            self.node.ssh_run_command(["NET", "localgroup", '"Remote Desktop Users"', "/add", username])
+            return True
+        except HostNotConnectableError:
+            return False
 
     def add_administrator(self, username):
         try:
