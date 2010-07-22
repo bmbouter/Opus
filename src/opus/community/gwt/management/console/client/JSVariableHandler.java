@@ -15,5 +15,9 @@ public class JSVariableHandler {
 	public native String getCommunityBaseURL()/*-{
 		return $wnd.communityBaseURL;
 	}-*/;
+	
+	public native String getProjectToken()/*-{
+		return $wnd.projectToken;
+	}-*/;
 
 }
