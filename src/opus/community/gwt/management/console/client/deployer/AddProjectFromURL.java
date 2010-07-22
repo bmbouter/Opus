@@ -3,6 +3,7 @@ package opus.community.gwt.management.console.client.deployer;
 import opus.community.gwt.management.console.client.deployer.AddOtherApplication.AddOtherApplicationUiBinder;
 import opus.community.gwt.management.console.client.resources.ApplicationPopupCss.ApplicationPopupStyle;
 import opus.community.gwt.management.console.client.resources.ProjectURLPopupCss.ProjectURLPopupStyle;
+import opus.community.gwt.management.console.client.JSVariableHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -34,7 +35,7 @@ public class AddProjectFromURL extends Composite {
 	@UiField
 	PopupPanel addProjectFromURLPopup;
 	@UiField 
-	TextBox projectURLTextBox;
+	TextBox projectTokenTextBox;
 	
 	private AddAppsBuildProject appBuilder;
 	
@@ -50,7 +51,7 @@ public class AddProjectFromURL extends Composite {
 	    addProjectFromURLPopup.addCloseHandler(new CloseHandler<PopupPanel>(){
 	    	@Override
 	    	public void onClose(CloseEvent<PopupPanel> event) {
-	    		projectURLTextBox.setText("");
+	    		projectTokenTextBox.setText("");
 	    	}
 	    });
 	    this.appBuilder = appBuilder;
@@ -67,8 +68,8 @@ public class AddProjectFromURL extends Composite {
 
 	@UiHandler("addProjectFromURLButton")
 	void onClick(ClickEvent e) {
-		
-		final String urlString = projectURLTextBox.getText()+"/?callback=";
+		JSVariableHandler varHandler = new JSVariableHandler();
+		final String urlString = varHandler.getCommunityBaseURL()+projectTokenTextBox.getText()+"?callback=";
 		appBuilder.addProject(URL.encode(urlString));
     	this.hide();
 	  

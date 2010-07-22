@@ -162,31 +162,49 @@
 	min-width: 50%;
 }
 .searchPanel{
-	margin-left: 2%;
-	min-width: 98%;
-	height: 95%;
+    margin: 0;
+    padding: 0;
+    display: block;
+    position: absolute;
+    top: 80px;
+    right: 30px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 32px;
 }
 .searchBox {	
 	color: black;
 	border-radius: 2px;
-	min-width: 65%;
-	margin-top: 1.5%;
-	height: 55%;
-	padding: 0 0 0 1%;
+	min-width: 30%;
+	margin-top: .5%;
+	margin-bottom: .5%;
+	margin-left: .5%;
+	margin-right: .5%;
+	flow: left;
 }
 .searchButton {
 	height: 70%;
 	border-radius: 2px;
-	min-width: 30%;
+	min-width: 10%;
 	cursor: pointer;
 	cursor: hand;	
 	font-family: "Droid Serif";
 	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF))');
 	color: black;
+	flow: left;
+	margin-top: .5%;
+	margin-bottom: .5%;
+	margin-left: .5%;
+	margin-right: .5%;
 }
 .listBox{
-	height: 65%;
-	margin-top: 15%;
+	min-width: 15%;
+	flow: left;
+	margin-top: .5%;
+	margin-bottom: .5%;
+	margin-left: .5%;
+	margin-right: .5%;
 }
 .leftAppScrollPanel {
 	height: 98%;
@@ -225,10 +243,20 @@
 .addExistingProjectButton {
 	height: 70%;
 	border-radius: 2px;
-	min-width: 30%;
+	min-width: 10%;
 	cursor: pointer;
 	cursor: hand;	
 	font-family: "Droid Serif";
 	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF))');
 	color: black;
+	flow: left;
+	margin-top: .5%;
+	margin-bottom: .5%;
+	margin-left: .5%;
+	margin-right: .5%;
+}
+.searchDockLayout {
+	margin: 0;
+    padding: 0;
+    height: 1000px;
 }

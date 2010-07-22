@@ -16,22 +16,15 @@
 			</g:north>
 			<g:north size='93'>
 				<g:DockLayoutPanel unit='PCT' styleName='{style.addAppsMainPanel}'>
-					<g:north size='8'>
-						<g:DockLayoutPanel unit='PCT'>
-							<g:west size="30">
+					<g:north size='6'>
+						<g:DockLayoutPanel unit='PCT' styleName='{style.searchDockLayout}'>
+							<g:west size="100">
 								<g:FlowPanel styleName="{style.searchPanel}">
 									<g:TextBox ui:field="searchBox" styleName="{style.searchBox}"></g:TextBox>
 									<g:Button ui:field="searchButton" text="Search" styleName="{style.searchButton}" />
+									<g:ListBox ui:field="fieldList" styleName="{style.listBox}"/>
+									<g:Button ui:field="addExistingProjectButton" text="Enter Token From Community Site" styleName="{style.addExistingProjectButton}"></g:Button>
 								</g:FlowPanel>
-							</g:west>
-							<g:west size="10">
-								<g:ListBox ui:field="fieldList" styleName="{style.listBox}"/>			
-							</g:west>
-							<g:west size="10">
-								<g:HTML></g:HTML>
-							</g:west>
-							<g:west size="10">
-								<g:Button ui:field="addExistingProjectButton" text="Add Project from URL" styleName="{style.addExistingProjectButton}"></g:Button>
 							</g:west>
 						</g:DockLayoutPanel>
 					</g:north>

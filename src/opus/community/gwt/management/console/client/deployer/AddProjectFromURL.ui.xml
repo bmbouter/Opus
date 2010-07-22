@@ -9,11 +9,11 @@
 			<g:north size="20">
 				<g:FlowPanel>
 					<g:Label text="URL:" styleName="{style.floatChild}"></g:Label>
-					<g:TextBox ui:field="projectURLTextBox" styleName="{style.floatChild}"></g:TextBox>
+					<g:TextBox ui:field="projectTokenTextBox" styleName="{style.floatChild}"></g:TextBox>
 				</g:FlowPanel>
 			</g:north>
 			<g:north size="20">
-				<g:Button ui:field="addProjectFromURLButton" text="Ok">
+				<g:Button ui:field="addProjectFromURLButton" text="Submit Token">
 				</g:Button>
 			</g:north>
 		</g:DockLayoutPanel>

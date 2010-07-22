@@ -11,4 +11,9 @@ public class JSVariableHandler {
 	public native String getDeployerBaseURL()/*-{
 		return $wnd.deployerBaseURL;
 	}-*/;
+	
+	public native String getCommunityBaseURL()/*-{
+		return $wnd.communityBaseURL;
+	}-*/;
+
 }
