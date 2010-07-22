@@ -47,8 +47,11 @@ public class DeploymentOptionsBuildProject extends Composite {
 		if(projectNameTextBox.getText().isEmpty()){
 			Window.alert("Subdomain required to deploy");
 			return false;
-		} else {
+		} else if(projectNameTextBox.getText().matches("[a-zA-Z_][a-zA-Z0-9_]*")){
 			return true;
+		} else {
+			Window.alert("Subdomain must start with a letter.");
+			return false;
 		}
 	}
 	

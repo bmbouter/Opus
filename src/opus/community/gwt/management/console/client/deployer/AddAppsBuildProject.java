@@ -78,6 +78,10 @@ public class AddAppsBuildProject extends Composite {
 		this.refreshAppListFlexTable(JSON_URL);
 		this.populateFieldList(URL.encode(JSVarHandler.getRepoBaseURL() + "/opus_community/model/fields/application/?a"));
 		this.appDeployer = appDeployer;	
+		String token = JSVarHandler.getProjectToken();
+		if (token != null) {
+			this.addProject(URL.encode(JSVarHandler.getCommunityBaseURL()+token+"?callback="));
+		}
 	}
 
 	public Object asObject(AddAppsBuildProject a){

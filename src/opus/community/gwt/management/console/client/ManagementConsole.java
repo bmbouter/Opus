@@ -19,6 +19,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -71,6 +72,7 @@ public class ManagementConsole extends Composite {
 				dashboardsButton.setStyleName(style.topDashboardButton());
 			}
 		});
+
 	}
 	
 	private void checkLogin(){
@@ -201,6 +203,11 @@ public class ManagementConsole extends Composite {
 			navigationMenuPanel.clear();
 			titleBarLabel.setText("");
 			createDashboardsPopup();
+			String token = JSVarHandler.getProjectToken();
+			if (token != null) {
+				deployNewButton.click();
+				Window.alert("got here");
+			}
 		} else {
 			showLoginPanel();
 		}
