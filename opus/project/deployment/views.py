@@ -479,7 +479,7 @@ def gwt(request):
     return render("OPUSManagementConsoleGWT.html",
             dict(mediaprefix = settings.OPUS_GWT_MEDIA,
                 baseurl = settings.OPUS_APACHE_SERVERNAME_SUFFIX,
-                repourl = opus.COMMUNITY_URL,
+                repourl = "https://opus-dev.cnl.ncsu.edu:9005/", #opus.COMMUNITY_URL,
                 project_token = token
                 ),
             request)
