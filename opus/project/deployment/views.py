@@ -472,9 +472,11 @@ def gwt(request):
     """GWT view. Login is not required, the GWT interface handles that itself.
 
     """
+    token = request.GET['token']
     return render("OPUSManagementConsoleGWT.html",
             dict(mediaprefix = settings.OPUS_GWT_MEDIA,
                 baseurl = settings.OPUS_APACHE_SERVERNAME_SUFFIX,
-                repourl = opus.COMMUNITY_URL
+                repourl = opus.COMMUNITY_URL,
+                project_token = token
                 ),
             request)
