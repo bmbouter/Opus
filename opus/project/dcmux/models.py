@@ -2,6 +2,7 @@ from django.db import models
 
 from opus.lib.prov.deltacloud import Deltacloud
 
+
 class Provider(models.Model):
     """A deltacloud cloud services provider.
 
