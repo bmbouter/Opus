@@ -480,6 +480,7 @@ def gwt(request):
             dict(mediaprefix = settings.OPUS_GWT_MEDIA,
                 baseurl = settings.OPUS_APACHE_SERVERNAME_SUFFIX,
                 repourl = opus.COMMUNITY_URL,
+                deployerurl = "https://" + str(request.get_host()),
                 project_token = token
                 ),
             request)
