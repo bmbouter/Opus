@@ -38,8 +38,10 @@
         baseURL = "{{ baseurl }}";
         repoBaseURL = "{{ repourl }}";
         deployerBaseURL = "";
-        communityBaseURL = "https://opus-dev.cnl.ncsu.edu:9005/opus_community/project/configuration/ ";
-                projectToken = {{ project_token  }};
+        communityBaseURL = "https://opus-dev.cnl.ncsu.edu:9005/opus_community/project/configuration/";
+        {% if project_token %}
+            projectToken = "{{ project_token  }}";
+        {% endif %}
             </script> 
   
 
