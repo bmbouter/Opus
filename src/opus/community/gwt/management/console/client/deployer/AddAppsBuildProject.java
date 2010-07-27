@@ -35,6 +35,13 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AddAppsBuildProject extends Composite {
+
+	private static AddAppsBuildProjectUiBinder uiBinder = GWT
+	.create(AddAppsBuildProjectUiBinder.class);
+
+	interface AddAppsBuildProjectUiBinder extends
+		UiBinder<Widget, AddAppsBuildProject> {
+	}
 	
 	//private static JSVariableHandler JSVarHandler;
 	private String JSON_URL;
@@ -45,16 +52,10 @@ public class AddAppsBuildProject extends Composite {
 	private ArrayList<String> types = new ArrayList<String>();
 	private ServerCommunicator jsonCom;
 
-	private static AddAppsBuildProjectUiBinder uiBinder = GWT
-			.create(AddAppsBuildProjectUiBinder.class);
-
 	private ApplicationDetailDialog appInfoDialog = new ApplicationDetailDialog();
 	private AddOtherApplication addOtherDialog = new AddOtherApplication(this);
 	private AddProjectFromURL addProject = new AddProjectFromURL(this);
-	interface AddAppsBuildProjectUiBinder extends
-			UiBinder<Widget, AddAppsBuildProject> {
-	}
-
+	
 	private applicationDeployer appDeployer;
 	private JSVariableHandler JSVarHandler;
 	
@@ -73,15 +74,15 @@ public class AddAppsBuildProject extends Composite {
 	
 	public AddAppsBuildProject(applicationDeployer appDeployer, ServerCommunicator jsonCom) {
 		JSVarHandler = new JSVariableHandler();
-		JSON_URL = URL.encode(JSVarHandler.getRepoBaseURL() + "/opus_community/search/application/json/?a");
+		JSON_URL = URL.encode(JSVarHandler.getRepoBaseURL() + "/search/application/json/?a");
 		initWidget(uiBinder.createAndBindUi(this));
 		this.jsonCom = jsonCom;
 		this.refreshAppListFlexTable(JSON_URL);
-		this.populateFieldList(URL.encode(JSVarHandler.getRepoBaseURL() + "/opus_community/model/fields/application/?a"));
+		this.populateFieldList(URL.encode(JSVarHandler.getRepoBaseURL() + "/model/fields/application/?a"));
 		this.appDeployer = appDeployer;	
 		String token = JSVarHandler.getProjectToken();
 		if (token != null) {
-			this.addProject(URL.encode(JSVarHandler.getCommunityBaseURL()+token+"?callback="));
+			this.addProject(URL.encode(JSVarHandler.getRepoBaseURL() + "/project/configuration/" + token + "?callback="));
 		}
 	}
 
@@ -191,7 +192,7 @@ public class AddAppsBuildProject extends Composite {
 		  Button addAppButton = new Button();
 		  addAppButton.addStyleName("addAppButton");
 		  addAppButton.setText("Add to List");
-		  final String url = URL.encode(JSVarHandler.getRepoBaseURL() + "/opus_community/" + name + "/versions/?a") + "&callback=";
+		  final String url = URL.encode(JSVarHandler.getRepoBaseURL() + "/" + name + "/versions/?a") + "&callback=";
 		  addAppButton.addClickHandler(new ClickHandler() {
 		      public void onClick(ClickEvent event) {
 		    	  selectedApp = name;

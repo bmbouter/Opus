@@ -21,6 +21,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -46,6 +47,7 @@ public class ManagementConsole extends Composite {
 	private applicationDeployer appDeployer;
 	private ProjectDashboard projectDashboard;
 	private Login loginPanel;
+	private IconPanel iconPanel;
 	private ServerCommunicator ServerComm;
 	private ManagementConsole managementCon;
 	private JSVariableHandler JSVarHandler;
@@ -65,6 +67,7 @@ public class ManagementConsole extends Composite {
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
 		loginPanel = new Login(mainDeckPanel, this);
+		iconPanel = new IconPanel();
 		JSVarHandler = new JSVariableHandler();
 		pp = new PopupPanel();
 		pp.setAutoHideEnabled(true);
@@ -165,34 +168,36 @@ public class ManagementConsole extends Composite {
 	
 	public void handleProjectNames(JsArray<ProjectNames> ProjectNames){
 		pp.clear();
-		FlowPanel FP = new FlowPanel();
-		for(int i = 0; i < ProjectNames.length(); i++){
-			final Label testLabel = new Label(ProjectNames.get(i).getName());
-			testLabel.setStyleName(style.popupLabel());
-			testLabel.addMouseOverHandler(new MouseOverHandler(){
-				public void onMouseOver(MouseOverEvent event){
-					testLabel.setStyleName(style.popupLabelActive());
-				}
-			});
-			testLabel.addMouseOutHandler(new MouseOutHandler(){
-				public void onMouseOut(MouseOutEvent event){
-					testLabel.setStyleName(style.popupLabel());
-				}
-			});
-			testLabel.addClickHandler(new ClickHandler() {
-		        public void onClick(ClickEvent event) {
-		        	mainDeckPanel.clear();
-		    		navigationMenuPanel.clear();
-		        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText(), managementCon); 
-		        	if(pp.isShowing()){
-		    			dashboardsButton.setStyleName(style.topDashboardButton());
-		    			pp.hide();
-		    		}   	
-		        }
-		     });
-			FP.add(testLabel);		
+		if(ProjectNames.length() != 0){
+			FlowPanel FP = new FlowPanel();
+			for(int i = 0; i < ProjectNames.length(); i++){
+				final Label testLabel = new Label(ProjectNames.get(i).getName());
+				testLabel.setStyleName(style.popupLabel());
+				testLabel.addMouseOverHandler(new MouseOverHandler(){
+					public void onMouseOver(MouseOverEvent event){
+						testLabel.setStyleName(style.popupLabelActive());
+					}
+				});
+				testLabel.addMouseOutHandler(new MouseOutHandler(){
+					public void onMouseOut(MouseOutEvent event){
+						testLabel.setStyleName(style.popupLabel());
+					}
+				});
+				testLabel.addClickHandler(new ClickHandler() {
+			        public void onClick(ClickEvent event) {
+			        	mainDeckPanel.clear();
+			    		navigationMenuPanel.clear();
+			        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText(), managementCon); 
+			        	if(pp.isShowing()){
+			    			dashboardsButton.setStyleName(style.topDashboardButton());
+			    			pp.hide();
+			    		}   	
+			        }
+			     });
+				FP.add(testLabel);		
+			}
+			pp.add(FP);
 		}
-		pp.add(FP);
 		pp.setStyleName(style.dashboardsPopup());
 	}
 	
@@ -203,9 +208,6 @@ public class ManagementConsole extends Composite {
 			deployNewButton.setVisible(true);
 			dashboardsButton.setVisible(true);
 			authenticationButton.setVisible(true);
-			mainDeckPanel.clear();
-			navigationMenuPanel.clear();
-			titleBarLabel.setText("");
 			createDashboardsPopup();
 			String token = JSVarHandler.getProjectToken();
 			if (token != null) {
