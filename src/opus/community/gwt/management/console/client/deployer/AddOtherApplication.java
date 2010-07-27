@@ -80,7 +80,7 @@ public class AddOtherApplication extends Composite {
 		
 		final String appString = applicationNameTextBox.getText();
 		final String appPath = applicationURLTextBox.getText();
-		final String appType = appTypeListBox.getItemText(appTypeListBox.getSelectedIndex());
+		final String appType = appTypeListBox.getValue(appTypeListBox.getSelectedIndex());
 		appBuilder.addApp(appString, appPath, appType);
     	this.hide();
 	}
