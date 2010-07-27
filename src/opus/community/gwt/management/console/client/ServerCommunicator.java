@@ -58,13 +58,13 @@ public class ServerCommunicator {
 	   // [4] JSON download has 1-second timeout.
 	   setTimeout(function() {
 	     if (!window[callback + "done"]) {
-	       handler.@opus.community.gwt.management.console.client.ServerCommunicator::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;I)(null);
+	       handler.@opus.community.gwt.management.console.client.ServerCommunicator::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;I)(null, requestId);
 	     }
 	     // [5] Cleanup. Remove script and callback elements.
 	     document.body.removeChild(script);
 	     delete window[callback];
 	     delete window[callback + "done"];
-	   }, 10000);
+	   }, 5000);
 	   
 	   // [6] Attach the script element to the document body.
 	   document.body.appendChild(script);
@@ -78,12 +78,14 @@ public class ServerCommunicator {
 	    //Window.alert(String.valueOf(queryType));
 
 		if (jso == null) {
-			//Window.alert("no json returned");
+			
+			Window.alert("no json returned for request # "+String.valueOf(rId));
 			this.error = "Error occured while retrieving JSON.";
 	      return;
-	    }
-		
+	    } else {
+		Window.alert(String.valueOf(rId));
 	    this.error = null;
+	    
 	    Object parent = queue[rId];
 	    
 	    if (queryType == 1) {
@@ -109,6 +111,7 @@ public class ServerCommunicator {
 	    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
 	    	p.importAppList(p.asArrayOfProjectData(jso));
 	    	//Window.alert(jso.toString());
+	    }
 	    }
 	  }
 	  
