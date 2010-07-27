@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -253,7 +254,7 @@ public class applicationDeployer extends Composite {
 		  //Add all Database fields to the form for submissionsd
 		  formContainerPanel.add(deploymentOptions.activeCheckBox);
 		  formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
-		  
+		  Window.alert(Cookies.getCookie("csrftoken"));
 		  deployerForm.submit();
 	  }
 

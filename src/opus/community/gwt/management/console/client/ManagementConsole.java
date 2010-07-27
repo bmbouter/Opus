@@ -1,5 +1,7 @@
 package opus.community.gwt.management.console.client;
 
+import java.util.Collection;
+
 import opus.community.gwt.management.console.client.dashboard.ProjectDashboard;
 import opus.community.gwt.management.console.client.deployer.applicationDeployer;
 import opus.community.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
@@ -29,6 +31,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.Cookies;
+
 
 public class ManagementConsole extends Composite {
 
@@ -47,7 +51,7 @@ public class ManagementConsole extends Composite {
 	private JSVariableHandler JSVarHandler;
 	private int appTypeFlag;
 	private PopupPanel pp;
-	
+	private int login;
 	@UiField Label titleBarLabel;
 	@UiField FlowPanel navigationMenuPanel;
 	@UiField DeckPanel mainDeckPanel;
@@ -76,6 +80,12 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void checkLogin(){
+		Collection<String> col = Cookies.getCookieNames();
+		for (String name : col) {
+			Window.alert(name);
+		}
+		Window.alert(col.toString());
+		//Cookies.
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + "/json/username/?a&callback=");
 		ServerComm.getJson(url, ServerComm, 6, this);
 	}
@@ -206,7 +216,6 @@ public class ManagementConsole extends Composite {
 			String token = JSVarHandler.getProjectToken();
 			if (token != null) {
 				deployNewButton.click();
-				Window.alert("got here");
 			}
 		} else {
 			showLoginPanel();
