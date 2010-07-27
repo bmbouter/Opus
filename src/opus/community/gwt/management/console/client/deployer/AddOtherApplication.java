@@ -12,6 +12,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -39,6 +40,9 @@ public class AddOtherApplication extends Composite {
 	@UiField
 	PopupPanel otherApplicationPopup;
 	
+	@UiField
+	ListBox appTypeListBox;
+	
 	private AddAppsBuildProject appBuilder;
 	
 	public AddOtherApplication(AddAppsBuildProject appBuilder) {
@@ -57,6 +61,8 @@ public class AddOtherApplication extends Composite {
 	    		applicationURLTextBox.setText("");
 	    	}
 	    });
+	    appTypeListBox.addItem("Git Repository", "git");
+	    appTypeListBox.addItem("Local File", "file");
 	    this.appBuilder = appBuilder;
 	}
 	
@@ -74,9 +80,9 @@ public class AddOtherApplication extends Composite {
 		
 		final String appString = applicationNameTextBox.getText();
 		final String appPath = applicationURLTextBox.getText();
-		appBuilder.addApp(appString, appPath);
+		final String appType = appTypeListBox.getItemText(appTypeListBox.getSelectedIndex());
+		appBuilder.addApp(appString, appPath, appType);
     	this.hide();
-	  
 	}
 
 }
