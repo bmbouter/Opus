@@ -1,1 +1,1 @@
-COMMUNITY_URL = "https://opus.ncsu.edu"
+COMMUNITY_URL = "http://opus.ncsu.edu"
