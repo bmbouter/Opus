@@ -49,6 +49,7 @@ public class AddAppsBuildProject extends Composite {
 	private String selectedApp = "";
 	private ArrayList<String> paths = new ArrayList<String>();
 	private ArrayList<String> apps = new ArrayList<String>();
+	private ArrayList<String> types = new ArrayList<String>();
 	private ServerCommunicator jsonCom;
 
 	private ApplicationDetailDialog appInfoDialog = new ApplicationDetailDialog();
@@ -246,7 +247,7 @@ public class AddAppsBuildProject extends Composite {
 			  addButton.setText("Add");
 			  addButton.addClickHandler(new ClickHandler() {
 		      public void onClick(ClickEvent event) {
-		    	  appBuilder.addApp(appString, appPath);
+		    	  appBuilder.addApp(appString, appPath, "git");
 		      	}
 		      });
 			  appInfoDialog.versionsFlexTable.setWidget(row, 1, addButton);
@@ -258,12 +259,18 @@ public class AddAppsBuildProject extends Composite {
 		  return paths;
 	  }
 	  
-	  public void addApp(String name, String path){
+	  public ArrayList<String> getAppTypes(){
+		  return types;
+	  }
+	  
+	  public void addApp(String name, String path, String type){
 		  final String nameString = name;
 		  final String pathString = path;
+		  final String typeString = type;
     	  if (!apps.contains(nameString)){
     		  apps.add(nameString);
     		  paths.add(pathString);
+    		  types.add(typeString);
     		  final int row = deployListFlexTable.getRowCount();
 	    	  deployListFlexTable.setHTML(row, 0, "<div><b>" + nameString+ "</b></div>");
 	    	  Button removeButton = new Button();
@@ -274,6 +281,7 @@ public class AddAppsBuildProject extends Composite {
 	    				 int removedIndex = apps.indexOf(nameString);
 	    				 apps.remove(nameString);
 	    				 paths.remove(pathString);
+	    				 paths.remove(typeString);
 	    				 deployListFlexTable.removeRow(removedIndex);
 	    			 }
 	    		 }
@@ -298,11 +306,11 @@ public class AddAppsBuildProject extends Composite {
 		  paths.clear();
 		  deployListFlexTable.removeAllRows();
 		  for (int i=0; i < communityApps.length(); i++){
-			  this.addApp(communityApps.get(i).getName(), communityApps.get(i).getPath());
+			  this.addApp(communityApps.get(i).getName(), communityApps.get(i).getPath(), communityApps.get(i).getType());
 		  }
 		  
 		  for (int i=0; i < manualApps.length(); i++){
-			  this.addApp(manualApps.get(i).getName(), manualApps.get(i).getPath());
+			  this.addApp(manualApps.get(i).getName(), manualApps.get(i).getPath(), manualApps.get(i).getType());
 		  }
 	  }
 	  

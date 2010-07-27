@@ -83,7 +83,7 @@ public class ServerCommunicator {
 			this.error = "Error occured while retrieving JSON.";
 	      return;
 	    } else {
-		Window.alert(String.valueOf(rId));
+		//Window.alert(String.valueOf(rId));
 	    this.error = null;
 	    
 	    Object parent = queue[rId];

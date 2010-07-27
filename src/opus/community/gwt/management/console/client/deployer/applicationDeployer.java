@@ -223,6 +223,7 @@ public class applicationDeployer extends Composite {
 		  this.deployerForm.add(formContainerPanel);
 		  
 		  ArrayList<String> paths = addApps.getAppPaths();
+		  ArrayList<String> apptypes = addApps.getAppTypes();
 		  Hidden numApps = new Hidden();
 		  numApps.setName("form-TOTAL_FORMS");
 		  numApps.setValue(String.valueOf(paths.size()));
@@ -236,7 +237,7 @@ public class applicationDeployer extends Composite {
 		  formContainerPanel.add(numMaxForms);
 		  for(int i=0; i < paths.size(); i++) {
 			  RadioButton pathtype = new RadioButton("form-" + i + "-apptype");
-			  pathtype.setFormValue("git");
+			  pathtype.setFormValue(apptypes.get(i));
 			  pathtype.setValue(true);
 			  TextBox path = new TextBox();
 			  path.setName("form-" + i +"-apppath");

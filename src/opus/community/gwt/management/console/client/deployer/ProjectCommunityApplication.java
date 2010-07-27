@@ -7,5 +7,5 @@ public class ProjectCommunityApplication extends JavaScriptObject{
 	
 	public final native String getPath() /*-{ return this.path }-*/;
 	public final native String getName() /*-{ return this.name + " " + this.version_number }-*/;
-		
+	public final native String getType() /*-{ return this.type }-*/;
 }

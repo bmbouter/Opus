@@ -83,12 +83,6 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void checkLogin(){
-		Collection<String> col = Cookies.getCookieNames();
-		for (String name : col) {
-			Window.alert(name);
-		}
-		Window.alert(col.toString());
-		//Cookies.
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + "/json/username/?a&callback=");
 		ServerComm.getJson(url, ServerComm, 6, this);
 	}
