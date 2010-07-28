@@ -187,11 +187,14 @@
 	float: left;
 }
 .projectIconActive{
-	color: white;	
+	color: black;	
 	text-align: center;
 	margin: 2%;
 	cursor: pointer;
 	cursor: hand;
-	background: orange;	
+	background: white;	
 	float: left;
+	border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
 }
