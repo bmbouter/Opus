@@ -227,6 +227,8 @@ public class ManagementConsole extends Composite {
 			deployNewButton.setVisible(true);
 			dashboardsButton.setVisible(true);
 			authenticationButton.setVisible(true);
+			mainDeckPanel.clear();
+			navigationMenuPanel.clear();
 			createDashboardsPopup();
 			String token = JSVarHandler.getProjectToken();
 			if (token != null) {

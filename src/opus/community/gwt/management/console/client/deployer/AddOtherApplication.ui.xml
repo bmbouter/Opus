@@ -6,14 +6,14 @@
   							glassEnabled="true" animationEnabled="true"
   							styleName="{style.otherAppPopup}">
 		<g:DockLayoutPanel unit='PCT' ui:field="otherAppDockLayoutPanel" styleName="{style.otherAppDockLayoutPanel}">
-			<g:north size="35">
+			<g:north size="30">
 				<g:FlowPanel>
 					<g:Label text="Name:" styleName="{style.floatChild}"></g:Label>
 					<g:TextBox ui:field="applicationNameTextBox" styleName="{style.floatChild}"></g:TextBox>
 					<g:HTML>e.g. "Application name"</g:HTML>
 				</g:FlowPanel>
 			</g:north>
-			<g:north size="35">
+			<g:north size="30">
 				<g:FlowPanel>
 					<g:Label text="Path:" styleName="{style.floatChild}"></g:Label>
 					<g:TextBox ui:field="applicationURLTextBox" styleName="{style.floatChild}"></g:TextBox>
@@ -26,8 +26,8 @@
 					<g:ListBox ui:field="appTypeListBox"/>
 				</g:FlowPanel>
 			</g:north>
-			<g:north size="10">
-				<g:Button ui:field="addApplicationButton" text="Add">
+			<g:north size="20">
+				<g:Button ui:field="addApplicationButton" text="Add" styleName="{style.addButton}">
 				</g:Button>
 			</g:north>
 		</g:DockLayoutPanel>
