@@ -1,5 +1,6 @@
 package opus.community.gwt.management.console.client;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import opus.community.gwt.management.console.client.dashboard.ProjectDashboard;
@@ -54,6 +55,9 @@ public class ManagementConsole extends Composite {
 	private int appTypeFlag;
 	private PopupPanel pp;
 	private int login;
+	private int projectCount;
+	
+	
 	@UiField Label titleBarLabel;
 	@UiField FlowPanel navigationMenuPanel;
 	@UiField DeckPanel mainDeckPanel;
@@ -67,7 +71,7 @@ public class ManagementConsole extends Composite {
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
 		loginPanel = new Login(mainDeckPanel, this);
-		iconPanel = new IconPanel();
+		iconPanel = new IconPanel(this);
 		JSVarHandler = new JSVariableHandler();
 		pp = new PopupPanel();
 		pp.setAutoHideEnabled(true);
@@ -124,17 +128,24 @@ public class ManagementConsole extends Composite {
 	
 	@UiHandler("dashboardsButton")
 	void handleDashboardsButtonMouseOver(MouseOverEvent event){
-		dashboardsButton.setStyleName(style.topDashboardButtonActive());
-		int left = dashboardsButton.getAbsoluteLeft();
-		int top = dashboardsButton.getAbsoluteTop() + dashboardsButton.getOffsetHeight();
-		pp.setPopupPosition(left, top);
-		int width = dashboardsButton.getOffsetWidth();
-		pp.setWidth(Integer.toString(width) + "px");
-		pp.show();
+		if(projectCount > 0) {
+			dashboardsButton.setStyleName(style.topDashboardButtonActive());
+			int left = dashboardsButton.getAbsoluteLeft();
+			int top = dashboardsButton.getAbsoluteTop() + dashboardsButton.getOffsetHeight();
+			pp.setPopupPosition(left, top);
+			int width = dashboardsButton.getOffsetWidth();
+			pp.setWidth(Integer.toString(width) + "px");
+			pp.show();
+		}
 	}
 	
 	@UiHandler("dashboardsButton")
 	void handleDashboardsButtonClick(ClickEvent event){
+		mainDeckPanel.clear();
+		navigationMenuPanel.clear();
+		titleBarLabel.setText("");
+		mainDeckPanel.add(iconPanel);
+		mainDeckPanel.showWidget(0);
 		if(pp.isShowing()){
 			pp.hide();
 		} else {
@@ -146,6 +157,7 @@ public class ManagementConsole extends Composite {
 			pp.setWidth(Integer.toString(width) + "px");
 			pp.show();
 		}
+		pp.hide();
 	}
 	
 	@UiHandler("authenticationButton")
@@ -168,7 +180,8 @@ public class ManagementConsole extends Composite {
 	
 	public void handleProjectNames(JsArray<ProjectNames> ProjectNames){
 		pp.clear();
-		if(ProjectNames.length() != 0){
+		projectCount = ProjectNames.length();
+		if(projectCount != 0){
 			FlowPanel FP = new FlowPanel();
 			for(int i = 0; i < ProjectNames.length(); i++){
 				final Label testLabel = new Label(ProjectNames.get(i).getName());
@@ -194,9 +207,15 @@ public class ManagementConsole extends Composite {
 			    		}   	
 			        }
 			     });
-				FP.add(testLabel);		
+				FP.add(testLabel);
+				//Add to the icon panel
+				iconPanel.addProjectIcon(ProjectNames.get(i).getName());
 			}
 			pp.add(FP);
+			mainDeckPanel.add(iconPanel);
+			mainDeckPanel.showWidget(0);
+		} else {
+			deployNewButton.click();
 		}
 		pp.setStyleName(style.dashboardsPopup());
 	}

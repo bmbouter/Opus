@@ -10,5 +10,7 @@ public class ManagementConsoleCss extends Widget {
 	    String popupLabelActive();
 	    String topDashboardButtonActive();
 	    String topDashboardButton();
+	    String projectIcon();
+	    String projectIconActive();
 	  }
 }
