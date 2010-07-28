@@ -1,8 +1,16 @@
 package opus.community.gwt.management.console.client.deployer;
 
+import java.util.HashMap;
+
+import opus.community.gwt.management.console.client.JSVariableHandler;
+import opus.community.gwt.management.console.client.ServerCommunicator;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -10,9 +18,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -25,8 +31,13 @@ public class DatabaseOptionsBuildProject extends Composite {
 			UiBinder<Widget, DatabaseOptionsBuildProject> {
 	}
 
-	private FormPanel deployerForm;
+	final String dbOptionsURL = "";
+	
 	private applicationDeployer appDeployer;
+	private HashMap<String, String> dbOptions;
+	private boolean optionsFlag;
+	private JSVariableHandler JSVarHandler;
+	private ServerCommunicator serverComm;
 
 	@UiField DockLayoutPanel dboptionsPanel;
 	@UiField TextBox nameTextBox;
@@ -38,15 +49,50 @@ public class DatabaseOptionsBuildProject extends Composite {
 	@UiField Button previousButton;	
 	@UiField DockLayoutPanel databaseOptionsPanel;
 	
-	public DatabaseOptionsBuildProject(FormPanel deployerForm, applicationDeployer appDeployer) {
+	public DatabaseOptionsBuildProject(applicationDeployer appDeployer, ServerCommunicator serverComm) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.deployerForm = deployerForm;
+		JSVarHandler = new JSVariableHandler();
+		this.serverComm = serverComm;
 		this.appDeployer = appDeployer;
-		this.dbengineListBox.addItem("Sqlite3", "sqlite3");
-		this.dbengineListBox.addItem("Postgresql", "postgresql_psycopg2");
-		this.dbengineListBox.addItem("Mysql", "mysql");
-		this.dbengineListBox.addItem("Oracle", "oracle");
+		dbOptions = new HashMap<String, String>();
+		checkForDBOptions();
+	}
+	
+	private void checkForDBOptions(){
+		if( dbOptionsURL.equals("")){
+			optionsFlag = true;
+			setupDBOptions();
+		} else {
+			final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + dbOptionsURL);
+			serverComm.getJson(url, serverComm, 8, this);
+		}
+	}
+	
+	private void setupDBOptions(){
+		if( optionsFlag ){
+			dbOptions.put("Sqlite3", "sqlite3");
+			dbOptions.put("Postgresql", "postgresql_psycopg2");
+			dbOptions.put("Mysql", "mysql");
+			dbOptions.put("Oracle", "oracle");
+		}
+		for(String key : dbOptions.keySet()){
+			if( key == "Sqlite3" ){
+				dbengineListBox.insertItem(key, dbOptions.get(key), 0);
+				dbengineListBox.setSelectedIndex(0);
+			} else {
+				dbengineListBox.addItem(key, dbOptions.get(key));
+			}
+		}
 		setDBOptionParams();
+	}
+	
+	private void setDBOptionParams(){
+		String item = dbengineListBox.getItemText(dbengineListBox.getSelectedIndex());
+		if( item.equals("Sqlite3") ){
+			dboptionsPanel.setVisible(false);
+		} else {
+			dboptionsPanel.setVisible(true);
+		}	
 	}
 	
 	@UiHandler("dbengineListBox")
@@ -54,21 +100,11 @@ public class DatabaseOptionsBuildProject extends Composite {
 		setDBOptionParams();	
 	}
 	
-	private void setDBOptionParams(){
-		int index = dbengineListBox.getSelectedIndex();
-		if(index == 0){
-			dboptionsPanel.setVisible(false);
-		} else {
-			dboptionsPanel.setVisible(true);
-		}	
-	}
-		
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
 			appDeployer.handleDeploymentOptionsLabel();
 		}
-		
 	}
 	
 	@UiHandler("previousButton")
@@ -91,6 +127,17 @@ public class DatabaseOptionsBuildProject extends Composite {
 			return true;
 		}
 	}
+	
+	public void handleDBOptions(JsArray<DBOptionsData> dbOptionsData){
+		if(dbOptionsData.length() == 0){
+			optionsFlag = true;
+			setupDBOptions();
+		}
+	}
+
+	public final native JsArray<DBOptionsData> asArrayOfDBOptionsData(JavaScriptObject jso) /*-{
+		return jso;
+	}-*/;
 }
 
 	

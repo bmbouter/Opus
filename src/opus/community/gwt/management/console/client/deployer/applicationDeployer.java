@@ -31,7 +31,6 @@ public class applicationDeployer extends Composite {
 
 	interface applicationDeployerUiBinder extends
 		UiBinder<Widget, applicationDeployer> {}
-
 		
 	private ApplicationDetailDialog appInfoDialog = new ApplicationDetailDialog();
 	private ProjectOptionsBuildProject projectOptions;
@@ -68,7 +67,7 @@ public class applicationDeployer extends Composite {
 		this.deployerForm = new FormPanel();
 		this.addApps = new AddAppsBuildProject(this, managementCon.getServerCommunicator());
 		this.projectOptions = new ProjectOptionsBuildProject(deployerForm, this);
-		this.databaseOptions = new DatabaseOptionsBuildProject(deployerForm, this);
+		this.databaseOptions = new DatabaseOptionsBuildProject(this, managementCon.getServerCommunicator());
 		this.deploymentOptions = new DeploymentOptionsBuildProject(deployerForm, this);
 		this.confirmBP = new ConfirmBuildProject(deployerForm, this);
 		this.activeLabel = addAppsLabel;

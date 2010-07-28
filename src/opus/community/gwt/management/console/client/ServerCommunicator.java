@@ -4,6 +4,7 @@ import java.util.Date;
 
 import opus.community.gwt.management.console.client.dashboard.Dashboard;
 import opus.community.gwt.management.console.client.deployer.AddAppsBuildProject;
+import opus.community.gwt.management.console.client.deployer.DatabaseOptionsBuildProject;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.Request;
@@ -73,9 +74,8 @@ public class ServerCommunicator {
 	  /**
 	   * Handle the response to the request for stock data from a remote server.
 	   */
-	  public void handleJsonResponse(JavaScriptObject jso, int rId) {
-	    int queryType = queryTypes[rId];
-	    //Window.alert(String.valueOf(queryType));
+	public void handleJsonResponse(JavaScriptObject jso, int rId) {
+		int queryType = queryTypes[rId];
 
 		if (jso == null) {
 			
@@ -83,35 +83,36 @@ public class ServerCommunicator {
 			this.error = "Error occured while retrieving JSON.";
 	      return;
 	    } else {
-		//Window.alert(String.valueOf(rId));
-	    this.error = null;
-	    
-	    Object parent = queue[rId];
-	    
-	    if (queryType == 1) {
-	    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
-	    	p.updateTable(p.asArrayOfAppData(jso));
-	    } else if (queryType == 2) {
-	    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
-	    	p.updateFieldList(p.asModelProperties(jso));
-	    } else if (queryType == 3) {
-	    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
-	    	p.handleVersions(p.asArrayOfVersionData(jso));
-	    } else if (queryType == 4) {
-	    	ManagementConsole mc = (ManagementConsole)parent;
-	    	mc.handleProjectNames(mc.asArrayOfProjectNames(jso));
-	    } else if (queryType == 5) {
-	    	Dashboard db = (Dashboard)parent;
-	    	db.handleProjectInformation(db.asJSOProjectInformation(jso));
-	    } else if (queryType == 6) {
-	    	ManagementConsole mc = (ManagementConsole)parent;
-	    	mc.handleUserInformation(mc.asJSOUserInformation(jso));
-	    } else if (queryType == 7) {
 	    	
-	    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
-	    	p.importAppList(p.asArrayOfProjectData(jso));
-	    	//Window.alert(jso.toString());
-	    }
+		    this.error = null;
+		    
+		    Object parent = queue[rId];
+		    
+		    if (queryType == 1) {
+		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
+		    	p.updateTable(p.asArrayOfAppData(jso));
+		    } else if (queryType == 2) {
+		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
+		    	p.updateFieldList(p.asModelProperties(jso));
+		    } else if (queryType == 3) {
+		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
+		    	p.handleVersions(p.asArrayOfVersionData(jso));
+		    } else if (queryType == 4) {
+		    	ManagementConsole mc = (ManagementConsole)parent;
+		    	mc.handleProjectNames(mc.asArrayOfProjectNames(jso));
+		    } else if (queryType == 5) {
+		    	Dashboard db = (Dashboard)parent;
+		    	db.handleProjectInformation(db.asJSOProjectInformation(jso));
+		    } else if (queryType == 6) {
+		    	ManagementConsole mc = (ManagementConsole)parent;
+		    	mc.handleUserInformation(mc.asJSOUserInformation(jso));
+		    } else if (queryType == 7) {	    	
+		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
+		    	p.importAppList(p.asArrayOfProjectData(jso));
+		    } else if (queryType == 8){
+		    	DatabaseOptionsBuildProject db = (DatabaseOptionsBuildProject)parent;
+		    	db.handleDBOptions(db.asArrayOfDBOptionsData(jso));
+		    }
 	    }
 	  }
 	  
