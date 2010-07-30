@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -25,7 +24,6 @@ public class ProjectOptionsBuildProject extends Composite {
 			UiBinder<Widget, ProjectOptionsBuildProject> {
 	}
 	
-	private FormPanel deployerForm;
 	private applicationDeployer appDeployer;
 	
 	@UiField TextBox usernameTextBox;
@@ -37,9 +35,8 @@ public class ProjectOptionsBuildProject extends Composite {
 	@UiField Button previousButton;
 	@UiField DockLayoutPanel projectOptionsPanel;
 	
-	public ProjectOptionsBuildProject(FormPanel deployerForm, applicationDeployer appDeployer) {
+	public ProjectOptionsBuildProject(applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.deployerForm = deployerForm;
 		this.appDeployer = appDeployer;
 	}	
 	

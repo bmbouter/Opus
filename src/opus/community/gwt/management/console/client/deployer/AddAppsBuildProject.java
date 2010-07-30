@@ -1,13 +1,9 @@
 package opus.community.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import opus.community.gwt.management.console.client.JSVariableHandler;
 import opus.community.gwt.management.console.client.ServerCommunicator;
-import opus.community.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
 import opus.community.gwt.management.console.client.resources.ProjectBuilderCss.ProjectBuilderStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -21,7 +17,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -43,7 +38,11 @@ public class AddAppsBuildProject extends Composite {
 		UiBinder<Widget, AddAppsBuildProject> {
 	}
 	
-	//private static JSVariableHandler JSVarHandler;
+	private final String tokenURL = "/project/configuration/token/?callback=";
+	private final String appFieldListURL = "/model/fields/application/?a";
+	private final String searchURL = "/search/application/json/?a";
+	private final String getVersionsURL = "/name/versions/?a&callback=";
+	
 	private String JSON_URL;
 	private Label errorMsgLabel = new Label();
 	private String selectedApp = "";
@@ -74,15 +73,15 @@ public class AddAppsBuildProject extends Composite {
 	
 	public AddAppsBuildProject(applicationDeployer appDeployer, ServerCommunicator jsonCom) {
 		JSVarHandler = new JSVariableHandler();
-		JSON_URL = URL.encode(JSVarHandler.getRepoBaseURL() + "/search/application/json/?a");
+		JSON_URL = URL.encode(JSVarHandler.getRepoBaseURL() + searchURL);
 		initWidget(uiBinder.createAndBindUi(this));
 		this.jsonCom = jsonCom;
-		this.refreshAppListFlexTable(JSON_URL);
-		this.populateFieldList(URL.encode(JSVarHandler.getRepoBaseURL() + "/model/fields/application/?a"));
+		this.refreshAppListFlexTable(URL.encode(JSVarHandler.getRepoBaseURL() + searchURL));
+		this.populateFieldList(URL.encode(JSVarHandler.getRepoBaseURL() + appFieldListURL));
 		this.appDeployer = appDeployer;	
 		String token = JSVarHandler.getProjectToken();
 		if (token != null) {
-			this.addProject(URL.encode(JSVarHandler.getRepoBaseURL() + "/project/configuration/" + token + "?callback="));
+			this.addProject(URL.encode(JSVarHandler.getRepoBaseURL() + tokenURL.replaceAll("token", token)));
 		}
 	}
 
@@ -109,7 +108,7 @@ public class AddAppsBuildProject extends Composite {
 	    url = URL.encode(url) + "&callback=";
 
 	    // Send request to server by replacing RequestBuilder code with a call to a JSNI method.
-	    jsonCom.getJson(url, jsonCom,1,this);
+	    jsonCom.getJson(url, jsonCom, "updateTable", this);
 	  }
 	  
 	  /**
@@ -118,7 +117,7 @@ public class AddAppsBuildProject extends Composite {
 	   */
 	  private void populateFieldList(String url) {
 		  url = URL.encode(url) + "&callback=";
-		  jsonCom.getJson(url, jsonCom, 2, this);
+		  jsonCom.getJson(url, jsonCom, "updateFieldList", this);
 	  }
 	  
 	  
@@ -138,23 +137,14 @@ public class AddAppsBuildProject extends Composite {
 	  void handleURLClick(ClickEvent e) {
 		  addProject.show();
 	  }
-	  /*@UiHandler("nextButton")
-	  void handleSubmitClick(ClickEvent eve) {
-		  ArrayList<String> postData = new ArrayList<String>();
-		  for(int i=0; i < paths.size(); i++) {
-			  postData.add("{\"type\":\"git\",\"path\":\""+paths.get(i)+"\"}");
-		  }
-		  this.doPost("https://opus-dev.cnl.ncsu.edu:9007/deployments/testname/", "json="+postData.toString());
-	  }*/
 
-	  
 	  private void search() {
 		  String query = searchBox.getText().trim();
 		  if (!query.isEmpty()) {
-			  String url = URL.encode(JSON_URL+"&field=" + fieldList.getValue(fieldList.getSelectedIndex()) + "&query="+query);
+			  String url = URL.encode(JSVarHandler.getRepoBaseURL() + searchURL + "&field=" + fieldList.getValue(fieldList.getSelectedIndex()) + "&query=" + query);
 			  this.refreshAppListFlexTable(url);
 		  } else {
-			  this.refreshAppListFlexTable(JSON_URL);
+			  this.refreshAppListFlexTable(URL.encode(JSVarHandler.getRepoBaseURL() + searchURL));
 		  }
 		  searchBox.setText("");
 	  }
@@ -192,7 +182,7 @@ public class AddAppsBuildProject extends Composite {
 		  Button addAppButton = new Button();
 		  addAppButton.addStyleName("addAppButton");
 		  addAppButton.setText("Add to List");
-		  final String url = URL.encode(JSVarHandler.getRepoBaseURL() + "/" + name + "/versions/?a") + "&callback=";
+		  final String url = URL.encode(JSVarHandler.getRepoBaseURL() + getVersionsURL.replaceAll("name", name));
 		  addAppButton.addClickHandler(new ClickHandler() {
 		      public void onClick(ClickEvent event) {
 		    	  selectedApp = name;
@@ -202,7 +192,7 @@ public class AddAppsBuildProject extends Composite {
 		    	  //Window.alert(String.valueOf(row));
 		    	  appInfoDialog.versionsFlexTable.setHTML(row, 0, "<div><b>" + name + "</b> -" + description + "</div>");
 		    	  //appInfoDialog.versionsFlexTable.setText(row, 0, "hello");
-		    	  jsonCom.getJson(url,handler,3,p);
+		    	  jsonCom.getJson(url, handler, "handleVersions", p);
 		    	  //Window.alert(url);
 		    	  
 	//	    	  appInfoDialog.versionsFlexTable.setWidget(row, 0, new HTMLPanel("<div><b>" + name + "</b> -" + description + "</div>"));
@@ -293,7 +283,7 @@ public class AddAppsBuildProject extends Composite {
 	  }
 	  
 	  public void addProject(String url){
-		  jsonCom.getJson(url, jsonCom, 7, this);
+		  jsonCom.getJson(url, jsonCom, "importAppList", this);
 	  }
 	  
 	  public void importAppList(JsArray<ProjectData> projectDataArray) {

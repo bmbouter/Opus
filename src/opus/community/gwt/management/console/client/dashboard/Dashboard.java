@@ -8,6 +8,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -22,6 +23,8 @@ public class Dashboard extends Composite {
 	interface DashboardUiBinder extends UiBinder<Widget, Dashboard> {
 	}
 
+	private final String projectInfoURL = "/json/projectName/?a&callback=";
+	
 	private ServerCommunicator serverComm;
 	private JSVariableHandler JSVarHandler;
 
@@ -39,8 +42,8 @@ public class Dashboard extends Composite {
 	}
 	
 	private void getProjectInfo(String projectName){
-		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + "/json/" + projectName + "/?a&callback=");
-		serverComm.getJson(url, serverComm, 5, this);
+		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + projectInfoURL.replaceAll("/projectName/", "/" + projectName +"/"));
+		serverComm.getJson(url, serverComm, "handleProjectInformation", this);
 	}
 	
 	public void handleProjectInformation(ProjectInformation projInfo){

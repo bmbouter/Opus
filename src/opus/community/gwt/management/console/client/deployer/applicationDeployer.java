@@ -10,7 +10,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -31,6 +30,8 @@ public class applicationDeployer extends Composite {
 
 	interface applicationDeployerUiBinder extends
 		UiBinder<Widget, applicationDeployer> {}
+		
+	private final String deploymentURL =  "/deployments/projectName/";
 		
 	private ApplicationDetailDialog appInfoDialog = new ApplicationDetailDialog();
 	private ProjectOptionsBuildProject projectOptions;
@@ -66,9 +67,9 @@ public class applicationDeployer extends Composite {
 		this.titleBarLabel = titleBarLabel;
 		this.deployerForm = new FormPanel();
 		this.addApps = new AddAppsBuildProject(this, managementCon.getServerCommunicator());
-		this.projectOptions = new ProjectOptionsBuildProject(deployerForm, this);
+		this.projectOptions = new ProjectOptionsBuildProject(this);
 		this.databaseOptions = new DatabaseOptionsBuildProject(this, managementCon.getServerCommunicator());
-		this.deploymentOptions = new DeploymentOptionsBuildProject(deployerForm, this);
+		this.deploymentOptions = new DeploymentOptionsBuildProject(this);
 		this.confirmBP = new ConfirmBuildProject(deployerForm, this);
 		this.activeLabel = addAppsLabel;
 		this.navigationMenuFocusFlag = 0;
@@ -215,7 +216,7 @@ public class applicationDeployer extends Composite {
 	  }
 	  
 	  void handleConfirmDeployProject(){
-		  deployerForm.setAction(JSVarHandler.getDeployerBaseURL() + "/deployments/" + deploymentOptions.projectNameTextBox.getText() + "/"); 
+		  deployerForm.setAction(JSVarHandler.getDeployerBaseURL() + deploymentURL.replaceAll("projectName", deploymentOptions.projectNameTextBox.getText())); 
 		  createdProjectName = deploymentOptions.projectNameTextBox.getText();
 		  
 		  VerticalPanel formContainerPanel = new VerticalPanel();
@@ -254,7 +255,6 @@ public class applicationDeployer extends Composite {
 		  //Add all Database fields to the form for submissionsd
 		  formContainerPanel.add(deploymentOptions.activeCheckBox);
 		  formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
-		  Window.alert(Cookies.getCookie("csrftoken"));
 		  deployerForm.submit();
 	  }
 

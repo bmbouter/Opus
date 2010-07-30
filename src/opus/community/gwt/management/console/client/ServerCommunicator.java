@@ -1,7 +1,5 @@
 package opus.community.gwt.management.console.client;
 
-import java.util.Date;
-
 import opus.community.gwt.management.console.client.dashboard.Dashboard;
 import opus.community.gwt.management.console.client.deployer.AddAppsBuildProject;
 import opus.community.gwt.management.console.client.deployer.DatabaseOptionsBuildProject;
@@ -20,27 +18,27 @@ public class ServerCommunicator {
 	private String error;
 	private int requestId;
 	private Object[] queue;
-	private int[] queryTypes;
+	private String[] queryTypes;
 	
 	public ServerCommunicator() {
 		this.queue = new Object[20];
-		this.queryTypes = new int[20];
+		this.queryTypes = new String[20];
 		this.requestId = 0;
 	}
 	  /**
 	   * Make call to remote server.
 	   */
 	
-	public void getJson(String url, ServerCommunicator handler, int queryType, Object parent){
-		//Window.alert(String.valueOf(queryType));
+	public void getJson(String url, ServerCommunicator handler, String queryType, Object parent){
 		queue[requestId] = parent;
 		queryTypes[requestId] = queryType;
-		requestJson(requestId, url, handler, queryType);
+		requestJson(requestId, url, handler);
 		requestId++;
+		error = "";
 	}
 	
 	  public native static void requestJson(int requestId, String url,
-	      ServerCommunicator handler, int queryType) /*-{
+	      ServerCommunicator handler) /*-{
 	   var callback = "callback" + requestId;
 
 	   // [1] Create a script element.
@@ -75,10 +73,9 @@ public class ServerCommunicator {
 	   * Handle the response to the request for stock data from a remote server.
 	   */
 	public void handleJsonResponse(JavaScriptObject jso, int rId) {
-		int queryType = queryTypes[rId];
+		String queryType = queryTypes[rId];
 
 		if (jso == null) {
-			
 			Window.alert("no json returned for request # "+String.valueOf(rId));
 			this.error = "Error occured while retrieving JSON.";
 	      return;
@@ -88,28 +85,28 @@ public class ServerCommunicator {
 		    
 		    Object parent = queue[rId];
 		    
-		    if (queryType == 1) {
+		    if (queryType.equals("updateTable")) {
 		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
 		    	p.updateTable(p.asArrayOfAppData(jso));
-		    } else if (queryType == 2) {
+		    } else if (queryType.equals("updateFieldList")) {
 		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
 		    	p.updateFieldList(p.asModelProperties(jso));
-		    } else if (queryType == 3) {
+		    } else if (queryType.equals("handleVersions")) {
 		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
 		    	p.handleVersions(p.asArrayOfVersionData(jso));
-		    } else if (queryType == 4) {
+		    } else if (queryType.equals("handleProjectNames")) {
 		    	ManagementConsole mc = (ManagementConsole)parent;
 		    	mc.handleProjectNames(mc.asArrayOfProjectNames(jso));
-		    } else if (queryType == 5) {
+		    } else if (queryType.equals("handleProjectInformation")) {
 		    	Dashboard db = (Dashboard)parent;
 		    	db.handleProjectInformation(db.asJSOProjectInformation(jso));
-		    } else if (queryType == 6) {
+		    } else if (queryType.equals("handleUserInformation")) {
 		    	ManagementConsole mc = (ManagementConsole)parent;
 		    	mc.handleUserInformation(mc.asJSOUserInformation(jso));
-		    } else if (queryType == 7) {	    	
+		    } else if (queryType.equals("importAppList")) {	    	
 		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
 		    	p.importAppList(p.asArrayOfProjectData(jso));
-		    } else if (queryType == 8){
+		    } else if (queryType.equals("handleDBOptions")){
 		    	DatabaseOptionsBuildProject db = (DatabaseOptionsBuildProject)parent;
 		    	db.handleDBOptions(db.asArrayOfDBOptionsData(jso));
 		    }

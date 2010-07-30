@@ -42,9 +42,4 @@ public class ApplicationDetailDialog extends Composite {
 	  public void hide() {
 		  applicationPopup.hide();
 	  }
-	/*  @UiHandler("cancelButton")
-	  void onClick(ClickEvent e) {
-		  applicationPopup.hide();
-	  }*/
-
 }

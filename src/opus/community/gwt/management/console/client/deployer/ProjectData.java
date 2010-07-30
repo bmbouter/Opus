@@ -1,7 +1,6 @@
 package opus.community.gwt.management.console.client.deployer;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
 
 class ProjectData extends JavaScriptObject {                              // [1]
   // Overlay types always have protected, zero argument constructors.

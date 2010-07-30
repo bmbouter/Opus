@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -24,7 +23,6 @@ public class DeploymentOptionsBuildProject extends Composite {
 			UiBinder<Widget, DeploymentOptionsBuildProject> {
 	}
 
-	private FormPanel deployerForm;
 	private applicationDeployer appDeployer;
 	
 	@UiField Button nextButton;
@@ -32,11 +30,9 @@ public class DeploymentOptionsBuildProject extends Composite {
 	@UiField Label baseUrlLabel;
 	@UiField TextBox projectNameTextBox;
 	@UiField CheckBox activeCheckBox;
-//	@UiField ScrollPanel deploymentOptionsScrollPanel;
 
-	public DeploymentOptionsBuildProject(FormPanel deployerForm, applicationDeployer appDeployer) {
+	public DeploymentOptionsBuildProject(applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.deployerForm = deployerForm;
 		this.appDeployer = appDeployer;
 		baseUrlLabel.setText(appDeployer.getBaseURL());
 		activeCheckBox.setValue(true);

@@ -27,6 +27,8 @@ public class DeleteProject extends Composite {
 	interface DeleteProjectUiBinder extends UiBinder<Widget, DeleteProject> {
 	}
 
+	private final String deleteProjectURL = "/deployments/projectTitle/destroy";
+	
 	private JSVariableHandler JSVarHandler;
 	private FormPanel deleteForm;
 	private ManagementConsole managementCon;
@@ -46,7 +48,7 @@ public class DeleteProject extends Composite {
 	private void setupDeleteForm(String projectTitle){
 		deleteForm.setMethod(FormPanel.METHOD_POST);
 		deleteForm.setVisible(false);
-		deleteForm.setAction(JSVarHandler.getDeployerBaseURL()+ "/deployments/" + projectTitle + "/destroy");
+		deleteForm.setAction(JSVarHandler.getDeployerBaseURL()+ deleteProjectURL.replaceAll("/projectTitle/", "/" + projectTitle +"/"));
 		titlePanel.add(deleteForm);
 		deleteForm.addSubmitHandler(new FormPanel.SubmitHandler() {
 		      public void onSubmit(SubmitEvent event) {

@@ -1,8 +1,5 @@
 package opus.community.gwt.management.console.client;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import opus.community.gwt.management.console.client.dashboard.ProjectDashboard;
 import opus.community.gwt.management.console.client.deployer.applicationDeployer;
 import opus.community.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
@@ -22,8 +19,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -33,7 +28,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.Cookies;
 
 
 public class ManagementConsole extends Composite {
@@ -45,6 +39,10 @@ public class ManagementConsole extends Composite {
 			UiBinder<Widget, ManagementConsole> {
 	}
 
+	private final String logoutURL = "/accounts/logout/";
+	private final String checkLoginURL = "/json/username/?a&callback=";
+	private final String projectsURL = "/json/?a&callback=";
+	
 	private applicationDeployer appDeployer;
 	private ProjectDashboard projectDashboard;
 	private Login loginPanel;
@@ -52,9 +50,7 @@ public class ManagementConsole extends Composite {
 	private ServerCommunicator ServerComm;
 	private ManagementConsole managementCon;
 	private JSVariableHandler JSVarHandler;
-	private int appTypeFlag;
 	private PopupPanel pp;
-	private int login;
 	private int projectCount;
 	
 	
@@ -87,8 +83,8 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void checkLogin(){
-		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + "/json/username/?a&callback=");
-		ServerComm.getJson(url, ServerComm, 6, this);
+		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + checkLoginURL);
+		ServerComm.getJson(url, ServerComm, "handleUserInformation", this);
 	}
 	
 	public void loginComplete(){
@@ -96,8 +92,8 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void createDashboardsPopup(){
-		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + "/json/?a&callback=");
-		ServerComm.getJson(url, ServerComm, 4, this);	
+		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + projectsURL);
+		ServerComm.getJson(url, ServerComm, "handleProjectNames", this);	
 	}
 	
 	public void onDeployNewProject(String projectName){
@@ -170,7 +166,7 @@ public class ManagementConsole extends Composite {
 			      }
 			 });
 			logoutForm.setMethod(FormPanel.METHOD_GET);
-			logoutForm.setAction(JSVarHandler.getDeployerBaseURL() + "/accounts/logout/");
+			logoutForm.setAction(JSVarHandler.getDeployerBaseURL() + logoutURL);
 			mainDeckPanel.add(logoutForm);
 			logoutForm.submit();
 		} else {
@@ -182,6 +178,7 @@ public class ManagementConsole extends Composite {
 		pp.clear();
 		projectCount = ProjectNames.length();
 		if(projectCount != 0){
+			iconPanel.projectIconsFlowPanel.clear();
 			FlowPanel FP = new FlowPanel();
 			for(int i = 0; i < ProjectNames.length(); i++){
 				final Label testLabel = new Label(ProjectNames.get(i).getName());

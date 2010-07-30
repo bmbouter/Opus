@@ -30,20 +30,6 @@ public class ConfirmBuildProject extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.deployerForm = deployerForm;
 		this.appDeployer = appDeployer;
-/*		confirmationScrollPanel.add(deployerForm);
-		AddAppsBuildProject addApps = appDeployer.getAddApps();
-		ProjectOptionsBuildProject projectOptions = appDeployer.getProjectOptions();
-		DatabaseOptionsBuildProject databaseOptions = appDeployer.getDatabaseOptions();
-		DeploymentOptionsBuildProject deploymentOptions = appDeployer.getDeploymentOptions();
-		
-		String username = projectOptions.usernameTextBox.getValue();
-		String email = projectOptions.emailTextBox.getValue();
-		Boolean admin = projectOptions.adminCheckBox.getValue();
-		
-		String database = databaseOptions.dbengineListBox.getItemText(databaseOptions.dbengineListBox.getSelectedIndex());
-		databaseOptions.nameTextBox.getValue();
-		//databaseOptions.
-*/		
 	}
 	
 	@UiHandler("previousButton")

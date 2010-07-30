@@ -64,7 +64,7 @@ public class DatabaseOptionsBuildProject extends Composite {
 			setupDBOptions();
 		} else {
 			final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + dbOptionsURL);
-			serverComm.getJson(url, serverComm, 8, this);
+			serverComm.getJson(url, serverComm, "handleDBOptions", this);
 		}
 	}
 	
