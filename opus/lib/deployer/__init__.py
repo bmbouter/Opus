@@ -407,7 +407,7 @@ application = opus.lib.profile.OpusWSGIHandler()
                     ))
 
         # Restart apache gracefully
-        proc = subprocess.call([secureops,"-r"],
+        proc = subprocess.Popen([secureops,"-r"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT)
         output = proc.communicate()[0]
@@ -444,7 +444,7 @@ class ProjectUndeployer(object):
         if os.path.exists(config_path):
             os.unlink(config_path)
 
-            proc = subprocess.call([secureops,"-r"],
+            proc = subprocess.Popen([secureops,"-r"],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT)
             output = proc.communicate()[0]
