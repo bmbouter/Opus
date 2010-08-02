@@ -407,9 +407,13 @@ application = opus.lib.profile.OpusWSGIHandler()
                     ))
 
         # Restart apache gracefully
-        ret = subprocess.call([secureops,"-r"])
+        proc = subprocess.call([secureops,"-r"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
+        output = proc.communicate()[0]
+        ret = proc.wait()
         if ret:
-            raise DeploymentException("Could not restart apache")
+            raise DeploymentException("Could not restart apache. {0}".format(output))
 
     def gen_cert(self, suffix):
         opus.lib.deployer.ssl.gen_cert("ssl", self.projectdir,
@@ -440,9 +444,13 @@ class ProjectUndeployer(object):
         if os.path.exists(config_path):
             os.unlink(config_path)
 
-            ret = subprocess.call([secureops, "-r"])
+            proc = subprocess.call([secureops,"-r"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT)
+            output = proc.communicate()[0]
+            ret = proc.wait()
             if ret:
-                raise DeploymentException("Could not restart apache")
+                raise DeploymentException("Could not restart apache. {0}".format(output))
 
     def delete_user(self, secureops="secureops"):
         """Calls userdel to remove the system user"""
