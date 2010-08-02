@@ -1,0 +1,4 @@
+include *.txt
+include src/Makefile
+include src/secureops.c
+recursive-include gwtmedia *
