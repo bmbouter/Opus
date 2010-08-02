@@ -216,7 +216,7 @@ see the `Django Deployment Guide`_ for help.
 
  .. _Django Deployment Guide: http://docs.djangoproject.com/en/1.2/howto/deployment/modwsgi/
 
-''Note:'' Opus 'must' be deployed using mod_wsgi's "Daemon Process" option.
+**Note:** Opus *must* be deployed using mod_wsgi's "Daemon Process" option.
 This has to do with how Apache reloads itself, and since Opus periodically
 must restart Apache, this causes problems if Opus is running in mod_wsgi's
 "embedded mode."
