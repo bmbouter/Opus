@@ -1,3 +1,4 @@
+
 =============
     Opus
 =============
@@ -166,8 +167,8 @@ Apache needs to have a few configuration items apart from the standard
 Django+mod_wsgi deployment.
 
 * A NameVirtualHost line must be present for the ports that Opus will be
-  deploying to. For example, if you have Opus configured to deploy to ports 80
-  and 443, Apache needs to have these lines in its configuration::
+  deploying projects to. For example, if you have Opus configured to deploy to
+  ports 80 and 443, Apache needs to have these lines in its configuration::
 
     NameVirtualHost *:80
     NameVirtualHost *:443
@@ -215,6 +216,10 @@ see the `Django Deployment Guide`_ for help.
 
  .. _Django Deployment Guide: http://docs.djangoproject.com/en/1.2/howto/deployment/modwsgi/
 
+''Note:'' Opus 'must' be deployed using mod_wsgi's "Daemon Process" option.
+This has to do with how Apache reloads itself, and since Opus periodically
+must restart Apache, this causes problems if Opus is running in mod_wsgi's
+"embedded mode."
 
 ------------------
 After Installation
