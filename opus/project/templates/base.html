@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <title>{% block title %}Opus{% endblock title %}</title>
+        {% block head %}{% endblock head %}
+    </head>
+    {% block body_tag %}<body>{% endblock body_tag %}
+        <h1>Opus</h1>
+        <div id="head_bar" />
+        <div id="main">
+            <div id="navigation">
+                <a href="{% url opus.project.deployment.views.list_or_new %}">Deployment List</a>
+            </div>
+            {% if message %}
+                <p>{{ message }}</p>
+            {% endif %}
+            <div id="content">
+                <br />
+                {% block content %}{% endblock content %}
+            </div>
+        </div>
+    </body>
+</html>

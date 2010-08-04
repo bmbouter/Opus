@@ -1,0 +1,11 @@
+<images>
+    {% for image in images %}
+        <image href="{{ images_uri }}/{{ image.id }}">
+            <id>{{ image.id }}</id>
+            <owner_id>{{ image.owner_id }}</owner_id>
+            <name>{{ image.name }}</name>
+            <description>{{ image.description }}</description>
+            <architecture>{{ image.architecture }}</architecture>
+        </image>
+    {% endfor %}
+</images>

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Success{% endblock %}
+
+{% block content %}
+<h1>Successfully Deployed <a href="{{ project.get_absolute_url }}">Project {{ project.name }}</a></h1>
+{% if message %}
+<div style="color: #FF0000; font-weight: bold;">
+    {{ message }}
+</div>
+{% endif %}
+
+{% endblock %}

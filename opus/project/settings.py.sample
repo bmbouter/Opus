@@ -1,0 +1,145 @@
+# Django settings for project project.
+
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+
+ADMINS = (
+    # ('Your Name', 'your_email@domain.com'),
+)
+
+MANAGERS = ADMINS
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': '',                      # Or path to database file if using sqlite3.
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
+
+# Local time zone for this installation. Choices can be found here:
+# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+# although not all choices may be available on all operating systems.
+# On Unix systems, a value of None will cause Django to use the same
+# timezone as the operating system.
+# If running in a Windows environment this must be set to the same as your
+# system time zone.
+TIME_ZONE = 'America/Chicago'
+
+# Language code for this installation. All choices can be found here:
+# http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'en-us'
+
+SITE_ID = 1
+
+# If you set this to False, Django will make some optimizations so as not
+# to load the internationalization machinery.
+USE_I18N = True
+
+# If you set this to False, Django will not format dates, numbers and
+# calendars according to the current locale
+USE_L10N = True
+
+# Absolute path to the directory that holds media.
+# Example: "/home/media/media.lawrence.com/"
+MEDIA_ROOT = ''
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash if there is a path component (optional in other cases).
+# Examples: "http://media.lawrence.com", "http://example.com/media/"
+MEDIA_URL = ''
+
+# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
+# trailing slash.
+# Examples: "http://foo.com/media/", "/media/".
+ADMIN_MEDIA_PREFIX = '/media/'
+
+# Make this unique, and don't share it with anybody.
+# XXX Set this to a string of length 50 containing random characters
+SECRET_KEY = None
+
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+#     'django.template.loaders.eggs.Loader',
+)
+
+MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+)
+
+ROOT_URLCONF = 'opus.project.urls'
+
+TEMPLATE_DIRS = (
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    # XXX set the path to the opus template diretory here
+    "INSERT PROJECT PATH HERE/opus/project/templates",
+)
+
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.admin',
+
+    'opus.project.deployment',
+)
+
+##########################
+# Opus Specific Settings #
+##########################
+
+# Set this to the directory where projects will be placed upon deployment. This
+# must be a directory that both exists, and the Opus user has write access to.
+OPUS_BASE_DIR = "/var/lib/opus/base"
+
+# Configure this with the directory the deployer should drop apache
+# configuration files. This directory must be writable by the Opus user, and
+# readable by apache. Apache must be configured to include every *.conf file in
+# this directory.
+OPUS_APACHE_CONFD = "/etc/httpd/conf.d/opus"
+
+# This should point to the path where the secureops binary is located. This is
+# compiled from the source files in the src/ directory of the Opus source. It
+# must be owned by root and have permissions 4750 (setuid root) and the Opus
+# user must have permissions to execute it.
+OPUS_SECUREOPS_COMMAND = "/usr/local/opus/bin/secureops"
+
+# Directory where log files should go. This directory must exist, and be
+# writable by the Opus user.
+LOG_DIR = "/PATH_TO_LOG_DIR/log"
+
+# Set this to one of the logging level strings, or one of the constants from
+# the logging module. Set to None to choose between INFO and DEBUG according to
+# settings.DEBUG automatically
+LOG_LEVEL = "DEBUG"
+
+# These are the directives that tell Opus what VirtualHost it should deploy
+# projects to. They will be passed into the <VirtualHost> directive in the
+# apache config, and Opus expects Apache to have an e.g. "NameVirtualHost *:80" line
+# (for port 80) in its config.
+# You can set these to None to disable serving altogether on that protocol
+OPUS_HTTP_PORT = 80
+OPUS_HTTPS_PORT = 443
+
+# This is the domain where projects will be served from. Project names are
+# prefixed to this string and used as the apache ServerName directive inside a
+# <VirtualHost> block.
+# Don't forget the leading dot.
+# This example serves a projectname "myproject" from myproject.example.com
+OPUS_APACHE_SERVERNAME_SUFFIX = ".example.com"
+
+# Location that is serving the opus community media
+OPUS_GWT_MEDIA = "/gwt"

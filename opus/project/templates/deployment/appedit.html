@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Opus Project Editor{% endblock %}
+
+{% block content %}
+<h1><a href="{{ project.get_absolute_url }}">Project {{ project.name }}</a></h1>
+{% if message %}
+<div style="color: #FF0000; font-weight: bold;">
+    {{ message }}
+</div>
+{% endif %}
+{% if failures %}
+<div style="color: #FF0000; font-weight: bold;">
+    <ul>
+        {% for f in failures %}
+        <li>Failed to {{ f.1 }} {{ f.0 }}. Error was: {{ f.2 }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<form action="{% url opus.project.deployment.views.editapp project.name %}" method="post">
+{% csrf_token %}
+{% for f in form.forms %}
+    {% for field in f.hidden_fields %}
+        {{ field }}
+    {% endfor %}
+{% endfor %}
+{{ form.management_form }}
+<table border="1">
+    <tr><td>App Name</td><td>Upgrade to:</td><td>Delete?</td></tr>
+{% for f in form.forms %}
+    <tr>
+        <td>{{ f.initial.appname }}</td>
+        {% for field in f.visible_fields %}
+            <td>{{ field }}</td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+</table>
+<input type="submit" value="Upgrade or Delete" />
+</form>
+
+{% endblock %}

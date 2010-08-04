@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Opus Project Editor{% endblock %}
+
+{% block content %}
+<h1><a href="{{ project.get_absolute_url }}">Project {{ project.name }}</a></h1>
+{% if message %}
+<div style="color: #FF0000; font-weight: bold;">
+    {{ message }}
+</div>
+{% endif %}
+
+<form method="post" action="{% url opus.project.deployment.views.addapp project.name %}">
+    {% csrf_token %}
+    <h2>Add new application</h2>
+    {{ appform.as_p }}
+    <input type="submit" value="Add" />
+</form>
+
+{% endblock %}

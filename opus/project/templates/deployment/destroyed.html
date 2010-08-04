@@ -1,0 +1,12 @@
+
+{% extends "base.html" %}
+{% block title %}Opus Project Editor{% endblock %}
+
+{% block content %}
+<h1>Project {{ projectname }} destroyed</h1>
+
+{% if message %}
+{{ message }}
+{% endif %}
+
+{% endblock %}

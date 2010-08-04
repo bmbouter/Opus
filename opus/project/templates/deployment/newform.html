@@ -1,0 +1,27 @@
+
+{% extends "base.html" %}
+{% block title %}New Deployment{% endblock %}
+
+{% block content %}
+<h2>Creating new project "{{projectname}}"</h2>
+<form action="{% url opus.project.deployment.views.edit_or_create projectname %}" method="post">
+    {% csrf_token %}
+    <table>
+        {{ pform.as_table }}
+        {{ dform.as_table }}
+    </table>
+    <table>
+        <tr>
+            <td>App URL</td><td>App Type</td>
+        </tr>
+        {{ appsform.management_form }}
+        {% for form in appsform.forms %}
+        <tr>
+            <td>{{ form.apppath }}</td>
+            <td>{{ form.apptype }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <input type="submit" value="GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!" />
+</form>
+{% endblock %}

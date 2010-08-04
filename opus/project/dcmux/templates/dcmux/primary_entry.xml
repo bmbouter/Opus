@@ -1,0 +1,5 @@
+<api driver='opus' version='1.0'>
+    {% for link in links %}
+        <link href="{{ link.uri }}" rel="{{ link.resource }}" />
+    {% endfor %}
+</api>
