@@ -1,0 +1,35 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="../resources/OtherApplicationPopup.css" type="opus.gwt.management.console.client.resources.ApplicationPopupCss.ApplicationPopupStyle"/>
+  	<g:PopupPanel ui:field="otherApplicationPopup" modal="true" 
+  							glassEnabled="true" animationEnabled="true"
+  							styleName="{style.otherAppPopup}">
+		<g:DockLayoutPanel unit='PCT' ui:field="otherAppDockLayoutPanel" styleName="{style.otherAppDockLayoutPanel}">
+			<g:north size="30">
+				<g:FlowPanel>
+					<g:Label text="Name:" styleName="{style.floatChild}"></g:Label>
+					<g:TextBox ui:field="applicationNameTextBox" styleName="{style.floatChild}"></g:TextBox>
+					<g:HTML>e.g. "Application name"</g:HTML>
+				</g:FlowPanel>
+			</g:north>
+			<g:north size="30">
+				<g:FlowPanel>
+					<g:Label text="Path:" styleName="{style.floatChild}"></g:Label>
+					<g:TextBox ui:field="applicationURLTextBox" styleName="{style.floatChild}"></g:TextBox>
+					<g:HTML>e.g. "git://github.com/bmbouter/worklog.git"</g:HTML>
+				</g:FlowPanel>
+			</g:north>
+			<g:north size="15">
+				<g:FlowPanel>
+					<g:Label text="Path Type:" styleName="{style.floatChild}"></g:Label>
+					<g:ListBox ui:field="appTypeListBox"/>
+				</g:FlowPanel>
+			</g:north>
+			<g:north size="20">
+				<g:Button ui:field="addApplicationButton" text="Add" styleName="{style.addButton}">
+				</g:Button>
+			</g:north>
+		</g:DockLayoutPanel>
+	</g:PopupPanel>
+</ui:UiBinder>

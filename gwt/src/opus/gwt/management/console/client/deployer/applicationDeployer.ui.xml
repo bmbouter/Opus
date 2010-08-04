@@ -1,0 +1,12 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="../resources/Deployer.css" type="opus.gwt.management.console.client.resources.Deployer.DeployerStyle"/>
+	<g:HTMLPanel>
+		<g:Label ui:field="addAppsLabel" styleName="{style.navigationLabel}">Step 1: Add Applications</g:Label>
+		<g:Label ui:field="projectOptionsLabel" styleName="{style.navigationLabel}">Step 2: Project Options</g:Label>
+		<g:Label ui:field="databaseOptionsLabel" styleName="{style.navigationLabel}">Step 3: Database Options</g:Label>
+		<g:Label ui:field="deploymentOptionsLabel" styleName="{style.navigationLabel}">Step 4: Deployment Options</g:Label>
+		<g:Label ui:field="confirmBPLabel" styleName="{style.navigationLabel}">Step 5: Confirm Selections</g:Label>
+	</g:HTMLPanel>
+</ui:UiBinder> 
