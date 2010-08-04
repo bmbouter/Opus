@@ -1,4 +1,10 @@
 include *.txt
 include src/Makefile
 include src/secureops.c
+include opus/project/settings.py.sample
+exclude opus/project/settings.py
+include opus/project/log
+include opus/lib/conf/default_settings.json
+recursive-include opus/project/templates *
+recursive-include opus/project/dcmux/templates *
 recursive-include gwtmedia *

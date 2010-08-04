@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 from django.core.management import execute_manager
 import sys
-sys.path.append("/home/andrew/opus-fh")
+import os.path
+sys.path.append(os.path.dirname(__file__))
 try:
     import settings # Assumed to be in the same directory.
 except ImportError:

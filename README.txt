@@ -19,7 +19,7 @@ deploying a project:
 * Generate a (temporary) self-signed certificate for SSL deployments
 * Writes out an Apache configuration file
 * Writes out a WSGI file
-* Restarts apache (gracefully, of course)
+* Restarts Apache (gracefully, of course)
 
 The entire process is fully automated. Additionally, the entire procedure is
 reversable to tear down and destroy a project. Applications can also be added,
@@ -31,7 +31,7 @@ repository will automatically be cloned, and can later be reset to a different
 version on request.
 
 Opus is configured with a virtual host base, and a port. You configure Apache
-as a NameVirtualHost on that port, and Opus generates apache configuration
+as a NameVirtualHost on that port, and Opus generates Apache configuration
 files for each project. For example, if the Opus Servername Suffix is set to
 ".opus.example.com", a deployed project will host from
 "projectname.opus.example.com"
@@ -90,6 +90,7 @@ Opus in its current form requires:
 * mod_wsgi
 * Linux
 * Some kind of database and the Django compatible Python bindings for it
+* A C compiler to compile the secureops program (see below)
 
 To build the Google Web Toolkit component, you need
 * Java
@@ -98,41 +99,48 @@ To build the Google Web Toolkit component, you need
 ----------
 Installing
 ----------
-As this project is in heavy development, the installation procedure isn't set
-in stone just yet. Here are some general installation guidelines.
-
-Clone this repository somewhere. You have probably already done this unless
-you're browsing the source online to read this file.
-
 Below, there are several references to the "Opus user." This refers to the
 Linux user that the Opus application will be running as. Typically, this is the
 same user that Apache uses, but since mod_wsgi can be configured to run
 projects as another user, we use the term "Opus user" instead.
+
+The first step is to install opus. Use
+
+    python setup.py install
+
+from within the source distribution to install the Opus python libraries and
+supporting files.
+
+Once the libraries are in place, move on to the next step.
 
 Secure Ops
 ----------
 Under the src/ directory in the source is a single C file and a Makefile. Opus
 needs to do certian operations that a non-superuser isn't normally allowed to
 do. Specifically, it needs to create system users, change ownership of files,
-and restart apache. This is all done with a small simple C program compiled and
+and restart Apache. This is all done with a small simple C program compiled and
 set to run with suid root.
+
+This file is not compiled by setup.py. You will need to compile and install it
+yourself.
 
 Compile this file and set its suid flag. It should be owned by root, and only
 executable by the Opus user (by setting the group appropriately).  A Makefile
 is provided for convenience. It will compile the file using gcc and then use
 sudo to change the ownership and permissions of the file. If your system is
-configured differently, for example with a different apache user, then you will
+configured differently, for example with a different Apache user, then you will
 need to either modify the Makefile or compile it yourself.
 
 Once the binary is compiled and working, take note of where it's installed to.
 It doesn't need to be installed to a system-wide location, but it does need to
-be where the opus user can execute it. You will enter in the path to the
-executable in the next step in the settings.py OPUS_SECUREOPS_COMMAND option.
+be where the opus user can execute it. You will configure the path to the
+executable in the next step in the settings.py under the
+OPUS_SECUREOPS_COMMAND option.
 
 Settings
 --------
-The next step is to deploy the Django project, which you can find located at
-opus/project in the source. To do that, first configure it:
+The next step is to deploy the Django project, which you can find installed as
+opus.project. To do that, first configure it:
 
 * Copy the settings.py.sample to settings.py
 * Configure the necessary settings in there. At a minimum, you'll need to set
@@ -149,22 +157,30 @@ opus/project in the source. To do that, first configure it:
   * LOG_DIR
   * OPUS_APACHE_SERVERNAME_SUFFIX
 
-Don't forget to make the base directory, log directory, and apache conf
+Don't forget to make the base directory, log directory, and Apache conf
 directory writable by the Opus user.
 
 Database Sync
 -------------
-Now sync the database by calling `manage.py syncdb`. Standard Django procedure.
+Now sync the database by calling `python manage.py syncdb`. Standard Django
+procedure.
 
 If you're using sqlite, you must create a directory to house the database file
-and the directory must be writable by the Opus user (since sqlite uses
-temporary files). Once the database is synced, make sure the database file is
-owned or at least writable by the Opus user.
+and the directory must be writable by the Opus user, not just the one sqlite
+file (since sqlite uses temporary files).
+
+Note that if you run this command as root (or any user other than the Opus
+user), the sqlite database (if any) as well as some log files will get created
+as that user, and thus you will get permission denied errors later when Opus
+is being run as an unprivileged user. Make sure you go back and set
+permissions appropriately for any files in the LOG_DIR directory, and the
+sqlite file if using sqlite.
 
 Apache Configuration
 --------------------
 Apache needs to have a few configuration items apart from the standard
-Django+mod_wsgi deployment.
+Django+mod_wsgi deployment. Somewhre in your Apache config, set the following
+items. We recommend putting this in a separate opus.conf inside of conf.d.
 
 * A NameVirtualHost line must be present for the ports that Opus will be
   deploying projects to. For example, if you have Opus configured to deploy to
@@ -177,12 +193,16 @@ Django+mod_wsgi deployment.
   make sure to add the appropriate "Listen" directives
 
 * Make sure to add an "Include" directive to include `*.conf` in the directory
-  configured by OPUS_BASE_DIR
+  configured by OPUS_BASE_DIR. e.g.::
+
+    Include conf.d/opus/*.conf
 
 * If you want to use the GWT interface, you must configure Apache (or any
   server, it doesn't have to be the same one) to serve the files from gwtmedia/
   in the source distribution. Then configure Opus's OPUS_GWT_MEDIA directive to
-  where browsers can find that media.
+  where browsers can find that media. e.g.::
+
+    Alias /gwt /usr/local/share/opus/gwtmedia
 
 Deployment
 ----------
@@ -219,7 +239,38 @@ see the `Django Deployment Guide`_ for help.
 **Note:** Opus *must* be deployed using mod_wsgi's "Daemon Process" option.
 This has to do with how Apache reloads itself, and since Opus periodically
 must restart Apache, this causes problems if Opus is running in mod_wsgi's
-"embedded mode."
+"embedded mode." So make sure lines such as these are in the context of the
+WSGIScriptAlias directive in the Apache configuration::
+
+    WSGIDaemonProcess OPUS
+    WSGIProcessGroup OPUS
+
+Here is a sample of the opus.conf Apache configuration::
+
+    NameVirtualHost *:80
+    NameVirtualHost *:443
+
+    <VirtualHost *:80>
+            Alias /gwt /var/www/opusenv/share/opus/gwtmedia
+            WSGIDaemonProcess OPUS
+            WSGIProcessGroup OPUS
+            WSGIScriptAlias / /var/lib/opus/wsgi/opus.wsgi
+    </VirtualHost>
+
+    Include conf.d/opus/*.conf
+
+Misc Notes
+----------
+Unfortunately, there are a few caveats at the moment.
+
+* django-admin.py must be in the system path. This isn't a problem unless
+  Django and Opus are running in a virtualenv. The solution right now is to
+  copy django-admin.py into a system path such as /usr/local/bin
+
+* WSGI's daemon processes if configured by default to run with the same user
+  as Apache, will fail since Apache by default has the "Include conf.d/\*.conf"
+  line before the "User apache" line. The solution is to move the include line
+  down below the user line.
 
 ------------------
 After Installation

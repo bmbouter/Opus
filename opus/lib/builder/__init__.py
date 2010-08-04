@@ -97,11 +97,20 @@ class ProjectBuilder(object):
     def _startproject(self, target):
         # Returns a temporary directory containing a skeleton project
 
-        # call django_admin.py startproject.py
+        # Create an environment for the subprocess. DJANGO_SETTINGS_MODULE
+        # must be excluded or this may fail
+        env = dict(os.environ)
+        try:
+            del env['DJANGO_SETTINGS_MODULE']
+        except KeyError:
+            pass
+        
+        # call django_admin.py startproject
         proc = subprocess.Popen(["django-admin.py", "startproject", self.projectname],
                 cwd=target,
                 stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT)
+                stderr=subprocess.STDOUT,
+                env=env)
         output = proc.communicate()[0]
         if proc.wait():
             raise BuildException("startproject failed. {0}".format(output))

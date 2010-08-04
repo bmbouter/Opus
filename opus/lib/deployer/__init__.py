@@ -139,7 +139,14 @@ class ProjectDeployer(object):
         env = dict(os.environ)
         env['OPUS_SETTINGS_FILE'] = os.path.join(self.projectdir, "opussettings.json")
         env['PYTHONPATH'] = os.path.split(opus.__path__[0])[0]
+        # Tells the logging module to disable logging, which would create
+        # permission issues
         env['OPUS_LOGGING_DISABLE'] = "1"
+        try:
+            # Don't leak this value from our current environment
+            del env['DJANGO_SETTINGS_MODULE']
+        except KeyError:
+            pass
         return env
 
     def _sync_database(self):

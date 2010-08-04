@@ -58,7 +58,7 @@ MEDIA_URL = ''
 ADMIN_MEDIA_PREFIX = '/media/'
 
 # Make this unique, and don't share it with anybody.
-# XXX Set this to a string of length 50 containing random characters
+# XXX Set this to a string of length at least 50 containing random characters
 SECRET_KEY = None
 
 # List of callables that know how to import templates from various sources.
@@ -82,7 +82,9 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    # XXX set the path to the opus template diretory here
+    
+    # XXX Set the path to the opus template diretory here. This is by default
+    # installed to <prefix>/lib/python2.X/site-packages/opus/project/templates
     "INSERT PROJECT PATH HERE/opus/project/templates",
 )
 
@@ -108,7 +110,9 @@ OPUS_BASE_DIR = "/var/lib/opus/base"
 # Configure this with the directory the deployer should drop apache
 # configuration files. This directory must be writable by the Opus user, and
 # readable by apache. Apache must be configured to include every *.conf file in
-# this directory.
+# this directory. (If you're following the readme instructions, you will
+# configure apache in the next step. Just make sure this directory is writable
+# by Opus)
 OPUS_APACHE_CONFD = "/etc/httpd/conf.d/opus"
 
 # This should point to the path where the secureops binary is located. This is
@@ -141,5 +145,10 @@ OPUS_HTTPS_PORT = 443
 # This example serves a projectname "myproject" from myproject.example.com
 OPUS_APACHE_SERVERNAME_SUFFIX = ".example.com"
 
-# Location that is serving the opus community media
+# Location that is serving the opus community media. If you want to use the
+# nice Google Web Toolkit interface (you probably do) then this needs to point
+# to the URL prefix that is set to serve those media files. These files are by
+# default installed to <prefix>/share/opus/gwtmedia, or can be found in the
+# gwtmedia directory of the source. You will need to set your webserver to
+# serve these files.
 OPUS_GWT_MEDIA = "/gwt"
