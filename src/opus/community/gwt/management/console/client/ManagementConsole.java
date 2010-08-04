@@ -177,8 +177,8 @@ public class ManagementConsole extends Composite {
 	public void handleProjectNames(JsArray<ProjectNames> ProjectNames){
 		pp.clear();
 		projectCount = ProjectNames.length();
+		iconPanel.projectIconsFlowPanel.clear();
 		if(projectCount != 0){
-			iconPanel.projectIconsFlowPanel.clear();
 			FlowPanel FP = new FlowPanel();
 			for(int i = 0; i < ProjectNames.length(); i++){
 				final Label testLabel = new Label(ProjectNames.get(i).getName());
@@ -212,6 +212,7 @@ public class ManagementConsole extends Composite {
 			mainDeckPanel.add(iconPanel);
 			mainDeckPanel.showWidget(0);
 		} else {
+			
 			deployNewButton.click();
 		}
 		pp.setStyleName(style.dashboardsPopup());
