@@ -93,6 +93,7 @@ Opus in its current form requires:
 * A C compiler to compile the secureops program (see below)
 
 To build the Google Web Toolkit component, you need
+
 * Java
 * GWT SDK
 
@@ -268,6 +269,15 @@ Unfortunately, there are a few caveats at the moment.
   Django and Opus are running in a virtualenv. The solution right now is to
   copy django-admin.py into a system path such as /usr/local/bin
 
+* If you get errors of this nature::
+
+    child pid 30465 exit signal Segmentation fault (11)
+    mod_wsgi (pid=30466): Unable to determine home directory for uid=-1.
+
+  See this page: http://code.google.com/p/modwsgi/issues/detail?id=40
+
+  To fix it, see the next bullet.
+
 * WSGI's daemon processes if configured by default to run with the same user
   as Apache, will fail since Apache by default has the `Include conf.d/*.conf`
   line before the "User apache" line. The solution is to move the include line
@@ -277,6 +287,18 @@ Unfortunately, there are a few caveats at the moment.
 * As shown above, the `Include conf.d/opus/*.conf` line ought to go below the
   virtualhost declaration for Opus, so that it is the default virtual host
   served by apache.
+
+* If you get errors of this nature::
+
+    Unable to connect to WSGI daemon process 'OPUS' on
+    '/etc/httpd/logs/wsgi.30603.0.1.sock' after multiple attempts.
+
+  See
+  http://code.google.com/p/modwsgi/wiki/ConfigurationIssues#Location_Of_UNIX_Sockets
+
+  To fix it, add this line to your Apache configuration::
+
+    WSGISocketPrefix run
 
 ------------------
 After Installation
