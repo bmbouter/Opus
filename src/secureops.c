@@ -90,7 +90,7 @@ int main(int argc, char **argv)
         // Create username
         if (fork() == 0) {
             execl("/usr/sbin/useradd", "/usr/sbin/useradd",
-                "-d", "/",
+                "-d", "/nonexistant",
                 "-M",
                 "-N",
                 "-s", "/bin/false",
