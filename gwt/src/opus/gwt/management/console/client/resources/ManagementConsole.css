@@ -1,0 +1,216 @@
+/*############################################################################
+# Copyright 2010 North Carolina State University                             #
+#                                                                            #
+#   Licensed under the Apache License, Version 2.0 (the "License");          #
+#   you may not use this file except in compliance with the License.         #
+#   You may obtain a copy of the License at                                  #
+#                                                                            #
+#       http://www.apache.org/licenses/LICENSE-2.0                           #
+#                                                                            #
+#   Unless required by applicable law or agreed to in writing, software      #
+#   distributed under the License is distributed on an "AS IS" BASIS,        #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. #
+#   See the License for the specific language governing permissions and      #
+#   limitations under the License.                                           #
+############################################################################*/
+
+.mainPanel {
+  	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E3E3E3), to(#8F8F8F), color-stop(.6,#999999))');
+  	background-image: literal('-moz-linear-gradient(0% 0% 90deg, #E3E3E3, #8F8F8F, #999999 60%)');
+  	position: absolute;
+    top: 0; 
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: 0;
+    min-width: 800px;
+    min-height: 700px;
+    font-size: 1em;
+}
+.subMainPanel {
+	width: 95%;
+	height: 94%;	
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    margin-top: 2%;
+    background:	literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#575757), to(#121212), color-stop(.4,#333333))');
+    background:	literal('-moz-linear-gradient(0% 0% 90deg, #575757, #121212, #333333 40%)');
+	border-radius: 10px;
+	-webkt-border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-box-shadow: 7px 7px 7px #121212;
+    -moz-box-shadow: 7px 7px 7px #121212;
+    box-shadow: 7px 7px 7px #121212;
+}
+.topBarPanel {
+	background: black;	
+	border-radius: 10px 10px 0 0;
+	-moz-border-radius: 10px 10px 0 0;
+	-webkit-border-radius: 10px 10px 0 0;
+	padding: 0.2% 0% 0% 1%;
+}
+.topBarLink {
+	cursor: pointer;
+	cursor: hand;
+	color: white;
+	float: left;
+	margin-right: 1%;
+}
+.titleBar {
+	padding: 0.4% 0% 0% 1%;
+    color: white;
+    font-size: 2.4em;
+    width: 100%;
+    height: 100%;
+    min-height: 95%;
+    text-shadow:10px 10px 5px #0F0F0F;
+    font-family: "Droid Serif";
+}
+.navigationMenu {
+	width: 84%;
+	height: 98%;
+	padding: 10% 0 0 12%;
+}
+.mainDeckPanel{
+	width: 98.5%;
+	height: 97.5%;
+	padding: 0 0 15% 0;
+}
+.topMenuPanel{
+	background: black;
+	border-radius: 10px 10px 0 0;
+	-moz-border-radius: 10px 10px 0 0;
+	border-bottom: 1px solid gray;
+}
+.topDashboardButton{
+	cursor: pointer;
+	cursot: hand;
+	background: black;
+	border: none;
+	color: white;
+	float: left;
+	border-right: 1px solid gray;
+	margin-left: 0.75%;
+	font-family: "Droid Serif";
+	height: 100%;
+}
+.topDashboardButtonActive{
+	cursor: pointer;
+	cursot: hand;
+	background: white;
+	border: none;
+	color: black;
+	float: left;
+	border-top: 1px solid gray;
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	border-radius: 5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
+	margin-left: 0.65%;
+	height: 100%;
+	font-family: "Droid Serif";
+}
+.topDeployNewButton{
+	cursor: pointer;
+	cursot: hand;
+	background: black;
+	border: none;
+	color: white;
+	float: left;
+	font-family: "Droid Serif";
+	height: 100%;
+}
+.loggedInAsLabel{
+	background: black;
+	border: none;
+	border-right: 1px solid gray;
+	color: orange;
+	margin-right: 0.2%;
+	height: 100%;
+	font-family: "Droid Serif";
+	float: right;
+}
+.authenticationButton{
+	cursor: pointer;
+	cursot: hand;
+	background: black;
+	border: none;
+	color: white;
+	margin-right: 0.4%;
+	height: 100%;
+	font-family: "Droid Serif";
+	float: right;
+	border: none;
+}	
+.dashboardsPopup {
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	border-bottom: 1px solid gray;
+	background: white;
+	-moz-border-radius: 0 5px 5px 5px;
+	border-radius: 0 5px 5px 5px;
+	padding: 0.5% 0.5% 0.5% 0.5%;
+}
+.popupLabel {
+	color: black;	
+	text-align: center;
+	border-bottom: 1px solid gray;
+	width: 90%;
+	margin-right: 5%;
+	margin-left: 5%;
+	cursor: pointer;
+	cursor: hand;
+}
+.popupLabelActive{
+	color: white;	
+	text-align: center;
+	border-bottom: 1px solid gray;
+	width: 90%;
+	margin-right: 5%;
+	margin-left: 5%;
+	cursor: pointer;
+	cursor: hand;
+	background: orange;	
+}
+.loginPanel{
+	color: black;
+	margin: 15% 0% 0% 30%;
+}
+.loginElement{
+	float: left;
+	color: orange;
+	font-size: 1.25em;
+}
+.loginTextBox{
+	float: left;
+	color: black;
+}
+.loginButton{
+	width: 8%;
+	margin: 0 0 0 5.25%;
+	border-radius: 5px;
+	border: #F08000;
+	box-shadow:2px 2px 10px #B86200;
+	background:	literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F08000), to(#F08000), color-stop(.5,#B86200))');
+    background:	literal('-moz-linear-gradient(0% 0% 90deg, #F08000, #F08000, #B86200 50%)'); 
+}
+.projectIcon {
+	color: white;	
+	text-align: center;
+	margin: 2%;
+	cursor: pointer;
+	cursor: hand;
+	float: left;
+}
+.projectIconActive{
+	color: black;	
+	text-align: center;
+	margin: 2%;
+	cursor: pointer;
+	cursor: hand;
+	background: white;	
+	float: left;
+	border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+}
