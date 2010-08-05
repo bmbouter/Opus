@@ -148,7 +148,7 @@ OPUS_APACHE_SERVERNAME_SUFFIX = ".example.com"
 # Location that is serving the opus community media. If you want to use the
 # nice Google Web Toolkit interface (you probably do) then this needs to point
 # to the URL prefix that is set to serve those media files. These files are by
-# default installed to <prefix>/share/opus/gwtmedia, or can be found in the
-# gwtmedia directory of the source. You will need to set your webserver to
+# default installed to <prefix>/share/opus/media, or can be found in the
+# gwt/build directory of the source. You will need to set your webserver to
 # serve these files.
 OPUS_GWT_MEDIA = "/gwt"

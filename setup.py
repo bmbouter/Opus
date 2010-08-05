@@ -4,11 +4,16 @@ from distutils.core import setup
 
 # Install data_files for gwtmedia directory
 data_files = []
-for dirpath, dirnames, filenames in os.walk("gwtmedia"):
+tocopy = os.path.join("gwt","build")
+for dirpath, dirnames, filenames in os.walk(tocopy):
     if filenames:
+        if dirpath.startswith(tocopy):
+            ndirpath = dirpath[len(tocopy):]
+        if ndirpath.startswith(os.path.sep):
+            ndirpath = ndirpath[1:]
         data_files.append(
                 (
-                    os.path.join("share","opus",dirpath),
+                    os.path.join("share","opus","media",ndirpath),
                     [os.path.join(dirpath,x) for x in filenames],
                 )
         )

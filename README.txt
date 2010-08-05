@@ -75,9 +75,9 @@ src/
 gwt/
     The source to the Google Web Toolkit interface.
 
-gwtmedia/
+gwt/build
     This is the compiled GWT javascript code needed for the GWT interface to
-    function.
+    function. It's provided in the source distribution for convenience.
 
 ------------
 Requirements
@@ -197,12 +197,13 @@ items. We recommend putting this in a separate opus.conf inside of conf.d.
 
     Include conf.d/opus/*.conf
 
-* If you want to use the GWT interface, you must configure Apache (or any
-  server, it doesn't have to be the same one) to serve the files from gwtmedia/
-  in the source distribution. Then configure Opus's OPUS_GWT_MEDIA directive to
-  where browsers can find that media. e.g.::
+* If you want to use the GWT interface (you probably do), you must configure
+  a webserver (perhaps the same one, it doesn't matter) to serve the files
+  from gwt/build/ in the source distribution (setup.py will install these files
+  to <prefix>/share/opus/media). Then configure Opus's OPUS_GWT_MEDIA directive
+  to where browsers can find that media. e.g.::
 
-    Alias /gwt /usr/local/share/opus/gwtmedia
+    Alias /gwt /usr/local/share/opus/media
 
 Deployment
 ----------
@@ -245,7 +246,7 @@ WSGIScriptAlias directive in the Apache configuration::
     WSGIDaemonProcess OPUS
     WSGIProcessGroup OPUS
 
-Here is a sample of the opus.conf Apache configuration::
+Here is an example of the opus.conf Apache configuration::
 
     NameVirtualHost *:80
     NameVirtualHost *:443
@@ -268,9 +269,14 @@ Unfortunately, there are a few caveats at the moment.
   copy django-admin.py into a system path such as /usr/local/bin
 
 * WSGI's daemon processes if configured by default to run with the same user
-  as Apache, will fail since Apache by default has the "Include conf.d/\*.conf"
+  as Apache, will fail since Apache by default has the `Include conf.d/*.conf`
   line before the "User apache" line. The solution is to move the include line
-  down below the user line.
+  down below the user line. (This seems like a mod_wsgi problem more than an
+  Opus problem)
+
+* As shown above, the `Include conf.d/opus/*.conf` line ought to go below the
+  virtualhost declaration for Opus, so that it is the default virtual host
+  served by apache.
 
 ------------------
 After Installation
@@ -318,7 +324,5 @@ The GWT interface is served from `/` (i.e. the root URL).
 
 In order for the GWT interface to function, the GWT media directory needs to be
 set up.  These are static css and javascript files. Set Apache (or any server)
-to serve these static files, and configure the OPUS_GWT_MEDIA directive to
-point to where these files are served from.
-
-The GWT media is in the gwtmedia/ directory of the source distribution.
+to serve these static files as described above in the `Apache Configuration`_
+section.
