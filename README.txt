@@ -284,9 +284,9 @@ Unfortunately, there are a few caveats at the moment.
   down below the user line. (This seems like a mod_wsgi problem more than an
   Opus problem)
 
-* As shown above, the `Include conf.d/opus/*.conf` line ought to go below the
-  virtualhost declaration for Opus, so that it is the default virtual host
-  served by apache.
+* As shown in the example in the last section, the `Include
+  conf.d/opus/*.conf` line ought to go below the virtualhost declaration for
+  Opus, so that it is the default virtual host served by apache.
 
 * If you get errors of this nature::
 
