@@ -121,6 +121,8 @@ class ProjectDeployer(object):
             if len(args) < 3:
                 raise TypeError("You must specify the database username and password")
             dbname = args[0]
+            if not dbname:
+                raise ValueError("You must specify a value for database name")
             dbuser = args[1]
             dbpassword = args[2]
             if len(args) >= 4:

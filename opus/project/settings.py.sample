@@ -152,3 +152,22 @@ OPUS_APACHE_SERVERNAME_SUFFIX = ".example.com"
 # gwt/build directory of the source. You will need to set your webserver to
 # serve these files.
 OPUS_GWT_MEDIA = "/gwt"
+
+# This settings enables the automatic configuration of a Postgres user and
+# database for a new project if the project has selected Postgres as their
+# database. In order for this to work, Opus must use the same database cluster
+# as deployed projects, and the database user Opus is configured with must have
+# create role and create database privileges.
+OPUS_AUTO_POSTGRES_CONFIG = False
+
+# A list of allowed database backends projects can choose from. This should be
+# a subset of the Django databases, which include 'postgresql_psycopg2',
+# 'postgresql', 'mysql', 'sqlite3', 'oracle'. If the list only contains one
+# option, no choice will be given to users.
+OPUS_ALLOWED_DATABASES = [
+        'postgresql_psycopg2',
+        'postgresql',
+        'mysql',
+        'sqlite3',
+        'oracle',
+        ]

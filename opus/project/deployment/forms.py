@@ -21,6 +21,10 @@ from django.forms.fields import *
 from django.forms.widgets import *
 from django.core.validators import RegexValidator
 from django.forms.formsets import formset_factory
+from django.conf import settings
+
+from opus.lib.log import get_logger
+log = get_logger()
 
 id_re = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_]+$')
 validate_identifier = RegexValidator(id_re, u"Enter a valid identifier consisting of letters, numbers, and underscores, not starting with a number.", 'invalid')
@@ -72,6 +76,31 @@ class DeploymentForm(forms.Form):
     dbhost = CharField(required=False)
     dbport = IntegerField(required=False)
     active = BooleanField(required=False, initial=True)
+
+    def __init__(self, *args, **kwargs):
+        forms.Form.__init__(self, *args, **kwargs)
+
+        # if there is only one option for the database in
+        # settings.OPUS_ALLOWED_DATABASES, remove the dbengine field
+        if len(settings.OPUS_ALLOWED_DATABASES) == 1:
+            del self.fields['dbengine']
+        else:
+            # Filter out the choices of dbengine according to
+            # settings.OPUS_ALLOWED_DATABASES
+            cf = self.fields['dbengine']
+            cf.choices = [x for x in cf.choices 
+                    if x[0] in settings.OPUS_ALLOWED_DATABASES]
+
+    def full_clean(self):
+        forms.Form.full_clean(self)
+        if not self._errors and self.is_bound and \
+                len(settings.OPUS_ALLOWED_DATABASES) == 1:
+            # If there was only 1 choice for dbengine, the field wasn't
+            # displayed. To retain compatibility with code that uses this
+            # class, insert it into cleaned_data here.
+            log.warning("full clean called, cleaned_data is %s", self.cleaned_data)
+            self.cleaned_data['dbengine'] = \
+                    settings.OPUS_ALLOWED_DATABASES[0]
 
     def clean(self):
         """Does some extra checks:
