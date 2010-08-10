@@ -130,7 +130,7 @@ def _init_logging():
 
     try:
         settings.LOG_DIR
-    except AttributeError:
+    except (AttributeError, ImportError):
         # Not running in a Django context, can't set up the master log file.
         django_context = False
 
