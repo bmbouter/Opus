@@ -33,3 +33,6 @@ from driver_base import DriverBase
 from image import Image
 from instance import Instance
 from realm import Realm
+
+# Exceptions
+import exceptions
