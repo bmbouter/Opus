@@ -23,6 +23,7 @@ import opus.lib.builder
 import opus.lib.deployer
 from opus.lib.deployer import DeploymentException
 import opus.lib.log
+from opus.project.deployment import tasks
 log = opus.lib.log.get_logger()
 
 from django.conf import settings
@@ -380,7 +381,7 @@ def create(request, projectname):
 def destroy(request, project):
     """Destroys a project"""
     if request.method == "POST":
-        project.destroy()
+        tasks.destroy_project.delay(project.pk)
         return render("deployment/destroyed.html", {
             'projectname': project.name
             }, request)

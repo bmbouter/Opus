@@ -18,7 +18,7 @@
 from django.core.management import execute_manager
 import sys
 import os.path
-sys.path.append(os.path.dirname(__file__))
+sys.path.append(os.path.join("..","..",os.path.dirname(__file__)))
 try:
     import settings # Assumed to be in the same directory.
 except ImportError:
