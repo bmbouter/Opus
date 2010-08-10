@@ -15,12 +15,13 @@
 ##############################################################################
 
 import httplib
-import logging
 import re
 import mimetools
 import base64
 from xml.dom.minidom import parseString
+import xml.parsers.expat
 
+from log import log
 from image import Image
 from instance import Instance
 from flavor import Flavor
@@ -37,8 +38,8 @@ resource_classes = {
     "instance": Instance,
     "realm": Realm,
     "state": State,
-    "storage-snapshot": StorageSnapshot,
-    "storage-volume": StorageVolume,
+    "storage_snapshot": StorageSnapshot,
+    "storage_volume": StorageVolume,
     #"transition": Transition,
 }
 
@@ -129,8 +130,8 @@ class Deltacloud(object):
 
         """
         headers = {
-            "Accept": "text/xml",
-            "Authorization": self._auth_string,
+            #"Accept": "text/xml",
+            #"Authorization": self._auth_string,
         }
 
         # Handle both absolute and relative urls
@@ -189,8 +190,8 @@ class Deltacloud(object):
             raise ValueError("Status code returned by deltacloud was %s." % response.status)
         try:
             return parseString(text)
-        except Exception:
-            log.error("There was a problem parsing XML from deltacloud!")
+        except xml.parsers.expat.ExpatError:
+            log.error("There was a problem parsing the following xml from deltacloud:\n'''%s'''" % text)
             raise
 
     def _get_resources(self, singular_resource_name, opts={}):

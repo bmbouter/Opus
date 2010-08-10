@@ -14,35 +14,42 @@
 #   limitations under the License.                                           #
 ##############################################################################
 
-"""A simple interface to deltacloud.
+class Image(object):
+    """
+    An abstract form of an instance.  An ``Image`` can be instantiated to
+    create multiple instances.
 
-Follows the interface to the ruby deltacloud client very closely.
+    An ``Image`` has the following attributes:
 
-"""
-from deltacloud import Deltacloud
+    id
+        A unique identifier for this image.
 
-from image import Image
-from instance import Instance
-from flavor import Flavor
-from realm import Realm
-from state import State
-from storage_snapshot import StorageSnapshot
-from storage_volume import StorageVolume
-from transition import Transition
+    driver
+        The driver object which instantiated this object.
 
-def get_prov():
-    """Returns an pre-configured Deltacloud object
+    owner_id
+        A unique identifier for the owner of this image.
 
-    The returned Deltacloud object is tied to the deltacloud provider
-    indicated in the settings file using the following variables
+    name
+        A descriptive name for this image
 
-    DELTACLOUD_API_URI -- The primary entry point URI for the provider
-    DELTACLOUD_USERNAME -- The username to logon to the provider
-    DELTACLOUD_PASSWORD -- The password to logon to the provider
+    description
+        An optional long description.
+
+    architecture
+        The machine architecture that this ``Image`` uses.  Examples are "i386
+        and "x86_64".
+
     """
 
-    from django.conf import settings
-    api_uri = settings.DELTACLOUD_API_URI
-    username = settings.DELTACLOUD_USERNAME
-    password = settings.DELTACLOUD_PASSWORD
-    return Deltacloud(username, password, api_uri)
+    def __init__(self, id, driver, owner_id, name, description, architecture):
+        self.driver = driver
+        self.id = id
+        self.owner_id = owner_id
+        self.name = name
+        self.description = description
+        self.architecture = architecture
+
+    def __repr__(self):
+        return '<Image id=%s, driver=%s, owner_id=%s, name="%s", description="%s", architecture="%s">' % \
+            (self.id, self.driver, self.owner_id, self.name, self.description, self.architecture)
