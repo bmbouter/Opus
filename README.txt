@@ -89,8 +89,10 @@ Opus in its current form requires:
 * Apache
 * mod_wsgi
 * Linux
-* Some kind of database and the Django compatible Python bindings for it
+* A Django compatible database server
 * A C compiler to compile the secureops program (see below)
+* Celery and Django-celery (djcelery)
+* A Celery compatible message broker such as RabbitMQ
 
 To build the Google Web Toolkit component, you need
 
@@ -100,11 +102,21 @@ To build the Google Web Toolkit component, you need
 ----------
 Installing
 ----------
+
 Below, there are several references to the "Opus user." This refers to the
 Linux user that the Opus application will be running as. Typically, this is the
 same user that Apache uses, but since mod_wsgi can be configured to run
 projects as another user, we use the term "Opus user" instead.
 
+Prerequisites
+-------------
+Before you begin, you must have all the requirements installed. You must
+configure the database server with a username, password, and database for
+Opus. You must configure your message passing broker beforehand. How to do
+those things are out of the scope of this document.
+
+First step
+----------
 The first step is to install opus. Use
 
     python setup.py install
@@ -150,6 +162,7 @@ opus.project. To do that, first configure it:
   the file for what they do.
 
   * DATABASE parameters
+  * Message Broker parameters
   * SECRET_KEY
   * TEMPLATE_DIRS
   * OPUS_BASE_DIR
@@ -300,11 +313,22 @@ Unfortunately, there are a few caveats at the moment.
 
     WSGISocketPrefix run
 
+Celery Daemon
+-------------
+In order for the asynchronous tasks that Opus uses to run, you must start the
+Celery daemon. This can be done by running `manage.py celeryd` which is found
+in the opus/lib/project directory. This will most likely need to be run as the
+Opus user. e.g.::
+
+    sudo -u apache ./manage.py celeryd
+
+See the Celery documentation for how to run this as a system daemon.
+
 ------------------
 After Installation
 ------------------
-Once Opus is installed and deployed you should be able to log into the admin
-interface and the deployment interface.
+Once Opus is installed and everything is running you should be able to log
+into the admin interface and the deployment interface.
 
 
 Admin Interface
