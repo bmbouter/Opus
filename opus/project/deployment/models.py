@@ -278,9 +278,9 @@ class DeployedProject(models.Model):
         tries = 0
         while subprocess.call(["pgrep", "-u", "opus"+self.name]) == 0:
             if tries >= 6:
-                log.warning("User still has processes running after 30 seconds! Continuin
+                log.warning("User still has processes running after 30 seconds! Continuing anyways")
                 break
-            log.debug("Was about to delete user, but it still has processes running! Wait
+            log.debug("Was about to delete user, but it still has processes running! Waiting 5 seconds")
             tries += 1
             time.sleep(5)
 
