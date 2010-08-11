@@ -92,7 +92,7 @@ class Instance(object):
         on failure.
 
         """
-        return self.driver.instance_start(self.id)
+        return self.driver.instance_stop(self.id)
 
     def reboot(self):
         """Reboots a running instance.
@@ -116,4 +116,4 @@ class Instance(object):
         return self.driver.instance_destroy(self.id)
 
     def __repr__(self):
-        return "<Instance id=%s, driver=%s, owner_id=%s, name=%s, image=%s, realm=%s, state=%s, public_addresses=%s, private_addresses=%s>" % (self.id, self.driver, self.owner_id, self.name, self.image, self.realm, self.state, self.public_addresses, self.private_addresses)
+        return "<Instance id=%s, driver=%s, owner_id=%s, name=%s, image_id=%s, realm=%s, state=%s, public_addresses=%s, private_addresses=%s>" % (self.id, self.driver, self.owner_id, self.name, self.image_id, self.realm, self.state, self.public_addresses, self.private_addresses)
