@@ -119,6 +119,8 @@ First step
 ----------
 The first step is to install opus. Use
 
+::
+
     python setup.py install
 
 from within the source distribution to install the Opus python libraries and

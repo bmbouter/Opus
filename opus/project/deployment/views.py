@@ -24,6 +24,7 @@ import opus.lib.deployer
 from opus.lib.deployer import DeploymentException
 import opus.lib.log
 from opus.project.deployment import tasks
+import opus.project.deployment.database
 log = opus.lib.log.get_logger()
 
 from django.conf import settings
@@ -315,20 +316,40 @@ def create(request, projectname):
                 builder.set_admin_app()
             log.debug("Executing create action on %r...", projectname)
             try:
+                # Create the project directory
                 projectdir = builder.create(settings.OPUS_BASE_DIR)
                 log.info("%r created, starting deploy process", projectname)
 
-                # Deploy it
+                # Prepare deployment parameters
                 info = models.DeploymentInfo()
                 info.dbengine = dform.cleaned_data['dbengine']
-                info.dbname = dform.cleaned_data['dbname']
-                info.dbpassword = dform.cleaned_data['dbpassword']
-                info.dbhost = dform.cleaned_data['dbhost']
-                info.dbport = dform.cleaned_data['dbport']
+                # If requested, create a database for it
+                if info.dbengine == "postgresql_psycopg2" and \
+                        settings.OPUS_AUTO_POSTGRES_CONFIG:
+                    autodb = opus.project.deployment.database.\
+                            setup_postgres(projectname)
+                    info.dbname, info.dbuser, info.dbpassword, \
+                            info.dbhost, info.dbport = autodb
+                elif info.dbengine == "sqlite3":
+                    # SQLite database locations get set automatically by the
+                    # deployment libraries. No other options are set.
+                    # SQLite is handled differently (as far as the location of
+                    # the code) since the file must be secured properly.  So
+                    # the deployer handles that correctly along side its
+                    # routines to change permissions on the directory.
+                    pass
+                else:
+                    info.dbname = dform.cleaned_data['dbname']
+                    info.dbuser = dform.cleaned_data['dbuser']
+                    info.dbpassword = dform.cleaned_data['dbpassword']
+                    info.dbhost = dform.cleaned_data['dbhost']
+                    info.dbport = dform.cleaned_data['dbport']
                 info.superusername = dform.cleaned_data['superusername']
                 info.superemail = dform.cleaned_data['superemail']
                 info.superpassword = dform.cleaned_data['superpassword']
 
+
+                # Deploy it now!
                 deployment.deploy(info, active=dform.cleaned_data['active'])
             except Exception, e:
                 # The project didn't deploy for whatever reason. Delete the

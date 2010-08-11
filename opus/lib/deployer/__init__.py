@@ -140,6 +140,9 @@ class ProjectDeployer(object):
         defaultdb['PASSWORD'] = dbpassword
         defaultdb['HOST'] = dbhost
         defaultdb['PORT'] = dbport
+        if defaultdb['ENGINE'].endswith("postgresql_psycopg2"):
+            # Require SSL on the server
+            defaultdb['OPTIONS'] = {"sslmode": "require"}
 
         self.config.save()
 
@@ -198,6 +201,10 @@ class ProjectDeployer(object):
         # Django modules loaded and configured in this interpreter, which may
         # conflict with any Django settings already imported.
         dbconfig = self.config['DATABASES']['default']
+        if dbconfig['ENGINE'].endswith("postgresql_psycopg2"):
+            options = """'OPTIONS': {'sslmode': 'require'}"""
+        else:
+            options = ""
         program = """
 import os
 try:
@@ -213,6 +220,7 @@ settings.configure(DATABASES = {{'default':
         'PASSWORD': {password!r},
         'HOST': {host!r},
         'PORT': {port!r},
+        {options}
     }}
 }})
 from django.contrib.auth.models import User
@@ -228,6 +236,7 @@ user.save()
                 port=dbconfig['PORT'],
                 suuser=username,
                 supassword=password,
+                options=options
                 )
 
         process = subprocess.Popen(["python"], stdin=subprocess.PIPE,
@@ -464,9 +473,9 @@ class ProjectUndeployer(object):
 
     def remove_apache_conf(self, apache_conf_dir, secureops="secureops"):
         """Removes the apache config file and reloads apache"""
-        log.info("Removing apache config for project %s", self.projectname)
         config_path = os.path.join(apache_conf_dir, "opus"+self.projectname+".conf")
         if os.path.exists(config_path):
+            log.info("Removing apache config for project %s", self.projectname)
             os.unlink(config_path)
 
             proc = subprocess.Popen([secureops,"-r"],

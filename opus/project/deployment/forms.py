@@ -60,7 +60,16 @@ class EditAppForm(forms.Form):
 EditAppFormSet = formset_factory(EditAppForm, extra=0, can_delete=True)
 
 class DeploymentForm(forms.Form):
-    """Form to ask how to deploy a project"""
+    """Form to ask how to deploy a project.
+    
+    About the database settings. The choices for the engine may be filtered out
+    depending on the Django settings. For SQLite, no other options are
+    specified (they are ignored). If configured, a postgres choice for the
+    dbengine does not require any other database options. If there is only one
+    choice for the database, and it is SQLite or postgres, the other options
+    are removed.
+    
+    """
     superusername = CharField(required=False)
     superpassword = CharField(required=False, widget=PasswordInput)
     superpasswordconfirm = CharField(required=False, widget=PasswordInput)
@@ -72,6 +81,7 @@ class DeploymentForm(forms.Form):
             ('oracle', 'Oracle', ),
             ))
     dbname = CharField(required=False)
+    dbuser = CharField(required=False)
     dbpassword = CharField(required=False, widget=PasswordInput)
     dbhost = CharField(required=False)
     dbport = IntegerField(required=False)
@@ -91,6 +101,20 @@ class DeploymentForm(forms.Form):
             cf.choices = [x for x in cf.choices 
                     if x[0] in settings.OPUS_ALLOWED_DATABASES]
 
+        # Additionally, under these conditions the rest of the database options
+        # are not used
+        if len(settings.OPUS_ALLOWED_DATABASES) == 1:
+            if settings.OPUS_ALLOWED_DATABASES[0] == "sqlite3" or \
+                    (settings.OPUS_ALLOWED_DATABASES[0] == \
+                     "postgresql_psycopg2" and \
+                     settings.OPUS_AUTO_POSTGRES_CONFIG):
+                del self.fields['dbname']
+                del self.fields['dbuser']
+                del self.fields['dbpassword']
+                del self.fields['dbhost']
+                del self.fields['dbport']
+
+
     def full_clean(self):
         forms.Form.full_clean(self)
         if not self._errors and self.is_bound and \
@@ -98,7 +122,6 @@ class DeploymentForm(forms.Form):
             # If there was only 1 choice for dbengine, the field wasn't
             # displayed. To retain compatibility with code that uses this
             # class, insert it into cleaned_data here.
-            log.warning("full clean called, cleaned_data is %s", self.cleaned_data)
             self.cleaned_data['dbengine'] = \
                     settings.OPUS_ALLOWED_DATABASES[0]
 

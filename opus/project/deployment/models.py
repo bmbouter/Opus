@@ -22,6 +22,7 @@ import time
 import opus.lib.deployer
 from opus.lib.deployer import DeploymentException
 from opus.lib.conf import OpusConfig
+from opus.project.deployment import database
 from opus.lib.log import get_logger
 log = get_logger()
 
@@ -46,6 +47,7 @@ class DeploymentInfo(object):
     def __init__(self):
         self.dbengine = None
         self.dbname = None
+        self.dbuser = ""
         self.dbpassword = ""
         self.dbhost = ""
         self.dbport = ""
@@ -193,6 +195,7 @@ class DeployedProject(models.Model):
 
         d.configure_database(info.dbengine,
                 info.dbname,
+                info.dbuser,
                 info.dbpassword,
                 info.dbhost,
                 info.dbport,
@@ -275,6 +278,7 @@ class DeployedProject(models.Model):
         # have ended. A return from pgrep will return 0 if a process matched, 1
         # if no processes match, 2 if there is an error (including user doesn't
         # exist)
+        # XXX Maybe move this code into delete_user()?
         tries = 0
         while subprocess.call(["pgrep", "-u", "opus"+self.name]) == 0:
             if tries >= 6:
@@ -286,6 +290,15 @@ class DeployedProject(models.Model):
 
         destroyer.delete_user(
                 secureops=settings.OPUS_SECUREOPS_COMMAND)
+
+        # Remove database and user if automatically created
+        try:
+            if self.config['DATABASES']['default']['ENGINE'].endswith(\
+                    "postgresql_psycopg2") and \
+                    settings.OPUS_AUTO_POSTGRES_CONFIG:
+                database.delete_postgres(self.name)
+        except Exception, e:
+            log.warning("Ignoring this error when trying to delete postgres user: %s", e)
 
         destroyer.remove_projectdir()
 
