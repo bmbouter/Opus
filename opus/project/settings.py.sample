@@ -183,3 +183,10 @@ OPUS_ALLOWED_DATABASES = [
         'sqlite3',
         'oracle',
         ]
+
+# These options specify the SSL cert and key used for deployed projects when
+# deploying on an HTTPS port. If either one is blank, the system will instead
+# generate a self-signed certificate for each project. With this option, you
+# can tell Opus to use a e.g. wildcard cert for every deployed project.
+OPUS_SSL_CRT = ""
+OPUS_SSL_KEY = ""

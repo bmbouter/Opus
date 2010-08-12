@@ -326,7 +326,9 @@ user.save()
         self.config.save()
 
 
-    def configure_apache(self, apache_conf_dir, httpport, sslport, servername_suffix, pythonpath="", secureops="secureops"):
+    def configure_apache(self, apache_conf_dir, httpport, sslport,
+            servername_suffix, pythonpath="", secureops="secureops",
+            ssl_crt=None, ssl_key=None):
         """Configures apache to serve this Django project.
         apache_conf_dir should be apache's conf.d directory where a .conf file
         can be dropped
@@ -337,6 +339,9 @@ user.save()
 
         servername_suffix is a string that will be appended to the end of the
         project name for the apache ServerName directive
+
+        ssl_crt and ssl_key, if specified, will be used in lieu of a self
+        signed certificate.
 
         """
         # Check if our dest file exists, so as not to overwrite it
@@ -407,12 +412,14 @@ application = opus.lib.profile.OpusWSGIHandler()
             for port in (httpport, sslport):
                 if not port: continue
                 if port == sslport:
+                    if not (ssl_crt and ssl_key):
+                        ssl_crt = os.path.join(self.projectdir, "ssl.crt")
+                        ssl_key = os.path.join(self.projectdir, "ssl.key")
                     ssllines = """
                         SSLEngine On
                         SSLCertificateFile {0}
                         SSLCertificateKeyFile {1}
-                        """.format(os.path.join(self.projectdir, "ssl.crt"),
-                        os.path.join(self.projectdir, "ssl.key"))
+                        """.format(ssl_crt, ssl_key)
                 else:
                     ssllines = ""
                 config.write("""

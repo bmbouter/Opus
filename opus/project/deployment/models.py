@@ -241,6 +241,8 @@ class DeployedProject(models.Model):
                 settings.OPUS_APACHE_SERVERNAME_SUFFIX,
                 secureops=settings.OPUS_SECUREOPS_COMMAND,
                 pythonpath=path_additions,
+                ssl_crt=settings.OPUS_SSL_CRT,
+                ssl_key=settings.OPUS_SSL_KEY,
                 )
 
     def deactivate(self):
