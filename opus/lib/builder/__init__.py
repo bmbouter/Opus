@@ -27,6 +27,7 @@ import shutil
 import re
 import shutil
 import keyword
+import json
 
 import opus.lib.builder.sources
 from opus.lib.conf import OpusConfig
@@ -38,6 +39,32 @@ App = namedtuple('App', ('path', 'pathtype'))
 
 class BuildException(Exception):
     """Something went wrong when assembling a project"""
+
+def merge_settings(target, source):
+    """Merges setting dictionaries. This mutates the target dict and attempts
+    to add as many settings from source as possible.
+
+    Here's the merge policy:
+    1) If a key exists in source but not target, the key,value pair is copied
+    over.
+    2) If the key exists in both and the value is a list, the target list is
+    extended with the source list
+    3) If the key exists in both and the value is a dict, the two dicts are
+    merged with this same policy.
+    4) If the key exists in both and the value is something immutable (string,
+    int, etc.) then the value on the target is overwritten.
+
+    """
+    for key,value in source.iteritems():
+        if key not in target:
+            target[key] = value
+        else:
+            if isinstance(value, list):
+                target[key].extend(value)
+            elif isinstance(value, dict):
+                merge_settings(target[key], value)
+            else:
+                target[key] = value
 
 class ProjectBuilder(object):
     """ProjectBuilder class, creates and configures a Django Project
@@ -221,8 +248,26 @@ load_settings()
             newapps.append("django.contrib.admin")
         self.config['INSTALLED_APPS'] += newapps
 
-        # Install stock opus related apps
-        self.config['INSTALLED_APPS'].append("opus.lib.profile.profilerapp")
+        # Add default template context preprocessors, so that applications can
+        # extend the list
+        from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+        self.config['TEMPLATE_CONTEXT_PROCESSORS'] = list(TEMPLATE_CONTEXT_PROCESSORS)
+
+        # Read in app metadata file
+        for app in appnames:
+            settingsfile = os.path.join(self.projectdir, app, "metadata.json")
+            if not os.path.exists(settingsfile):
+                continue
+            with open(settingsfile, 'r') as f:
+                metadata = json.load(f)
+
+            try:
+                app_settings = metadata['settings']
+            except KeyError:
+                continue
+
+            # Merge settings in app_settings with global settings
+            merge_settings(self.config, app_settings)
 
         # Write back out the settings
         self.config.save()

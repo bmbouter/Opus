@@ -144,14 +144,14 @@ We recommend the following setup for your Postgres pg_hba.conf for security::
 Then connect as the postgres user with `sudo -u postgres psql` and run these
 commands to create a user for Opus::
 
-    CREATE USER opus WITH PASSWORD 'putpasswordhere';
+    CREATE USER opus WITH PASSWORD 'putpasswordhere' CREATEROLE CREATEDB;
     CREATE DATABASE opus OWNER opus;
 
-You will need to generate an ssl cert and key, name them `server.crt` and
-`server.key` and put them in the Postgres data directory. It can be self
-signed with no problem. You can do this by going to `/etc/pki/tls/certs` and
-using the provided makefile. Make sure the files have permissions 600 and are
-owned by the Postgres user.
+You will now need to generate an ssl cert and key, name them `server.crt` and
+`server.key` and put them in the Postgres data directory. It's okay if it's
+self signed. You can do this by going to `/etc/pki/tls/certs` and using the
+provided makefile. Make sure the files have permissions 600 and are owned by
+the Postgres user.
 
 Then you need to go into the data directory, and edit the `postgres.conf` file
 to enable ssl. Uncomment the ssl line and change it to `on`.

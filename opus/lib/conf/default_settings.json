@@ -7,7 +7,9 @@
         "django.contrib.contenttypes", 
         "django.contrib.sessions", 
         "django.contrib.sites", 
-        "django.contrib.messages"
+        "django.contrib.messages",
+        "opus.lib.profile.profilerapp",
+        "djcelery"
     ], 
     "ADMIN_MEDIA_PREFIX": "/media/", 
     "USE_I18N": true, 

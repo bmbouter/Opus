@@ -45,6 +45,9 @@ def load_settings():
         objs = json.load(f)
     # Encode all strings, see docstring explanation in recurse_encode
     objs = recurse_encode(objs)
+
+    # Look up one frame in the stack and insert the new values into the scope
+    # of the caller.
     frame = inspect.stack()[1][0]
     for name, value in objs.iteritems():
         frame.f_locals[name] = value
@@ -89,9 +92,13 @@ class OpusConfig(object):
 
     """
     def __init__(self, settingsfile, new=False):
-        """Creates a new OpusConfig object with the given settings file.
-        If new is not False, an existing file will not be read at
-        initialization
+        """Creates a new OpusConfig object with the given settings file.  If
+        new is True, an existing file will not be read at initialization, and
+        instead the settings will be blank. The named file will still be used
+        upon save.
+
+        To create new settings from the template, use
+        OpusConfig.new_from_template()
         
         """
         if not new:
