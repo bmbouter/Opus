@@ -243,6 +243,7 @@ class DeployedProject(models.Model):
                 pythonpath=path_additions,
                 ssl_crt=settings.OPUS_SSL_CRT,
                 ssl_key=settings.OPUS_SSL_KEY,
+                ssl_chain=settings.OPUS_SSL_CHAIN,
                 )
 
     def deactivate(self):
