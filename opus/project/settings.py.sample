@@ -17,6 +17,9 @@ DATABASES = {
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        
+        # XXX If using postgresql_psycopg2, uncomment this line
+        #'OPTIONS': {'sslmode': 'require'},
     }
 }
 
@@ -62,7 +65,7 @@ MEDIA_URL = ''
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/adminmedia/'
 
 # Make this unique, and don't share it with anybody.
 # XXX Set this to a string of length at least 50 containing random characters
@@ -184,9 +187,11 @@ OPUS_ALLOWED_DATABASES = [
         'oracle',
         ]
 
-# These options specify the SSL cert and key used for deployed projects when
-# deploying on an HTTPS port. If either one is blank, the system will instead
-# generate a self-signed certificate for each project. With this option, you
-# can tell Opus to use a e.g. wildcard cert for every deployed project.
+# These options specify the SSL cert and key, and chain file used for deployed
+# projects when deploying on an HTTPS port. If any are blank, the system will
+# instead generate a self-signed certificate for each project. With this
+# option, you can tell Opus to use a e.g. wildcard cert for every deployed
+# project.
 OPUS_SSL_CRT = ""
 OPUS_SSL_KEY = ""
+OPUS_SSL_CHAIN = ""

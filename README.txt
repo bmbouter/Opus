@@ -4,6 +4,8 @@
 =============
 Welcome to Opus. The Open Source Services Management Platform.
 
+https://fedorahosted.org/opus/
+
 ----------
 About Opus
 ----------
@@ -102,24 +104,66 @@ To build the Google Web Toolkit component, you need
 ----------
 Installing
 ----------
+The installation procedure for Opus is not simple. There are a lot of
+components that work together, and a lot of steps. We have tried to make this
+readme as complete and comprehensive as possible. If you find something
+incorrect, missing, or even something that's just a bit confusing or unclear,
+let us know. We are committed to keeping this readme as a clear and complete
+as possible.
 
 Below, there are several references to the "Opus user." This refers to the
-Linux user that the Opus application will be running as. Typically, this is the
-same user that Apache uses, but since mod_wsgi can be configured to run
-projects as another user, we use the term "Opus user" instead.
+Linux user that the Opus application will be running as. Typically, this is
+the same user that Apache uses, but since mod_wsgi can be configured to run
+projects as another user (with daemon mode), we use the term "Opus user"
+instead.
 
 Prerequisites
 -------------
 Before you begin, you must have all the requirements installed. You must
-configure the database server with a username, password, and database for
-Opus. You must configure your message passing broker beforehand. How to do
-those things are out of the scope of this document.
+configure the database server with a username, password, and database for Opus
+to use. You must configure your message passing broker with a user, password,
+and vhost for Opus to use.
 
-First step
-----------
-The first step is to install opus. Use
+Configuring Postgres
+````````````````````
+If you choose to use Postgres, here's an example on how our setup usually
+goes. This may not work for every system (we use Fedora), but should give you
+an idea of what's involved.
 
-::
+We recommend the following setup for your Postgres pg_hba.conf for security::
+
+    # Used for the administrator (a human) to connect.  This can only be
+    # accessed by user postgres
+    local   all         postgres                               ident sameuser
+
+    # Allow any user to connect to a database of the same name from SSL and only
+    # from localhost
+    hostssl sameuser         all           127.0.0.1/32           md5
+    hostssl sameuser         all           ::1/128           md5
+
+Then connect as the postgres user with `sudo -u postgres psql` and run these
+commands to create a user for Opus::
+
+    CREATE USER opus WITH PASSWORD 'putpasswordhere';
+    CREATE DATABASE opus OWNER opus;
+
+You will need to generate an ssl cert and key, name them `server.crt` and
+`server.key` and put them in the Postgres data directory. It can be self
+signed with no problem. You can do this by going to `/etc/pki/tls/certs` and
+using the provided makefile. Make sure the files have permissions 600 and are
+owned by the Postgres user.
+
+Then you need to go into the data directory, and edit the `postgres.conf` file
+to enable ssl. Uncomment the ssl line and change it to `on`.
+
+Then later when configuring database options, make sure to put "localhost" for
+the database host, instead of leaving it blank. Otherwise, it will attempt to
+use local sockets instead of tcp, which will fail. Also, uncomment the
+"sslmode" line in settings.py to ensure encrypion is used.
+
+Installing Opus
+---------------
+To install opus, use the following command::
 
     python setup.py install
 
@@ -192,39 +236,10 @@ is being run as an unprivileged user. Make sure you go back and set
 permissions appropriately for any files in the LOG_DIR directory, and the
 sqlite file if using sqlite.
 
-Apache Configuration
---------------------
-Apache needs to have a few configuration items apart from the standard
-Django+mod_wsgi deployment. Somewhre in your Apache config, set the following
-items. We recommend putting this in a separate opus.conf inside of conf.d.
-
-* A NameVirtualHost line must be present for the ports that Opus will be
-  deploying projects to. For example, if you have Opus configured to deploy to
-  ports 80 and 443, Apache needs to have these lines in its configuration::
-
-    NameVirtualHost *:80
-    NameVirtualHost *:443
-
-* If Opus is configured to serve on non-standard ports (besides 80 and 443),
-  make sure to add the appropriate "Listen" directives
-
-* Make sure to add an "Include" directive to include `*.conf` in the directory
-  configured by OPUS_BASE_DIR. e.g.::
-
-    Include conf.d/opus/*.conf
-
-* If you want to use the GWT interface (you probably do), you must configure
-  a webserver (perhaps the same one, it doesn't matter) to serve the files
-  from gwt/build/ in the source distribution (setup.py will install these files
-  to <prefix>/share/opus/media). Then configure Opus's OPUS_GWT_MEDIA directive
-  to where browsers can find that media. e.g.::
-
-    Alias /gwt /usr/local/share/opus/media
-
 Deployment
 ----------
-At this point, deploy the Opus project like any other project as described in
-the `Django Deployment Guide`_.
+At this point, deployment for Opus is mostly like like any other project as
+described in the `Django Deployment Guide`_.
 
 For convenience, here is a sample wsgi file that will need to be created::
 
@@ -232,9 +247,13 @@ For convenience, here is a sample wsgi file that will need to be created::
     import sys
 
     os.environ['DJANGO_SETTINGS_MODULE'] = 'opus.project.settings'
+    os.environ['CELERY_LOADER'] = "django"
 
     import django.core.handlers.wsgi
     application = django.core.handlers.wsgi.WSGIHandler()
+
+Note the celery line, which is required for celery to work. If you have your
+settings module in a different location, you will need to adjust that line.
 
 The Opus package must be on the Python path for the project to run. If Opus
 isn't installed to a system location, or if Opus isn't on your Python path some
@@ -262,19 +281,55 @@ WSGIScriptAlias directive in the Apache configuration::
     WSGIDaemonProcess OPUS
     WSGIProcessGroup OPUS
 
+This is a limitation that will go away once Celery is better integrated.
+
 Here is an example of the opus.conf Apache configuration::
 
     NameVirtualHost *:80
     NameVirtualHost *:443
 
     <VirtualHost *:80>
-            Alias /gwt /var/www/opusenv/share/opus/gwtmedia
-            WSGIDaemonProcess OPUS
-            WSGIProcessGroup OPUS
-            WSGIScriptAlias / /var/lib/opus/wsgi/opus.wsgi
+        Alias /gwt /var/www/opusenv/share/opus/media
+        Alias /adminmedia /usr/lib/python2.6/site-packages/django/contrib/admin/media
+        WSGIDaemonProcess OPUS
+        WSGIProcessGroup OPUS
+        WSGIScriptAlias / /var/lib/opus/wsgi/opus.wsgi
     </VirtualHost>
 
     Include conf.d/opus/*.conf
+
+You will of course need to change paths and such for your own deployment; this
+is only an example. See notes in the next section about this example.
+
+Apache Configuration
+--------------------
+Apache needs to have a few configuration items apart from the standard
+Django+mod_wsgi deployment. Somewhre in your Apache config, set the following
+items.
+
+* As shown in the above example, A NameVirtualHost line must be present for
+  the ports that Opus will be deploying projects to. For example, if you have
+  Opus configured to deploy to ports 80 and 443, Apache needs to have these
+  lines in its configuration::
+
+    NameVirtualHost *:80
+    NameVirtualHost *:443
+
+* If Opus is configured to serve on non-standard ports (besides 80 and 443),
+  make sure to add the appropriate "Listen" directives
+
+* As shown in the above example, make sure to add an "Include" directive to
+  include `*.conf` in the directory configured by OPUS_BASE_DIR. e.g.::
+
+    Include conf.d/opus/*.conf
+
+* If you want to use the GWT interface (you probably do), you must configure
+  a webserver (perhaps the same one, it doesn't matter) to serve the files
+  from gwt/build/ in the source distribution (setup.py will install these files
+  to <prefix>/share/opus/media). Then configure Opus's OPUS_GWT_MEDIA directive
+  to where browsers can find that media. e.g.::
+
+    Alias /gwt /usr/local/share/opus/media
 
 Misc Notes
 ----------
