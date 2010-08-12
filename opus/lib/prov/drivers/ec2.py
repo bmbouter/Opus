@@ -16,6 +16,7 @@
 
 from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError, AWSConnectionError, BotoClientError
+from boto.ec2.regioninfo import RegionInfo
 
 from opus.lib.prov import DriverBase
 from opus.lib.prov import Image, Instance, Realm
@@ -33,7 +34,9 @@ class EC2Driver(DriverBase):
         The AWS Secret Key corresponding to the Access key given.
 
     uri
-        TODO
+        The region endpoint url that is connected to.  This can be the url for
+        a different EC2 region, or it could point to any uri for a EC2 query
+        API.
 
     """
 
@@ -43,8 +46,12 @@ class EC2Driver(DriverBase):
         self.uri = uri
 
         # The connection that all of the ec2 communication goes through
+        if uri is None:
+            region = None
+        else:
+            region = RegionInfo(self, EC2Connection.DefaultRegionName, self.uri)
         try:
-            self.ec2 = EC2Connection(self.name, self.password, host=self.uri)
+            self.ec2 = EC2Connection(self.name, self.password, is_secure=False, region=region)
         except (EC2ResponseError, AWSConnectionError) as e:
             raise ServerError(e)
 
