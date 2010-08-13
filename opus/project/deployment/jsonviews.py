@@ -34,7 +34,7 @@ def render(struct, request):
         json.dump(struct, response)
         response.write(")")
     else:
-        json.dump(struct, response)
+        json.dump(struct, response, indent=4)
     return response
 
 @login_required
@@ -87,6 +87,8 @@ def projectinfo(request, project):
     info['dbhost'] = database['HOST']
     info['dbport'] = database['PORT']
     info['active'] = project.active
+    info['needsappsettings'] = not project.all_settings_set()
+    info['appsettings'] = project.get_app_settings()
 
     return render(info, request)
 
