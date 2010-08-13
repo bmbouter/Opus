@@ -11,7 +11,7 @@
         "opus.lib.profile.profilerapp",
         "djcelery"
     ], 
-    "ADMIN_MEDIA_PREFIX": "/media/", 
+    "ADMIN_MEDIA_PREFIX": "/adminmedia/", 
     "USE_I18N": true, 
     "TEMPLATE_DEBUG": true, 
     "LANGUAGE_CODE": "en-us", 

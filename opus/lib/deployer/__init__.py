@@ -354,7 +354,7 @@ user.save()
         except OSError, e:
             import errno
             if e.errno != errno.EEXIST:
-                raise e
+                raise
             # Directory already exists, no big deal
         with open(os.path.join(wsgi_dir, "django.wsgi"), 'w') as wsgi:
             wsgi.write("""
@@ -430,11 +430,16 @@ application = opus.lib.profile.OpusWSGIHandler()
                     <VirtualHost {namevirtualhost}>
                         {ssllines}
                         ServerName {projectname}{servername_suffix}
-                        Alias /media {adminmedia}
+                        Alias /adminmedia {adminmedia}
+                        Alias /media {mediadir}
                         WSGIProcessGroup {name}
                         WSGIApplicationGroup %{{GLOBAL}}
                         WSGIScriptAlias / {wsgifile}
                         <Directory {wsgidir}>
+                            Order allow,deny
+                            Allow from all
+                        </Directory>
+                        <Directory {mediadir}>
                             Order allow,deny
                             Allow from all
                         </Directory>
@@ -444,6 +449,7 @@ application = opus.lib.profile.OpusWSGIHandler()
                     ssllines=ssllines,
                     projectname=self.projectname,
                     servername_suffix=servername_suffix,
+                    mediadir=os.path.join(self.projectdir, "media"),
                     name="opus"+self.projectname,
                     namevirtualhost="*:{0}".format(port),
                     wsgidir=wsgi_dir,

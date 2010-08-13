@@ -129,6 +129,9 @@ class ProjectBuilder(object):
         # Copy the applications into it
         appnames = self._copy_apps()
 
+        # Add app media symlinks
+        self._add_symlinks(appnames)
+
         # Add settings.py directives (installed apps, database config)
         self._configure_settings(appnames)
 
@@ -136,6 +139,13 @@ class ProjectBuilder(object):
         self._configure_urls(appnames)
 
         return self.projectdir
+
+    def _add_symlinks(self, appnames):
+        for app in appnames:
+            # Symlink the media dir
+            if os.path.exists(os.path.join(self.projectdir, app, "media")):
+                os.symlink(os.path.join("..",app,"media"),
+                        os.path.join(self.projectdir, "media",app))
 
     def _startproject(self, target):
         # Returns a temporary directory containing a skeleton project
@@ -164,6 +174,7 @@ class ProjectBuilder(object):
         os.mkdir(os.path.join(projectdir, "log"))
         os.mkdir(os.path.join(projectdir, "templates"))
         os.mkdir(os.path.join(projectdir, "templates", "registration"))
+        os.mkdir(os.path.join(projectdir, "media"))
 
         # Put login.html template in place
         with open(os.path.join(
@@ -360,6 +371,11 @@ class ProjectEditor(object):
                     .format(appname=newapp,
                             fullname=fullname))
 
+        # If the app has a media directory, add a symlink for it
+        if os.path.exists(os.path.join(self.projectdir, newapp, "media")):
+            os.symlink(os.path.join("..",newapp,"media"),
+                    os.path.join(self.projectdir, "media",newapp))
+
         # Sync db
         deployer = opus.lib.deployer.ProjectDeployer(self.projectdir)
         deployer.sync_database()
@@ -401,6 +417,11 @@ class ProjectEditor(object):
             for line in urllines:
                 urlfile.write(line)
 
+        # If there's a media symlink, remove it
+        medialink = os.path.join(self.projectdir,"media",appname)
+        if os.path.exists(medialink):
+            os.unlink(medialink)
+
         # Touch wsgi file
         self._touch_wsgi()
 
@@ -423,6 +444,14 @@ class ProjectEditor(object):
         log.debug("apptype is %s", apptype)
 
         opus.lib.builder.sources.upgrade_functions[apptype](apppath, to)
+
+        # If there isn't a media link and there should be, add one
+        if os.path.exists(os.path.join(self.projectdir, appname, "media")) \
+                and not os.path.exists(os.path.join(self.projectdir,
+                    "media",appname)):
+            os.symlink(os.path.join("..",appname,"media"),
+                    os.path.join(self.projectdir, "media",appname))
+
 
         self._touch_wsgi()
 
