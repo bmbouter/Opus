@@ -33,8 +33,14 @@ Info:
     </form>
 </div>
 <h2>Applications</h2>
+<ul>
+    <li>
 <a href="{% url opus.project.deployment.views.editapp project.name %}">
     Edit Applications</a>
+</li><li>
+<a href="{% url opus.project.deployment.views.set_app_settings project.name %}">
+    Edit Application Settings</a>
+</li></ul>
 
 <form method="post" action="{% url opus.project.deployment.views.addapp project.name %}">
     {% csrf_token %}

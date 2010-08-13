@@ -68,6 +68,9 @@ class DeploymentForm(forms.Form):
     dbengine does not require any other database options. If there is only one
     choice for the database, and it is SQLite or postgres, the other options
     are removed.
+
+    If the keyword argument "noactive" is given to the constructor and is True,
+    the activate checkbox will be removed.
     
     """
     superusername = CharField(required=False)
@@ -88,7 +91,11 @@ class DeploymentForm(forms.Form):
     active = BooleanField(required=False, initial=True)
 
     def __init__(self, *args, **kwargs):
+        noactive = kwargs.pop("noactive", False)
         forms.Form.__init__(self, *args, **kwargs)
+
+        if noactive:
+            del self.fields['active']
 
         # if there is only one option for the database in
         # settings.OPUS_ALLOWED_DATABASES, remove the dbengine field
@@ -150,3 +157,17 @@ class DeploymentForm(forms.Form):
         
         return self.cleaned_data
 
+class UserSettingsForm(forms.BaseForm):
+    """A form that generates its fields from the constructor given a list of
+    tuples in the form (name, prettyname, type). The type field is either "int"
+    or "char".
+    """
+    base_fields = {}
+    def __init__(self, fieldlist, *args, **kwargs):
+        forms.BaseForm.__init__(self, *args, **kwargs)
+
+        for name, prettyname, type in fieldlist:
+            if type == "int":
+                self.fields[name] = forms.IntegerField(label=prettyname)
+            elif type == "char":
+                self.fields[name] = forms.CharField(label=prettyname)

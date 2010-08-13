@@ -18,6 +18,8 @@ import os.path
 import re
 import subprocess
 import time
+import json
+import itertools
 
 import opus.lib.deployer
 from opus.lib.deployer import DeploymentException
@@ -139,7 +141,10 @@ class DeployedProject(models.Model):
             self._conf.save()
             # Touch wsgi file, indicating to mod_wsgi to re-load modules and
             # therefore any changed configuration parameters
-            os.utime(os.path.join(self.projectdir, "wsgi", 'django.wsgi'), None)
+            wsgifile = os.path.join(self.projectdir, "wsgi", 'django.wsgi')
+            if os.path.exists(wsgifile):
+                # It may not exist if the project isn't active
+                os.utime(wsgifile, None)
         super(DeployedProject, self).save(*args, **kwargs)
 
     def is_active(self):
@@ -226,6 +231,8 @@ class DeployedProject(models.Model):
         Pass in a deployer object, otherwise one will be created.
 
         """
+        if not self.all_settings_set():
+            raise DeploymentException("Tried to activate, but some applications still have settings to set")
         if not d:
             d = opus.lib.deployer.ProjectDeployer(self.projectdir)
         # XXX This is a bit of a hack, the opus libraries should be in the
@@ -307,3 +314,55 @@ class DeployedProject(models.Model):
 
         if self.id is not None:
             self.delete()
+
+    def get_app_settings(self):
+        """Returns a mapping of app names to a list of settings. Each item in
+        the settings list is a (name, prettyname, type) tuple where name and
+        prettyname are strings and type is either "char" or "int"
+
+        """
+        app_settings = {}
+        for app in self.config['INSTALLED_APPS']:
+            # Is this application local to the project? If not skip it, since
+            # we don't have a good way right now to find where it's installed
+            if not app.startswith(self.name+'.'):
+                continue
+            app = app[len(self.name)+1:]
+            md_filename = os.path.join(self.projectdir, app, "metadata.json")
+            if not os.path.exists(md_filename):
+                continue
+
+            with open(md_filename, 'r') as md_file:
+                app_metadata = json.load(md_file)
+
+            usersettings = app_metadata.get("usersettings", None)
+
+            if not usersettings:
+                continue
+
+            # Do some validity checking
+            u = []
+            for s in usersettings:
+                if len(s) != 3:
+                    continue
+                if not all(isinstance(x, basestring) for x in s):
+                    continue
+                if s[2] not in ("int", "char"):
+                    continue
+                u.append(s)
+
+            if u:
+                app_settings[app] = u
+        return app_settings
+
+    def all_settings_set(self):
+        """Returns true if all the application specific settings are set in the
+        global config. If false is returned, the project shouldn't be activated
+        yet.
+
+        """
+        app_settings = self.get_app_settings()
+        for setting in itertools.chain.from_iterable(app_settings.itervalues()):
+            if setting[0] not in self.config:
+                return False
+        return True

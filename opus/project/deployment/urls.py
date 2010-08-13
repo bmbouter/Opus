@@ -28,4 +28,5 @@ urlpatterns = patterns('opus.project.deployment.views',
         url(r'^(?P<projectname>{0})/destroy$'.format(projectpattern), 'destroy'),
         url(r'^(?P<projectname>{0})/addapp$'.format(projectpattern), 'addapp'),
         url(r'^(?P<projectname>{0})/apps$'.format(projectpattern), 'editapp'),
+        url(r'^(?P<projectname>{0})/confapps$'.format(projectpattern), 'set_app_settings'),
 )

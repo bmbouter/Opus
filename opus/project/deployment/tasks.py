@@ -20,9 +20,21 @@ from opus.project.deployment import models
 from opus.lib.log import get_logger
 log = get_logger()
 
-@task(task_name='opus.project.tasks.destroy_project')
+@task
 def destroy_project(projectid):
     project = models.DeployedProject.objects.get(pk=projectid)
+
+    log.info("Running task to destroy project %s", project)
+    project.destroy()
+
+@task
+def destroy_project_by_name(projectname):
+    """Used by the rollback functionality, since the model object is never
+    committed to the database
+
+    """
+    project = models.DeployedProject()
+    project.name = projectname
 
     log.info("Running task to destroy project %s", project)
     project.destroy()

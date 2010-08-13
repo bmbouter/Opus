@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+{% block title %}Set App Settings{% endblock %}
+
+{% block content %}
+{% if messages %}
+<div style="color: #FF0000; font-weight: bold;">
+    {% for message in messages %}
+    {{ message }}<br />
+    {% endfor %}
+</div>
+{% endif %}
+
+Back to <a href="{{ project.get_absolute_url }}">Project {{ project.name }}</a>
+
+{% if project.active %}
+
+{% if appforms %}
+<h2>Configure your app settings</h2>
+{% else %}
+<h2>There are no app settings to configure</h2>
+{% endif %}
+
+{% else %}
+
+{% if not appforms %}
+    <h2>Your project is deployed and ready to activate</h2>
+    There are no app settings to configure. Just click Save and Activate and your project will start serving requests.
+{% else %}
+<h2>Some apps have settings that you need to configure</h2>
+Before you can activate your project, the following apps have settings you need to fill out.
+{% endif %}
+
+{% endif %}
+<form method="post" action="{% url opus.project.deployment.views.set_app_settings project.name %}">
+    {% csrf_token %}
+    {% for app, appform in appforms.items %}
+    <h3>{{ app }}</h3>
+    <table border="1">
+    {{ appform.as_table }}
+    </table>
+    {% endfor %}
+    {% if project.active %}
+    <input type="submit" value="Save" />
+    {% else %}
+    <input type="submit" name="activate" value="Save and Activate" />
+    <input type="submit" value="Just Save" />
+    {% endif %}
+</form>
+
+{% endblock %}

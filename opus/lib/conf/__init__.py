@@ -125,6 +125,9 @@ class OpusConfig(object):
     def __getitem__(self, key):
         return self._settings[key]
 
+    def get(self, *args, **kwargs):
+        return self._settings.get(*args, **kwargs)
+
     def __setitem__(self, key, value):
         self._settings[key] = value
 
