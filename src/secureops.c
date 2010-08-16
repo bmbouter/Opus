@@ -33,7 +33,34 @@ int help()
     printf("    secureops -r\n");
     printf("Delete a user from the system:\n");
     printf("    secureops -d <username>\n");
+    printf("Creates a new RabbitMQ user/vhost and writes to stdout the password:\n");
+    printf("    secureops -e <username>\n");
+    printf("Delete a RabbitMQ user and vhost:\n");
+    printf("    secureops -b <username>\n");
     return 1;
+}
+
+
+/**
+ * Generates a random password and puts it in the given buffer
+ */
+void getpwd(char *buffer, int length)
+{
+    FILE *urandom = fopen("/dev/urandom", "r");
+    int i = 0;
+    while (i < length) {
+        int c = fgetc(urandom);
+        if (c == EOF) {
+            fprintf(stderr, "EOF on read from urandom?\n");
+            exit(1);
+        }
+        char ch = (char)c;
+        if (ch >= 32 && ch < 123) {
+            buffer[i] = ch;
+            i++;
+        }
+    }
+    fclose(urandom);
 }
 
 int main(int argc, char **argv)
@@ -154,6 +181,152 @@ int main(int argc, char **argv)
         printf("Some files failed to set permissions\n");
         return 2;
     }
+
+    /*
+     * Create a rabbitmq vhost and user, and set a random password
+     */
+    if (strcmp(argv[1], "-e") == 0) {
+        if (argc < 3) {
+            printf("Must specify a username with -e\n");
+            return help();
+        }
+        char *username = argv[2];
+
+        {
+            // Create a vhost
+            if (fork() == 0) {
+                execl("/usr/sbin/rabbitmqctl", "/usr/sbin/rabbitmqctl",
+                        "-q",
+                        "add_vhost",
+                        username,
+                        (char *)NULL);
+                printf("rabbitmqctl failed to launch, errno: %d\n", errno);
+                _exit(255);
+            }
+            int ret;
+            wait(&ret);
+            if (!WIFEXITED(ret) || WEXITSTATUS(ret)) {
+                printf("rabbitmqctl add_vhost failed\n");
+                printf("Error code: %d\n", WEXITSTATUS(ret));
+                return 1;
+            }
+        }
+
+        // Generate a password
+        char password[31];
+        getpwd(password, 30);
+        password[30] = 0;
+
+        {
+            // Create a user
+            if (fork() == 0) {
+                execl("/usr/sbin/rabbitmqctl", "/usr/sbin/rabbitmqctl",
+                        "-q",
+                        "add_user",
+                        username,
+                        password,
+                        (char *)NULL);
+                printf("rabbitmqctl failed to launch, errno: %d\n", errno);
+                _exit(255);
+            }
+            int ret;
+            wait(&ret);
+            if (!WIFEXITED(ret) || WEXITSTATUS(ret)) {
+                printf("rabbitmqctl add_user failed\n");
+                printf("Error code: %d\n", WEXITSTATUS(ret));
+                return 1;
+            }
+        }
+
+        {
+            // Set permissions
+            if (fork() == 0) {
+                execl("/usr/sbin/rabbitmqctl", "/usr/sbin/rabbitmqctl",
+                        "-q",
+                        "set_permissions",
+                        "-p", username,
+                        username,
+                        "", ".*", ".*",
+                        (char *)NULL);
+                printf("rabbitmqctl failed to launch, errno: %d\n", errno);
+                _exit(255);
+            }
+            int ret;
+            wait(&ret);
+            if (!WIFEXITED(ret) || WEXITSTATUS(ret)) {
+                printf("rabbitmqctl set_permissions failed\n");
+                printf("Error code: %d\n", WEXITSTATUS(ret));
+                return 1;
+            }
+        }
+
+        printf("%s", password);
+
+        return 0;
+    }
+
+    /*
+     * Deletes a rabbitmq user and vhost
+     */
+    if (strcmp(argv[1], "-b") == 0) {
+        if (argc < 3) {
+            printf("Must specify a username with -b\n");
+            return help();
+        }
+        char *username = argv[2];
+
+        if (strlen(username) < 5) {
+            printf("Bad username");
+            return 1;
+        }
+        if (strncmp(username, "opus", 4) != 0) {
+            printf("Won't delete that user");
+            return 1;
+        }
+
+        {
+            // Delete the vhost
+            if (fork() == 0) {
+                execl("/usr/sbin/rabbitmqctl", "/usr/sbin/rabbitmqctl",
+                        "-q",
+                        "delete_vhost",
+                        username,
+                        (char *)NULL);
+                printf("rabbitmqctl failed to launch, errno: %d\n", errno);
+                _exit(255);
+            }
+            int ret;
+            wait(&ret);
+            if (!WIFEXITED(ret) || WEXITSTATUS(ret)) {
+                printf("rabbitmqctl delete_vhost failed\n");
+                printf("Error code: %d\n", WEXITSTATUS(ret));
+                return 1;
+            }
+        }
+        {
+            // Delete the user
+            if (fork() == 0) {
+                execl("/usr/sbin/rabbitmqctl", "/usr/sbin/rabbitmqctl",
+                        "-q",
+                        "delete_user",
+                        username,
+                        (char *)NULL);
+                printf("rabbitmqctl failed to launch, errno: %d\n", errno);
+                _exit(255);
+            }
+            int ret;
+            wait(&ret);
+            if (!WIFEXITED(ret) || WEXITSTATUS(ret)) {
+                printf("rabbitmqctl delete_user failed\n");
+                printf("Error code: %d\n", WEXITSTATUS(ret));
+                return 1;
+            }
+        }
+
+        return 0;
+
+    }
+
     printf("Bad mode\n");
     return help();
 }
