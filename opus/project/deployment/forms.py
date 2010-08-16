@@ -166,8 +166,10 @@ class UserSettingsForm(forms.BaseForm):
     def __init__(self, fieldlist, *args, **kwargs):
         forms.BaseForm.__init__(self, *args, **kwargs)
 
-        for name, prettyname, type in fieldlist:
+        for name, prettyname, type, default in fieldlist:
             if type == "int":
-                self.fields[name] = forms.IntegerField(label=prettyname)
-            elif type == "char":
-                self.fields[name] = forms.CharField(label=prettyname)
+                self.fields[name] = forms.IntegerField(label=prettyname, initial=default)
+            elif type in ("char", "str", "string"):
+                self.fields[name] = forms.CharField(label=prettyname, initial=default)
+            elif type in "float":
+                self.fields[name] = forms.FloatField(label=prettyname, initial=default)
