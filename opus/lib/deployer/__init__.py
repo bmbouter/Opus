@@ -97,6 +97,7 @@ class ProjectDeployer(object):
         """
         self.config['TEMPLATE_DIRS'] = (os.path.join(self.projectdir, "templates"),)
         self.config['LOG_DIR'] = os.path.join(self.projectdir, 'log')
+        self.config['MEDIA_ROOT'] = os.path.join(self.projectdir, 'media/')
         self.config.save()
 
 
