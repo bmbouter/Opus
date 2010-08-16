@@ -344,11 +344,15 @@ class DeployedProject(models.Model):
             u = []
             for s in usersettings:
                 if len(s) != 4:
+                    log.warning("usersettings line has wrong number of args: %s", s)
                     continue
                 # All values except the last (default) must be a string
                 if not all(isinstance(x, basestring) for x in s[:3]):
+                    log.warning("usersettings line is bad, one of the first three elements is not a string: %s", s)
+                    log.warning(": %s", s)
                     continue
                 if s[2] not in ("int", "char", "str", "string", "float"):
+                    log.warning("usersettings line has bad type: %s", s)
                     continue
                 u.append(s)
 
