@@ -41,8 +41,12 @@ def load_settings():
             raise KeyError()
     except KeyError:
         raise ImportError("Cannot find Opus settings file, OPUS_SETTINGS_FILE was undefined")
-    with open(settings_file,'r') as f:
-        objs = json.load(f)
+    try:
+        with open(settings_file,'r') as f:
+            objs = json.load(f)
+    except IOError, e:
+        print repr(settings_file)
+        raise
     # Encode all strings, see docstring explanation in recurse_encode
     objs = recurse_encode(objs)
 

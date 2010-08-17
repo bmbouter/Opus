@@ -214,10 +214,19 @@ class DeployedProject(models.Model):
 
         d.gen_cert(settings.OPUS_APACHE_SERVERNAME_SUFFIX)
 
+        d.setup_celery(settings.OPUS_SECUREOPS_COMMAND,
+                pythonpath=self._get_path_additions())
+
         if active:
             self.activate(d)
 
         self.save()
+
+    def _get_path_additions(self):
+        return "{0}:{1}".format(
+                settings.OPUS_BASE_DIR,
+                os.path.split(opus.__path__[0])[0],
+                )
 
     def activate(self, d=None):
         """Activate this project. This writes out the apache config with the
@@ -234,13 +243,9 @@ class DeployedProject(models.Model):
             raise DeploymentException("Tried to activate, but some applications still have settings to set")
         if not d:
             d = opus.lib.deployer.ProjectDeployer(self.projectdir)
-        # XXX This is a bit of a hack, the opus libraries should be in the
-        # path for the deployed app. TODO: Find a better way to handle
-        # this.
-        path_additions = "{0}:{1}".format(
-                settings.OPUS_BASE_DIR,
-                os.path.split(opus.__path__[0])[0],
-                )
+        # The opus libraries should be in the path for the deployed app. TODO:
+        # Find a better way to handle this.
+        path_additions = self._get_path_additions()
         d.configure_apache(settings.OPUS_APACHE_CONFD,
                 settings.OPUS_HTTP_PORT,
                 settings.OPUS_HTTPS_PORT,
@@ -280,6 +285,9 @@ class DeployedProject(models.Model):
         destroyer = opus.lib.deployer.ProjectUndeployer(self.projectdir)
 
         destroyer.remove_apache_conf(settings.OPUS_APACHE_CONFD,
+                secureops=settings.OPUS_SECUREOPS_COMMAND)
+
+        destroyer.stop_celery(
                 secureops=settings.OPUS_SECUREOPS_COMMAND)
 
         destroyer.delete_user(

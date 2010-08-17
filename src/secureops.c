@@ -23,6 +23,7 @@
 #include <pwd.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <signal.h>
 
 int help()
 {
@@ -37,6 +38,12 @@ int help()
     printf("    secureops -e <username>\n");
     printf("Delete a RabbitMQ user and vhost:\n");
     printf("    secureops -b <username>\n");
+    printf("Supervisord operations:\n");
+    printf("    secureops -s <username> <projectdir> <operation>\n");
+    printf(" where <operation> is one of:\n");
+    printf("    -S to start supervisord\n");
+    printf("    -T to send SIGTERM to supervisord\n");
+    printf("    -H to send SIGHUP to supervisord\n");
     return 1;
 }
 
@@ -55,7 +62,9 @@ void getpwd(char *buffer, int length)
             exit(1);
         }
         char ch = (char)c;
-        if (ch >= 32 && ch < 123) {
+        if ((ch >= '0' && ch <= '9') ||
+            (ch >= 'A' && ch <= 'Z') ||
+            (ch >= 'a' && ch <= 'z')) {
             buffer[i] = ch;
             i++;
         }
@@ -300,7 +309,11 @@ int main(int argc, char **argv)
             if (!WIFEXITED(ret) || WEXITSTATUS(ret)) {
                 printf("rabbitmqctl delete_vhost failed\n");
                 printf("Error code: %d\n", WEXITSTATUS(ret));
-                return 1;
+                if (WEXITSTATUS(ret) != 2) {
+                    // If returns 2, the vhost didn't exist. We should just
+                    // move on to delete the user
+                    return WEXITSTATUS(ret);
+                }
             }
         }
         {
@@ -319,12 +332,110 @@ int main(int argc, char **argv)
             if (!WIFEXITED(ret) || WEXITSTATUS(ret)) {
                 printf("rabbitmqctl delete_user failed\n");
                 printf("Error code: %d\n", WEXITSTATUS(ret));
-                return 1;
+                return WEXITSTATUS(ret);
             }
         }
 
         return 0;
 
+    }
+
+    /*
+     * Supervisord operations
+     */
+    if (strcmp(argv[1], "-s") == 0) {
+        if (argc < 5) {
+            printf("Not enough arguments\n");
+            return help();
+        }
+
+        char *username = argv[2];
+        if (strlen(username) < 5) {
+            printf("Bad username");
+            return 1;
+        }
+        if (strncmp(username, "opus", 4) != 0) {
+            printf("Won't change to that user");
+            return 1;
+        }
+
+        // Drop permissions to that user, to ensure we won't kill anything that
+        // we shouldn't be able to.
+        int uid;
+        {
+            struct passwd *passwd = getpwnam(username);
+            if (!passwd) {
+                printf("Couldn't get uid\n");
+                return 1;
+            }
+            uid = passwd->pw_uid;
+        }
+        setuid(uid);
+
+        char *projectdir = argv[3];
+
+        if (strcmp(argv[4], "-S") == 0) {
+            // Starts up the supervisord process
+            char pathaddition[] = "/supervisord.conf";
+            int pathadditionlen = strlen(pathaddition);
+
+            int pdlen = strlen(projectdir);
+
+            char confpath[pdlen + pathadditionlen + 1];
+            strncpy(confpath, projectdir, pdlen);
+            strncpy(confpath+pdlen, pathaddition, pathadditionlen);
+            confpath[pdlen+pathadditionlen] = 0;
+
+            execlp("supervisord", "supervisord",
+                    "-c", confpath,
+                    (char *)NULL);
+            printf("supervisord couldn't launch. %d\n", errno);
+            return 255;
+        }
+
+        // Both remaining options have to know the pid. Read it from the pid file
+        int pid;
+        {
+            char pathaddition[] = "/run/supervisord.pid";
+            int pathadditionlen = strlen(pathaddition);
+
+            int pdlen = strlen(projectdir);
+
+            char pidpath[pdlen + pathadditionlen + 1];
+            strncpy(pidpath, projectdir, pdlen);
+            strncpy(pidpath+pdlen, pathaddition, pathadditionlen);
+            pidpath[pdlen+pathadditionlen] = 0;
+
+            FILE *pidfile = fopen(pidpath, "r");
+            if (!pidfile) {
+                printf("Could not open the pid file\n");
+                return 1;
+            }
+            char pidstring[10];
+            fread(pidstring, 1, 9, pidfile);
+            pidstring[9] = 0;
+            errno = 0;
+            pid = strtol(pidstring, NULL, 10);
+            if (errno != 0) {
+                printf("PID file didn't seem to contain a number\n");
+                return 1;
+            }
+        }
+
+        int ret;
+        if (strcmp(argv[4], "-T") == 0) {
+            // Send a sigterm to the process
+            ret = kill(pid, 15);
+        }
+        else if (strcmp(argv[4], "-H") == 0) {
+            // Send a sighup to the process
+            ret = kill(pid, 1);
+        }
+        if (ret == -1) {
+            printf("Sending of signal failed. pid was %d. errno: %d", pid, errno);
+            return 1;
+        }
+        return 0;
     }
 
     printf("Bad mode\n");

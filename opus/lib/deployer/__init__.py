@@ -258,6 +258,9 @@ user.save()
         os.mkdir(
                 os.path.join(self.projectdir, "sqlite")
                 )
+        os.mkdir(
+                os.path.join(self.projectdir, "run")
+                )
         d = open(os.path.join(self.projectdir, "sqlite", "database.sqlite"), 'w')
         d.close()
 
@@ -296,6 +299,7 @@ user.save()
         command.append(os.path.join(self.projectdir, "sqlite", "database.sqlite"))
         command.append(os.path.join(self.projectdir, "ssl.crt"))
         command.append(os.path.join(self.projectdir, "ssl.key"))
+        command.append(os.path.join(self.projectdir, "run"))
 
         log.info("Calling secure operation with arguments {0!r}".format(command))
         log.debug("cwd: {0}".format(os.getcwd()))
@@ -472,6 +476,73 @@ application = opus.lib.profile.OpusWSGIHandler()
         opus.lib.deployer.ssl.gen_cert("ssl", self.projectdir,
                 self.projectname+suffix)
 
+    def setup_celery(self, secureops="secureops", pythonpath=""):
+        """Uses rabbitmqctl to create a celery user and vhost, then configures
+        the project with them.
+
+        Also sets up the supervisord daemon conf file and starts supervisord
+
+        """
+        username = "opus"+self.projectname
+
+        # create user and vhost
+        log.info("Creating the RabbitMQ user and vhost")
+        proc = subprocess.Popen([secureops, '-e', username],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                )
+        password = proc.communicate()[0]
+        ret = proc.wait()
+        if ret:
+            # password is not a password if it failed, but the error output
+            raise DeploymentException("Creating RabbitMQ user/vhost failed. Ret:{0}. Output:{1}".format(ret, password))
+        log.debug("Secure ops finished. Ret: {0}".format(ret))
+
+        
+        self.config['BROKER_HOST'] = 'localhost'
+        self.config['BROKER_PORT'] = 5672
+        self.config['BROKER_USER'] = username
+        self.config['BROKER_PASSWORD'] = password
+        self.config['BROKER_VHOST'] = username
+        self.config.save()
+
+        # Set up a supervisord configuration file
+        supervisordconf = """
+[supervisord]
+logfile=%(here)s/log/supervisord.log
+pidfile=%(here)s/run/supervisord.pid
+
+[program:celery]
+command=python %(here)s/manage.py celeryd --loglevel=INFO
+directory=%(here)s
+numprocs=1
+stdout_logfile=%(here)s/log/celeryd.log
+stderr_logfile=%(here)s/log/celeryd.log
+autostart=true
+autorestart=true
+startsecs=10
+stopwaitsecs = 600
+environment=PYTHONPATH={path!r},OPUS_SETTINGS_FILE={opussettings!r}
+""".format(path=pythonpath,
+        opussettings=str(os.path.join(self.projectdir, "opussettings.json")))
+
+        conffilepath = os.path.join(self.projectdir, "supervisord.conf")
+        with open(os.path.join(self.projectdir, "supervisord.conf"), 'w') as sobj:
+            sobj.write(supervisordconf)
+
+        # Start it up
+        log.info("Starting up supervisord for the project")
+        proc = subprocess.Popen([secureops, '-s',
+            username, self.projectdir, '-S'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                )
+        output = proc.communicate()[0]
+        ret = proc.wait()
+        if ret:
+            raise DeploymentException("Failed to start supervisord. Ret:{0}. Output:{1}".format(ret, output))
+        log.debug("Secure ops finished. Ret: {0}".format(ret))
+
 class ProjectUndeployer(object):
     """Contains methods for destroying a deployed project.
 
@@ -480,6 +551,8 @@ class ProjectUndeployer(object):
 
     * remove_apache_conf() should be called first, so that apache immediately
       stops serving files.
+    * stop_celery should be next, so that any other processes running are
+      stopped
     * delete_user()
     * remove_projectdir()
 
@@ -510,7 +583,45 @@ class ProjectUndeployer(object):
             log.info("Removing apache config for project %s", self.projectname)
             os.unlink(config_path)
 
-            self._restart_apachc(secureops)
+            self._restart_apache(secureops)
+
+    def stop_celery(self, secureops="secureops"):
+        """Shuts down supervisord, and removes the user/vhost from rabbitmq"""
+        # Check if the pid file exists. If not, nothing to do
+        pidfilename = os.path.join(self.projectdir, "run", "supervisord.pid")
+        if os.path.exists(pidfilename):
+
+            log.info("attempting to sigkill supervisord")
+            proc = subprocess.Popen([secureops,"-s",
+                    "opus"+self.projectname,
+                    self.projectdir,
+                    '-H'],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT)
+            output = proc.communicate()[0]
+            ret = proc.wait()
+            if ret:
+                raise DeploymentException("Could not stop supervisord. {0}".format(output))
+
+        # Delete the user/vhost.
+        log.info("removing rabbitmq user/vhost")
+        proc = subprocess.Popen([secureops,"-b",
+                "opus"+self.projectname,
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
+        output = proc.communicate()[0]
+        ret = proc.wait()
+        # This returns 2 if the user doesn't exist, 1 for other errors that we
+        # shouldn't ignore
+        if ret:
+            if ret == 2:
+                log.info("user/vhost didn't exist. ignoring")
+            else:
+                raise DeploymentException("Could not stop supervisord. {0}".format(output))
+        else:
+            log.debug("done")
+
 
 
     def delete_user(self, secureops="secureops"):
@@ -545,6 +656,9 @@ class ProjectUndeployer(object):
             # ignore return code 6: user doesn't exist, to make this
             # idempotent.
             raise DeploymentException("userdel failed: {0}".format(output))
+        log.debug("User removed")
+
+
 
     def remove_projectdir(self):
         """Deletes the entire project directory off the filesystem"""
