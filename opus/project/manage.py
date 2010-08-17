@@ -18,7 +18,9 @@
 from django.core.management import execute_manager
 import sys
 import os.path
-sys.path.append(os.path.join("..","..",os.path.dirname(__file__)))
+# Find the current file, look at its directory, go up two directories, and add
+# that to the path. That should be the directory containing the opus package
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..")))
 try:
     import settings # Assumed to be in the same directory.
 except ImportError, e:

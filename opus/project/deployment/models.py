@@ -17,7 +17,6 @@
 import os.path
 import re
 import subprocess
-import time
 import json
 import itertools
 
@@ -282,21 +281,6 @@ class DeployedProject(models.Model):
 
         destroyer.remove_apache_conf(settings.OPUS_APACHE_CONFD,
                 secureops=settings.OPUS_SECUREOPS_COMMAND)
-
-        # Bug 45, userdel will fail if any processes are still running by the
-        # user. Here we wait a maximum of 30 seconds to make sure all processes
-        # have ended. A return from pgrep will return 0 if a process matched, 1
-        # if no processes match, 2 if there is an error (including user doesn't
-        # exist)
-        # XXX Maybe move this code into delete_user()?
-        tries = 0
-        while subprocess.call(["pgrep", "-u", "opus"+self.name]) == 0:
-            if tries >= 6:
-                log.warning("User still has processes running after 30 seconds! Continuing anyways")
-                break
-            log.debug("Was about to delete user, but it still has processes running! Waiting 5 seconds")
-            tries += 1
-            time.sleep(5)
 
         destroyer.delete_user(
                 secureops=settings.OPUS_SECUREOPS_COMMAND)

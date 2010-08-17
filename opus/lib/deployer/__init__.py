@@ -30,6 +30,7 @@ import tempfile
 import grp
 import random
 import shutil
+import time
 
 import opus
 from opus.lib.conf import OpusConfig
@@ -489,13 +490,10 @@ class ProjectUndeployer(object):
         path = os.path.abspath(self.projectdir)
         self.projectname = os.path.basename(path)
 
-    def remove_apache_conf(self, apache_conf_dir, secureops="secureops"):
-        """Removes the apache config file and reloads apache"""
-        config_path = os.path.join(apache_conf_dir, "opus"+self.projectname+".conf")
-        if os.path.exists(config_path):
-            log.info("Removing apache config for project %s", self.projectname)
-            os.unlink(config_path)
+        self.apache_restarted = False
 
+    def _restart_apache(self, secureops):
+            log.info("Restarting apache")
             proc = subprocess.Popen([secureops,"-r"],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT)
@@ -503,10 +501,41 @@ class ProjectUndeployer(object):
             ret = proc.wait()
             if ret:
                 raise DeploymentException("Could not restart apache. {0}".format(output))
+            self.apache_restarted = True
+
+    def remove_apache_conf(self, apache_conf_dir, secureops="secureops"):
+        """Removes the apache config file and reloads apache"""
+        config_path = os.path.join(apache_conf_dir, "opus"+self.projectname+".conf")
+        if os.path.exists(config_path):
+            log.info("Removing apache config for project %s", self.projectname)
+            os.unlink(config_path)
+
+            self._restart_apachc(secureops)
+
 
     def delete_user(self, secureops="secureops"):
         """Calls userdel to remove the system user"""
         log.info("Deleting user for project %s", self.projectname)
+
+        # Bug 45, userdel will fail if any processes are still running by the
+        # user. Here we wait a maximum of 30 seconds to make sure all processes
+        # have ended. A return from pgrep will return 0 if a process matched, 1
+        # if no processes match, 2 if there is an error (including user doesn't
+        # exist)
+        tries = 0
+        while subprocess.call(["pgrep", "-u", "opus"+self.projectname]) == 0:
+            if not self.apache_restarted:
+                # Wasn't restarted because the config file didn't exist. But
+                # somehow last time apache may not have been restarted properly
+                # since some processes are still running. Restart it now.
+                self._restart_apache(secureops)
+            if tries >= 6:
+                log.warning("User still has processes running after 30 seconds! Continuing anyways")
+                break
+            log.debug("Was about to delete user, but it still has processes running! Waiting 5 seconds")
+            tries += 1
+            time.sleep(5)
+
         proc = subprocess.Popen([secureops, '-d', "opus"+self.projectname],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT)
