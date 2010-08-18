@@ -179,6 +179,7 @@ class ProjectDeployer(object):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 env=self._getenv(),
+                close_fds=True,
                 )
         output = proc.communicate()[0]
         if proc.wait():
@@ -193,6 +194,7 @@ class ProjectDeployer(object):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 env=self._getenv(),
+                close_fds=True,
                 )
         output = proc.communicate()[0]
         if proc.returncode:
@@ -244,6 +246,7 @@ user.save()
         process = subprocess.Popen(["python"], stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
+                close_fds=True,
                 )
         output = process.communicate(program)[0]
         ret = process.wait()
@@ -407,12 +410,13 @@ application = opus.lib.profile.OpusWSGIHandler()
         # I know the following lines are confusing. Perhaps a TODO later would
         # be to push most of the templates out of the code
         with open(config_path, 'w') as config:
-            config.write("""WSGIDaemonProcess {name} threads=4 processes=2 maximum-requests=1000 user={user} group={group} display-name={projectname} {ppdirective}
+            config.write("""WSGIDaemonProcess {name} threads=4 processes=2 home={projectpath} maximum-requests=1000 user={user} group={group} display-name={projectname} {ppdirective}
             """.format(
                     name="opus"+self.projectname,
                     user="opus"+self.projectname,
                     group=group,
                     projectname=self.projectname,
+                    projectpath=self.projectdir,
                     ppdirective=ppdirective,
                 ))
             for port in (httpport, sslport):
@@ -511,6 +515,7 @@ application = opus.lib.profile.OpusWSGIHandler()
 [supervisord]
 logfile=%(here)s/log/supervisord.log
 pidfile=%(here)s/run/supervisord.pid
+loglevel=debug
 
 [program:celery]
 command=python %(here)s/manage.py celeryd --loglevel=INFO
@@ -530,12 +535,22 @@ environment=PYTHONPATH={path!r},OPUS_SETTINGS_FILE={opussettings!r}
         with open(os.path.join(self.projectdir, "supervisord.conf"), 'w') as sobj:
             sobj.write(supervisordconf)
 
+    def start_supervisord(self,secureops="secureops"):
+        env = dict(os.environ)
+        try:
+            del env['DJANGO_SETTINGS_MODULE']
+        except KeyError:
+            pass
+
+        username = "opus"+self.projectname
         # Start it up
         log.info("Starting up supervisord for the project")
         proc = subprocess.Popen([secureops, '-s',
             username, self.projectdir, '-S'],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
+                env=env,
+                close_fds=True,
                 )
         output = proc.communicate()[0]
         ret = proc.wait()
@@ -591,11 +606,11 @@ class ProjectUndeployer(object):
         pidfilename = os.path.join(self.projectdir, "run", "supervisord.pid")
         if os.path.exists(pidfilename):
 
-            log.info("attempting to sigkill supervisord")
+            log.info("attempting to sigterm supervisord")
             proc = subprocess.Popen([secureops,"-s",
                     "opus"+self.projectname,
                     self.projectdir,
-                    '-H'],
+                    '-T'],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT)
             output = proc.communicate()[0]

@@ -15,14 +15,16 @@
 ##############################################################################
 
 from celery.decorators import task
+from django.conf import settings
 
-from opus.project.deployment import models
+from opus.lib.deployer import ProjectDeployer
+import opus.project.deployment.models
 from opus.lib.log import get_logger
 log = get_logger()
 
 @task
 def destroy_project(projectid):
-    project = models.DeployedProject.objects.get(pk=projectid)
+    project = opus.project.deployment.models.DeployedProject.objects.get(pk=projectid)
 
     log.info("Running task to destroy project %s", project)
     project.destroy()
@@ -33,8 +35,13 @@ def destroy_project_by_name(projectname):
     committed to the database
 
     """
-    project = models.DeployedProject()
+    project = opus.project.deployment.models.DeployedProject()
     project.name = projectname
 
     log.info("Running task to destroy project %s", project)
     project.destroy()
+
+@task
+def start_supervisord(projectdir):
+    d = ProjectDeployer(projectdir)
+    d.start_supervisord(settings.OPUS_SECUREOPS_COMMAND)

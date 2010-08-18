@@ -370,7 +370,14 @@ int main(int argc, char **argv)
             }
             uid = passwd->pw_uid;
         }
-        setuid(uid);
+        if (setgid(99) == -1) {
+            perror("setgid");
+            return 1;
+        }
+        if (setuid(uid) == -1) {
+            perror("setuid");
+            return 1;
+        }
 
         char *projectdir = argv[3];
 
@@ -386,11 +393,21 @@ int main(int argc, char **argv)
             strncpy(confpath+pdlen, pathaddition, pathadditionlen);
             confpath[pdlen+pathadditionlen] = 0;
 
-            execlp("supervisord", "supervisord",
-                    "-c", confpath,
-                    (char *)NULL);
-            printf("supervisord couldn't launch. %d\n", errno);
-            return 255;
+            if (fork() == 0) {
+                execlp("supervisord", "supervisord",
+                        "-c", confpath,
+                        (char *)NULL);
+                printf("supervisord couldn't launch. %d\n", errno);
+                _exit(255);
+            }
+            int ret;
+            wait(&ret);
+            if (!WIFEXITED(ret) || WEXITSTATUS(ret)) {
+                printf("Failed to launch supervisord\n");
+                printf("Error code: %d\n", WEXITSTATUS(ret));
+                return 1;
+            }
+            return 0;
         }
 
         // Both remaining options have to know the pid. Read it from the pid file

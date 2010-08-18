@@ -23,6 +23,7 @@ import itertools
 import opus.lib.deployer
 from opus.lib.deployer import DeploymentException
 from opus.lib.conf import OpusConfig
+import opus.project.deployment.tasks
 from opus.project.deployment import database
 from opus.lib.log import get_logger
 log = get_logger()
@@ -216,6 +217,11 @@ class DeployedProject(models.Model):
 
         d.setup_celery(settings.OPUS_SECUREOPS_COMMAND,
                 pythonpath=self._get_path_additions())
+
+        # Schedule celery to start supervisord. Somehow if supervisord is
+        # started directly by mod_wsgi, strange things happen to supervisord's
+        # signal handlers
+        opus.project.deployment.tasks.start_supervisord.delay(self.projectdir)
 
         if active:
             self.activate(d)
