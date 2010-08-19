@@ -337,8 +337,8 @@ def create(request, projectname):
                 builder.set_admin_app()
             if pdata['idprovider'] != 'local':
                 log.debug(" ... and the idp app %r", pdata['idprovider'])
-                import opus.lib.apps
-                apppath = os.path.join(opus.lib.apps.__path__[0], pdata['idprovider'])
+                from opus.lib import apps
+                apppath = os.path.join(apps.__path__[0], pdata['idprovider'])
                 builder.add_app(apppath, 'file')
 
             # Now actually execute the tasks. This is done in a try block which
