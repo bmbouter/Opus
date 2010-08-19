@@ -307,10 +307,11 @@ admin.autodiscover()
                     .format(appname=app,
                             fullname=fullname))
         # Add the login view
-        urls.append("    (r'^accounts/login/$', 'django.contrib.auth.views.login'),\n")
+        urls.append("    url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),\n")
+        urls.append("    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', name='logout'),\n")
         # Add the admin interface view
         if self.admin:
-            urls.append("    (r'^admin/', include(admin.site.urls)),\n")
+            urls.append("    url(r'^admin/', include(admin.site.urls)),\n")
         urls.append(")\n")
         
 
