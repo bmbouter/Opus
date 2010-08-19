@@ -99,6 +99,7 @@ class ProjectDeployer(object):
         self.config['TEMPLATE_DIRS'] = (os.path.join(self.projectdir, "templates"),)
         self.config['LOG_DIR'] = os.path.join(self.projectdir, 'log')
         self.config['MEDIA_ROOT'] = os.path.join(self.projectdir, 'media/')
+        self.config['OPUS_SECURE_UPLOADS'] = os.path.join(self.projectdir, "opus_secure_uploads/")
         self.config.save()
 
 
@@ -264,6 +265,9 @@ user.save()
         os.mkdir(
                 os.path.join(self.projectdir, "run")
                 )
+        os.mkdir(
+                os.path.join(self.projectdir, "opus_secure_uploads")
+                )
         d = open(os.path.join(self.projectdir, "sqlite", "database.sqlite"), 'w')
         d.close()
 
@@ -303,6 +307,7 @@ user.save()
         command.append(os.path.join(self.projectdir, "ssl.crt"))
         command.append(os.path.join(self.projectdir, "ssl.key"))
         command.append(os.path.join(self.projectdir, "run"))
+        command.append(os.path.join(self.projectdir, "opus_secure_uploads"))
 
         log.info("Calling secure operation with arguments {0!r}".format(command))
         log.debug("cwd: {0}".format(os.getcwd()))
