@@ -314,14 +314,17 @@ def create(request, projectname):
         # with error text
         if all(f.is_valid() for f in allforms):
             log.info("Preparing to create+deploy %s", projectname)
+
+            pdata = pform.cleaned_data
+
             # Create the deployment object to do some early validation checks
             deployment = models.DeployedProject()
             deployment.name = projectname
             deployment.owner = request.user
             deployment.full_clean()
 
-            # Create a new project
-            pdata = pform.cleaned_data
+            # Configure the new project. None of these actions actually execute
+            # until we enter the try block below
             builder = opus.lib.builder.ProjectBuilder(projectname)
             for appdata in appsform.cleaned_data:
                 if not appdata:
@@ -329,9 +332,18 @@ def create(request, projectname):
                     continue
                 log.debug(" ... with app %r", appdata['apppath'])
                 builder.add_app(appdata['apppath'], appdata['apptype'])
-            if pdata['admin']:
+            if pdata['admin'] or pdata['idprovider'] == 'local':
                 log.debug(" ... and the admin app")
                 builder.set_admin_app()
+            if pdata['idprovider'] != 'local':
+                log.debug(" ... and the idp app %r", pdata['idprovider'])
+                import opus.lib.apps
+                apppath = os.path.join(opus.lib.apps.__path__[0], pdata['idprovider'])
+                builder.add_app(apppath, 'file')
+
+            # Now actually execute the tasks. This is done in a try block which
+            # catches all exceptions so that we can roll back failed partial
+            # deployments in any error cases.
             log.debug("Executing create action on %r...", projectname)
             try:
                 # Create the project directory
@@ -427,10 +439,12 @@ def _get_app_settings_forms(app_settings, initial=None, data=None):
                 initial=initial)
     return appforms
 
+
 @login_required
 @get_project_object
 def set_app_settings(request, project):
-    """Asks the user about application specific settings"""
+    """Asks the user about application specific settings.  This includes any
+    chosen projects, as well as hardcoded ldap or openid features"""
     if request.method == "POST":
         appforms = _get_app_settings_forms(project.get_app_settings(),
                 project.config,

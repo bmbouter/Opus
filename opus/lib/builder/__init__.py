@@ -336,7 +336,9 @@ class ProjectEditor(object):
 
     def _touch_wsgi(self):
         # Reloads the project
-        os.utime(os.path.join(self.projectdir, "wsgi", 'django.wsgi'), None)
+        wsgifile = os.path.join(self.projectdir, "wsgi", 'django.wsgi')
+        if os.path.exists(wsgifile):
+            os.utime(wsgifile, None)
 
     def add_app(self, apppath, apptype):
         """Adds an application to the project and touches the wsgi file. This

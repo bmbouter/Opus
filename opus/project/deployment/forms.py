@@ -36,8 +36,20 @@ class IdentifierField(forms.CharField):
     default_validators = [validate_identifier]
 
 class ProjectForm(forms.Form):
-    """Form to ask for parameters for the project itself"""
-    admin = BooleanField(required=False)
+    """Form to ask for parameters for the project itself. These are options set
+    once when the project is deployed. For things that can change later, see
+    DeploymentForm (yes I think I got the names backwards)"""
+    admin = BooleanField(required=False,
+            label="Install Admin interface?")
+    idprovider = ChoiceField(required=True,
+            widget=Select(),
+            label="What type of authentication should be installed?",
+            choices = (
+                ("local", "Local Authentication (implies admin interface)"),
+                ("openid", "Open ID"),
+                ("ldap", "LDAP"),
+            )
+        )
 
 class AppForm(forms.Form):
     """Form to ask for parameters about one app within a project"""
@@ -70,7 +82,8 @@ class DeploymentForm(forms.Form):
     are removed.
 
     If the keyword argument "noactive" is given to the constructor and is True,
-    the activate checkbox will be removed.
+    the activate checkbox will be removed. This is used to not give that option
+    at initial deployment, but only on the project edit page.
     
     """
     superusername = CharField(required=False)
@@ -159,17 +172,47 @@ class DeploymentForm(forms.Form):
 
 class UserSettingsForm(forms.BaseForm):
     """A form that generates its fields from the constructor given a list of
-    tuples in the form (name, prettyname, type). The type field is either "int"
-    or "char".
+    tuples in the right form.
+    If the data is malformed, raises a ValueError()
     """
     base_fields = {}
     def __init__(self, fieldlist, *args, **kwargs):
         forms.BaseForm.__init__(self, *args, **kwargs)
 
-        for name, prettyname, type, default in fieldlist:
+        for field in fieldlist:
+            if len(field) < 3:
+                raise ValueError("A field didn't have enough args")
+            name = field[0]
+            label = field[1]
+            type = field[2]
+            args = field[3:]
+
             if type == "int":
-                self.fields[name] = forms.IntegerField(label=prettyname, initial=default)
+                if len(args) < 1:
+                    default = None
+                else:
+                    default = args[0]
+                self.fields[name] = forms.IntegerField(label=label, initial=default)
             elif type in ("char", "str", "string"):
-                self.fields[name] = forms.CharField(label=prettyname, initial=default)
-            elif type in "float":
-                self.fields[name] = forms.FloatField(label=prettyname, initial=default)
+                if len(args) < 1:
+                    default = None
+                else:
+                    default = args[0]
+                self.fields[name] = forms.CharField(label=label, initial=default)
+            elif type == "float":
+                if len(args) < 1:
+                    default = None
+                else:
+                    default = args[0]
+                self.fields[name] = forms.FloatField(label=label, initial=default)
+            elif type == "choice":
+                if len(args) < 1:
+                    raise ValueError("Choice field requested, but no choices were listed")
+                choices = []
+                for c in args[0]:
+                    if len(c) != 2:
+                        raise ValueError("Choices must have 2 items: field and label")
+                    choices.append((c[0], c[1]))
+                self.fields[name] = forms.ChoiceField(label=label, choices=choices)
+            else:
+                raise ValueError("Unknown type %s" % type)

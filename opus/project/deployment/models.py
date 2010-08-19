@@ -45,7 +45,7 @@ class IdentifierField(models.CharField):
         models.CharField.__init__(self, *args, **kwargs)
 
 class DeploymentInfo(object):
-    """Holds information about a project deployment"""
+    """Just a container that holds information about a project deployment"""
     def __init__(self):
         self.dbengine = None
         self.dbname = None
@@ -63,6 +63,12 @@ class DeploymentInfo(object):
             raise ValidationError("Deployment parameters not specified")
 
 class DeployedProject(models.Model):
+    """The actual model for a deployed project. The database doesn't contain
+    too many fields, but this class contains lots of methods to query information and
+    edit projects. Most of the state is stored in the filesystem and not the
+    database. (For example, whether the project is activated is defined by the
+    presence of an apache config file for the project)
+    """
     name = IdentifierField(unique=True)
     owner = models.ForeignKey(django.contrib.auth.models.User)
 
@@ -338,18 +344,18 @@ class DeployedProject(models.Model):
             if not usersettings:
                 continue
 
-            # Do some validity checking
+            # Do some really brief validity checking. Most validity checking is
+            # done in the constructor of UserSettingsForm though
             u = []
             for s in usersettings:
-                if len(s) != 4:
+                if len(s) < 3:
                     log.warning("usersettings line has wrong number of args: %s", s)
                     continue
                 # All values except the last (default) must be a string
                 if not all(isinstance(x, basestring) for x in s[:3]):
                     log.warning("usersettings line is bad, one of the first three elements is not a string: %s", s)
-                    log.warning(": %s", s)
                     continue
-                if s[2] not in ("int", "char", "str", "string", "float"):
+                if s[2] not in ("int", "char", "str", "string", "float", 'choice'):
                     log.warning("usersettings line has bad type: %s", s)
                     continue
                 u.append(s)
