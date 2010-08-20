@@ -27,7 +27,7 @@ import random
 
 import opus
 
-def load_settings():
+def load_settings(globals):
     """Loads settings from the configuration file into the caller's locals
     dict. This is intended to be used from within a Django settings.py to load
     dynamic settings like this:
@@ -50,11 +50,8 @@ def load_settings():
     # Encode all strings, see docstring explanation in recurse_encode
     objs = recurse_encode(objs)
 
-    # Look up one frame in the stack and insert the new values into the scope
-    # of the caller.
-    frame = inspect.stack()[1][0]
     for name, value in objs.iteritems():
-        frame.f_locals[name] = value
+        globals[name] = value
 
 def recurse_encode(obj):
     """Recursively go through a structure and change unicode strings to byte

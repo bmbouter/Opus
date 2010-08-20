@@ -227,7 +227,7 @@ class ProjectBuilder(object):
 # file opussettings.json in JSON format. You may put your own values below to
 # override Opus's configuration, but this is not recommended.
 from opus.lib.conf import load_settings
-load_settings()
+load_settings(globals())
 """)
 
         # Randomizing SECRET_KEY is taken care of for us by new_from_template,
