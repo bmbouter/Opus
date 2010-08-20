@@ -51,7 +51,7 @@ class EC2Driver(DriverBase):
         else:
             region = RegionInfo(self, EC2Connection.DefaultRegionName, self.uri)
         try:
-            self.ec2 = EC2Connection(self.name, self.password, is_secure=False, region=region)
+            self.ec2 = EC2Connection(self.name, self.password, region=region)
         except (EC2ResponseError, AWSConnectionError) as e:
             raise ServerError(e)
 
@@ -254,7 +254,7 @@ class EC2Driver(DriverBase):
         if len(realms):
             return realms[0]
         else:
-            return []
+            return None
 
 
 def _image_from_boto_image(boto_instance, driver):

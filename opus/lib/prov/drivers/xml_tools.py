@@ -38,7 +38,10 @@ def xml_get_text(dom, element_name):
             if node.nodeType == node.TEXT_NODE:
                 text += node.data
         result.append(text)
-    return result
+    if len(result) == 0:
+        return [""]
+    else:
+        return result
     
 def xml_get_elements_dictionary(dom, element_name, key_name, value_name):
     """Iterates through a number of elements and generates a dictionary.
