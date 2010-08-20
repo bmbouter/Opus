@@ -212,12 +212,14 @@ class DeployedProject(models.Model):
                 info.dbport,
                 )
 
+        # This must go before sync_database, in case some settings that are
+        # set by set_paths are used by a models.py at import time.
+        d.set_paths()
+
         d.sync_database(info.superusername,
                 info.superemail,
                 info.superpassword,
                 )
-
-        d.set_paths()
 
         d.gen_cert(settings.OPUS_APACHE_SERVERNAME_SUFFIX)
 
