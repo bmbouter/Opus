@@ -448,6 +448,10 @@ int main(int argc, char **argv)
             // Send a sighup to the process
             ret = kill(pid, 1);
         }
+        else {
+            printf("Unknown secureops option\n");
+            return help();
+        }
         if (ret == -1) {
             printf("Sending of signal failed. pid was %d. errno: %d", pid, errno);
             return 1;
