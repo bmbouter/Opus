@@ -328,7 +328,6 @@ class DeployedProject(models.Model):
         for app in self.config['INSTALLED_APPS']:
             # Is this application local to the project? If not skip it, since
             # we don't have a good way right now to find where it's installed
-            log.debug("App is %s", app)
             if not os.path.exists(os.path.join(self.projectdir, app)):
                 continue
             md_filename = os.path.join(self.projectdir, app, "metadata.json")
