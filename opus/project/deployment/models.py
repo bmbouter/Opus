@@ -303,6 +303,7 @@ class DeployedProject(models.Model):
         destroyer.stop_celery(
                 secureops=settings.OPUS_SECUREOPS_COMMAND)
 
+        # This also kills off any remaining processes owned by that user
         destroyer.delete_user(
                 secureops=settings.OPUS_SECUREOPS_COMMAND)
 

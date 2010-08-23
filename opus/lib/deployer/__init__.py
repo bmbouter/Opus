@@ -645,17 +645,33 @@ class ProjectUndeployer(object):
         else:
             log.debug("done")
 
+    def kill_processes(self, secureops="secureops"):
+        """Sends a sigterm to all processes owned by the user, waits 10 or so
+        seconds, then sends a sigkill to all. This is called by delete_user if
+        there are still processes running, so no need to call it directly
+        normally
+
+        """
+        log.info("Killing all processes owned by project %s...", self.projectname)
+        proc = subprocess.Popen([secureops, "-k", "opus"+self.projectname],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
+        output = proc.communicate()[0]
+        ret = proc.wait()
+        if ret:
+            raise DeploymentException("Failed to kill processes. Ret:{0}. Output:{1}"\
+                    .format(ret, output))
 
 
     def delete_user(self, secureops="secureops"):
         """Calls userdel to remove the system user"""
         log.info("Deleting user for project %s", self.projectname)
 
-        # Bug 45, userdel will fail if any processes are still running by the
-        # user. Here we wait a maximum of 30 seconds to make sure all processes
-        # have ended. A return from pgrep will return 0 if a process matched, 1
-        # if no processes match, 2 if there is an error (including user doesn't
-        # exist)
+        # userdel will fail on some systems if any processes are still running
+        # by the user. Here we wait a maximum of 30 seconds to make sure all
+        # processes have ended. A return from pgrep will return 0 if a process
+        # matched, 1 if no processes match, 2 if there is an error (including
+        # user doesn't exist)
         tries = 0
         while subprocess.call(["pgrep", "-u", "opus"+self.projectname]) == 0:
             if not self.apache_restarted:
@@ -664,7 +680,9 @@ class ProjectUndeployer(object):
                 # since some processes are still running. Restart it now.
                 self._restart_apache(secureops)
             if tries >= 6:
-                log.warning("User still has processes running after 30 seconds! Continuing anyways")
+                log.warning("User still has processes running after 30 seconds!")
+                # I'll take care of this *cracks knuckles*
+                self.kill_processes(secureops)
                 break
             log.debug("Was about to delete user, but it still has processes running! Waiting 5 seconds")
             tries += 1

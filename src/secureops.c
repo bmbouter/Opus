@@ -44,6 +44,8 @@ int help()
     printf("    -S to start supervisord\n");
     printf("    -T to send SIGTERM to supervisord\n");
     printf("    -H to send SIGHUP to supervisord\n");
+    printf("End all processes. (Sends SIGTERM, waits 15 seconds, and sends SIGKILL)\n");
+    printf("    secureops -k <username>\n");
     return 1;
 }
 
@@ -72,11 +74,47 @@ void getpwd(char *buffer, int length)
     fclose(urandom);
 }
 
+int check_username(char *username) {
+    if (strlen(username) < 5) {
+        printf("Bad username");
+        return 1;
+    }
+    if (strncmp(username, "opus", 4) != 0) {
+        printf("Won't change to that user");
+        return 1;
+    }
+    return 0;
+}
+
+int drop_privs(char *username) {
+    // Drop permissions to that user, to ensure we won't kill anything that
+    // we shouldn't be able to.
+    if (check_username(username)) {
+        return 1;
+    }
+    int uid;
+    {
+        struct passwd *passwd = getpwnam(username);
+        if (!passwd) {
+            printf("Couldn't get uid\n");
+            return 1;
+        }
+        uid = passwd->pw_uid;
+    }
+    if (setgid(99) == -1) {
+        perror("setgid");
+        return 1;
+    }
+    if (setuid(uid) == -1) {
+        perror("setuid");
+        return 1;
+    }
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
-    // Set the real user id. Effective user-id ought to be good enough, but
-    // some things check real user id I suppose
-    setuid( geteuid() );
+    setuid(0);
     
     /*
      * Restart Apache
@@ -350,32 +388,9 @@ int main(int argc, char **argv)
         }
 
         char *username = argv[2];
-        if (strlen(username) < 5) {
-            printf("Bad username");
-            return 1;
-        }
-        if (strncmp(username, "opus", 4) != 0) {
-            printf("Won't change to that user");
-            return 1;
-        }
 
-        // Drop permissions to that user, to ensure we won't kill anything that
-        // we shouldn't be able to.
-        int uid;
-        {
-            struct passwd *passwd = getpwnam(username);
-            if (!passwd) {
-                printf("Couldn't get uid\n");
-                return 1;
-            }
-            uid = passwd->pw_uid;
-        }
-        if (setgid(99) == -1) {
-            perror("setgid");
-            return 1;
-        }
-        if (setuid(uid) == -1) {
-            perror("setuid");
+        if (drop_privs(username)) {
+            printf("Could not drop privs");
             return 1;
         }
 
@@ -454,6 +469,51 @@ int main(int argc, char **argv)
         }
         if (ret == -1) {
             printf("Sending of signal failed. pid was %d. errno: %d", pid, errno);
+            return 1;
+        }
+        return 0;
+    }
+    if (strcmp(argv[1], "-k") == 0) {
+
+        if (argc < 3) {
+            printf("Not enough arguments\n");
+            return help();
+        }
+        char *username = argv[2];
+        if (check_username(username)) {
+            return 1;
+        }
+
+        if (fork() == 0) {
+            execlp("pkill", "pkill",
+                    "-SIGTERM",
+                    "-u", username,
+                    (char *)NULL);
+            printf("pkill couldn't launch. %d\n", errno);
+            _exit(255);
+        }
+        int ret;
+        wait(&ret);
+        if (!WIFEXITED(ret) || (WEXITSTATUS(ret) > 1)) {
+            printf("pkill exited abnormally\n");
+            printf("Error code: %d\n", WEXITSTATUS(ret));
+            return 1;
+        }
+
+        sleep(10);
+
+        if (fork() == 0) {
+            execlp("pkill", "pkill",
+                    "-SIGKILL",
+                    "-u", username,
+                    (char *)NULL);
+            printf("pkill couldn't launch. %d\n", errno);
+            _exit(255);
+        }
+        wait(&ret);
+        if (!WIFEXITED(ret) || (WEXITSTATUS(ret) > 1)) {
+            printf("pkill exited abnormally\n");
+            printf("Error code: %d\n", WEXITSTATUS(ret));
             return 1;
         }
         return 0;
