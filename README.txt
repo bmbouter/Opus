@@ -10,7 +10,7 @@ https://fedorahosted.org/opus/
 About Opus
 ----------
 In a nutshell, Opus allows the automatic deployment of Django projects in a
-secure way. Specifically, it automates the following items in th process of
+secure way. Specifically, it automates the following items in the process of
 deploying a project:
 
 * Configures a new Django project given a list of applications
@@ -113,9 +113,9 @@ as possible.
 
 Below, there are several references to the "Opus user." This refers to the
 Linux user that the Opus application will be running as. Typically, this is
-the same user that Apache uses, but since mod_wsgi can be configured to run
-projects as another user (with daemon mode), we use the term "Opus user"
-instead.
+the same user that Apache uses, and is "apache" throught examples in this
+documentation, but since mod_wsgi can be configured to run projects as another
+user (with daemon mode), we use the term "Opus user" instead.
 
 Prerequisites
 -------------
@@ -160,6 +160,37 @@ Then later when configuring database options, make sure to put "localhost" for
 the database host, instead of leaving it blank. Otherwise, it will attempt to
 use local sockets instead of tcp, which will fail. Also, uncomment the
 "sslmode" line in settings.py to ensure encrypion is used.
+
+**Important Note:** Since Opus creates Postgres users and databases of the
+format "opus<appname>" you should **not** name your user/database something
+that starts with "opus". This could cause conflicts, and in a worst case,
+cause Opus to de-provision its own database.
+
+Configuring RabbitMQ
+````````````````````
+Opus requires a message passing broker, both for itself and to provide to
+deployed projects. We recommend RabbitMQ, since it's easy to set up and scales
+excellently.
+
+Once installed, you will need to create a user and a vhost for Opus. Remember
+these parameters, you will enter them later when configuring Opus' settings.py
+file.
+
+These commands can be used to create a new user, a new vhost, and set
+permissions. You will probably need to run these under sudo::
+
+    $ rabbitmqctl add_user my_opus_user mypassword
+    $ rabbitmqctl add_vhost my_opus_vhost
+    $ rabbitmqctl set_permissions -p my_opus_vhost my_opus_user "" ".*" ".*"
+
+As far as I have found, putting the password on the command line is the only
+way to set a RabbitMQ password. Be mindful of terminal logs, bash history
+logs, and sudo logs that all may save the password.
+
+**Important Note:** Since Opus creates RabbitMQ users and vhosts of the format
+"opus<appname>" you should **not** name your user/vhost something that starts
+with "opus".  This could cause conflicts, and in a worst case, cause Opus to
+de-provision its own database.
 
 Installing Opus
 ---------------
@@ -220,28 +251,37 @@ opus.project. To do that, first configure it:
 Don't forget to make the base directory, log directory, and Apache conf
 directory writable by the Opus user.
 
+If you're using sqlite, you must create a directory to house the database file
+and the directory must be writable by the Opus user. (Sqlite uses temporary
+files, and must have write permission to the entire directory containing the
+database file). If you haven't already, create a directory, change ownership
+to the Opus user, and reset the database parameter in the settings.py file.
+
 Database Sync
 -------------
-Now sync the database by calling `python manage.py syncdb`. Standard Django
-procedure.
+Now you need to sync the database. This needs to be done as the Opus user,
+otherwise log files and sqlite (if it's used) will have the wrong owner and
+Opus will get permission errors. If the opus user is "apache", then run this
+command from the project directory::
 
-If you're using sqlite, you must create a directory to house the database file
-and the directory must be writable by the Opus user, not just the one sqlite
-file (since sqlite uses temporary files).
+    $ sudo -u apache python manage.py syncdb
 
-Note that if you run this command as root (or any user other than the Opus
-user), the sqlite database (if any) as well as some log files will get created
-as that user, and thus you will get permission denied errors later when Opus
-is being run as an unprivileged user. Make sure you go back and set
-permissions appropriately for any files in the LOG_DIR directory, and the
-sqlite file if using sqlite.
+If you run this command as root (or any user other than the Opus user), the
+sqlite database (if any) as well as some log files will get created as that
+user, and thus you will get permission denied errors later when Opus is being
+run as an unprivileged user. Make sure you go back and set permissions
+appropriately for any files in the LOG_DIR directory, and the sqlite file if
+using sqlite.
 
 Deployment
 ----------
 At this point, deployment for Opus is mostly like like any other project as
 described in the `Django Deployment Guide`_.
 
-For convenience, here is a sample wsgi file that will need to be created::
+For convenience, a sample wsgi file is included in the "wsgi" directory of the
+Opus project directory.
+
+It looks like this::
 
     import os
     import sys
@@ -266,7 +306,7 @@ directory, which is the Opus package. In the above example, the opus package
 would be /opt/opus-repository/opus, and /opt/opus-repository is the repository
 containing this README, the opus package, setup.py, and such.
 
-Once your wsgi file is in place, Apache must be configured to run this app.
+Once your wsgi file looks good, Apache must be configured to run this app.
 Again, follow your normal procedure for deploying a Django app with mod_wsgi,
 see the `Django Deployment Guide`_ for help.
 
@@ -275,31 +315,45 @@ see the `Django Deployment Guide`_ for help.
 **Note:** Opus *must* be deployed using mod_wsgi's "Daemon Process" option.
 This has to do with how Apache reloads itself, and since Opus periodically
 must restart Apache, this causes problems if Opus is running in mod_wsgi's
-"embedded mode." So make sure lines such as these are in the context of the
-WSGIScriptAlias directive in the Apache configuration::
-
-    WSGIDaemonProcess OPUS
-    WSGIProcessGroup OPUS
-
-This is a limitation that will go away once Celery is better integrated.
+"embedded mode." The below example takes care of this with the
+"WSGIDaemonProcess" and "WSGIProcessGroup" options. This is a limitation that
+will hopefully go away once Celery is better integrated.
 
 Here is an example of the opus.conf Apache configuration::
 
     NameVirtualHost *:80
     NameVirtualHost *:443
 
+    WSGIDaemonProcess OPUS
+
     <VirtualHost *:80>
-        Alias /gwt /var/www/opusenv/share/opus/media
+        Alias /gwt /var/www/opusenv/share/opus/build
         Alias /adminmedia /usr/lib/python2.6/site-packages/django/contrib/admin/media
-        WSGIDaemonProcess OPUS
         WSGIProcessGroup OPUS
-        WSGIScriptAlias / /var/lib/opus/wsgi/opus.wsgi
+        WSGIScriptAlias / /var/lib/opus/project/wsgi/opus.wsgi
+    </VirtualHost>
+    <VirtualHost *:443>
+        Alias /gwt /var/www/opusenv/share/opus/build
+        Alias /adminmedia /usr/lib/python2.6/site-packages/django/contrib/admin/media
+        WSGIProcessGroup OPUS
+        WSGIScriptAlias / /var/lib/opus/project/wsgi/opus.wsgi
+        SSLEngine On
+        SSLCertificateFile /path/to/cert/file
+        SSLCertificateKeyFile /path/to/key/file
     </VirtualHost>
 
     Include conf.d/opus/*.conf
 
 You will of course need to change paths and such for your own deployment; this
-is only an example. See notes in the next section about this example.
+is only an example. See notes in the next section about this example and what
+you need to watch out for.
+
+If you don't want or need SSL, remove those lines and set OPUS_HTTPS_PORT to
+None in the settings.py file. Note that SSL virtual host support is provided
+by the `Server Name Indication`_ protocol. Not all client browsers support
+this.
+
+ .. _Server Name Indication: http://en.wikipedia.org/wiki/Server_Name_Indication
 
 Apache Configuration
 --------------------
@@ -326,10 +380,21 @@ items.
 * If you want to use the GWT interface (you probably do), you must configure
   a webserver (perhaps the same one, it doesn't matter) to serve the files
   from gwt/build/ in the source distribution (setup.py will install these files
-  to <prefix>/share/opus/media). Then configure Opus's OPUS_GWT_MEDIA directive
+  to <prefix>/share/opus/build). Then configure Opus's OPUS_GWT_MEDIA directive
   to where browsers can find that media. e.g.::
 
-    Alias /gwt /usr/local/share/opus/media
+    Alias /gwt /usr/local/share/opus/build
+
+Celery Daemon
+-------------
+In order for the asynchronous tasks that Opus uses to run, you must start the
+Celery daemon. This can be done by running `manage.py celeryd` which is found
+in the opus/lib/project directory. This will most likely need to be run as the
+Opus user. e.g.::
+
+    sudo -u apache ./manage.py celeryd
+
+See the Celery documentation for how to run this as a system daemon.
 
 Misc Notes
 ----------
@@ -369,17 +434,6 @@ Unfortunately, there are a few caveats at the moment.
   To fix it, add this line to your Apache configuration::
 
     WSGISocketPrefix run
-
-Celery Daemon
--------------
-In order for the asynchronous tasks that Opus uses to run, you must start the
-Celery daemon. This can be done by running `manage.py celeryd` which is found
-in the opus/lib/project directory. This will most likely need to be run as the
-Opus user. e.g.::
-
-    sudo -u apache ./manage.py celeryd
-
-See the Celery documentation for how to run this as a system daemon.
 
 ------------------
 After Installation

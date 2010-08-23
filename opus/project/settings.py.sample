@@ -155,7 +155,7 @@ OPUS_HTTPS_PORT = 443
 # This is the domain where projects will be served from. Project names are
 # prefixed to this string and used as the apache ServerName directive inside a
 # <VirtualHost> block.
-# Don't forget the leading dot.
+# Don't forget the leading dot. Do not include a port on this.
 # This example serves a projectname "myproject" from myproject.example.com
 OPUS_APACHE_SERVERNAME_SUFFIX = ".example.com"
 
