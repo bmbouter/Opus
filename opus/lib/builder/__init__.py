@@ -28,6 +28,7 @@ import re
 import shutil
 import keyword
 import json
+import subprocess
 
 import opus.lib.builder.sources
 from opus.lib.conf import OpusConfig
@@ -385,6 +386,22 @@ class ProjectEditor(object):
 
         # reload
         self._touch_wsgi()
+
+    def restart_celery(self, secureops="secureops"):
+        """Call this after you're done adding, upgrading, or deleting apps to
+        reload the celery daemon"""
+        log.info("Restarting supervisord/celery")
+        proc = subprocess.Popen([secureops,"-s",
+                "opus"+self.projectname,
+                self.projectdir,
+                "-H",
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
+        output = proc.communicate()[0]
+        ret = proc.wait()
+        if ret:
+            raise BuildException("Could not restart supervisord. {0}".format(output))
 
     def del_app(self, appname):
         """Removes an application from the project. This takes effect

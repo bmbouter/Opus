@@ -503,6 +503,7 @@ def addapp(request, project):
             editor = opus.lib.builder.ProjectEditor(project.projectdir)
             editor.add_app(appform.cleaned_data['apppath'],
                     appform.cleaned_data['apptype'])
+            editor.restart_celery(settings.OPUS_SECUREOPS_COMMAND)
             return render("deployment/addappform.html", dict(
                 message='Application added',
                 appform=forms.AppForm(),
@@ -565,6 +566,8 @@ def editapp(request, project):
                         failures.append((appform.cleaned_data['appname'], 'upgrade', e))
                     else:
                         upgradecount += 1
+            if upgradecount > 0 or deletecount > 0:
+                editor.restart_celery(settings.OPUS_SECUREOPS_COMMAND)
 
             message = "{upcnt} {upproj} upgraded successfully. {delcnt} {delproj} deleted successfully.".format(
                     upcnt = upgradecount,
