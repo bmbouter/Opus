@@ -159,23 +159,21 @@ class ProjectDeployer(object):
             self.create_superuser(username, email, password)
 
     def _getenv(self):
-        "Gets an environment with paths set up for a manage.py subprocess"
+        """"Gets an environment with paths set up for a manage.py or
+        djang-admin subprocess"""
         env = dict(os.environ)
         env['OPUS_SETTINGS_FILE'] = os.path.join(self.projectdir, "opussettings.json")
-        env['PYTHONPATH'] = os.path.split(opus.__path__[0])[0]
+        env['PYTHONPATH'] = os.path.split(opus.__path__[0])[0] + ":" + \
+                self.projectdir
         # Tells the logging module to disable logging, which would create
         # permission issues
         env['OPUS_LOGGING_DISABLE'] = "1"
-        try:
-            # Don't leak this value from our current environment
-            del env['DJANGO_SETTINGS_MODULE']
-        except KeyError:
-            pass
+        env['DJANGO_SETTINGS_MODULE'] = "settings"
         return env
 
     def _sync_database(self):
         # Runs sync on the database
-        proc = subprocess.Popen(["python", "manage.py", "syncdb", "--noinput"],
+        proc = subprocess.Popen(["django-admin.py", "syncdb", "--noinput"],
                 cwd=self.projectdir,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
@@ -187,7 +185,7 @@ class ProjectDeployer(object):
             raise DeploymentException("syncdb failed. {0}".format(output))
 
     def create_superuser(self, username, email, password):
-        proc = subprocess.Popen(["python", "manage.py", "createsuperuser",
+        proc = subprocess.Popen(["django-admin.py", "createsuperuser",
                 "--noinput",
                 "--username", username,
                 "--email", email],
@@ -370,17 +368,26 @@ user.save()
             if e.errno != errno.EEXIST:
                 raise
             # Directory already exists, no big deal
+
+        if pythonpath:
+            ppdirective = "sys.path.append({0!r})\n".format(pythonpath)
+        else:
+            ppdirective = ""
+
         with open(os.path.join(wsgi_dir, "django.wsgi"), 'w') as wsgi:
             wsgi.write("""
 import os
 import sys
 
-os.environ['DJANGO_SETTINGS_MODULE'] = '{projectname}.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 os.environ['OPUS_SETTINGS_FILE'] = {settingspath!r}
+
+{additionalpaths}
 
 # Needed so that apps can import their own things without having to know the
 # project name.
 sys.path.append({projectpath!r})
+
 
 #import django.core.handlers.wsgi
 #application = django.core.handlers.wsgi.WSGIHandler()
@@ -389,13 +396,10 @@ import opus.lib.profile
 application = opus.lib.profile.OpusWSGIHandler()
 """.format(projectname = self.projectname,
            projectpath = self.projectdir,
+           additionalpaths = ppdirective,
            settingspath = os.path.join(self.projectdir, "opussettings.json"),
            ))
 
-        if pythonpath:
-            ppdirective = "python-path={0}\n".format(pythonpath)
-        else:
-            ppdirective = ""
 
         # Discover the group under which to run the daemon proceses. Should be
         # an unpriviliged group, try to discover what that is.
@@ -415,14 +419,13 @@ application = opus.lib.profile.OpusWSGIHandler()
         # I know the following lines are confusing. Perhaps a TODO later would
         # be to push most of the templates out of the code
         with open(config_path, 'w') as config:
-            config.write("""WSGIDaemonProcess {name} threads=4 processes=2 home={projectpath} maximum-requests=1000 user={user} group={group} display-name={projectname} {ppdirective}
+            config.write("""WSGIDaemonProcess {name} threads=4 processes=2 home={projectpath} maximum-requests=1000 user={user} group={group} display-name={projectname}
             """.format(
                     name="opus"+self.projectname,
                     user="opus"+self.projectname,
                     group=group,
                     projectname=self.projectname,
                     projectpath=self.projectdir,
-                    ppdirective=ppdirective,
                 ))
             for port in (httpport, sslport):
                 if not port: continue

@@ -237,8 +237,7 @@ class DeployedProject(models.Model):
         self.save()
 
     def _get_path_additions(self):
-        return "{0}:{1}".format(
-                settings.OPUS_BASE_DIR,
+        return "{0}".format(
                 os.path.split(opus.__path__[0])[0],
                 )
 
@@ -322,18 +321,16 @@ class DeployedProject(models.Model):
             self.delete()
 
     def get_app_settings(self):
-        """Returns a mapping of app names to a list of settings. Each item in
-        the settings list is a (name, prettyname, type) tuple where name and
-        prettyname are strings and type is either "char" or "int"
+        """Returns a mapping of app names to a list of settings.
 
         """
         app_settings = {}
         for app in self.config['INSTALLED_APPS']:
             # Is this application local to the project? If not skip it, since
             # we don't have a good way right now to find where it's installed
-            if not app.startswith(self.name+'.'):
+            log.debug("App is %s", app)
+            if not os.path.exists(os.path.join(self.projectdir, app)):
                 continue
-            app = app[len(self.name)+1:]
             md_filename = os.path.join(self.projectdir, app, "metadata.json")
             if not os.path.exists(md_filename):
                 continue

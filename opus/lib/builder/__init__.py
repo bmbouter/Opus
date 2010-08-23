@@ -233,7 +233,7 @@ load_settings(globals())
 
         # Randomizing SECRET_KEY is taken care of for us by new_from_template,
         # but we still have to set ROOT_URLCONF
-        self.config['ROOT_URLCONF'] = "{0}.urls".format(self.projectname)
+        self.config['ROOT_URLCONF'] = "urls"
 
 
     def _copy_apps(self):
@@ -254,8 +254,7 @@ load_settings(globals())
         for app in appnames:
             if keyword.iskeyword(app):
                 raise BuildException("App name cannot be a keyword")
-            fullname = "{0}.{1}".format(self.projectname, app)
-            newapps.append(fullname)
+            newapps.append(app)
         if self.admin:
             newapps.append("django.contrib.admin")
         self.config['INSTALLED_APPS'] += newapps
@@ -362,18 +361,15 @@ class ProjectEditor(object):
 
         # Now add the app to installed apps
         config = self._get_config()
-        config["INSTALLED_APPS"].append("{0}.{1}".format(
-                self.projectname, newapp))
+        config["INSTALLED_APPS"].append(newapp)
         config.save()
 
         # Add a line in urls.py for it
         with open(os.path.join(self.projectdir, "urls.py"), 'a') as urls:
-            fullname = "{0}.{1}".format(self.projectname, newapp)
             urls.write("urlpatterns += "\
                     "patterns('', url(r'^{appname}/', "\
-                    "include('{fullname}.urls')))\n"\
-                    .format(appname=newapp,
-                            fullname=fullname))
+                    "include('{appname}.urls')))\n"\
+                    .format(appname=newapp))
 
         # If the app has a media directory, add a symlink for it
         if os.path.exists(os.path.join(self.projectdir, newapp, "media")):
@@ -410,23 +406,21 @@ class ProjectEditor(object):
         Raises ValueError if the project is not in INSTALLED_APPS
 
         """
-        if "/" in appname or "\\" in appname:
+        if "/" in appname or "\\" in appname or "." in appname:
             raise ValueError("Bad app name")
 
-        appname = self._strip_appname(appname)
+        self._check_appname(appname)
 
         # Remove from INSTALLED_APPS
         config = self._get_config()
-        config["INSTALLED_APPS"].remove("{0}.{1}".format(
-                self.projectname, appname))
+        config["INSTALLED_APPS"].remove(appname)
         config.save()
 
         # Removes the urls.py line
         with open(os.path.join(self.projectdir, "urls.py"), 'r') as urlfile:
             urllines = urlfile.readlines()
-        match = re.compile(r"include\('{projectname}\.{appname}\.urls'\)"\
-                .format(projectname=self.projectname,
-                        appname=appname))
+        match = re.compile(r"include\('{appname}\.urls'\)"\
+                .format(appname=appname))
         for linenum, line in enumerate(urllines):
             if match.search(line):
                 del urllines[linenum]
@@ -454,10 +448,10 @@ class ProjectEditor(object):
         if "/" in appname or "\\" in appname:
             raise ValueError("Bad app name")
 
-        appname = self._strip_appname(appname)
+        self._check_appname(appname)
 
-        log.info("Upgrading {0}.{1} to version {2}".format(
-            self.projectname, appname, to))
+        log.info("Upgrading {1} to version {2}".format(
+            appname, to))
         apppath = os.path.join(self.projectdir, appname)
         apptype = opus.lib.builder.sources.introspect_source(apppath)
         log.debug("apppath is %s", apppath)
@@ -475,11 +469,6 @@ class ProjectEditor(object):
 
         self._touch_wsgi()
 
-    def _strip_appname(self, appname):
-        # appnames are given as projectname.appname
-        if not appname.startswith(self.projectname + "."):
-            raise BuildException("Bad app name")
-        newappname = appname[len(self.projectname)+1:]
-        if not os.path.exists(os.path.join(self.projectdir, newappname)):
+    def _check_appname(self, appname):
+        if not os.path.exists(os.path.join(self.projectdir, appname)):
             raise BuildException("App doesn't exist")
-        return newappname

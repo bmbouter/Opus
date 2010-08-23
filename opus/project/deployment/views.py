@@ -17,6 +17,7 @@
 import functools
 import json
 import urllib2
+import os.path
 
 from opus.project.deployment import models, forms
 import opus.lib.builder
@@ -523,7 +524,9 @@ def addapp(request, project):
 def _get_apps(project):
     apps = []
     for potential in project.config['INSTALLED_APPS']:
-        if potential.startswith(project.name + "."):
+        if "." in potential:
+            continue
+        if os.path.exists(os.path.join(project.projectdir,potential)):
             apps.append(dict(appname=potential))
     return apps
 
