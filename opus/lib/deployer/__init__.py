@@ -149,12 +149,13 @@ class ProjectDeployer(object):
 
         self.config.save()
 
-    def sync_database(self, username=None, email=None, password=None):
+    def sync_database(self, username=None, email=None, password=None,
+            secureops="secureops"):
         """Do the initial database sync. If a username, email, and password are
         provided, a superuser is created
 
         """
-        self._sync_database()
+        self._sync_database(secureops)
         if username and email and password:
             self.create_superuser(username, email, password)
 
@@ -171,9 +172,10 @@ class ProjectDeployer(object):
         env['DJANGO_SETTINGS_MODULE'] = "settings"
         return env
 
-    def _sync_database(self):
+    def _sync_database(self, secureops):
         # Runs sync on the database
-        proc = subprocess.Popen(["django-admin.py", "syncdb", "--noinput"],
+        log.debug("Running syncdb")
+        proc = subprocess.Popen([secureops, "-y", "opus"+self.projectname],
                 cwd=self.projectdir,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
@@ -181,28 +183,22 @@ class ProjectDeployer(object):
                 close_fds=True,
                 )
         output = proc.communicate()[0]
-        if proc.wait():
-            raise DeploymentException("syncdb failed. {0}".format(output))
+        ret = proc.wait()
+        if ret:
+            raise DeploymentException("syncdb failed. Code {0}. {1}".format(ret, output))
 
     def create_superuser(self, username, email, password):
-        proc = subprocess.Popen(["django-admin.py", "createsuperuser",
-                "--noinput",
-                "--username", username,
-                "--email", email],
-                cwd=self.projectdir,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                env=self._getenv(),
-                close_fds=True,
-                )
-        output = proc.communicate()[0]
-        if proc.returncode:
-            raise DeploymentException("create superuser failed. Return val: {0}. Output: {1}".format(proc.returncode, output))
-
-        # Now set the password by invoking django code to directly interface
-        # with the database. Do this in a sub process so as not to have all the
-        # Django modules loaded and configured in this interpreter, which may
-        # conflict with any Django settings already imported.
+        """Creates a new superuser with given parameters in the target
+        project"""
+        # Create the user and set the password by invoking django code to
+        # directly interface with the database. Do this in a sub process so as
+        # not to have all the Django modules loaded and configured in this
+        # interpreter, which may conflict with any Django settings already
+        # imported.
+        # This is done this way to avoid calling manage.py or running any
+        # client code that the user has access to, since this happens with
+        # Opus' permissions, not the deployed project permissions.
+        log.debug("Creating superuser")
         dbconfig = self.config['DATABASES']['default']
         if dbconfig['ENGINE'].endswith("postgresql_psycopg2"):
             options = """'OPTIONS': {'sslmode': 'require'}"""
@@ -227,9 +223,7 @@ settings.configure(DATABASES = {{'default':
     }}
 }})
 from django.contrib.auth.models import User
-user = User.objects.get(username={suuser!r})
-user.set_password({supassword!r})
-user.save()
+User.objects.create_superuser({suuser!r},{suemail!r},{supassword!r})
         """.format(
                 engine=dbconfig['ENGINE'],
                 name=dbconfig['NAME'],
@@ -238,6 +232,7 @@ user.save()
                 host=dbconfig['HOST'],
                 port=dbconfig['PORT'],
                 suuser=username,
+                suemail=email,
                 supassword=password,
                 options=options
                 )

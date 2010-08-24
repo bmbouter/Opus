@@ -226,6 +226,7 @@ class DeployedProject(models.Model):
         d.sync_database(info.superusername,
                 info.superemail,
                 info.superpassword,
+                settings.OPUS_SECUREOPS_COMMAND
                 )
 
         d.gen_cert(settings.OPUS_APACHE_SERVERNAME_SUFFIX)

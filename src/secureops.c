@@ -46,6 +46,9 @@ int help()
     printf("    -H to send SIGHUP to supervisord\n");
     printf("End all processes. (Sends SIGTERM, waits 15 seconds, and sends SIGKILL)\n");
     printf("    secureops -k <username>\n");
+    printf("Changes to the given user and runs 'django-admin.py syncdb' and that's it\n");
+    printf("(You probably want to set the DJANGO_SETTINGS_FILE env var before calling\n");
+    printf("    secureops -y <username>\n");
     return 1;
 }
 
@@ -517,6 +520,27 @@ int main(int argc, char **argv)
             return 1;
         }
         return 0;
+    }
+
+    /*
+     * Run django-admin syncdb
+     */
+    if (strcmp(argv[1], "-y") == 0) {
+        if (argc < 3) {
+            printf("Not enough arguments\n");
+            return help();
+        }
+        char *username = argv[2];
+        if (drop_privs(username)) {
+            return 1;
+        }
+
+        execlp("django-admin.py", "django-admin.py",
+                "syncdb", "--noinput",
+                (char *)NULL);
+        printf("Couldn't launch django-admin.py\n");
+        
+        return 255;
     }
 
     printf("Bad mode\n");
