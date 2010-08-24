@@ -134,10 +134,6 @@ public class ProjectOptions extends Composite {
 			formContainer.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
 		}
-		Hidden button = new Hidden();
-		button.setName("activate");
-		
-		formContainer.setWidget(formContainer.getRowCount(), 0, button);
 		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 	}
 	
@@ -162,6 +158,9 @@ public class ProjectOptions extends Composite {
 	}
 	@UiHandler("ActivateButton")
 	void handleActivateButton(ClickEvent event){
+		Hidden button = new Hidden();
+		button.setName("activate");	
+		formContainer.setWidget(formContainer.getRowCount(), 0, button);
 		TextBox a = new TextBox();
 		a.setVisible(false);
 		a.setName("active");
