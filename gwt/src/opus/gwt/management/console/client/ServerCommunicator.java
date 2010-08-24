@@ -16,10 +16,14 @@
 
 package opus.gwt.management.console.client;
 
+import opus.gwt.management.console.client.appbrowser.AppBrowserUiBinder;
+import opus.gwt.management.console.client.appbrowser.AppIcon;
 import opus.gwt.management.console.client.dashboard.Dashboard;
+import opus.gwt.management.console.client.dashboard.ProjectOptions;
+import opus.gwt.management.console.client.dashboard.ProjectSettings;
 import opus.gwt.management.console.client.deployer.AddAppsBuildProject;
 import opus.gwt.management.console.client.deployer.DatabaseOptionsBuildProject;
-
+import opus.gwt.management.console.client.deployer.ProjectData;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -46,6 +50,7 @@ public class ServerCommunicator {
 	   */
 	
 	public void getJson(String url, ServerCommunicator handler, String queryType, Object parent){
+		//Window.alert(url + "     ---    " + String.valueOf(requestId));
 		queue[requestId] = parent;
 		queryTypes[requestId] = queryType;
 		requestJson(requestId, url, handler);
@@ -56,7 +61,7 @@ public class ServerCommunicator {
 	  public native static void requestJson(int requestId, String url,
 	      ServerCommunicator handler) /*-{
 	   var callback = "callback" + requestId;
-
+		//alert(url+callback)
 	   // [1] Create a script element.
 	   var script = document.createElement("script");
 	   script.setAttribute("src", url+callback);
@@ -79,7 +84,7 @@ public class ServerCommunicator {
 	     document.body.removeChild(script);
 	     delete window[callback];
 	     delete window[callback + "done"];
-	   }, 5000);
+	   }, 10000);
 	   
 	   // [6] Attach the script element to the document body.
 	   document.body.appendChild(script);
@@ -120,11 +125,20 @@ public class ServerCommunicator {
 		    	ManagementConsole mc = (ManagementConsole)parent;
 		    	mc.handleUserInformation(mc.asJSOUserInformation(jso));
 		    } else if (queryType.equals("importAppList")) {	    	
-		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
+		    	AppBrowserUiBinder p = (AppBrowserUiBinder)parent;
 		    	p.importAppList(p.asArrayOfProjectData(jso));
 		    } else if (queryType.equals("handleDBOptions")){
 		    	DatabaseOptionsBuildProject db = (DatabaseOptionsBuildProject)parent;
 		    	db.handleDBOptions(db.asArrayOfDBOptionsData(jso));
+		    } else if (queryType == "getAppInfo") {
+		    	AppBrowserUiBinder p = (AppBrowserUiBinder)parent;
+		    	p.populateAppGrid(p.asArrayOfAppData(jso));
+		    } else if(queryType == "getVersionInfo"){
+		    	AppIcon p = (AppIcon)parent;
+		    	p.handleVersionInfo(p.asArrayOfVersionData(jso));
+		    } else if(queryType == "getFeaturedList"){
+		    	AppBrowserUiBinder p = (AppBrowserUiBinder)parent;
+		    	p.populateFeaturedList(jso);
 		    }
 	    }
 	  }

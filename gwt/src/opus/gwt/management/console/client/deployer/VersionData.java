@@ -19,7 +19,7 @@ package opus.gwt.management.console.client.deployer;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 
-class VersionData extends JavaScriptObject {                              // [1]
+public class VersionData extends JavaScriptObject {                              // [1]
   // Overlay types always have protected, zero argument constructors.
   protected VersionData() {}                                              // [2]
 
@@ -28,5 +28,6 @@ class VersionData extends JavaScriptObject {                              // [1]
   public final native JsArray<DependencyData> getDependencies() /*-{ return this.dependencies; }-*/;
   public final native String getPath() /*-{ return this.path }-*/;
   public final native String getType() /*-{ return this.type }-*/;
-
+  public final native String getAppPk() /*-{ return this.app_pk }-*/;
+  public final native String getVersionPk() /*-{ return this.pk }-*/;
 }

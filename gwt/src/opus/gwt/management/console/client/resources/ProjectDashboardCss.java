@@ -22,6 +22,7 @@ public class ProjectDashboardCss {
 	  public interface ProjectDashboardStyle extends CssResource {
 		    String navigationLabel();
 		    String navigationLabelActive();
+		    String WarningLabel();
 		  }
 
 }
