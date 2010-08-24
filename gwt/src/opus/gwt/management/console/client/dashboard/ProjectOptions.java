@@ -118,7 +118,7 @@ public class ProjectOptions extends Composite {
 					Label settingLabel = new Label();
 					settingLabel.setText(parts[1]);
 					for(int k=3; k<parts.length; k++){
-						setting.addItem(parts[k], parts[++k]);
+						setting.addItem(parts[++k], parts[k]);
 						if(parts[++k].equals("true")){
 							setting.setItemSelected(setting.getItemCount()-1, true);
 						}
