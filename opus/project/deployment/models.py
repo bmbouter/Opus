@@ -34,7 +34,7 @@ from django.core.validators import RegexValidator, ValidationError
 import django.contrib.auth.models
 
 
-id_re = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_]+$')
+id_re = re.compile(r'^[a-z][a-z0-9_]+$')
 validate_identifier = RegexValidator(id_re, u"Enter a valid identifier consisting of letters, numbers, and underscores, not starting with a number.", 'invalid')
 class IdentifierField(models.CharField):
     default_validators = [validate_identifier]

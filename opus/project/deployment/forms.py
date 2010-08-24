@@ -26,7 +26,7 @@ from django.conf import settings
 from opus.lib.log import get_logger
 log = get_logger()
 
-id_re = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_]+$')
+id_re = re.compile(r'^[a-z][a-z0-9_]+$')
 validate_identifier = RegexValidator(id_re, u"Enter a valid identifier consisting of letters, numbers, and underscores, not starting with a number.", 'invalid')
 class IdentifierField(forms.CharField):
     default_error_messages = {
