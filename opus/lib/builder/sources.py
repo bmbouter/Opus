@@ -56,6 +56,7 @@ app type.
 import shutil
 import subprocess
 import os.path
+import os
 
 import opus.lib.builder
 
@@ -73,6 +74,11 @@ def fromfilesys(src, dst):
 
 def fromgit(src, dst):
     """src is a git compatible URL to a git repository"""
+    if "@" in src:
+        src, rev = src.split("@", 1)
+    else:
+        rev = None
+    before = set(os.listdir(dst))
     proc = subprocess.Popen(["git", "clone", src],
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
             cwd=dst)
@@ -80,6 +86,10 @@ def fromgit(src, dst):
     ret = proc.wait()
     if ret:
         raise CopyError("Could not copy. Git returned {0}".format(output))
+    after = set(os.listdir(dst))
+    appname = list(after - before)[0]
+    if rev:
+        upgradegit(os.path.join(dst,appname), rev)
 
 copy_functions = {
         'file': fromfilesys,

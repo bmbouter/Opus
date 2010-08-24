@@ -450,7 +450,7 @@ class ProjectEditor(object):
 
         self._check_appname(appname)
 
-        log.info("Upgrading {1} to version {2}".format(
+        log.info("Upgrading {0} to version {1}".format(
             appname, to))
         apppath = os.path.join(self.projectdir, appname)
         apptype = opus.lib.builder.sources.introspect_source(apppath)
