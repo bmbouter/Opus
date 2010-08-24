@@ -129,6 +129,13 @@ class DeployedProject(models.Model):
             urls.append(https)
         return urls
 
+    def get_apps(self):
+        """Returns an iterator over application names that are currently
+        installed"""
+        for app in self.config['INSTALLED_APPS']:
+            if os.path.exists(os.path.join(self.projectdir, app)):
+                yield app
+
     @property
     def config(self):
         """Returns an opus.lib.conf.OpusConfig object for this project. This is
@@ -324,13 +331,16 @@ class DeployedProject(models.Model):
     def get_app_settings(self):
         """Returns a mapping of app names to a list of settings.
 
+        The "Default" values are the values from the metadata here, not the
+        values from the project config. If sending the current values from
+        settings to the user, you'll need to modify this data. (this is done in
+        jsonviews.py for the projectinfo() view)
+
         """
         app_settings = {}
-        for app in self.config['INSTALLED_APPS']:
+        for app in self.get_apps():
             # Is this application local to the project? If not skip it, since
             # we don't have a good way right now to find where it's installed
-            if not os.path.exists(os.path.join(self.projectdir, app)):
-                continue
             md_filename = os.path.join(self.projectdir, app, "metadata.json")
             if not os.path.exists(md_filename):
                 continue

@@ -76,9 +76,8 @@ def projectinfo(request, project):
     info['active'] = project.active
 
     info['apps'] = []
-    for app in project.config['INSTALLED_APPS']:
-        if app.startswith(project.name + "."):
-            info['apps'].append(app)
+    for app in project.get_apps():
+        info['apps'].append(app)
 
     database = project.config['DATABASES']['default']
     info['dbname'] = database['NAME']
@@ -89,6 +88,20 @@ def projectinfo(request, project):
     info['active'] = project.active
     info['needsappsettings'] = not project.all_settings_set()
     info['appsettings'] = project.get_app_settings()
+    # Set a default for these according to the actual settings
+    for app, settinglist in info['appsettings'].iteritems():
+        for setting in settinglist:
+            name = setting[0]
+            type = setting[2]
+            if type == "choice":
+                for choice in setting[3]:
+                    choicevalue = choice[0]
+                    if project.config.get(name, None) == choicevalue:
+                        choice.append(True)
+                    else:
+                        choice.append(False)
+            else:
+                setting[3] = project.config.get(name, setting[3])
 
     return render(info, request)
 
