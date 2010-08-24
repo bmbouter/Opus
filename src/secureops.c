@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <pwd.h>
+#include <grp.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <signal.h>
@@ -89,6 +90,25 @@ int check_username(char *username) {
     return 0;
 }
 
+int find_nogroup() {
+    // Searches through some pre-defined possibile names for the unprivliged
+    // group on the system. On some it's "nobody" and others it's "nogroup"
+    char *canidates[] = {"nobody", "nogroup", NULL};
+
+    char **try = canidates;
+    while (*try != NULL) {
+
+        struct group *g = getgrnam(*try);
+        if (g) {
+            return g->gr_gid;
+        }
+
+        try++;
+    }
+    return -999;
+}
+
+
 int drop_privs(char *username) {
     // Drop permissions to that user, to ensure we won't kill anything that
     // we shouldn't be able to.
@@ -104,7 +124,13 @@ int drop_privs(char *username) {
         }
         uid = passwd->pw_uid;
     }
-    if (setgid(99) == -1) {
+
+    int gid = find_nogroup();
+    if (gid < 1) {
+        printf("Could not find the anonymous group\n");
+        return 1;
+    }
+    if (setgid(gid) == -1) {
         perror("setgid");
         return 1;
     }
