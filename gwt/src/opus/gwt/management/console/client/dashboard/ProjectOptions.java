@@ -13,11 +13,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -118,6 +120,7 @@ public class ProjectOptions extends Composite {
 			formContainer.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
 		}
+		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 	}
 	
 	public void setActive(boolean active){
@@ -144,7 +147,7 @@ public class ProjectOptions extends Composite {
 		        managementCon.onDeployNewProject(projectName);
 		      }
 		    });
-		//RootPanel.get().add(form);
+		RootPanel.get().add(form);
 		form.submit();
 	}
 	@UiHandler("ActivateButton")
@@ -168,7 +171,7 @@ public class ProjectOptions extends Composite {
 		        managementCon.onDeployNewProject(projectName);
 		      }
 		    });
-		//RootPanel.get().add(form);
+		RootPanel.get().add(form);
 		form.submit();
 	}
 	public final native ProjectSettings asProjectSettings(JavaScriptObject jso) /*-{
