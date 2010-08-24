@@ -36,11 +36,13 @@ public class ProjectOptions extends Composite {
 	private JSVariableHandler JSVarHandler;
 	private boolean active;
 	private ManagementConsole managementCon;
-	private FormPanel optionsForm;
+	private ProjectDashboard projectDashboard;
+	
 	private static ProjectOptionsUiBinder uiBinder = GWT
 			.create(ProjectOptionsUiBinder.class);
 	
 	@UiField FlexTable formContainer;
+	@UiField FormPanel optionsForm;
 	@UiField Button SaveButton;
 	@UiField Button ActivateButton;
 	@UiField Label WarningLabel;
@@ -49,11 +51,12 @@ public class ProjectOptions extends Composite {
 	interface ProjectOptionsUiBinder extends UiBinder<Widget, ProjectOptions> {
 	}
 
-	public ProjectOptions(String projectName, ManagementConsole manCon) {
+	public ProjectOptions(String projectName, ManagementConsole manCon, ProjectDashboard projectDashboard) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.projectName = projectName;
 		this.JSVarHandler = new JSVariableHandler();
 		this.managementCon = manCon;
+		this.projectDashboard = projectDashboard;
 		this.optionsForm = new FormPanel();
 		setupOptionsForm();
 	}
@@ -152,8 +155,8 @@ public class ProjectOptions extends Composite {
 	
 	@UiHandler("SaveButton")
 	void handleSaveButton(ClickEvent event){
-		optionsForm.add(formContainer);
-		RootPanel.get().add(optionsForm);
+		//optionsForm.add(formContainer);
+		//projectDashboard.getDeckPanel().add(optionsForm);
 		optionsForm.submit();
 	}
 	@UiHandler("ActivateButton")
@@ -167,9 +170,9 @@ public class ProjectOptions extends Composite {
 			a.setText("true");
 		}
 		formContainer.setWidget(formContainer.getRowCount(), 1, a);
-		optionsForm.add(formContainer);
+		//optionsForm.add(formContainer);
 
-		RootPanel.get().add(optionsForm);
+		//projectDashboard.getDeckPanel().add(optionsForm);
 		optionsForm.submit();
 	}
 	public final native ProjectSettings asProjectSettings(JavaScriptObject jso) /*-{
