@@ -158,6 +158,7 @@ public class ProjectOptions extends Composite {
 			a.setValue("true");
 		}
 		formContainer.setWidget(formContainer.getRowCount(), 1, a);
+		Window.alert(a.toString());
 		FormPanel form = new FormPanel();
 		form.add(formContainer);
 		form.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
