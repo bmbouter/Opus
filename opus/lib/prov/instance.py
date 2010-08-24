@@ -65,13 +65,13 @@ class Instance(object):
     """
     
     def __init__(self, id, driver, owner_id, name, image_id,
-            realm, state, public_addresses, private_addresses):
+            realm_id, state, public_addresses, private_addresses):
         self.id = id
         self.driver = driver
         self.owner_id = owner_id
         self.name = name
         self.image_id = image_id
-        self.realm = realm
+        self.realm_id = realm_id
         self.state = state
         self.public_addresses = public_addresses
         self.private_addresses = private_addresses
@@ -92,7 +92,7 @@ class Instance(object):
         on failure.
 
         """
-        return self.driver.instance_start(self.id)
+        return self.driver.instance_stop(self.id)
 
     def reboot(self):
         """Reboots a running instance.
@@ -116,4 +116,4 @@ class Instance(object):
         return self.driver.instance_destroy(self.id)
 
     def __repr__(self):
-        return "<Instance id=%s, driver=%s, owner_id=%s, name=%s, image=%s, realm=%s, state=%s, public_addresses=%s, private_addresses=%s>" % (self.id, self.driver, self.owner_id, self.name, self.image, self.realm, self.state, self.public_addresses, self.private_addresses)
+        return "<Instance id=%s, driver=%s, owner_id=%s, name=%s, image_id=%s, realm_id=%s, state=%s, public_addresses=%s, private_addresses=%s>" % (self.id, self.driver, self.owner_id, self.name, self.image_id, self.realm_id, self.state, self.public_addresses, self.private_addresses)

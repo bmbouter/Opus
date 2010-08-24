@@ -27,7 +27,7 @@ import random
 
 import opus
 
-def load_settings():
+def load_settings(globals):
     """Loads settings from the configuration file into the caller's locals
     dict. This is intended to be used from within a Django settings.py to load
     dynamic settings like this:
@@ -41,13 +41,17 @@ def load_settings():
             raise KeyError()
     except KeyError:
         raise ImportError("Cannot find Opus settings file, OPUS_SETTINGS_FILE was undefined")
-    with open(settings_file,'r') as f:
-        objs = json.load(f)
+    try:
+        with open(settings_file,'r') as f:
+            objs = json.load(f)
+    except IOError, e:
+        print repr(settings_file)
+        raise
     # Encode all strings, see docstring explanation in recurse_encode
     objs = recurse_encode(objs)
-    frame = inspect.stack()[1][0]
+
     for name, value in objs.iteritems():
-        frame.f_locals[name] = value
+        globals[name] = value
 
 def recurse_encode(obj):
     """Recursively go through a structure and change unicode strings to byte
@@ -89,9 +93,13 @@ class OpusConfig(object):
 
     """
     def __init__(self, settingsfile, new=False):
-        """Creates a new OpusConfig object with the given settings file.
-        If new is not False, an existing file will not be read at
-        initialization
+        """Creates a new OpusConfig object with the given settings file.  If
+        new is True, an existing file will not be read at initialization, and
+        instead the settings will be blank. The named file will still be used
+        upon save.
+
+        To create new settings from the template, use
+        OpusConfig.new_from_template()
         
         """
         if not new:
@@ -117,6 +125,9 @@ class OpusConfig(object):
 
     def __getitem__(self, key):
         return self._settings[key]
+
+    def get(self, *args, **kwargs):
+        return self._settings.get(*args, **kwargs)
 
     def __setitem__(self, key, value):
         self._settings[key] = value

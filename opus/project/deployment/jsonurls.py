@@ -26,6 +26,8 @@ projectpattern = "[a-zA-Z_][a-zA-Z0-9_]*"
 
 urlpatterns = patterns('opus.project.deployment.jsonviews',
         url(r'^username', 'get_user'),
+        url(r'^database', 'get_database_settings'),
         url(r'^$', 'projectlist'),
-        url(r'^(?P<projectname>{0})/$'.format(projectpattern), 'projectinfo'),
+        url(r'^projects/(?P<projectname>{0})/$'.format(projectpattern), 'projectinfo'),
+        url(r'^projects', 'projectlist'),
 )

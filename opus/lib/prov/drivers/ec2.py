@@ -16,9 +16,11 @@
 
 from boto.ec2.connection import EC2Connection
 from boto.exception import EC2ResponseError, AWSConnectionError, BotoClientError
+from boto.ec2.regioninfo import RegionInfo
 
 from opus.lib.prov import DriverBase
 from opus.lib.prov import Image, Instance, Realm
+from opus.lib.prov.exceptions import ParsingError, ServerError
 
 class EC2Driver(DriverBase):
     """An EC2 provisioning driver.
@@ -32,7 +34,9 @@ class EC2Driver(DriverBase):
         The AWS Secret Key corresponding to the Access key given.
 
     uri
-        TODO
+        The region endpoint url that is connected to.  This can be the url for
+        a different EC2 region, or it could point to any uri for a EC2 query
+        API.
 
     """
 
@@ -42,7 +46,14 @@ class EC2Driver(DriverBase):
         self.uri = uri
 
         # The connection that all of the ec2 communication goes through
-        self.ec2 = EC2Connection(self.name, self.password, host=self.uri)
+        if uri is None:
+            region = None
+        else:
+            region = RegionInfo(self, EC2Connection.DefaultRegionName, self.uri)
+        try:
+            self.ec2 = EC2Connection(self.name, self.password, region=region)
+        except (EC2ResponseError, AWSConnectionError) as e:
+            raise ServerError(e)
 
     ##### Images #####
 
@@ -62,16 +73,18 @@ class EC2Driver(DriverBase):
 
         # Parse filter argument
         if "id" in filter:
-            id_list = [filter["id"]]
-        else:
-            id_list = None
+            return [self.image(filter["id"])]
         if "owner_id" in filter:
             owner_list = [filter["owner_id"]]
         else:
             owner_list = None
 
         images = []
-        ec2_images = self.ec2.get_all_images(id_list, owner_list)
+        try:
+            ec2_images = self.ec2.get_all_images(None , owner_list)
+        except EC2ResponseError as e:
+            raise ParsingError(e)
+
         for ec2_image in ec2_images:
             if "name" not in filter or ec2_image.name == filter["name"]:
                 if "architecture" not in filter or ec2_image.architecture == filter["architecture"]:
@@ -82,8 +95,14 @@ class EC2Driver(DriverBase):
 
     def image(self, id):
         """Return a specific ``Image`` object."""
-        #return opus.lib.prov.Image(...)
-        raise NotImplementedError()
+        try:
+            images = self.ec2.get_all_images([id])
+        except EC2ResponseError as e:
+            raise ParsingError(e)
+        return _image_from_boto_image(
+            images[0],
+            self
+        )
 
     ##### Instances #####
 
@@ -98,20 +117,39 @@ class EC2Driver(DriverBase):
         - "state"
 
         """
-        reservations = self.ec2.get_all_images(id_list, owner_list)
+
+        # Parse filter argument
+        if "id" in filter:
+            return [self.instance(filter["id"])]
+        if "state" in filter:
+            state_list = [filter["state"]]
+        else:
+            state_list = None
+
+        instances = []
+        try:
+            reservations = self.ec2.get_all_instances()
+        except EC2ResponseError as e:
+            raise ParsingError(e)
         for reservation in reservations:
-            if "owner_id" not in filter or reservation.owner_id == filter["owner_id"]:
-                for ec2_instance in reservation:
-                    if "architecture" not in filter or ec2_instance.architecture == filter["architecture"]:
-                        instances.append(
-                            _instance_from_boto_instance(ec2_instance, self, reservation.owner_id)
-                        )
+            for ec2_instance in reservation.instances:
+                if "state" not in filter or ec2_instance.state == filter["state"]:
+                    instances.append(
+                        _instance_from_boto_instance(ec2_instance, self, reservation.owner_id)
+                    )
         return instances
 
     def instance(self, id):
         """Return a specific ``Instance`` object."""
-        #return opus.lib.prov.Instance(...)
-        raise NotImplementedError()
+        try:
+            reservations = self.ec2.get_all_instances([id])
+        except EC2ResponseError as e:
+            raise ParsingError(e)
+        return _instance_from_boto_instance(
+            reservations[0].instances[0],
+            self,
+            reservations[0].owner_id
+        )
 
     ##### Instance Actions #####
 
@@ -121,8 +159,15 @@ class EC2Driver(DriverBase):
         Returns the ``Instance`` object of the created instance.
 
         """
-        #return opus.lib.prov.Instance(...)
-        raise NotImplementedError()
+        if realm_id != None:
+            #TODO: Implement realm (region) placement
+            raise NotImplementedError()
+        try:
+            image = self.ec2.get_all_images([image_id])[0]
+            reservation = image.run(instance_type="m1.large")
+        except EC2ResponseError as e:
+            raise ParsingError(e)
+        return _instance_from_boto_instance(reservation.instances[0], self, reservation.owner_id)
 
     def instance_start(self, instance_id):
         """Takes an existing ``instance_id`` and starts it.
@@ -131,7 +176,11 @@ class EC2Driver(DriverBase):
         on failure.
 
         """
-        raise NotImplementedError()
+        try:
+            reservations = self.ec2.start_instances([instance_id])
+        except EC2ResponseError as e:
+            raise ParsingError(e)
+        return len(reservations) is 1
 
     def instance_stop(self, instance_id):
         """Takes an existing ``instance_id`` and stops or shuts it down.
@@ -140,7 +189,11 @@ class EC2Driver(DriverBase):
         on failure.
 
         """
-        raise NotImplementedError()
+        try:
+            instances = self.ec2.stop_instances([instance_id])
+        except EC2ResponseError as e:
+            raise ParsingError(e)
+        return len(instances) is 1
 
     def instance_reboot(self, instance_id):
         """Takes an existing ``instance_id`` and reboots it.
@@ -149,7 +202,11 @@ class EC2Driver(DriverBase):
         on failure.
 
         """
-        raise NotImplementedError()
+        try:
+            status = self.ec2.reboot_instances([instance_id])
+        except EC2ResponseError as e:
+            raise ParsingError(e)
+        return status
 
     def instance_destroy(self, instance_id):
         """Takes an existing ``instance_id`` and destroys it.
@@ -161,7 +218,11 @@ class EC2Driver(DriverBase):
         on failure.
 
         """
-        raise NotImplementedError()
+        try:
+            instances = self.ec2.terminate_instances([instance_id])
+        except EC2ResponseError as e:
+            raise ParsingError(e)
+        return len(instances) is 1
 
     ##### Realms #####
 
@@ -175,13 +236,25 @@ class EC2Driver(DriverBase):
         - "id"
 
         """
-        #return [ opus.lib.prov.Realm(...), ...]
-        raise NotImplementedError()
+        try:
+            regions = self.ec2.get_all_regions()
+        except EC2ResponseError as e:
+            raise ParsingError(e)
+        realms = []
+        for region in regions:
+            if "id" not in filter or region.name == filter["id"]:
+                realms.append(
+                    _realm_from_boto_region(region, self)
+                )
+        return realms
 
     def realm(self, id):
         """Return a specific ``Realm`` object."""
-        #return opus.lib.prov.Realm(...)
-        raise NotImplementedError()
+        realms = self.realms({"id":id})
+        if len(realms):
+            return realms[0]
+        else:
+            return None
 
 
 def _image_from_boto_image(boto_instance, driver):
@@ -195,20 +268,26 @@ def _image_from_boto_image(boto_instance, driver):
         boto_instance.architecture,
     )
 
-def _region_to_realm(region):
-    """Converts a region from boto to a realm."""
-    pass #TODO
-
 def _instance_from_boto_instance(boto_instance, driver, owner_id):
     """Returns a ``opus.lib.prov.instance`` object from a boto instance."""
     return Instance(
         boto_instance.id,
         driver,
-        boto_instance.owner_id,
+        owner_id,
         boto_instance.image_id,
         boto_instance.image_id,
-        _region_to_realm(boto_instance.region),
+        boto_instance.placement,
         boto_instance.state,
         boto_instance.public_dns_name,
         boto_instance.private_dns_name,
+    )
+
+def _realm_from_boto_region(boto_region, driver):
+    """Returns a ``opus.lib.prov.realm`` object from a boto Zone."""
+    return Realm(
+        boto_region.name,
+        driver,
+        boto_region.name,
+        True,
+        -1,
     )

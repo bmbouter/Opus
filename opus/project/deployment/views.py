@@ -17,6 +17,7 @@
 import functools
 import json
 import urllib2
+import os.path
 
 from opus.project.deployment import models, forms
 import opus.lib.builder
@@ -24,6 +25,7 @@ import opus.lib.deployer
 from opus.lib.deployer import DeploymentException
 import opus.lib.log
 from opus.project.deployment import tasks
+import opus.project.deployment.database
 log = opus.lib.log.get_logger()
 
 from django.conf import settings
@@ -223,15 +225,6 @@ def edit(request, project):
                 # save model and config, activate/deactivate if requested,
                 # add new superuser if requested
                 project.save()
-                if 'active' in form.changed_data:
-                    if cd['active']:
-                        log.debug("Activating")
-                        project.activate()
-                        messages.append("Project activated")
-                    else:
-                        log.debug("Deactivating")
-                        project.deactivate()
-                        messages.append("Project deactivated")
                 if "superusername" in form.changed_data:
                     # Should this code be offloaded to a method in the model?
                     log.debug("Adding new superuser")
@@ -256,6 +249,33 @@ def edit(request, project):
                         del form.data['superemail']
                         del form.data['superpassword']
                         del form.data['superpasswordconfirm']
+                # Do this after everything else. If activate fails due to
+                # missing app settings, it redirects. Everything else should
+                # still be saved though.
+                if 'active' in form.changed_data:
+                    if cd['active']:
+                        if not project.all_settings_set():
+                            log.debug("Tried to activate, but still needs settings set. Rendering app settings page")
+
+                            appforms = _get_app_settings_forms(project.get_app_settings(),
+                                    project.config)
+                            if messages:
+                                messages.append("")
+                                messages.append("BUT...")
+                            messages.append("You asked me to activate the project, but you must set all the settings below first.")
+
+                            return render("deployment/appsettings.html", dict(
+                                    appforms=appforms,
+                                    project=project,
+                                    messages=messages,
+                                    ), request)
+                        log.debug("Activating")
+                        project.activate()
+                        messages.append("Project activated")
+                    else:
+                        log.debug("Deactivating")
+                        project.deactivate()
+                        messages.append("Project deactivated")
             return render("deployment/edit.html",
                     {'project': project,
                         'form': form,
@@ -289,20 +309,23 @@ def create(request, projectname):
         # the forms.
         pform = forms.ProjectForm(request.POST)
         appsform = forms.AppFormSet(request.POST)
-        dform = forms.DeploymentForm(request.POST)
+        dform = forms.DeploymentForm(request.POST, noactive=True)
         allforms = [pform, appsform, dform]
         # If forms aren't valid, fall through and display the (invalid) forms
         # with error text
         if all(f.is_valid() for f in allforms):
             log.info("Preparing to create+deploy %s", projectname)
+
+            pdata = pform.cleaned_data
+
             # Create the deployment object to do some early validation checks
             deployment = models.DeployedProject()
             deployment.name = projectname
             deployment.owner = request.user
             deployment.full_clean()
 
-            # Create a new project
-            pdata = pform.cleaned_data
+            # Configure the new project. None of these actions actually execute
+            # until we enter the try block below
             builder = opus.lib.builder.ProjectBuilder(projectname)
             for appdata in appsform.cleaned_data:
                 if not appdata:
@@ -310,26 +333,55 @@ def create(request, projectname):
                     continue
                 log.debug(" ... with app %r", appdata['apppath'])
                 builder.add_app(appdata['apppath'], appdata['apptype'])
-            if pdata['admin']:
+            if pdata['admin'] or pdata['idprovider'] == 'local':
                 log.debug(" ... and the admin app")
                 builder.set_admin_app()
+            if pdata['idprovider'] != 'local':
+                log.debug(" ... and the idp app %r", pdata['idprovider'])
+                from opus.lib import apps
+                apppath = os.path.join(apps.__path__[0], pdata['idprovider'])
+                builder.add_app(apppath, 'file')
+
+            # Now actually execute the tasks. This is done in a try block which
+            # catches all exceptions so that we can roll back failed partial
+            # deployments in any error cases.
             log.debug("Executing create action on %r...", projectname)
             try:
+                # Create the project directory
                 projectdir = builder.create(settings.OPUS_BASE_DIR)
                 log.info("%r created, starting deploy process", projectname)
 
-                # Deploy it
+                # Prepare deployment parameters
                 info = models.DeploymentInfo()
                 info.dbengine = dform.cleaned_data['dbengine']
-                info.dbname = dform.cleaned_data['dbname']
-                info.dbpassword = dform.cleaned_data['dbpassword']
-                info.dbhost = dform.cleaned_data['dbhost']
-                info.dbport = dform.cleaned_data['dbport']
+                # If requested, create a database for it
+                if info.dbengine == "postgresql_psycopg2" and \
+                        settings.OPUS_AUTO_POSTGRES_CONFIG:
+                    autodb = opus.project.deployment.database.\
+                            setup_postgres(projectname)
+                    info.dbname, info.dbuser, info.dbpassword, \
+                            info.dbhost, info.dbport = autodb
+                elif info.dbengine == "sqlite3":
+                    # SQLite database locations get set automatically by the
+                    # deployment libraries. No other options are set.
+                    # SQLite is handled differently (as far as the location of
+                    # the code) since the file must be secured properly.  So
+                    # the deployer handles that correctly along side its
+                    # routines to change permissions on the directory.
+                    pass
+                else:
+                    info.dbname = dform.cleaned_data['dbname']
+                    info.dbuser = dform.cleaned_data['dbuser']
+                    info.dbpassword = dform.cleaned_data['dbpassword']
+                    info.dbhost = dform.cleaned_data['dbhost']
+                    info.dbport = dform.cleaned_data['dbport']
                 info.superusername = dform.cleaned_data['superusername']
                 info.superemail = dform.cleaned_data['superemail']
                 info.superpassword = dform.cleaned_data['superpassword']
 
-                deployment.deploy(info, active=dform.cleaned_data['active'])
+
+                # Deploy it now! But don't activate it.
+                deployment.deploy(info, False)
             except Exception, e:
                 # The project didn't deploy for whatever reason. Delete the
                 # project directory and re-raise the exception
@@ -338,13 +390,13 @@ def create(request, projectname):
                 # edit_or_create() ought to check that for us, this function
                 # shouldn't be called on an existing project.
                 log.error("Project didn't fully create or deploy, rolling back deployment. %s", e)
-                deployment.destroy()
+                # Schedule a task to delete the project
+                tasks.destroy_project_by_name.delay(deployment.name)
                 raise
 
             log.info("Project %r successfully deployed", projectname)
 
-            return render("deployment/success.html", dict(
-                project=deployment), request)
+            return redirect("opus.project.deployment.views.set_app_settings", projectname)
 
         else:
             log.debug(request.POST)
@@ -356,7 +408,7 @@ def create(request, projectname):
         log.debug("create view called, displaying form")
         appsform = forms.AppFormSet()
         pform = forms.ProjectForm()
-        dform = forms.DeploymentForm()
+        dform = forms.DeploymentForm(noactive=True)
 
         # If a token was passed in to the GET params, try and use it to
         # populate the app list formset
@@ -375,6 +427,69 @@ def create(request, projectname):
             dform=dform,
             projectname=projectname,
             ), request)
+
+
+def _get_app_settings_forms(app_settings, initial=None, data=None):
+    """Returns a dict mapping app names to UserSettingForm objects given a
+    dictionary as returned by DeployedProject.get_app_settings()
+
+    """
+    appforms = {}
+    for appname, s in app_settings.iteritems():
+        appforms[appname] = forms.UserSettingsForm(s, data, prefix=appname,
+                initial=initial)
+    return appforms
+
+
+@login_required
+@get_project_object
+def set_app_settings(request, project):
+    """Asks the user about application specific settings.  This includes any
+    chosen projects, as well as hardcoded ldap or openid features"""
+    if request.method == "POST":
+        appforms = _get_app_settings_forms(project.get_app_settings(),
+                project.config,
+                request.POST)
+        if all(x.is_valid() for x in appforms.itervalues()):
+            # Save the settings
+            for app, appform in appforms.iteritems():
+                opus.lib.builder.merge_settings(
+                        project.config, appform.cleaned_data)
+            project.config.save()
+
+            # Either way, the config needs to be reloaded, either by calling
+            # activate() wich writes the config file, or by calling save()
+            # which touches the wsgi config
+            if "activate" in request.POST:
+                # Writes apache config and restarts apache
+                project.activate()
+                message = "Settings saved, and project activated"
+            elif "active" in request.POST:
+                # GWT submits this hidden field to activate or deactivate
+                if request.POST['active'] == 'false':
+                    project.deactivate()
+                else:
+                    project.activate()
+            else:
+                # Saves model, writes config file, touches wsgi config
+                project.save()
+                message = "Settings saved"
+
+            return render("deployment/appsettings.html", dict(
+                    appforms=appforms,
+                    project=project,
+                    message=message,
+                    ), request)
+
+    else:
+        appforms = _get_app_settings_forms(project.get_app_settings(),
+                project.config)
+
+    return render("deployment/appsettings.html", dict(
+            appforms=appforms,
+            project=project,
+            ), request)
+
 
 @login_required
 @get_project_object
@@ -399,6 +514,7 @@ def addapp(request, project):
             editor = opus.lib.builder.ProjectEditor(project.projectdir)
             editor.add_app(appform.cleaned_data['apppath'],
                     appform.cleaned_data['apptype'])
+            editor.restart_celery(settings.OPUS_SECUREOPS_COMMAND)
             return render("deployment/addappform.html", dict(
                 message='Application added',
                 appform=forms.AppForm(),
@@ -418,7 +534,9 @@ def addapp(request, project):
 def _get_apps(project):
     apps = []
     for potential in project.config['INSTALLED_APPS']:
-        if potential.startswith(project.name + "."):
+        if "." in potential:
+            continue
+        if os.path.exists(os.path.join(project.projectdir,potential)):
             apps.append(dict(appname=potential))
     return apps
 
@@ -461,6 +579,8 @@ def editapp(request, project):
                         failures.append((appform.cleaned_data['appname'], 'upgrade', e))
                     else:
                         upgradecount += 1
+            if upgradecount > 0 or deletecount > 0:
+                editor.restart_celery(settings.OPUS_SECUREOPS_COMMAND)
 
             message = "{upcnt} {upproj} upgraded successfully. {delcnt} {delproj} deleted successfully.".format(
                     upcnt = upgradecount,

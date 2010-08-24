@@ -14,19 +14,34 @@
 #   limitations under the License.                                           #
 ##############################################################################
 
-from django.conf.urls.defaults import *
+from celery.decorators import task
+from django.conf import settings
 
-# The regex that matches project names in the URL. This needs to be a python
-# identifier, since it translates to a python package. It also needs to be
-# less than 30 characters or so, since it translates into a system user (this
-# is checked in the edit_or_create view to give a better error message)
-projectpattern = "[a-zA-Z_][a-zA-Z0-9_]*"
+from opus.lib.deployer import ProjectDeployer
+import opus.project.deployment.models
+from opus.lib.log import get_logger
+log = get_logger()
 
-urlpatterns = patterns('opus.project.deployment.views',
-        url(r'^$', 'list_or_new'),
-        url(r'^(?P<projectname>{0})/$'.format(projectpattern), 'edit_or_create'),
-        url(r'^(?P<projectname>{0})/destroy$'.format(projectpattern), 'destroy'),
-        url(r'^(?P<projectname>{0})/addapp$'.format(projectpattern), 'addapp'),
-        url(r'^(?P<projectname>{0})/apps$'.format(projectpattern), 'editapp'),
-        url(r'^(?P<projectname>{0})/confapps$'.format(projectpattern), 'set_app_settings'),
-)
+@task
+def destroy_project(projectid):
+    project = opus.project.deployment.models.DeployedProject.objects.get(pk=projectid)
+
+    log.info("Running task to destroy project %s", project)
+    project.destroy()
+
+@task
+def destroy_project_by_name(projectname):
+    """Used by the rollback functionality, since the model object is never
+    committed to the database
+
+    """
+    project = opus.project.deployment.models.DeployedProject()
+    project.name = projectname
+
+    log.info("Running task to destroy project %s", project)
+    project.destroy()
+
+@task
+def start_supervisord(projectdir):
+    d = ProjectDeployer(projectdir)
+    d.start_supervisord(settings.OPUS_SECUREOPS_COMMAND)

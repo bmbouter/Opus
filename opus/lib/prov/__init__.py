@@ -29,10 +29,15 @@ This package provides two things:
 
 """
 
-from driver_base import DriverBase
 from image import Image
 from instance import Instance
 from realm import Realm
 
-# Exceptions
+from driver_base import DriverBase
 import exceptions
+import drivers
+
+DRIVERS = {
+    "ec2":drivers.EC2Driver,
+    "opennebula1.4":drivers.OpenNebula14Driver
+}

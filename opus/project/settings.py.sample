@@ -17,6 +17,9 @@ DATABASES = {
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        
+        # XXX If using postgresql_psycopg2, uncomment this line
+        #'OPTIONS': {'sslmode': 'require'},
     }
 }
 
@@ -62,7 +65,7 @@ MEDIA_URL = ''
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/adminmedia/'
 
 # Make this unique, and don't share it with anybody.
 # XXX Set this to a string of length at least 50 containing random characters
@@ -152,7 +155,7 @@ OPUS_HTTPS_PORT = 443
 # This is the domain where projects will be served from. Project names are
 # prefixed to this string and used as the apache ServerName directive inside a
 # <VirtualHost> block.
-# Don't forget the leading dot.
+# Don't forget the leading dot. Do not include a port on this.
 # This example serves a projectname "myproject" from myproject.example.com
 OPUS_APACHE_SERVERNAME_SUFFIX = ".example.com"
 
@@ -168,7 +171,8 @@ OPUS_GWT_MEDIA = "/gwt"
 # database for a new project if the project has selected Postgres as their
 # database. In order for this to work, Opus must use the same database cluster
 # as deployed projects, and the database user Opus is configured with must have
-# create role and create database privileges.
+# create role and create database privileges. This means you cannot use this
+# option if Opus is not itself configured to use Postgres
 OPUS_AUTO_POSTGRES_CONFIG = False
 
 # A list of allowed database backends projects can choose from. This should be
@@ -182,3 +186,12 @@ OPUS_ALLOWED_DATABASES = [
         'sqlite3',
         'oracle',
         ]
+
+# These options specify the SSL cert and key, and chain file used for deployed
+# projects when deploying on an HTTPS port. If any are blank, the system will
+# instead generate a self-signed certificate for each project. With this
+# option, you can tell Opus to use a e.g. wildcard cert for every deployed
+# project.
+OPUS_SSL_CRT = ""
+OPUS_SSL_KEY = ""
+OPUS_SSL_CHAIN = ""

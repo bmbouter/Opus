@@ -13,7 +13,7 @@ for dirpath, dirnames, filenames in os.walk(tocopy):
             ndirpath = ndirpath[1:]
         data_files.append(
                 (
-                    os.path.join("share","opus","media",ndirpath),
+                    os.path.join("share","opus","build",ndirpath),
                     [os.path.join(dirpath,x) for x in filenames],
                 )
         )

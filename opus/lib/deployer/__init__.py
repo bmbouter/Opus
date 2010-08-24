@@ -30,6 +30,7 @@ import tempfile
 import grp
 import random
 import shutil
+import time
 
 import opus
 from opus.lib.conf import OpusConfig
@@ -97,6 +98,8 @@ class ProjectDeployer(object):
         """
         self.config['TEMPLATE_DIRS'] = (os.path.join(self.projectdir, "templates"),)
         self.config['LOG_DIR'] = os.path.join(self.projectdir, 'log')
+        self.config['MEDIA_ROOT'] = os.path.join(self.projectdir, 'media/')
+        self.config['OPUS_SECURE_UPLOADS'] = os.path.join(self.projectdir, "opus_secure_uploads/")
         self.config.save()
 
 
@@ -140,64 +143,67 @@ class ProjectDeployer(object):
         defaultdb['PASSWORD'] = dbpassword
         defaultdb['HOST'] = dbhost
         defaultdb['PORT'] = dbport
+        if defaultdb['ENGINE'].endswith("postgresql_psycopg2"):
+            # Require SSL on the server
+            defaultdb['OPTIONS'] = {"sslmode": "require"}
 
         self.config.save()
 
-    def sync_database(self, username=None, email=None, password=None):
+    def sync_database(self, username=None, email=None, password=None,
+            secureops="secureops"):
         """Do the initial database sync. If a username, email, and password are
         provided, a superuser is created
 
         """
-        self._sync_database()
+        self._sync_database(secureops)
         if username and email and password:
             self.create_superuser(username, email, password)
 
     def _getenv(self):
-        "Gets an environment with paths set up for a manage.py subprocess"
+        """"Gets an environment with paths set up for a manage.py or
+        djang-admin subprocess"""
         env = dict(os.environ)
         env['OPUS_SETTINGS_FILE'] = os.path.join(self.projectdir, "opussettings.json")
-        env['PYTHONPATH'] = os.path.split(opus.__path__[0])[0]
+        env['PYTHONPATH'] = os.path.split(opus.__path__[0])[0] + ":" + \
+                self.projectdir
         # Tells the logging module to disable logging, which would create
         # permission issues
         env['OPUS_LOGGING_DISABLE'] = "1"
-        try:
-            # Don't leak this value from our current environment
-            del env['DJANGO_SETTINGS_MODULE']
-        except KeyError:
-            pass
+        env['DJANGO_SETTINGS_MODULE'] = "settings"
         return env
 
-    def _sync_database(self):
+    def _sync_database(self, secureops):
         # Runs sync on the database
-        proc = subprocess.Popen(["python", "manage.py", "syncdb", "--noinput"],
+        log.debug("Running syncdb")
+        proc = subprocess.Popen([secureops, "-y", "opus"+self.projectname],
                 cwd=self.projectdir,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 env=self._getenv(),
+                close_fds=True,
                 )
         output = proc.communicate()[0]
-        if proc.wait():
-            raise DeploymentException("syncdb failed. {0}".format(output))
+        ret = proc.wait()
+        if ret:
+            raise DeploymentException("syncdb failed. Code {0}. {1}".format(ret, output))
 
     def create_superuser(self, username, email, password):
-        proc = subprocess.Popen(["python", "manage.py", "createsuperuser",
-                "--noinput",
-                "--username", username,
-                "--email", email],
-                cwd=self.projectdir,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                env=self._getenv(),
-                )
-        output = proc.communicate()[0]
-        if proc.returncode:
-            raise DeploymentException("create superuser failed. Return val: {0}. Output: {1}".format(proc.returncode, output))
-
-        # Now set the password by invoking django code to directly interface
-        # with the database. Do this in a sub process so as not to have all the
-        # Django modules loaded and configured in this interpreter, which may
-        # conflict with any Django settings already imported.
+        """Creates a new superuser with given parameters in the target
+        project"""
+        # Create the user and set the password by invoking django code to
+        # directly interface with the database. Do this in a sub process so as
+        # not to have all the Django modules loaded and configured in this
+        # interpreter, which may conflict with any Django settings already
+        # imported.
+        # This is done this way to avoid calling manage.py or running any
+        # client code that the user has access to, since this happens with
+        # Opus' permissions, not the deployed project permissions.
+        log.debug("Creating superuser")
         dbconfig = self.config['DATABASES']['default']
+        if dbconfig['ENGINE'].endswith("postgresql_psycopg2"):
+            options = """'OPTIONS': {'sslmode': 'require'}"""
+        else:
+            options = ""
         program = """
 import os
 try:
@@ -213,12 +219,11 @@ settings.configure(DATABASES = {{'default':
         'PASSWORD': {password!r},
         'HOST': {host!r},
         'PORT': {port!r},
+        {options}
     }}
 }})
 from django.contrib.auth.models import User
-user = User.objects.get(username={suuser!r})
-user.set_password({supassword!r})
-user.save()
+User.objects.create_superuser({suuser!r},{suemail!r},{supassword!r})
         """.format(
                 engine=dbconfig['ENGINE'],
                 name=dbconfig['NAME'],
@@ -227,12 +232,15 @@ user.save()
                 host=dbconfig['HOST'],
                 port=dbconfig['PORT'],
                 suuser=username,
+                suemail=email,
                 supassword=password,
+                options=options
                 )
 
         process = subprocess.Popen(["python"], stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
+                close_fds=True,
                 )
         output = process.communicate(program)[0]
         ret = process.wait()
@@ -246,6 +254,12 @@ user.save()
         # information is put into them
         os.mkdir(
                 os.path.join(self.projectdir, "sqlite")
+                )
+        os.mkdir(
+                os.path.join(self.projectdir, "run")
+                )
+        os.mkdir(
+                os.path.join(self.projectdir, "opus_secure_uploads")
                 )
         d = open(os.path.join(self.projectdir, "sqlite", "database.sqlite"), 'w')
         d.close()
@@ -285,6 +299,8 @@ user.save()
         command.append(os.path.join(self.projectdir, "sqlite", "database.sqlite"))
         command.append(os.path.join(self.projectdir, "ssl.crt"))
         command.append(os.path.join(self.projectdir, "ssl.key"))
+        command.append(os.path.join(self.projectdir, "run"))
+        command.append(os.path.join(self.projectdir, "opus_secure_uploads"))
 
         log.info("Calling secure operation with arguments {0!r}".format(command))
         log.debug("cwd: {0}".format(os.getcwd()))
@@ -317,7 +333,9 @@ user.save()
         self.config.save()
 
 
-    def configure_apache(self, apache_conf_dir, httpport, sslport, servername_suffix, pythonpath="", secureops="secureops"):
+    def configure_apache(self, apache_conf_dir, httpport, sslport,
+            servername_suffix, pythonpath="", secureops="secureops",
+            ssl_crt=None, ssl_key=None, ssl_chain=None):
         """Configures apache to serve this Django project.
         apache_conf_dir should be apache's conf.d directory where a .conf file
         can be dropped
@@ -328,6 +346,9 @@ user.save()
 
         servername_suffix is a string that will be appended to the end of the
         project name for the apache ServerName directive
+
+        ssl_crt and ssl_key, if specified, will be used in lieu of a self
+        signed certificate.
 
         """
         # Check if our dest file exists, so as not to overwrite it
@@ -340,19 +361,28 @@ user.save()
         except OSError, e:
             import errno
             if e.errno != errno.EEXIST:
-                raise e
+                raise
             # Directory already exists, no big deal
+
+        if pythonpath:
+            ppdirective = "sys.path.append({0!r})\n".format(pythonpath)
+        else:
+            ppdirective = ""
+
         with open(os.path.join(wsgi_dir, "django.wsgi"), 'w') as wsgi:
             wsgi.write("""
 import os
 import sys
 
-os.environ['DJANGO_SETTINGS_MODULE'] = '{projectname}.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 os.environ['OPUS_SETTINGS_FILE'] = {settingspath!r}
+
+{additionalpaths}
 
 # Needed so that apps can import their own things without having to know the
 # project name.
 sys.path.append({projectpath!r})
+
 
 #import django.core.handlers.wsgi
 #application = django.core.handlers.wsgi.WSGIHandler()
@@ -361,13 +391,10 @@ import opus.lib.profile
 application = opus.lib.profile.OpusWSGIHandler()
 """.format(projectname = self.projectname,
            projectpath = self.projectdir,
+           additionalpaths = ppdirective,
            settingspath = os.path.join(self.projectdir, "opussettings.json"),
            ))
 
-        if pythonpath:
-            ppdirective = "python-path={0}\n".format(pythonpath)
-        else:
-            ppdirective = ""
 
         # Discover the group under which to run the daemon proceses. Should be
         # an unpriviliged group, try to discover what that is.
@@ -387,34 +414,45 @@ application = opus.lib.profile.OpusWSGIHandler()
         # I know the following lines are confusing. Perhaps a TODO later would
         # be to push most of the templates out of the code
         with open(config_path, 'w') as config:
-            config.write("""WSGIDaemonProcess {name} threads=4 processes=2 maximum-requests=1000 user={user} group={group} display-name={projectname} {ppdirective}
+            config.write("""WSGIDaemonProcess {name} threads=4 processes=2 home={projectpath} maximum-requests=1000 user={user} group={group} display-name={projectname}
             """.format(
                     name="opus"+self.projectname,
                     user="opus"+self.projectname,
                     group=group,
                     projectname=self.projectname,
-                    ppdirective=ppdirective,
+                    projectpath=self.projectdir,
                 ))
             for port in (httpport, sslport):
                 if not port: continue
                 if port == sslport:
+                    if not (ssl_crt and ssl_key):
+                        ssl_crt = os.path.join(self.projectdir, "ssl.crt")
+                        ssl_key = os.path.join(self.projectdir, "ssl.key")
+                        ssl_chain = ""
+                    else:
+                        ssl_chain = "SSLCertificateChainFile " + ssl_chain
                     ssllines = """
                         SSLEngine On
                         SSLCertificateFile {0}
                         SSLCertificateKeyFile {1}
-                        """.format(os.path.join(self.projectdir, "ssl.crt"),
-                        os.path.join(self.projectdir, "ssl.key"))
+                        {2}
+                        """.format(ssl_crt, ssl_key, ssl_chain)
                 else:
                     ssllines = ""
                 config.write("""
                     <VirtualHost {namevirtualhost}>
                         {ssllines}
                         ServerName {projectname}{servername_suffix}
-                        Alias /media {adminmedia}
+                        Alias /adminmedia {adminmedia}
+                        Alias /media {mediadir}
                         WSGIProcessGroup {name}
                         WSGIApplicationGroup %{{GLOBAL}}
                         WSGIScriptAlias / {wsgifile}
                         <Directory {wsgidir}>
+                            Order allow,deny
+                            Allow from all
+                        </Directory>
+                        <Directory {mediadir}>
                             Order allow,deny
                             Allow from all
                         </Directory>
@@ -424,6 +462,7 @@ application = opus.lib.profile.OpusWSGIHandler()
                     ssllines=ssllines,
                     projectname=self.projectname,
                     servername_suffix=servername_suffix,
+                    mediadir=os.path.join(self.projectdir, "media"),
                     name="opus"+self.projectname,
                     namevirtualhost="*:{0}".format(port),
                     wsgidir=wsgi_dir,
@@ -444,6 +483,84 @@ application = opus.lib.profile.OpusWSGIHandler()
         opus.lib.deployer.ssl.gen_cert("ssl", self.projectdir,
                 self.projectname+suffix)
 
+    def setup_celery(self, secureops="secureops", pythonpath=""):
+        """Uses rabbitmqctl to create a celery user and vhost, then configures
+        the project with them.
+
+        Also sets up the supervisord daemon conf file and starts supervisord
+
+        """
+        username = "opus"+self.projectname
+
+        # create user and vhost
+        log.info("Creating the RabbitMQ user and vhost")
+        proc = subprocess.Popen([secureops, '-e', username],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                )
+        password = proc.communicate()[0]
+        ret = proc.wait()
+        if ret:
+            # password is not a password if it failed, but the error output
+            raise DeploymentException("Creating RabbitMQ user/vhost failed. Ret:{0}. Output:{1}".format(ret, password))
+        log.debug("Secure ops finished. Ret: {0}".format(ret))
+
+        
+        self.config['BROKER_HOST'] = 'localhost'
+        self.config['BROKER_PORT'] = 5672
+        self.config['BROKER_USER'] = username
+        self.config['BROKER_PASSWORD'] = password
+        self.config['BROKER_VHOST'] = username
+        self.config.save()
+
+        # Set up a supervisord configuration file
+        supervisordconf = """
+[supervisord]
+logfile=%(here)s/log/supervisord.log
+pidfile=%(here)s/run/supervisord.pid
+loglevel=debug
+
+[program:celery]
+command=python %(here)s/manage.py celeryd --loglevel=INFO
+directory=%(here)s
+numprocs=1
+stdout_logfile=%(here)s/log/celeryd.log
+stderr_logfile=%(here)s/log/celeryd.log
+autostart=true
+autorestart=true
+startsecs=10
+stopwaitsecs = 600
+environment=PYTHONPATH={path!r},OPUS_SETTINGS_FILE={opussettings!r}
+""".format(path=pythonpath,
+        opussettings=str(os.path.join(self.projectdir, "opussettings.json")))
+
+        conffilepath = os.path.join(self.projectdir, "supervisord.conf")
+        with open(os.path.join(self.projectdir, "supervisord.conf"), 'w') as sobj:
+            sobj.write(supervisordconf)
+
+    def start_supervisord(self,secureops="secureops"):
+        env = dict(os.environ)
+        try:
+            del env['DJANGO_SETTINGS_MODULE']
+        except KeyError:
+            pass
+
+        username = "opus"+self.projectname
+        # Start it up
+        log.info("Starting up supervisord for the project")
+        proc = subprocess.Popen([secureops, '-s',
+            username, self.projectdir, '-S'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                env=env,
+                close_fds=True,
+                )
+        output = proc.communicate()[0]
+        ret = proc.wait()
+        if ret:
+            raise DeploymentException("Failed to start supervisord. Ret:{0}. Output:{1}".format(ret, output))
+        log.debug("Secure ops finished. Ret: {0}".format(ret))
+
 class ProjectUndeployer(object):
     """Contains methods for destroying a deployed project.
 
@@ -452,6 +569,8 @@ class ProjectUndeployer(object):
 
     * remove_apache_conf() should be called first, so that apache immediately
       stops serving files.
+    * stop_celery should be next, so that any other processes running are
+      stopped
     * delete_user()
     * remove_projectdir()
 
@@ -462,13 +581,10 @@ class ProjectUndeployer(object):
         path = os.path.abspath(self.projectdir)
         self.projectname = os.path.basename(path)
 
-    def remove_apache_conf(self, apache_conf_dir, secureops="secureops"):
-        """Removes the apache config file and reloads apache"""
-        log.info("Removing apache config for project %s", self.projectname)
-        config_path = os.path.join(apache_conf_dir, "opus"+self.projectname+".conf")
-        if os.path.exists(config_path):
-            os.unlink(config_path)
+        self.apache_restarted = False
 
+    def _restart_apache(self, secureops):
+            log.info("Restarting apache")
             proc = subprocess.Popen([secureops,"-r"],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT)
@@ -476,10 +592,97 @@ class ProjectUndeployer(object):
             ret = proc.wait()
             if ret:
                 raise DeploymentException("Could not restart apache. {0}".format(output))
+            self.apache_restarted = True
+
+    def remove_apache_conf(self, apache_conf_dir, secureops="secureops"):
+        """Removes the apache config file and reloads apache"""
+        config_path = os.path.join(apache_conf_dir, "opus"+self.projectname+".conf")
+        if os.path.exists(config_path):
+            log.info("Removing apache config for project %s", self.projectname)
+            os.unlink(config_path)
+
+            self._restart_apache(secureops)
+
+    def stop_celery(self, secureops="secureops"):
+        """Shuts down supervisord, and removes the user/vhost from rabbitmq"""
+        # Check if the pid file exists. If not, nothing to do
+        pidfilename = os.path.join(self.projectdir, "run", "supervisord.pid")
+        if os.path.exists(pidfilename):
+
+            log.info("attempting to sigterm supervisord")
+            proc = subprocess.Popen([secureops,"-s",
+                    "opus"+self.projectname,
+                    self.projectdir,
+                    '-T'],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT)
+            output = proc.communicate()[0]
+            ret = proc.wait()
+            if ret:
+                raise DeploymentException("Could not stop supervisord. {0}".format(output))
+
+        # Delete the user/vhost.
+        log.info("removing rabbitmq user/vhost")
+        proc = subprocess.Popen([secureops,"-b",
+                "opus"+self.projectname,
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
+        output = proc.communicate()[0]
+        ret = proc.wait()
+        # This returns 2 if the user doesn't exist, 1 for other errors that we
+        # shouldn't ignore
+        if ret:
+            if ret == 2:
+                log.info("user/vhost didn't exist. ignoring")
+            else:
+                raise DeploymentException("Could not stop supervisord. {0}".format(output))
+        else:
+            log.debug("done")
+
+    def kill_processes(self, secureops="secureops"):
+        """Sends a sigterm to all processes owned by the user, waits 10 or so
+        seconds, then sends a sigkill to all. This is called by delete_user if
+        there are still processes running, so no need to call it directly
+        normally
+
+        """
+        log.info("Killing all processes owned by project %s...", self.projectname)
+        proc = subprocess.Popen([secureops, "-k", "opus"+self.projectname],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
+        output = proc.communicate()[0]
+        ret = proc.wait()
+        if ret:
+            raise DeploymentException("Failed to kill processes. Ret:{0}. Output:{1}"\
+                    .format(ret, output))
+
 
     def delete_user(self, secureops="secureops"):
         """Calls userdel to remove the system user"""
         log.info("Deleting user for project %s", self.projectname)
+
+        # userdel will fail on some systems if any processes are still running
+        # by the user. Here we wait a maximum of 30 seconds to make sure all
+        # processes have ended. A return from pgrep will return 0 if a process
+        # matched, 1 if no processes match, 2 if there is an error (including
+        # user doesn't exist)
+        tries = 0
+        while subprocess.call(["pgrep", "-u", "opus"+self.projectname]) == 0:
+            if not self.apache_restarted:
+                # Wasn't restarted because the config file didn't exist. But
+                # somehow last time apache may not have been restarted properly
+                # since some processes are still running. Restart it now.
+                self._restart_apache(secureops)
+            if tries >= 6:
+                log.warning("User still has processes running after 30 seconds!")
+                # I'll take care of this *cracks knuckles*
+                self.kill_processes(secureops)
+                break
+            log.debug("Was about to delete user, but it still has processes running! Waiting 5 seconds")
+            tries += 1
+            time.sleep(5)
+
         proc = subprocess.Popen([secureops, '-d', "opus"+self.projectname],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT)
@@ -489,6 +692,9 @@ class ProjectUndeployer(object):
             # ignore return code 6: user doesn't exist, to make this
             # idempotent.
             raise DeploymentException("userdel failed: {0}".format(output))
+        log.debug("User removed")
+
+
 
     def remove_projectdir(self):
         """Deletes the entire project directory off the filesystem"""
