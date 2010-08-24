@@ -365,7 +365,7 @@ class DeployedProject(models.Model):
                 if not all(isinstance(x, basestring) for x in s[:3]):
                     log.warning("usersettings line is bad, one of the first three elements is not a string: %s", s)
                     continue
-                if s[2] not in ("int", "char", "str", "string", "float", 'choice'):
+                if s[2] not in ("int", "char", "str", "string", "float", 'choice', 'bool'):
                     log.warning("usersettings line has bad type: %s", s)
                     continue
                 u.append(s)
