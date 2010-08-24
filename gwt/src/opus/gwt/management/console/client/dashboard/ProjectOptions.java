@@ -13,11 +13,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -29,7 +31,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 public class ProjectOptions extends Composite {
 
 	private ServerCommunicator communicator;
-	private final String optionsUrl = "/deployments/projectname/confapps";
+	private final String optionsUrl = "deployments/projectName/confapps";
 	private String projectName;
 	private JSVariableHandler JSVarHandler;
 	private boolean active;
@@ -118,6 +120,7 @@ public class ProjectOptions extends Composite {
 			formContainer.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
 		}
+		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 	}
 	
 	public void setActive(boolean active){
@@ -138,12 +141,13 @@ public class ProjectOptions extends Composite {
 		FormPanel form = new FormPanel();
 		form.add(formContainer);
 		form.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
+		Window.alert(form.getAction());
 		form.setMethod(FormPanel.METHOD_POST);
-		  form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+		/*  form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
 		        managementCon.onDeployNewProject(projectName);
 		      }
-		    });
+		    });*/
 		RootPanel.get().add(form);
 		form.submit();
 	}
@@ -153,15 +157,16 @@ public class ProjectOptions extends Composite {
 		a.setVisible(false);
 		a.setName("active");
 		if(this.active) {
-			a.setValue("false");
+			a.setText("false");
 		} else {
-			a.setValue("true");
+			a.setText("true");
 		}
 		formContainer.setWidget(formContainer.getRowCount(), 1, a);
 		Window.alert(a.toString());
 		FormPanel form = new FormPanel();
 		form.add(formContainer);
 		form.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
+		Window.alert(form.getAction());
 		form.setMethod(FormPanel.METHOD_POST);
 		  form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
