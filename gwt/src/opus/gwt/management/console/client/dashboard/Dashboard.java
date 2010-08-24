@@ -16,18 +16,24 @@
 
 package opus.gwt.management.console.client.dashboard;
 
+import java.util.ArrayList;
+
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ServerCommunicator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Dashboard extends Composite {
@@ -38,10 +44,13 @@ public class Dashboard extends Composite {
 	interface DashboardUiBinder extends UiBinder<Widget, Dashboard> {
 	}
 
-	private final String projectInfoURL = "/json/projectName/?a&callback=";
+	private final String projectInfoURL = "/json/projects/projectName/?a&callback=";
 	
 	private ServerCommunicator serverComm;
 	private JSVariableHandler JSVarHandler;
+	private JavaScriptObject appSettings;
+	private ProjectDashboard projectDashboard;
+	private boolean active;
 
 	@UiField FlowPanel applicationsFlowPanel;
 	@UiField Label dbnameLabel;
@@ -49,11 +58,12 @@ public class Dashboard extends Composite {
 	@UiField Label activeLabel;
 	@UiField FlowPanel urlsFlowPanel;
 	
-	public Dashboard(String projectName, ServerCommunicator serverComm) {
+	public Dashboard(String projectName, ServerCommunicator serverComm, ProjectDashboard projectDashboard) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.serverComm = serverComm;
 		JSVarHandler = new JSVariableHandler();
 		getProjectInfo(projectName);
+		this.projectDashboard = projectDashboard;
 	}
 	
 	private void getProjectInfo(String projectName){
@@ -64,10 +74,13 @@ public class Dashboard extends Composite {
 	public void handleProjectInformation(ProjectInformation projInfo){
 		dbnameLabel.setText(projInfo.getDBName());
 		dbengineLabel.setText(projInfo.getDBEngine());
-		if(projInfo.getActive()){
+		if(projInfo.isActive()){
 			activeLabel.setText("Yes");
+			active = true;
 		} else {
 			activeLabel.setText("No");
+			active = false;
+			projectDashboard.displayOptions();
 		}
 		for(int i =0; i < projInfo.getApps().length(); i++){
 			int index = projInfo.getApps().get(i).indexOf(".");
@@ -76,6 +89,19 @@ public class Dashboard extends Composite {
 		for(int i =0; i < projInfo.getURLS().length(); i++){
 			urlsFlowPanel.add(new HTML("<a href='" + projInfo.getURLS().get(i) + "'>" + projInfo.getURLS().get(i) + "</a>"));	
 		}
+
+		ProjectSettings settings = projInfo.getAppSettings();
+		String a = settings.getApplicationSettings();
+		//Get list of apps
+		String[] apps = a.split(";;;\\s*");
+		//Create panel to display options for all apps
+		ProjectOptions options = projectDashboard.getOptionsPanel();
+		options.importProjectSettings(settings, apps);
+		
+	}
+	
+	public boolean isActive(){
+		return active;
 	}
 	
 	public final native ProjectInformation asJSOProjectInformation(JavaScriptObject jso) /*-{

@@ -38,11 +38,11 @@
 					<g:Label ui:field='titleBarLabel' styleName="{style.titleBar}"> 
 					</g:Label>
 				</g:north>
-				<g:west size ='10.1'>
+				<g:west size ='12'>
 					<g:FlowPanel ui:field='navigationMenuPanel' styleName="{style.navigationMenu}">
 					</g:FlowPanel>
 				</g:west>
-				<g:east size='90'>	
+				<g:east size='88'>	
 					<g:DeckPanel ui:field="mainDeckPanel" styleName="{style.mainDeckPanel}">
 					</g:DeckPanel>
 				</g:east>		

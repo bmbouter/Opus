@@ -20,6 +20,8 @@ import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ManagementConsole;
+import opus.gwt.management.console.client.appbrowser.AppBrowserUiBinder;
+import opus.gwt.management.console.client.dashboard.ProjectOptions;
 import opus.gwt.management.console.client.resources.Deployer.DeployerStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -51,11 +53,15 @@ public class applicationDeployer extends Composite {
 		
 	private ApplicationDetailDialog appInfoDialog = new ApplicationDetailDialog();
 	private ProjectOptionsBuildProject projectOptions;
-	private AddAppsBuildProject addApps;
+	//private AddAppsBuildProject addApps;
 	private DatabaseOptionsBuildProject databaseOptions;
 	private DeploymentOptionsBuildProject deploymentOptions;
 	private ConfirmBuildProject confirmBP;
 
+	private ProjectOptions projectSettings;
+	
+	private AppBrowserUiBinder appBrowser;
+	
 	private int navigationMenuFocusFlag;
 	private String createdProjectName;
 	private ManagementConsole managementCon;
@@ -82,9 +88,11 @@ public class applicationDeployer extends Composite {
 		this.navigationMenuPanel = navigationMenuPanel;
 		this.titleBarLabel = titleBarLabel;
 		this.deployerForm = new FormPanel();
-		this.addApps = new AddAppsBuildProject(this, managementCon.getServerCommunicator());
+		this.appBrowser = new AppBrowserUiBinder(this,managementCon.getServerCommunicator());
+		//this.addApps = new AddAppsBuildProject(this, managementCon.getServerCommunicator());
 		this.projectOptions = new ProjectOptionsBuildProject(this);
 		this.databaseOptions = new DatabaseOptionsBuildProject(this, managementCon.getServerCommunicator());
+		//this.projectSettings = new ProjectOptions(managementCon.getServerCommunicator());
 		this.deploymentOptions = new DeploymentOptionsBuildProject(this);
 		this.confirmBP = new ConfirmBuildProject(deployerForm, this);
 		this.activeLabel = addAppsLabel;
@@ -98,13 +106,16 @@ public class applicationDeployer extends Composite {
 	}
 	
 	private void setupMainDeckPanel(){
-		mainDeckPanel.add(addApps);
+		//mainDeckPanel.add(projectSettings);
+		mainDeckPanel.add(appBrowser);
 		mainDeckPanel.add(projectOptions);
 		mainDeckPanel.add(databaseOptions);
 		mainDeckPanel.add(deploymentOptions);
 		mainDeckPanel.add(confirmBP);
 		mainDeckPanel.add(deployerForm);
 		mainDeckPanel.showWidget(0);
+		appBrowser.setHeight("");
+		appBrowser.setWidth("");
 	}
 	
 	private void setupNavigationMenuPanel(){
@@ -138,7 +149,7 @@ public class applicationDeployer extends Composite {
 		  }
 	  }
 	  
-	  void handleProjectOptionsLabel(){
+	 public void handleProjectOptionsLabel(){
 		  if(navigationMenuFocusFlag != 1){
 			  projectOptionsLabel.setStyleName(style.navigationLabelActive());
 			  mainDeckPanel.showWidget(1);
@@ -192,7 +203,9 @@ public class applicationDeployer extends Composite {
 			String databasePort = databaseOptions.portTextBox.getValue();
 			
 			String projectName = deploymentOptions.projectNameTextBox.getText() + deploymentOptions.baseUrlLabel.getText();
-			ArrayList<String> apps = addApps.getApps();
+			
+			
+			ArrayList<String> apps = appBrowser.getApps();
 			String html = "<p><b>List of Applications:</b> <ul>";
 			
 			for (int i = 0; i < apps.size(); i++){
@@ -238,8 +251,8 @@ public class applicationDeployer extends Composite {
 		  VerticalPanel formContainerPanel = new VerticalPanel();
 		  this.deployerForm.add(formContainerPanel);
 		  
-		  ArrayList<String> paths = addApps.getAppPaths();
-		  ArrayList<String> apptypes = addApps.getAppTypes();
+		  ArrayList<String> paths = appBrowser.getAppPaths();
+		  ArrayList<String> apptypes = appBrowser.getAppTypes();
 		  Hidden numApps = new Hidden();
 		  numApps.setName("form-TOTAL_FORMS");
 		  numApps.setValue(String.valueOf(paths.size()));
@@ -277,11 +290,11 @@ public class applicationDeployer extends Composite {
 	  ProjectOptionsBuildProject getProjectOptions() {
 		  return projectOptions;
 	  }
-	  
+	  /*
 	  AddAppsBuildProject getAddApps() {
 		  return addApps;
 	  }
-	  
+	  */
 	  DatabaseOptionsBuildProject getDatabaseOptions(){
 		  return databaseOptions;
 	  }
