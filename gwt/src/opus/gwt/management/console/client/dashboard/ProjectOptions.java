@@ -143,11 +143,11 @@ public class ProjectOptions extends Composite {
 		form.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
 		Window.alert(form.getAction());
 		form.setMethod(FormPanel.METHOD_POST);
-		  form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+		/*  form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
 		        managementCon.onDeployNewProject(projectName);
 		      }
-		    });
+		    });*/
 		RootPanel.get().add(form);
 		form.submit();
 	}
