@@ -144,7 +144,7 @@ public class ProjectOptions extends Composite {
 		        managementCon.onDeployNewProject(projectName);
 		      }
 		    });
-		RootPanel.get().add(form);
+		//RootPanel.get().add(form);
 		form.submit();
 	}
 	@UiHandler("ActivateButton")
@@ -153,9 +153,9 @@ public class ProjectOptions extends Composite {
 		a.setVisible(false);
 		a.setName("active");
 		if(this.active) {
-			a.setValue("false");
+			a.setText("false");
 		} else {
-			a.setValue("true");
+			a.setText("true");
 		}
 		formContainer.setWidget(formContainer.getRowCount(), 1, a);
 		Window.alert(a.toString());
@@ -168,7 +168,7 @@ public class ProjectOptions extends Composite {
 		        managementCon.onDeployNewProject(projectName);
 		      }
 		    });
-		RootPanel.get().add(form);
+		//RootPanel.get().add(form);
 		form.submit();
 	}
 	public final native ProjectSettings asProjectSettings(JavaScriptObject jso) /*-{
