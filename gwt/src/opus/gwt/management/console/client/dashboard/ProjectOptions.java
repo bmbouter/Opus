@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 public class ProjectOptions extends Composite {
 
 	private ServerCommunicator communicator;
-	private final String optionsUrl = "deployments/projectname/confapps";
+	private final String optionsUrl = "deployments/projectName/confapps";
 	private String projectName;
 	private JSVariableHandler JSVarHandler;
 	private boolean active;
@@ -166,6 +166,7 @@ public class ProjectOptions extends Composite {
 		FormPanel form = new FormPanel();
 		form.add(formContainer);
 		form.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
+		Window.alert(form.getAction());
 		form.setMethod(FormPanel.METHOD_POST);
 		  form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
