@@ -457,11 +457,21 @@ def set_app_settings(request, project):
                         project.config, appform.cleaned_data)
             project.config.save()
 
+            # Either way, the config needs to be reloaded, either by calling
+            # activate() wich writes the config file, or by calling save()
+            # which touches the wsgi config
             if "activate" in request.POST:
+                # Writes apache config and restarts apache
                 project.activate()
                 message = "Settings saved, and project activated"
+            elif "active" in request.POST:
+                # GWT submits this hidden field to activate or deactivate
+                if request.POST['active'] == 'false':
+                    project.deactivate()
+                else:
+                    project.activate()
             else:
-                # Reload settings file:
+                # Saves model, writes config file, touches wsgi config
                 project.save()
                 message = "Settings saved"
 

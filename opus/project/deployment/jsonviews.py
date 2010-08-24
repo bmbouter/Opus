@@ -111,3 +111,9 @@ def get_user(request):
     r['authenticated'] = request.user.is_authenticated()
     r['username'] = request.user.username
     return render(r, request)
+
+def get_database_settings(request):
+    r = {}
+    r['OPUS_AUTO_POSTGRES_CONFIG'] = settings.OPUS_AUTO_POSTGRES_CONFIG
+    r['OPUS_ALLOWED_DATABASES'] = settings.OPUS_ALLOWED_DATABASES
+    return render(r, request)
