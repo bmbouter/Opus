@@ -36,6 +36,7 @@ public class ProjectOptions extends Composite {
 	private JSVariableHandler JSVarHandler;
 	private boolean active;
 	private ManagementConsole managementCon;
+	private FormPanel optionsForm;
 	private static ProjectOptionsUiBinder uiBinder = GWT
 			.create(ProjectOptionsUiBinder.class);
 	
@@ -53,6 +54,18 @@ public class ProjectOptions extends Composite {
 		this.projectName = projectName;
 		this.JSVarHandler = new JSVariableHandler();
 		this.managementCon = manCon;
+		this.optionsForm = new FormPanel();
+		setupOptionsForm();
+	}
+	
+	public void setupOptionsForm(){
+		optionsForm.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
+		optionsForm.setMethod(FormPanel.METHOD_POST);
+		optionsForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+		        managementCon.onDeployNewProject(projectName);
+		    }
+			});
 	}
 	
 	public void importProjectSettings(ProjectSettings settings, String[] apps){
@@ -120,6 +133,10 @@ public class ProjectOptions extends Composite {
 			formContainer.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
 		}
+		Hidden button = new Hidden();
+		button.setName("activate");
+		
+		formContainer.setWidget(formContainer.getRowCount(), 0, button);
 		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 	}
 	
@@ -138,18 +155,9 @@ public class ProjectOptions extends Composite {
 	
 	@UiHandler("SaveButton")
 	void handleSaveButton(ClickEvent event){
-		FormPanel form = new FormPanel();
-		form.add(formContainer);
-		form.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
-		Window.alert(form.getAction());
-		form.setMethod(FormPanel.METHOD_POST);
-		/*  form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        managementCon.onDeployNewProject(projectName);
-		      }
-		    });*/
-		RootPanel.get().add(form);
-		form.submit();
+		optionsForm.add(formContainer);
+		RootPanel.get().add(optionsForm);
+		optionsForm.submit();
 	}
 	@UiHandler("ActivateButton")
 	void handleActivateButton(ClickEvent event){
@@ -162,19 +170,10 @@ public class ProjectOptions extends Composite {
 			a.setText("true");
 		}
 		formContainer.setWidget(formContainer.getRowCount(), 1, a);
-		Window.alert(a.toString());
-		FormPanel form = new FormPanel();
-		form.add(formContainer);
-		form.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
-		Window.alert(form.getAction());
-		form.setMethod(FormPanel.METHOD_POST);
-		  form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        managementCon.onDeployNewProject(projectName);
-		      }
-		    });
-		RootPanel.get().add(form);
-		form.submit();
+		optionsForm.add(formContainer);
+
+		RootPanel.get().add(optionsForm);
+		optionsForm.submit();
 	}
 	public final native ProjectSettings asProjectSettings(JavaScriptObject jso) /*-{
 		alert("ssss");
