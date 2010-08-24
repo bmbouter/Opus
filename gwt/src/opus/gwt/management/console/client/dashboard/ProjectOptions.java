@@ -158,9 +158,6 @@ public class ProjectOptions extends Composite {
 	}
 	@UiHandler("ActivateButton")
 	void handleActivateButton(ClickEvent event){
-		Hidden button = new Hidden();
-		button.setName("activate");	
-		formContainer.setWidget(formContainer.getRowCount(), 0, button);
 		TextBox a = new TextBox();
 		a.setVisible(false);
 		a.setName("active");
