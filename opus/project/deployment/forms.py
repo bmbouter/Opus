@@ -214,5 +214,11 @@ class UserSettingsForm(forms.BaseForm):
                         raise ValueError("Choices must have 2 items: field and label")
                     choices.append((c[0], c[1]))
                 self.fields[name] = forms.ChoiceField(label=label, choices=choices)
+            elif type == "bool":
+                if len(args) < 1:
+                    default = False
+                else:
+                    default = args[0]
+                self.fields[name] = forms.BooleanField(label=label, initial=default, required=False)
             else:
                 raise ValueError("Unknown type %s" % type)
