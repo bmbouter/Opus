@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 public class ProjectOptions extends Composite {
 
 	private ServerCommunicator communicator;
-	private final String optionsUrl = "/deployments/projectname/confapps";
+	private final String optionsUrl = "deployments/projectname/confapps";
 	private String projectName;
 	private JSVariableHandler JSVarHandler;
 	private boolean active;
