@@ -302,10 +302,8 @@ admin.autodiscover()
         urls.append("\n# URLs added from the Project Builder:\n")
         urls.append("urlpatterns += patterns('',\n")
         for app in appnames:
-            fullname = "{0}.{1}".format(self.projectname, app)
-            urls.append("    (r'^{appname}/', include('{fullname}.urls')),\n"\
-                    .format(appname=app,
-                            fullname=fullname))
+            urls.append("    (r'^{appname}/', include('{appname}.urls')),\n"\
+                    .format(appname=app))
         # Add the login view
         urls.append("    url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),\n")
         urls.append("    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', name='logout'),\n")
