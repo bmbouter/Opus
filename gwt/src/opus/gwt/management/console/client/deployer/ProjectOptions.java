@@ -46,7 +46,6 @@ public class ProjectOptions extends Composite {
 	@UiField PasswordTextBox passwordTextBox;
 	@UiField PasswordTextBox passwordConfirmTextBox;
 	@UiField CheckBox adminCheckBox;
-	@UiField CheckBox authenticationListBox;
 	@UiField Button nextButton;
 	@UiField Button previousButton;
 	@UiField DockLayoutPanel projectOptionsPanel;

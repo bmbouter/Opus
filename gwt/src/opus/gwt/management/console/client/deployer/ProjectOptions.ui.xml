@@ -74,9 +74,8 @@
 									</g:north>
 									<g:north size='2'>
 										<g:FlowPanel>
-											<g:Label styleName="{style.configParameter}">Django Admin Interface?</g:Label>
-											<g:ListBox ui:field="authenticationListBox" styleName="{style.configParameter}">
-												
+											<g:Label styleName="{style.configParameter}">Identity Provider:</g:Label>
+											<g:ListBox name="idprovider" ui:field="idProvider" styleName="{style.configParameter}">
 											</g:ListBox>
 										</g:FlowPanel>
 									</g:north>
