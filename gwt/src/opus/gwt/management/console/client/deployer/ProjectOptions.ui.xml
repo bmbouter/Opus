@@ -72,6 +72,14 @@
 											<g:CheckBox name='admin' ui:field="adminCheckBox" styleName="{style.configParameter}"></g:CheckBox>
 										</g:FlowPanel>
 									</g:north>
+									<g:north size='2'>
+										<g:FlowPanel>
+											<g:Label styleName="{style.configParameter}">Django Admin Interface?</g:Label>
+											<g:ListBox ui:field="authenticationListBox" styleName="{style.configParameter}">
+												
+											</g:ListBox>
+										</g:FlowPanel>
+									</g:north>
 								</g:DockLayoutPanel>
 							</g:west>
 							<g:west size='25'>

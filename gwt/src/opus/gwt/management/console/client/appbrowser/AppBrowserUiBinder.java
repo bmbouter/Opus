@@ -2,47 +2,29 @@ package opus.gwt.management.console.client.appbrowser;
 
 import java.util.ArrayList;
 
-import opus.gwt.management.console.client.appbrowser.AppIcon;
-import opus.gwt.management.console.client.appbrowser.AppData;
-import opus.gwt.management.console.client.deployer.ProjectCommunityApplication;
+import opus.gwt.management.console.client.ServerCommunicator;
 import opus.gwt.management.console.client.deployer.ProjectData;
 import opus.gwt.management.console.client.deployer.VersionData;
-import opus.gwt.management.console.client.deployer.ProjectFieldData;
-import opus.gwt.management.console.client.deployer.ProjectManualApplication;
 import opus.gwt.management.console.client.deployer.applicationDeployer;
-import opus.gwt.management.console.client.ServerCommunicator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 

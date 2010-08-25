@@ -16,24 +16,18 @@
 
 package opus.gwt.management.console.client.dashboard;
 
-import java.util.ArrayList;
-
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ServerCommunicator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Dashboard extends Composite {
@@ -90,12 +84,12 @@ public class Dashboard extends Composite {
 			urlsFlowPanel.add(new HTML("<a href='" + projInfo.getURLS().get(i) + "'>" + projInfo.getURLS().get(i) + "</a>"));	
 		}
 
-		ProjectSettings settings = projInfo.getAppSettings();
+		ProjectSettingsData settings = projInfo.getAppSettings();
 		String a = settings.getApplicationSettings();
 		//Get list of apps
 		String[] apps = a.split(";;;\\s*");
 		//Create panel to display options for all apps
-		ProjectOptions options = projectDashboard.getOptionsPanel();
+		ProjectSettings options = projectDashboard.getOptionsPanel();
 		options.importProjectSettings(settings, apps);
 		
 	}

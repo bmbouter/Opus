@@ -30,13 +30,13 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ProjectOptionsBuildProject extends Composite {
+public class ProjectOptions extends Composite {
 
 	private static BuildProjectPage2UiBinder uiBinder = GWT
 			.create(BuildProjectPage2UiBinder.class);
 
 	interface BuildProjectPage2UiBinder extends
-			UiBinder<Widget, ProjectOptionsBuildProject> {
+			UiBinder<Widget, ProjectOptions> {
 	}
 	
 	private applicationDeployer appDeployer;
@@ -46,11 +46,12 @@ public class ProjectOptionsBuildProject extends Composite {
 	@UiField PasswordTextBox passwordTextBox;
 	@UiField PasswordTextBox passwordConfirmTextBox;
 	@UiField CheckBox adminCheckBox;
+	@UiField CheckBox authenticationListBox;
 	@UiField Button nextButton;
 	@UiField Button previousButton;
 	@UiField DockLayoutPanel projectOptionsPanel;
 	
-	public ProjectOptionsBuildProject(applicationDeployer appDeployer) {
+	public ProjectOptions(applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.appDeployer = appDeployer;
 	}	

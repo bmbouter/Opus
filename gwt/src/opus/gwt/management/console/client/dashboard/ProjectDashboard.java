@@ -41,7 +41,7 @@ public class ProjectDashboard extends Composite {
 	private Dashboard dashboard;
 	private DeleteProject deleteProject;
 	private ManageApps manageApps;
-	private ProjectOptions projectOptions;
+	private ProjectSettings projectSettings;
 	
 	private int navigationMenuFocusFlag;
 	private Label activeLabel;
@@ -66,7 +66,7 @@ public class ProjectDashboard extends Composite {
 		dashboard = new Dashboard(projectTitle, managementCon.getServerCommunicator(),this);
 		deleteProject = new DeleteProject(projectTitle, managementCon);
 		manageApps = new ManageApps();
-		projectOptions = new ProjectOptions(projectTitle, managementCon, this);
+		projectSettings = new ProjectSettings(projectTitle, managementCon, this);
 		setupTitleBarLabel(projectTitle);
 		setupNavigationMenuPanel();
 		setupMainDeckPanel();
@@ -95,11 +95,11 @@ public class ProjectDashboard extends Composite {
 		//mainDeckPanel.add(manageApps);
 		//mainDeckPanel.add(new HTML());
 		mainDeckPanel.add(deleteProject);
-		mainDeckPanel.add(projectOptions);
+		mainDeckPanel.add(projectSettings);
 	}
 	
-	public ProjectOptions getOptionsPanel(){
-		return this.projectOptions;
+	public ProjectSettings getOptionsPanel(){
+		return this.projectSettings;
 	}
 	
 	@UiHandler("dashboardLabel")
@@ -158,7 +158,7 @@ public class ProjectDashboard extends Composite {
 			activeLabel.setStyleName(style.navigationLabel());
 			activeLabel = optionsLabel;
 			navigationMenuFocusFlag = DeckPanels.OPTIONSPANEL.ordinal();
-			projectOptions.setActive(dashboard.isActive());
+			projectSettings.setActive(dashboard.isActive());
 		}
 	}
 	

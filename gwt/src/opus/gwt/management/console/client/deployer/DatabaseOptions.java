@@ -23,7 +23,6 @@ import opus.gwt.management.console.client.ServerCommunicator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.http.client.URL;
@@ -109,7 +108,7 @@ public class DatabaseOptions extends Composite {
 		String item = dbengineListBox.getItemText(dbengineListBox.getSelectedIndex());
 		if( item.equals("sqlite3") ){
 			dboptionsPanel.setVisible(false);
-		} else if( postgresAutoConfig ) {
+		} else if( postgresAutoConfig && item.equals("postgresql_psycopg2") ) {
 			dboptionsPanel.setVisible(false);
 		} else {
 			dboptionsPanel.setVisible(true);
@@ -160,6 +159,7 @@ public class DatabaseOptions extends Composite {
 		for(String option : options){
 			dbOptions.put(option, option);
 		}
+		
 		postgresAutoConfig = dbOptionsData.getAutoPostgresConfig();
 		setupDBOptions();
 	}

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ManagementConsole;
 import opus.gwt.management.console.client.appbrowser.AppBrowserUiBinder;
-import opus.gwt.management.console.client.dashboard.ProjectOptions;
+import opus.gwt.management.console.client.dashboard.ProjectSettings;
 import opus.gwt.management.console.client.resources.Deployer.DeployerStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -52,13 +52,12 @@ public class applicationDeployer extends Composite {
 	private final String deploymentURL =  "/deployments/projectName/";
 		
 	private ApplicationDetailDialog appInfoDialog = new ApplicationDetailDialog();
-	private ProjectOptionsBuildProject projectOptions;
-	//private AddAppsBuildProject addApps;
+	private ProjectOptions projectOptions;
 	private DatabaseOptions databaseOptions;
-	private DeploymentOptionsBuildProject deploymentOptions;
+	private DeploymentOptions deploymentOptions;
 	private ConfirmBuildProject confirmBP;
 
-	private ProjectOptions projectSettings;
+	private ProjectSettings projectSettings;
 	
 	private AppBrowserUiBinder appBrowser;
 	
@@ -90,10 +89,10 @@ public class applicationDeployer extends Composite {
 		this.deployerForm = new FormPanel();
 		this.appBrowser = new AppBrowserUiBinder(this,managementCon.getServerCommunicator());
 		//this.addApps = new AddAppsBuildProject(this, managementCon.getServerCommunicator());
-		this.projectOptions = new ProjectOptionsBuildProject(this);
+		this.projectOptions = new ProjectOptions(this);
 		this.databaseOptions = new DatabaseOptions(this, managementCon.getServerCommunicator());
-		//this.projectSettings = new ProjectOptions(managementCon.getServerCommunicator());
-		this.deploymentOptions = new DeploymentOptionsBuildProject(this);
+		//this.projectSettings = new ProjectSettings(managementCon.getServerCommunicator());
+		this.deploymentOptions = new DeploymentOptions(this);
 		this.confirmBP = new ConfirmBuildProject(deployerForm, this);
 		this.activeLabel = addAppsLabel;
 		this.navigationMenuFocusFlag = 0;
@@ -287,7 +286,7 @@ public class applicationDeployer extends Composite {
 		  deployerForm.submit();
 	  }
 
-	  ProjectOptionsBuildProject getProjectOptions() {
+	  public ProjectOptions getProjectOptions() {
 		  return projectOptions;
 	  }
 	  /*
@@ -299,7 +298,7 @@ public class applicationDeployer extends Composite {
 		  return databaseOptions;
 	  }
 	  
-	  DeploymentOptionsBuildProject getDeploymentOptions(){
+	  DeploymentOptions getDeploymentOptions(){
 		  return deploymentOptions;
 	  }
 	  

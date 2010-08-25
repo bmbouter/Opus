@@ -29,7 +29,6 @@ public class DBOptionsData extends JavaScriptObject {
 		for(var i = 0; i < this.OPUS_ALLOWED_DATABASES.length; i++){
 			allowed += this.OPUS_ALLOWED_DATABASES[i] + ",";
 		} 
-		allowed = "sqlite3,mysql,postgresql_psycopg2";
 		return allowed; 
 	}-*/;
 	 

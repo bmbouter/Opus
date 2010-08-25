@@ -1,6 +1,4 @@
 package opus.gwt.management.console.client.dashboard;
-import java.util.ArrayList;
-
 import com.google.gwt.core.client.JavaScriptObject;
 
 public class UserSetting extends JavaScriptObject{

@@ -29,13 +29,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DeploymentOptionsBuildProject extends Composite {
+public class DeploymentOptions extends Composite {
 
 	private static DeploymentOptionsBuildProjectUiBinder uiBinder = GWT
 			.create(DeploymentOptionsBuildProjectUiBinder.class);
 
 	interface DeploymentOptionsBuildProjectUiBinder extends
-			UiBinder<Widget, DeploymentOptionsBuildProject> {
+			UiBinder<Widget, DeploymentOptions> {
 	}
 
 	private applicationDeployer appDeployer;
@@ -46,7 +46,7 @@ public class DeploymentOptionsBuildProject extends Composite {
 	@UiField TextBox projectNameTextBox;
 	@UiField CheckBox activeCheckBox;
 
-	public DeploymentOptionsBuildProject(applicationDeployer appDeployer) {
+	public DeploymentOptions(applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.appDeployer = appDeployer;
 		baseUrlLabel.setText(appDeployer.getBaseURL());

@@ -19,11 +19,9 @@ package opus.gwt.management.console.client;
 import opus.gwt.management.console.client.appbrowser.AppBrowserUiBinder;
 import opus.gwt.management.console.client.appbrowser.AppIcon;
 import opus.gwt.management.console.client.dashboard.Dashboard;
-import opus.gwt.management.console.client.dashboard.ProjectOptions;
-import opus.gwt.management.console.client.dashboard.ProjectSettings;
 import opus.gwt.management.console.client.deployer.AddAppsBuildProject;
 import opus.gwt.management.console.client.deployer.DatabaseOptions;
-import opus.gwt.management.console.client.deployer.ProjectData;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
