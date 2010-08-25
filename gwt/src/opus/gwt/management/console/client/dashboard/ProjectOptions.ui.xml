@@ -13,7 +13,7 @@
 			</g:north>
 			
 			<g:south size='93'>
-				<g:HTMLPanel>
+				<g:HTMLPanel ui:field="FormHolder">
 					<g:Label ui:field="WarningLabel"></g:Label>
 				
 				<g:FormPanel ui:field="optionsForm">

@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -46,6 +47,7 @@ public class ProjectOptions extends Composite {
 	@UiField Button SaveButton;
 	@UiField Button ActivateButton;
 	@UiField Label WarningLabel;
+	@UiField HTMLPanel FormHolder;
 	@UiField ProjectDashboardStyle style;
 	
 	interface ProjectOptionsUiBinder extends UiBinder<Widget, ProjectOptions> {
@@ -57,7 +59,7 @@ public class ProjectOptions extends Composite {
 		this.JSVarHandler = new JSVariableHandler();
 		this.managementCon = manCon;
 		this.projectDashboard = projectDashboard;
-		this.optionsForm = new FormPanel();
+		this.optionsForm = new FormPanel("thisone");
 		setupOptionsForm();
 	}
 	
@@ -67,8 +69,10 @@ public class ProjectOptions extends Composite {
 		optionsForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 			public void onSubmitComplete(SubmitCompleteEvent event) {
 		        managementCon.onDeployNewProject(projectName);
+		        Window.alert(event.getResults());
 		    }
 			});
+		
 	}
 	
 	public void importProjectSettings(ProjectSettings settings, String[] apps){
@@ -157,6 +161,8 @@ public class ProjectOptions extends Composite {
 	void handleSaveButton(ClickEvent event){
 		//optionsForm.add(formContainer);
 		//projectDashboard.getDeckPanel().add(optionsForm);
+		optionsForm.add(formContainer);
+		
 		optionsForm.submit();
 	}
 	@UiHandler("ActivateButton")
@@ -170,7 +176,6 @@ public class ProjectOptions extends Composite {
 			a.setText("true");
 		}
 		formContainer.setWidget(formContainer.getRowCount(), 1, a);
-		//optionsForm.add(formContainer);
 
 		//projectDashboard.getDeckPanel().add(optionsForm);
 		optionsForm.submit();
