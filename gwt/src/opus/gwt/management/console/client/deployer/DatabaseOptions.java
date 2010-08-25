@@ -80,7 +80,6 @@ public class DatabaseOptions extends Composite {
 			optionsFlag = true;
 			setupDBOptions();
 		} else {
-			Window.alert("Getting DB Options");
 			final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + dbOptionsURL);
 			serverComm.getJson(url, serverComm, "handleDBOptions", this);
 		}
@@ -149,17 +148,13 @@ public class DatabaseOptions extends Composite {
 	}
 	
 	public void handleDBOptions(DBOptionsData dbOptionsData){
-		Window.alert("Setting DbOptions");
 		optionsFlag = false;
-		if( dbOptionsData.getAutoPostgresConfig())
-			Window.alert("Auto Config Postgress");
 		
 		String[] options = dbOptionsData.getAllowedDatabases().split(",");
 		
 		for(String option : options){
 			dbOptions.put(option, option);
 		}
-		
 		postgresAutoConfig = dbOptionsData.getAutoPostgresConfig();
 		setupDBOptions();
 	}
