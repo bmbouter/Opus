@@ -136,11 +136,12 @@ public class AppBrowserUiBinder extends Composite {
 				int pk = applications.get(i).getPk();
 				
 				String iconPath = applications.get(i).getIconURL();
+				String path = applications.get(i).getPath();
 				
 				if( iconPath.equals("") ){
 					iconPath = "http://openiconlibrary.sourceforge.net/gallery2/Icons/devices/blockdevice-2.png";
 				}
-				AppIcon appIcon = createAppIcon(name,desc,pk,iconPath);
+				AppIcon appIcon = createAppIcon(name,desc,pk,iconPath,path);
 				
 				for (int j=0; j < featured.length; j++){
 
@@ -178,8 +179,8 @@ public class AppBrowserUiBinder extends Composite {
 		
 	}
 	
-	public AppIcon createAppIcon(String name, String info, int pk, String iconPath) { 
-		final AppIcon icon = new AppIcon(name, iconPath,info,pk);
+	public AppIcon createAppIcon(String name, String info, int pk, String iconPath, String appPath) { 
+		final AppIcon icon = new AppIcon(name, iconPath,info,pk,appPath);
 		icon.setIconHTML("<img align='left' src='"+iconPath+"'/><b>"+name+"</b><br/>"+icon.getShortDescription());
 		icon.setStyleName("appIcon");
 		

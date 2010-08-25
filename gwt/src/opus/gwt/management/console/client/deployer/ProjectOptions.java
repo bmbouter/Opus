@@ -17,6 +17,7 @@
 package opus.gwt.management.console.client.deployer;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -26,6 +27,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -49,12 +51,26 @@ public class ProjectOptions extends Composite {
 	@UiField Button nextButton;
 	@UiField Button previousButton;
 	@UiField DockLayoutPanel projectOptionsPanel;
+	@UiField ListBox idProvider;
 	
 	public ProjectOptions(applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.appDeployer = appDeployer;
+		idProvider.addItem("");
+		idProvider.addItem("Local","local");
+		idProvider.addItem("LDAP","ldap");
+		idProvider.addItem("OpenId","openid");
 	}	
 	
+	@UiHandler("idProvider")
+	void handleChangeIdProvider(ChangeEvent event){
+		if(idProvider.getItemText(idProvider.getSelectedIndex()).equals("Local")){
+			adminCheckBox.setValue(true);
+			adminCheckBox.setEnabled(false);
+		} else {
+			adminCheckBox.setEnabled(true);			
+		}
+	}
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){

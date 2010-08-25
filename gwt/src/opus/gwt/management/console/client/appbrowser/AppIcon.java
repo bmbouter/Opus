@@ -39,7 +39,7 @@ public class AppIcon extends Composite {
 	private VerticalPanel formContainer;
 	private int selectedVersion;
 
-	public AppIcon(String name, String iconURL, String description, int pk) {
+	public AppIcon(String name, String iconURL, String description, int pk, String path) {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
 		versionForm = new FormPanel();
@@ -48,6 +48,7 @@ public class AppIcon extends Composite {
 		this.name = name;
 		this.icon = iconURL;
 		this.desc = description;
+		this.path = path;
 		this.pk = String.valueOf(pk);
 	}
 	
@@ -76,7 +77,8 @@ public class AppIcon extends Composite {
 	}
 	
 	public String getPath() {
-		return versions.get(selectedVersion).getPath();
+		String fullpath = path+versions.get(selectedVersion).getTag();
+		return fullpath;
 	}
 	
 	public FormPanel getVersions(){

@@ -27,4 +27,17 @@ class AppData extends JavaScriptObject {                              // [1]
   public final native String getContact() /*-{ return this.fields.contact; }-*/;
   public final native String getDescription() /*-{ return this.fields.description; }-*/; 
   public final native String getModel() /*-{ return this.model; }-*/; 
+  public final native String getIconURL() /*-{
+	var url = this.fields.icon_url;
+	if( url == "" ){
+		return null;
+	} else if( url == null ){
+		return null;
+	} else if( url == undefined ){
+		return null;
+	} else {
+		return ''+url;
+	} 
+}-*/; 
+  public final native String getPath() /*-{ return this.path }-*/;
 } 

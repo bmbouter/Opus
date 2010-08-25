@@ -12,6 +12,7 @@ class VersionData extends JavaScriptObject {                              // [1]
   public final native JsArray<DependencyData> getDependencies() /*-{ return this.dependencies; }-*/;
   public final native String getPath() /*-{ return this.path }-*/;
   public final native String getType() /*-{ return this.type }-*/;
-  public final native String getPk() /*-{ return this.pk }-*/;
+  public final native String getPk() /*-{ return this.pk; }-*/;
+  public final native String getTag() /*-{ return this.tag; }-*/;
 
 }
