@@ -39,7 +39,6 @@ have write access to this directory.
 """
 
 import logging # python standard library rocks!
-import inspect
 import sys
 import os
 import os.path
@@ -63,9 +62,6 @@ HIGHLIGHT = {
     'ERROR': RED,
     'WARNING': YELLOW,
 }
-
-# Assume true until _init_logging tries to do the import
-django_context = True
 
 class MyFormatter(logging.Formatter):
     """Used to format log messages all pretty like."""
@@ -109,127 +105,66 @@ class MyFormatter(logging.Formatter):
 
         return logging.Formatter.format(self, record)
 
-def _init_logging():
-    """Initializes Opus's logging
-
-    This is called the first time a logger is requested
-
-    """
-    global django_context
-
-    if "OPUS_LOGGING_DISABLE" in os.environ:
-        # Private hook so Opus can disable logging in situations where logging
-        # would fail, such as when Opus calls syncdb on a project.
-        root_logger = logging.getLogger()
-        class NullHandler(logging.Handler):
-            def emit(self, record):
-                pass
-        root_logger.addHandler(NullHandler)
-        django_context = False
-        return
+def get_logger(name=None):
+    """Gets a logger for use by Opus. If you want your log entries to also go
+    to a separate file, give a name. Otherwise, log messages go to the master
+    log"""
+    opusroot = logging.getLogger("opus")
 
     try:
-        settings.LOG_DIR
+        logdir = settings.LOG_DIR
     except (AttributeError, ImportError):
-        # Not running in a Django context, can't set up the master log file.
-        django_context = False
+        logdir = None
 
-
-    # Configure a handler for the root logger
-    root_logger = logging.getLogger()
-    if django_context:
-        handler = logging.FileHandler(
-                os.path.join(settings.LOG_DIR, "master.log"),
-                "a")
-        handler.setFormatter( MyFormatter( color=False) )
-        root_logger.addHandler(handler)
-
-    # Configure second handler for the root logger to stdout if it's a console
     try:
-        if sys.stdout.isatty():
-            stdout_handler = logging.StreamHandler(sys.stdout)
-            stdout_handler.setFormatter( MyFormatter(color=True) )
-            root_logger.addHandler(stdout_handler)
-    except IOError:
-        # mod_wsgi may raise an error if we try to access stdout
-        pass
+        loglevel = settings.LOG_LEVEL
+    except (AttributeError, ImportError):
+        loglevel = logging.DEBUG
 
-    if not django_context:
-        # Just set it to debug and be done with it
-        root_logger.setLevel(logging.DEBUG)
-        return
+    if isinstance(loglevel, basestring):
+            loglevel = {"DEBUG":logging.DEBUG,
+                        "INFO": logging.INFO,
+                        "WARNING": logging.WARNING,
+                        "ERROR": logging.ERROR,
+                        "CRITICAL": logging.CRITICAL
+                    }[loglevel.upper()]
+    
 
-    # Set logging level. Attempt to get settings.LOG_LEVEL and set log level to
-    # that. If it's not an int or a string matching one of the 5 standard log
-    # levels, or if LOG_LEVEL isn't defined, logging is set to DEBUG or INFO
-    # depending on settings.DEBUG
-    def fallback():
-        if settings.DEBUG:
-            log_level = logging.DEBUG
-        else:
-            log_level = logging.INFO
-        return log_level
-    try:
-        level = settings.LOG_LEVEL
-    except AttributeError:
-        log_level = fallback()
-    else:
-        if isinstance(level, basestring):
-            try:
-                log_level = {"DEBUG":logging.DEBUG,
-                            "INFO": logging.INFO,
-                            "WARNING": logging.WARNING,
-                            "ERROR": logging.ERROR,
-                            "CRITICAL": logging.CRITICAL
-                        }[level.upper()]
-            except KeyError:
-                log_level = fallback()
-        elif isinstance(level, (int,long)):
-                log_level = level
-        else:
-            log_level = fallback()
+    # If opusroot doesn't have any handlers, add one
+    if not opusroot.handlers:
+        opusroot.setLevel(loglevel)
+        if logdir:
+            masterlogfile = os.path.join(logdir, "master.log")
+            masterhandler = logging.FileHandler(masterlogfile)
+            masterhandler.setFormatter(MyFormatter(color=False))
+            opusroot.addHandler(masterhandler)
 
-    root_logger.setLevel(log_level)
-
-def getLogger(appname=None):
-    """Returns the application's logger
-
-    This is called by each application to get their logging object.  It returns
-    a different logger based on which application called it.  The application
-    can then use standard python logging, for example:
-    >>> import opus.lib.log
-    >>> log = opus.lib.log.getLogger()
-    >>> log.debug("Debug Message here!")
-
-    appname, if specified, will be used for the application log file.
-    Otherwise, the appname will be determined using inspect.stack() to look up
-    one frame in the stack call.
-
-    """
-    if len(logging.getLogger().handlers) == 0:
-        _init_logging()
-
-    # Get the app name that is logging
-    if appname:
-        app_name = appname
-    else:
-        stack = inspect.stack()
         try:
-            app_name = stack[1][0].f_globals["__package__"].split(".")[-1]
-        finally:
-            del stack
+            if hasattr(sys.stderr, "isatty"):
+                istty = sys.stderr.isatty()
+            else:
+                istty = False
+        except IOError:
+            # mod_wsgi raises an error if std streams are accessed
+            pass
+        else:
+            if istty:
+                # Add a handler to stderr, using GLORIOUS EXTRA-COLOR!
+                colorstderr = logging.StreamHandler()
+                colorstderr.setFormatter(MyFormatter(color=True))
+                opusroot.addHandler(colorstderr)
 
-    log = logging.getLogger(app_name)
+    if not name:
+        return opusroot
 
-    # Add a handler if it doesn't already exist
-    if len(log.handlers) == 0 and django_context:
-        handler = logging.FileHandler(
-                os.path.join(settings.LOG_DIR, app_name+".log"),
-                'a')
-        handler.setFormatter( MyFormatter(color=False) )
-        log.addHandler(handler)
+    applogger = logging.getLogger("opus."+name)
+    if not applogger.handlers:
+        applogger.setLevel(loglevel)
+        if logdir:
+            # Set up a handler to a separate file
+            applogfile = os.path.join(logdir, name+".log")
+            h = logging.FileHandler(applogfile, delay=True)
+            h.setFormatter(MyFormatter(color=False))
+            applogger.addHandler(h)
 
-    return log
-
-# A more PEP8 name:
-get_logger = getLogger
+    return applogger
