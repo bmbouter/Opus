@@ -520,12 +520,24 @@ logfile=%(here)s/log/supervisord.log
 pidfile=%(here)s/run/supervisord.pid
 loglevel=debug
 
-[program:celery]
+[program:celeryd]
 command=python %(here)s/manage.py celeryd --loglevel=INFO
 directory=%(here)s
 numprocs=1
 stdout_logfile=%(here)s/log/celeryd.log
 stderr_logfile=%(here)s/log/celeryd.log
+autostart=true
+autorestart=true
+startsecs=10
+stopwaitsecs = 600
+environment=PYTHONPATH={path!r},OPUS_SETTINGS_FILE={opussettings!r}
+
+[program:celerybeat]
+command=python %(here)s/manage.py celerybeat --loglevel=INFO -s %(here)s/sqlite/celerybeat-schedule.db
+directory=%(here)s
+numprocs=1
+stdout_logfile=%(here)s/log/celerybeat.log
+stderr_logfile=%(here)s/log/celerybeat.log
 autostart=true
 autorestart=true
 startsecs=10
