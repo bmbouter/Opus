@@ -20,7 +20,8 @@ from django.conf.urls.defaults import *
 # identifier, since it translates to a python package. It also needs to be
 # less than 30 characters or so, since it translates into a system user (this
 # is checked in the edit_or_create view to give a better error message)
-projectpattern = "[a-zA-Z_][a-zA-Z0-9_]*"
+# Also, it needs to be lowercase since postgres chokes on uppercase usernames
+projectpattern = "[a-z][a-z0-9_]*"
 
 urlpatterns = patterns('opus.project.deployment.views',
         url(r'^$', 'list_or_new'),
@@ -28,4 +29,5 @@ urlpatterns = patterns('opus.project.deployment.views',
         url(r'^(?P<projectname>{0})/destroy$'.format(projectpattern), 'destroy'),
         url(r'^(?P<projectname>{0})/addapp$'.format(projectpattern), 'addapp'),
         url(r'^(?P<projectname>{0})/apps$'.format(projectpattern), 'editapp'),
+        url(r'^(?P<projectname>{0})/confapps$'.format(projectpattern), 'set_app_settings'),
 )

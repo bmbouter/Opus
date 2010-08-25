@@ -14,18 +14,42 @@
 #   limitations under the License.                                           #
 ##############################################################################
 
-from xml_tools import xml_get_text
-
 class Image(object):
-    
-    def __init__(self, deltacloud, dom):
-        self._deltacloud = deltacloud
-        self.xml = dom.toxml()
-        self.id = xml_get_text(dom, "id")[0]
-        self.owner_id = xml_get_text(dom, "owner_id")[0]
-        self.name = xml_get_text(dom, "name")[0]
-        self.description = xml_get_text(dom, "description")[0]
-        self.architecture = xml_get_text(dom, "architecture")[0]
+    """
+    An abstract form of an instance.  An ``Image`` can be instantiated to
+    create multiple instances.
+
+    An ``Image`` has the following attributes:
+
+    id
+        A unique identifier for this image.
+
+    driver
+        The driver object which instantiated this object.
+
+    owner_id
+        A unique identifier for the owner of this image.
+
+    name
+        A descriptive name for this image
+
+    description
+        An optional long description.
+
+    architecture
+        The machine architecture that this ``Image`` uses.  Examples are "i386
+        and "x86_64".
+
+    """
+
+    def __init__(self, id, driver, owner_id, name, description, architecture):
+        self.driver = driver
+        self.id = id
+        self.owner_id = owner_id
+        self.name = name
+        self.description = description
+        self.architecture = architecture
 
     def __repr__(self):
-        return self.xml
+        return '<Image id=%s, driver=%s, owner_id=%s, name="%s", description="%s", architecture="%s">' % \
+            (self.id, self.driver, self.owner_id, self.name, self.description, self.architecture)

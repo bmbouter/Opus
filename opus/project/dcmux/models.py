@@ -16,7 +16,7 @@
 
 from django.db import models
 
-from opus.lib.prov.deltacloud import Deltacloud
+from opus.lib.prov.deltacloud_old import Deltacloud
 
 
 class Provider(models.Model):

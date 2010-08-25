@@ -14,35 +14,30 @@
 #   limitations under the License.                                           #
 ##############################################################################
 
-"""A simple interface to deltacloud.
+"""
+This package provides two things:
 
-Follows the interface to the ruby deltacloud client very closely.
+1. An interface for provisioning drivers to implement.  This is given in the
+   DriverBase class and the supporting objects in image.py, instance.py and
+   realm.py.  The DriverBase class is the only class that must be subclassed in
+   order to create a driver.  This is where you should look if you want to
+   implement a driver.
+
+2. Various drivers which implement the interface.  Any drivers which properly
+   implement this interface can be used interchangeably.  These drivers are
+   contained in the drivers/ folder.
 
 """
-from deltacloud import Deltacloud
 
 from image import Image
 from instance import Instance
-from flavor import Flavor
 from realm import Realm
-from state import State
-from storage_snapshot import StorageSnapshot
-from storage_volume import StorageVolume
-from transition import Transition
 
-def get_prov():
-    """Returns an pre-configured Deltacloud object
+from driver_base import DriverBase
+import exceptions
+import drivers
 
-    The returned Deltacloud object is tied to the deltacloud provider
-    indicated in the settings file using the following variables
-
-    DELTACLOUD_API_URI -- The primary entry point URI for the provider
-    DELTACLOUD_USERNAME -- The username to logon to the provider
-    DELTACLOUD_PASSWORD -- The password to logon to the provider
-    """
-
-    from django.conf import settings
-    api_uri = settings.DELTACLOUD_API_URI
-    username = settings.DELTACLOUD_USERNAME
-    password = settings.DELTACLOUD_PASSWORD
-    return Deltacloud(username, password, api_uri)
+DRIVERS = {
+    "ec2":drivers.EC2Driver,
+    "opennebula1.4":drivers.OpenNebula14Driver
+}

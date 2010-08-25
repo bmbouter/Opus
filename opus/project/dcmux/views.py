@@ -23,7 +23,6 @@ from collections import namedtuple
 
 import opus.lib.log
 log = opus.lib.log.getLogger()
-import opus.lib.prov.deltacloud
 from models import Provider, Policy, DownstreamImage, UpstreamImage, Instance
 
 HardwareProfile = namedtuple("HardwareProfile", "id")

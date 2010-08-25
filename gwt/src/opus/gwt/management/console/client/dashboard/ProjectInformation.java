@@ -25,7 +25,8 @@ public class ProjectInformation extends JavaScriptObject {
 	
 	public final native JsArrayString getApps() /*-{ return this.apps; }-*/;
 	public final native JsArrayString getURLS() /*-{ return this.urls; }-*/;
-	public final native boolean getActive() /*-{ return this.active; }-*/;
+	public final native boolean isActive() /*-{ return this.active; }-*/;
 	public final native String getDBName()  /*-{ return this.dbname; }-*/;
 	public final native String getDBEngine()  /*-{ return this.dbengine; }-*/;
+	public final native ProjectSettings getAppSettings() /*-{ return this.appsettings }-*/;
 }

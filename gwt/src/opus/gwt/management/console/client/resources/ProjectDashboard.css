@@ -63,7 +63,7 @@
 	word-wrap: break-word;
 	cursor: pointer;
 	cursor: hand;
-	min-width: 90%;
+	min-width: 100%;
 }
 .navigationLabelActive {
 	width: 100%;
@@ -76,7 +76,7 @@
 	word-wrap: break-word;
 	cursor: pointer;
 	cursor: hand;
-	min-width: 90%;
+	min-width: 100%;
 }
 
 .projAppsPanel{
@@ -108,4 +108,8 @@
 	/*position: relative; direction: ltr; left: 0px; right: auto;*/
 	color: black;
 	height: 80%;
+}
+.WarningLabel{
+	color:red;
+	margin-top:10px;
 }

@@ -41,10 +41,11 @@ public class ProjectDashboard extends Composite {
 	private Dashboard dashboard;
 	private DeleteProject deleteProject;
 	private ManageApps manageApps;
+	private ProjectOptions projectOptions;
 	
 	private int navigationMenuFocusFlag;
 	private Label activeLabel;
-	private enum DeckPanels{DASHBOARDPANEL, DELETEPROJECTPANEL};
+	private enum DeckPanels{DASHBOARDPANEL, DELETEPROJECTPANEL, OPTIONSPANEL};
 	
 	private DeckPanel mainDeckPanel;
 	private FlowPanel navigationMenuPanel;
@@ -54,6 +55,7 @@ public class ProjectDashboard extends Composite {
 	@UiField Label manageAppsLabel;
 	@UiField Label editProjectLabel;
 	@UiField Label deleteProjectLabel;
+	@UiField Label optionsLabel;
 	@UiField ProjectDashboardStyle style;
 	
 	public ProjectDashboard(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, String projectTitle, ManagementConsole managementCon){
@@ -61,9 +63,10 @@ public class ProjectDashboard extends Composite {
 		this.titleBarLabel = titleBarLabel;
 		this.navigationMenuPanel = navigationMenuPanel;
 		this.mainDeckPanel = mainDeckPanel;
-		dashboard = new Dashboard(projectTitle, managementCon.getServerCommunicator());
+		dashboard = new Dashboard(projectTitle, managementCon.getServerCommunicator(),this);
 		deleteProject = new DeleteProject(projectTitle, managementCon);
 		manageApps = new ManageApps();
+		projectOptions = new ProjectOptions(projectTitle, managementCon, this);
 		setupTitleBarLabel(projectTitle);
 		setupNavigationMenuPanel();
 		setupMainDeckPanel();
@@ -71,6 +74,7 @@ public class ProjectDashboard extends Composite {
 		navigationMenuFocusFlag = DeckPanels.DASHBOARDPANEL.ordinal();
 		activeLabel = dashboardLabel;
 		activeLabel.setStyleName(style.navigationLabelActive());
+		
 	}
 	
 	private void setupTitleBarLabel(String projectTitle){
@@ -82,6 +86,8 @@ public class ProjectDashboard extends Composite {
 		//navigationMenuPanel.add(manageAppsLabel);
 		//navigationMenuPanel.add(editProjectLabel);
 		navigationMenuPanel.add(deleteProjectLabel);
+		navigationMenuPanel.add(optionsLabel);
+
 	}
 	
 	private void setupMainDeckPanel(){
@@ -89,6 +95,11 @@ public class ProjectDashboard extends Composite {
 		//mainDeckPanel.add(manageApps);
 		//mainDeckPanel.add(new HTML());
 		mainDeckPanel.add(deleteProject);
+		mainDeckPanel.add(projectOptions);
+	}
+	
+	public ProjectOptions getOptionsPanel(){
+		return this.projectOptions;
 	}
 	
 	@UiHandler("dashboardLabel")
@@ -134,4 +145,24 @@ public class ProjectDashboard extends Composite {
 			  navigationMenuFocusFlag = DeckPanels.DELETEPROJECTPANEL.ordinal();
 		  }
 	 }
+	
+	@UiHandler("optionsLabel")
+	void handoptionsLabel(ClickEvent event){
+		displayOptions();
+	}
+	
+	public void displayOptions(){
+		if(navigationMenuFocusFlag != DeckPanels.OPTIONSPANEL.ordinal()){
+			optionsLabel.setStyleName(style.navigationLabelActive());
+			mainDeckPanel.showWidget(DeckPanels.OPTIONSPANEL.ordinal());
+			activeLabel.setStyleName(style.navigationLabel());
+			activeLabel = optionsLabel;
+			navigationMenuFocusFlag = DeckPanels.OPTIONSPANEL.ordinal();
+			projectOptions.setActive(dashboard.isActive());
+		}
+	}
+	
+	public DeckPanel getDeckPanel(){
+		return this.mainDeckPanel;
+	}
 }

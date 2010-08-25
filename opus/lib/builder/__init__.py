@@ -27,6 +27,8 @@ import shutil
 import re
 import shutil
 import keyword
+import json
+import subprocess
 
 import opus.lib.builder.sources
 from opus.lib.conf import OpusConfig
@@ -38,6 +40,32 @@ App = namedtuple('App', ('path', 'pathtype'))
 
 class BuildException(Exception):
     """Something went wrong when assembling a project"""
+
+def merge_settings(target, source):
+    """Merges setting dictionaries. This mutates the target dict and attempts
+    to add as many settings from source as possible.
+
+    Here's the merge policy:
+    1) If a key exists in source but not target, the key,value pair is copied
+    over.
+    2) If the key exists in both and the value is a list, the target list is
+    extended with the source list
+    3) If the key exists in both and the value is a dict, the two dicts are
+    merged with this same policy.
+    4) If the key exists in both and the value is something immutable (string,
+    int, etc.) then the value on the target is overwritten.
+
+    """
+    for key,value in source.iteritems():
+        if key not in target:
+            target[key] = value
+        else:
+            if isinstance(value, list):
+                target[key].extend(value)
+            elif isinstance(value, dict):
+                merge_settings(target[key], value)
+            else:
+                target[key] = value
 
 class ProjectBuilder(object):
     """ProjectBuilder class, creates and configures a Django Project
@@ -102,6 +130,9 @@ class ProjectBuilder(object):
         # Copy the applications into it
         appnames = self._copy_apps()
 
+        # Add app media symlinks
+        self._add_symlinks(appnames)
+
         # Add settings.py directives (installed apps, database config)
         self._configure_settings(appnames)
 
@@ -109,6 +140,13 @@ class ProjectBuilder(object):
         self._configure_urls(appnames)
 
         return self.projectdir
+
+    def _add_symlinks(self, appnames):
+        for app in appnames:
+            # Symlink the media dir
+            if os.path.exists(os.path.join(self.projectdir, app, "media")):
+                os.symlink(os.path.join("..",app,"media"),
+                        os.path.join(self.projectdir, "media",app))
 
     def _startproject(self, target):
         # Returns a temporary directory containing a skeleton project
@@ -137,6 +175,7 @@ class ProjectBuilder(object):
         os.mkdir(os.path.join(projectdir, "log"))
         os.mkdir(os.path.join(projectdir, "templates"))
         os.mkdir(os.path.join(projectdir, "templates", "registration"))
+        os.mkdir(os.path.join(projectdir, "media"))
 
         # Put login.html template in place
         with open(os.path.join(
@@ -189,12 +228,12 @@ class ProjectBuilder(object):
 # file opussettings.json in JSON format. You may put your own values below to
 # override Opus's configuration, but this is not recommended.
 from opus.lib.conf import load_settings
-load_settings()
+load_settings(globals())
 """)
 
         # Randomizing SECRET_KEY is taken care of for us by new_from_template,
         # but we still have to set ROOT_URLCONF
-        self.config['ROOT_URLCONF'] = "{0}.urls".format(self.projectname)
+        self.config['ROOT_URLCONF'] = "urls"
 
 
     def _copy_apps(self):
@@ -215,14 +254,31 @@ load_settings()
         for app in appnames:
             if keyword.iskeyword(app):
                 raise BuildException("App name cannot be a keyword")
-            fullname = "{0}.{1}".format(self.projectname, app)
-            newapps.append(fullname)
+            newapps.append(app)
         if self.admin:
             newapps.append("django.contrib.admin")
         self.config['INSTALLED_APPS'] += newapps
 
-        # Install stock opus related apps
-        self.config['INSTALLED_APPS'].append("opus.lib.profile.profilerapp")
+        # Add default template context preprocessors, so that applications can
+        # extend the list
+        from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+        self.config['TEMPLATE_CONTEXT_PROCESSORS'] = list(TEMPLATE_CONTEXT_PROCESSORS)
+
+        # Read in app metadata file
+        for app in appnames:
+            settingsfile = os.path.join(self.projectdir, app, "metadata.json")
+            if not os.path.exists(settingsfile):
+                continue
+            with open(settingsfile, 'r') as f:
+                metadata = json.load(f)
+
+            try:
+                app_settings = metadata['settings']
+            except KeyError:
+                continue
+
+            # Merge settings in app_settings with global settings
+            merge_settings(self.config, app_settings)
 
         # Write back out the settings
         self.config.save()
@@ -246,15 +302,14 @@ admin.autodiscover()
         urls.append("\n# URLs added from the Project Builder:\n")
         urls.append("urlpatterns += patterns('',\n")
         for app in appnames:
-            fullname = "{0}.{1}".format(self.projectname, app)
-            urls.append("    (r'^{appname}/', include('{fullname}.urls')),\n"\
-                    .format(appname=app,
-                            fullname=fullname))
+            urls.append("    (r'^{appname}/', include('{appname}.urls')),\n"\
+                    .format(appname=app))
         # Add the login view
-        urls.append("    (r'^accounts/login/$', 'django.contrib.auth.views.login'),\n")
+        urls.append("    url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),\n")
+        urls.append("    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', name='logout'),\n")
         # Add the admin interface view
         if self.admin:
-            urls.append("    (r'^admin/', include(admin.site.urls)),\n")
+            urls.append("    url(r'^admin/', include(admin.site.urls)),\n")
         urls.append(")\n")
         
 
@@ -280,7 +335,9 @@ class ProjectEditor(object):
 
     def _touch_wsgi(self):
         # Reloads the project
-        os.utime(os.path.join(self.projectdir, "wsgi", 'django.wsgi'), None)
+        wsgifile = os.path.join(self.projectdir, "wsgi", 'django.wsgi')
+        if os.path.exists(wsgifile):
+            os.utime(wsgifile, None)
 
     def add_app(self, apppath, apptype):
         """Adds an application to the project and touches the wsgi file. This
@@ -302,18 +359,20 @@ class ProjectEditor(object):
 
         # Now add the app to installed apps
         config = self._get_config()
-        config["INSTALLED_APPS"].append("{0}.{1}".format(
-                self.projectname, newapp))
+        config["INSTALLED_APPS"].append(newapp)
         config.save()
 
         # Add a line in urls.py for it
         with open(os.path.join(self.projectdir, "urls.py"), 'a') as urls:
-            fullname = "{0}.{1}".format(self.projectname, newapp)
             urls.write("urlpatterns += "\
                     "patterns('', url(r'^{appname}/', "\
-                    "include('{fullname}.urls')))\n"\
-                    .format(appname=newapp,
-                            fullname=fullname))
+                    "include('{appname}.urls')))\n"\
+                    .format(appname=newapp))
+
+        # If the app has a media directory, add a symlink for it
+        if os.path.exists(os.path.join(self.projectdir, newapp, "media")):
+            os.symlink(os.path.join("..",newapp,"media"),
+                    os.path.join(self.projectdir, "media",newapp))
 
         # Sync db
         deployer = opus.lib.deployer.ProjectDeployer(self.projectdir)
@@ -322,6 +381,22 @@ class ProjectEditor(object):
         # reload
         self._touch_wsgi()
 
+    def restart_celery(self, secureops="secureops"):
+        """Call this after you're done adding, upgrading, or deleting apps to
+        reload the celery daemon"""
+        log.info("Restarting supervisord/celery")
+        proc = subprocess.Popen([secureops,"-s",
+                "opus"+self.projectname,
+                self.projectdir,
+                "-H",
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
+        output = proc.communicate()[0]
+        ret = proc.wait()
+        if ret:
+            raise BuildException("Could not restart supervisord. {0}".format(output))
+
     def del_app(self, appname):
         """Removes an application from the project. This takes effect
         immediately.
@@ -329,23 +404,21 @@ class ProjectEditor(object):
         Raises ValueError if the project is not in INSTALLED_APPS
 
         """
-        if "/" in appname or "\\" in appname:
+        if "/" in appname or "\\" in appname or "." in appname:
             raise ValueError("Bad app name")
 
-        appname = self._strip_appname(appname)
+        self._check_appname(appname)
 
         # Remove from INSTALLED_APPS
         config = self._get_config()
-        config["INSTALLED_APPS"].remove("{0}.{1}".format(
-                self.projectname, appname))
+        config["INSTALLED_APPS"].remove(appname)
         config.save()
 
         # Removes the urls.py line
         with open(os.path.join(self.projectdir, "urls.py"), 'r') as urlfile:
             urllines = urlfile.readlines()
-        match = re.compile(r"include\('{projectname}\.{appname}\.urls'\)"\
-                .format(projectname=self.projectname,
-                        appname=appname))
+        match = re.compile(r"include\('{appname}\.urls'\)"\
+                .format(appname=appname))
         for linenum, line in enumerate(urllines):
             if match.search(line):
                 del urllines[linenum]
@@ -355,6 +428,11 @@ class ProjectEditor(object):
         with open(os.path.join(self.projectdir, "urls.py"), 'w') as urlfile:
             for line in urllines:
                 urlfile.write(line)
+
+        # If there's a media symlink, remove it
+        medialink = os.path.join(self.projectdir,"media",appname)
+        if os.path.exists(medialink):
+            os.unlink(medialink)
 
         # Touch wsgi file
         self._touch_wsgi()
@@ -368,10 +446,10 @@ class ProjectEditor(object):
         if "/" in appname or "\\" in appname:
             raise ValueError("Bad app name")
 
-        appname = self._strip_appname(appname)
+        self._check_appname(appname)
 
-        log.info("Upgrading {0}.{1} to version {2}".format(
-            self.projectname, appname, to))
+        log.info("Upgrading {0} to version {1}".format(
+            appname, to))
         apppath = os.path.join(self.projectdir, appname)
         apptype = opus.lib.builder.sources.introspect_source(apppath)
         log.debug("apppath is %s", apppath)
@@ -379,13 +457,16 @@ class ProjectEditor(object):
 
         opus.lib.builder.sources.upgrade_functions[apptype](apppath, to)
 
+        # If there isn't a media link and there should be, add one
+        if os.path.exists(os.path.join(self.projectdir, appname, "media")) \
+                and not os.path.exists(os.path.join(self.projectdir,
+                    "media",appname)):
+            os.symlink(os.path.join("..",appname,"media"),
+                    os.path.join(self.projectdir, "media",appname))
+
+
         self._touch_wsgi()
 
-    def _strip_appname(self, appname):
-        # appnames are given as projectname.appname
-        if not appname.startswith(self.projectname + "."):
-            raise BuildException("Bad app name")
-        newappname = appname[len(self.projectname)+1:]
-        if not os.path.exists(os.path.join(self.projectdir, newappname)):
+    def _check_appname(self, appname):
+        if not os.path.exists(os.path.join(self.projectdir, appname)):
             raise BuildException("App doesn't exist")
-        return newappname

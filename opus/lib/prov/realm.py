@@ -14,17 +14,40 @@
 #   limitations under the License.                                           #
 ##############################################################################
 
-from xml_tools import xml_get_text
-
 class Realm(object):
+    """
+    The exact definition of a realm is left up to a driver.  It's usually a
+    division of resources.  Instances are usually created in the default realm,
+    but one can be started in an alternate realm by specifying the realm.id
+    when starting the instance.
     
-    def __init__(self, deltacloud, dom):
-        self._deltacloud = deltacloud
-        self.xml = dom.toxml()
-        self.id = xml_get_text(dom, "id")[0]
-        self.name = xml_get_text(dom, "name")[0]
-        self.state = xml_get_text(dom, "state")[0]
-        self.limit = xml_get_text(dom, "limit")[0]
+    A ``Realm`` has the following attributes:
+
+    id
+        A unique identifier for this realm.
+
+    driver
+        The driver object which instantiated this object.
+
+    name
+        A descriptive name for this image.
+
+    available
+        Boolean ``True`` or ``False`` indicating if this realm can be used at
+        the time.
+
+    limit
+        The maximum number of instantes that can be created in this realm by
+        this user
+
+    """
+    
+    def __init__(self, id, driver, name, available, limit):
+        self.id = id
+        self.driver = driver
+        self.name = name
+        self.available = available
+        self.limit = limit
 
     def __repr__(self):
-        return self.xml
+        return "<Realm id=%s, driver=%s, name=%s, available=%s, limit=%s>" % (self.id, self.driver, self.name, self.available, self.limit)

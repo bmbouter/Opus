@@ -14,47 +14,106 @@
 #   limitations under the License.                                           #
 ##############################################################################
 
-from xml_tools import xml_get_text, xml_get_elements_dictionary
-
 class Instance(object):
+    """Represents a machine that is a concrete form of an image.
+
+    The following actions can be performed with an instance:
+
+        start()
+            This starts an instance which has previously been shut down.
+
+        stop()
+            This stops an instance that is running.
+
+        reboot()
+            This reboots an instance that is running.
+
+        destroy()
+            This destroys an instance from existance, and invalidates this object.
+
+    An instance has the following attributes:
+
+        id
+            A unique identifier for this instance.
+
+        driver
+            The driver object which instantiated this object.
+
+        owner_id
+            A unique identifier for the owner of this instance.
+
+        name
+            A descriptive name for this
+
+        image_id
+            The image id which this instance is an instantiation of.
+
+        realm
+            The realm which this instance was started in.
+
+        state
+            An instance will be in one of the following states: "pending", "stopped" or "running".
+
+        public_addresses
+            A list of strings that are valid public ip addresses or a domain
+            name that resolves to a valid public ip address.
+
+        private_addresses
+            A list of strings that are valid private ip addresses or a domain
+            name that resolves to a valid private ip address.
+
+    """
     
-    def __init__(self, deltacloud, dom):
-        self._deltacloud = deltacloud
-        self.xml = dom.toxml()        
-        self.id = xml_get_text(dom, "id")[0]
-        self.owner_id = xml_get_text(dom, "owner_id")[0]
-        self.name = xml_get_text(dom, "name")[0]
-        self.image = xml_get_text(dom, "image")[0]
-        self.flavor = xml_get_text(dom, "flavor")[0]
-        self.realm = xml_get_text(dom, "realm")[0]
-        self.state = xml_get_text(dom, "state")[0]
-
-        # Actions
-        self.actions = xml_get_elements_dictionary(dom, "link", "rel", "href")
-        self.available_actions = self.actions.keys()
-
-        # Addresses
-        pub_addr_element = dom.getElementsByTagName("public-addresses")[0]
-        priv_addr_element = dom.getElementsByTagName("private-addresses")[0]
-        self.public_addresses = xml_get_text(pub_addr_element, "address")
-        self.private_addresses = xml_get_text(priv_addr_element, "address")
+    def __init__(self, id, driver, owner_id, name, image_id,
+            realm_id, state, public_addresses, private_addresses):
+        self.id = id
+        self.driver = driver
+        self.owner_id = owner_id
+        self.name = name
+        self.image_id = image_id
+        self.realm_id = realm_id
+        self.state = state
+        self.public_addresses = public_addresses
+        self.private_addresses = private_addresses
 
     def start(self):
-        return self._action("start")
+        """Starts a stopped instance.
+
+        Returns ``True`` on success.  Returns ``False``, or raises an exception
+        on failure.
+
+        """
+        return self.driver.instance_start(self.id)
 
     def stop(self):
-        return self._action("stop")
+        """Stops an instance that is running.
+
+        Returns ``True`` on success.  Returns ``False``, or raises an exception
+        on failure.
+
+        """
+        return self.driver.instance_stop(self.id)
 
     def reboot(self):
-        return self._action("reboot")
+        """Reboots a running instance.
 
-    def _action(self, action):
-        try:
-            url = self.actions[action]
-        except KeyError:
-            return False
-        self._deltacloud._request(url, "POST")
-        return True
+        Returns ``True`` on success.  Returns ``False``, or raises an exception
+        on failure.
+
+        """
+        return self.driver.instance_reboot(self.id)
+
+    def destroy(self):
+        """Deletes an existing instance
+
+        The instance_id will no longer be valid after this call.  Any lingering
+        ``Instance`` objects will become invalid and shouldn't be used.
+
+        Returns ``True`` on success.  Returns ``False``, or raises an exception
+        on failure.
+
+        """
+        return self.driver.instance_destroy(self.id)
 
     def __repr__(self):
-        return self.xml
+        return "<Instance id=%s, driver=%s, owner_id=%s, name=%s, image_id=%s, realm_id=%s, state=%s, public_addresses=%s, private_addresses=%s>" % (self.id, self.driver, self.owner_id, self.name, self.image_id, self.realm_id, self.state, self.public_addresses, self.private_addresses)
