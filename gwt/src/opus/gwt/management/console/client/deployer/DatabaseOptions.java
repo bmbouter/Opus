@@ -38,23 +38,24 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DatabaseOptionsBuildProject extends Composite {
+public class DatabaseOptions extends Composite {
 
-	private static DatabaseOptionsBuildProjectUiBinder uiBinder = GWT
-			.create(DatabaseOptionsBuildProjectUiBinder.class);
+	private static DatabaseOptionsUiBinder uiBinder = GWT
+			.create(DatabaseOptionsUiBinder.class);
 	
-	interface DatabaseOptionsBuildProjectUiBinder extends
-			UiBinder<Widget, DatabaseOptionsBuildProject> {
+	interface DatabaseOptionsUiBinder extends
+			UiBinder<Widget, DatabaseOptions> {
 	}
 
-	final String dbOptionsURL = "";
+	final String dbOptionsURL = "/json/database/?callback=";
 	
 	private applicationDeployer appDeployer;
 	private HashMap<String, String> dbOptions;
 	private boolean optionsFlag;
 	private JSVariableHandler JSVarHandler;
 	private ServerCommunicator serverComm;
-
+	private boolean postgresAutoConfig;
+	
 	@UiField DockLayoutPanel dboptionsPanel;
 	@UiField TextBox nameTextBox;
 	@UiField TextBox passwordTextBox;
@@ -65,9 +66,10 @@ public class DatabaseOptionsBuildProject extends Composite {
 	@UiField Button previousButton;	
 	@UiField DockLayoutPanel databaseOptionsPanel;
 	
-	public DatabaseOptionsBuildProject(applicationDeployer appDeployer, ServerCommunicator serverComm) {
+	public DatabaseOptions(applicationDeployer appDeployer, ServerCommunicator serverComm) {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
+		postgresAutoConfig = false;
 		this.serverComm = serverComm;
 		this.appDeployer = appDeployer;
 		dbOptions = new HashMap<String, String>();
@@ -79,6 +81,7 @@ public class DatabaseOptionsBuildProject extends Composite {
 			optionsFlag = true;
 			setupDBOptions();
 		} else {
+			Window.alert("Getting DB Options");
 			final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + dbOptionsURL);
 			serverComm.getJson(url, serverComm, "handleDBOptions", this);
 		}
@@ -104,7 +107,9 @@ public class DatabaseOptionsBuildProject extends Composite {
 	
 	private void setDBOptionParams(){
 		String item = dbengineListBox.getItemText(dbengineListBox.getSelectedIndex());
-		if( item.equals("Sqlite3") ){
+		if( item.equals("sqlite3") ){
+			dboptionsPanel.setVisible(false);
+		} else if( postgresAutoConfig ) {
 			dboptionsPanel.setVisible(false);
 		} else {
 			dboptionsPanel.setVisible(true);
@@ -144,14 +149,22 @@ public class DatabaseOptionsBuildProject extends Composite {
 		}
 	}
 	
-	public void handleDBOptions(JsArray<DBOptionsData> dbOptionsData){
-		if(dbOptionsData.length() == 0){
-			optionsFlag = true;
-			setupDBOptions();
+	public void handleDBOptions(DBOptionsData dbOptionsData){
+		Window.alert("Setting DbOptions");
+		optionsFlag = false;
+		if( dbOptionsData.getAutoPostgresConfig())
+			Window.alert("Auto Config Postgress");
+		
+		String[] options = dbOptionsData.getAllowedDatabases().split(",");
+		
+		for(String option : options){
+			dbOptions.put(option, option);
 		}
+		postgresAutoConfig = dbOptionsData.getAutoPostgresConfig();
+		setupDBOptions();
 	}
 
-	public final native JsArray<DBOptionsData> asArrayOfDBOptionsData(JavaScriptObject jso) /*-{
+	public final native DBOptionsData asArrayOfDBOptionsData(JavaScriptObject jso) /*-{
 		return jso;
 	}-*/;
 }

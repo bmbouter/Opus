@@ -23,16 +23,13 @@
     right: 0;
     left: 0;
     margin: 0;
-    min-width: 800px;
-    min-height: 700px;
+    min-width: 1024px;
+    min-height: 640px;
     font-size: 1em;
 }
 .subMainPanel {
-	width: 900px;
-	height: 630px;	
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 2%;
+    margin: 2% 2% 2% 2%;
+    background: #575757;
     background:	literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#575757), to(#121212), color-stop(.4,#333333))');
     background:	literal('-moz-linear-gradient(0% 0% 90deg, #575757, #121212, #333333 40%)');
 	border-radius: 10px;
@@ -73,8 +70,8 @@
 	margin-top: 50px;
 }
 .mainDeckPanel{
-	width: 770px;
-	height: 540px;
+	width: 96%;
+	height: 94%;
 	padding: 0 7.5% 7.5% 0;
 }
 .topMenuPanel{

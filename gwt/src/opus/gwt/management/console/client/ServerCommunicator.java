@@ -22,7 +22,7 @@ import opus.gwt.management.console.client.dashboard.Dashboard;
 import opus.gwt.management.console.client.dashboard.ProjectOptions;
 import opus.gwt.management.console.client.dashboard.ProjectSettings;
 import opus.gwt.management.console.client.deployer.AddAppsBuildProject;
-import opus.gwt.management.console.client.deployer.DatabaseOptionsBuildProject;
+import opus.gwt.management.console.client.deployer.DatabaseOptions;
 import opus.gwt.management.console.client.deployer.ProjectData;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.Request;
@@ -97,7 +97,7 @@ public class ServerCommunicator {
 		String queryType = queryTypes[rId];
 
 		if (jso == null) {
-			Window.alert("no json returned for request # "+String.valueOf(rId));
+			Window.alert("no json returned for request # " + String.valueOf(rId) + " = " + queryType);
 			this.error = "Error occured while retrieving JSON.";
 	      return;
 	    } else {
@@ -128,7 +128,7 @@ public class ServerCommunicator {
 		    	AppBrowserUiBinder p = (AppBrowserUiBinder)parent;
 		    	p.importAppList(p.asArrayOfProjectData(jso));
 		    } else if (queryType.equals("handleDBOptions")){
-		    	DatabaseOptionsBuildProject db = (DatabaseOptionsBuildProject)parent;
+		    	DatabaseOptions db = (DatabaseOptions)parent;
 		    	db.handleDBOptions(db.asArrayOfDBOptionsData(jso));
 		    } else if (queryType == "getAppInfo") {
 		    	AppBrowserUiBinder p = (AppBrowserUiBinder)parent;

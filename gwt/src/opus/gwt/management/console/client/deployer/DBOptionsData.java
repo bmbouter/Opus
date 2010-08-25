@@ -21,6 +21,16 @@ import com.google.gwt.core.client.JavaScriptObject;
 public class DBOptionsData extends JavaScriptObject {
 	protected DBOptionsData() {}                                 
 
-	public final native JavaScriptObject getDBOptions() /*-{ return this.options; }-*/;
+	public final native boolean getAutoPostgresConfig() /*-{ 
+		return this.OPUS_AUTO_POSTGRES_CONFIG; 
+	}-*/;
+	public final native String getAllowedDatabases() /*-{
+		var allowed = "";
+		for(var i = 0; i < this.OPUS_ALLOWED_DATABASES.length; i++){
+			allowed += this.OPUS_ALLOWED_DATABASES[i] + ",";
+		} 
+		allowed = "sqlite3,mysql,postgresql_psycopg2";
+		return allowed; 
+	}-*/;
 	 
 }

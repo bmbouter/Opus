@@ -54,7 +54,7 @@ public class applicationDeployer extends Composite {
 	private ApplicationDetailDialog appInfoDialog = new ApplicationDetailDialog();
 	private ProjectOptionsBuildProject projectOptions;
 	//private AddAppsBuildProject addApps;
-	private DatabaseOptionsBuildProject databaseOptions;
+	private DatabaseOptions databaseOptions;
 	private DeploymentOptionsBuildProject deploymentOptions;
 	private ConfirmBuildProject confirmBP;
 
@@ -91,7 +91,7 @@ public class applicationDeployer extends Composite {
 		this.appBrowser = new AppBrowserUiBinder(this,managementCon.getServerCommunicator());
 		//this.addApps = new AddAppsBuildProject(this, managementCon.getServerCommunicator());
 		this.projectOptions = new ProjectOptionsBuildProject(this);
-		this.databaseOptions = new DatabaseOptionsBuildProject(this, managementCon.getServerCommunicator());
+		this.databaseOptions = new DatabaseOptions(this, managementCon.getServerCommunicator());
 		//this.projectSettings = new ProjectOptions(managementCon.getServerCommunicator());
 		this.deploymentOptions = new DeploymentOptionsBuildProject(this);
 		this.confirmBP = new ConfirmBuildProject(deployerForm, this);
@@ -295,7 +295,7 @@ public class applicationDeployer extends Composite {
 		  return addApps;
 	  }
 	  */
-	  DatabaseOptionsBuildProject getDatabaseOptions(){
+	  DatabaseOptions getDatabaseOptions(){
 		  return databaseOptions;
 	  }
 	  
