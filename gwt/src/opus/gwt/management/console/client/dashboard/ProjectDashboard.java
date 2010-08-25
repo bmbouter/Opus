@@ -66,7 +66,7 @@ public class ProjectDashboard extends Composite {
 		dashboard = new Dashboard(projectTitle, managementCon.getServerCommunicator(),this);
 		deleteProject = new DeleteProject(projectTitle, managementCon);
 		manageApps = new ManageApps();
-		projectOptions = new ProjectOptions(projectTitle, managementCon);
+		projectOptions = new ProjectOptions(projectTitle, managementCon, this);
 		setupTitleBarLabel(projectTitle);
 		setupNavigationMenuPanel();
 		setupMainDeckPanel();
@@ -160,5 +160,9 @@ public class ProjectDashboard extends Composite {
 			navigationMenuFocusFlag = DeckPanels.OPTIONSPANEL.ordinal();
 			projectOptions.setActive(dashboard.isActive());
 		}
+	}
+	
+	public DeckPanel getDeckPanel(){
+		return this.mainDeckPanel;
 	}
 }

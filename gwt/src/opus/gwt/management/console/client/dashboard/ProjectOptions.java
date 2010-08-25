@@ -36,10 +36,13 @@ public class ProjectOptions extends Composite {
 	private JSVariableHandler JSVarHandler;
 	private boolean active;
 	private ManagementConsole managementCon;
+	private ProjectDashboard projectDashboard;
+	
 	private static ProjectOptionsUiBinder uiBinder = GWT
 			.create(ProjectOptionsUiBinder.class);
 	
 	@UiField FlexTable formContainer;
+	@UiField FormPanel optionsForm;
 	@UiField Button SaveButton;
 	@UiField Button ActivateButton;
 	@UiField Label WarningLabel;
@@ -48,11 +51,24 @@ public class ProjectOptions extends Composite {
 	interface ProjectOptionsUiBinder extends UiBinder<Widget, ProjectOptions> {
 	}
 
-	public ProjectOptions(String projectName, ManagementConsole manCon) {
+	public ProjectOptions(String projectName, ManagementConsole manCon, ProjectDashboard projectDashboard) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.projectName = projectName;
 		this.JSVarHandler = new JSVariableHandler();
 		this.managementCon = manCon;
+		this.projectDashboard = projectDashboard;
+		this.optionsForm = new FormPanel();
+		setupOptionsForm();
+	}
+	
+	public void setupOptionsForm(){
+		optionsForm.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
+		optionsForm.setMethod(FormPanel.METHOD_POST);
+		optionsForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+		        managementCon.onDeployNewProject(projectName);
+		    }
+			});
 	}
 	
 	public void importProjectSettings(ProjectSettings settings, String[] apps){
@@ -105,7 +121,8 @@ public class ProjectOptions extends Composite {
 					Label settingLabel = new Label();
 					settingLabel.setText(parts[1]);
 					for(int k=3; k<parts.length; k++){
-						setting.addItem(parts[k], parts[++k]);
+						setting.addItem(parts[++k], parts[k-1]);
+						
 						if(parts[++k].equals("true")){
 							setting.setItemSelected(setting.getItemCount()-1, true);
 						}
@@ -138,18 +155,9 @@ public class ProjectOptions extends Composite {
 	
 	@UiHandler("SaveButton")
 	void handleSaveButton(ClickEvent event){
-		FormPanel form = new FormPanel();
-		form.add(formContainer);
-		form.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
-		Window.alert(form.getAction());
-		form.setMethod(FormPanel.METHOD_POST);
-		/*  form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        managementCon.onDeployNewProject(projectName);
-		      }
-		    });*/
-		RootPanel.get().add(form);
-		form.submit();
+		//optionsForm.add(formContainer);
+		//projectDashboard.getDeckPanel().add(optionsForm);
+		optionsForm.submit();
 	}
 	@UiHandler("ActivateButton")
 	void handleActivateButton(ClickEvent event){
@@ -162,19 +170,10 @@ public class ProjectOptions extends Composite {
 			a.setText("true");
 		}
 		formContainer.setWidget(formContainer.getRowCount(), 1, a);
-		Window.alert(a.toString());
-		FormPanel form = new FormPanel();
-		form.add(formContainer);
-		form.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
-		Window.alert(form.getAction());
-		form.setMethod(FormPanel.METHOD_POST);
-		  form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        managementCon.onDeployNewProject(projectName);
-		      }
-		    });
-		RootPanel.get().add(form);
-		form.submit();
+		//optionsForm.add(formContainer);
+
+		//projectDashboard.getDeckPanel().add(optionsForm);
+		optionsForm.submit();
 	}
 	public final native ProjectSettings asProjectSettings(JavaScriptObject jso) /*-{
 		alert("ssss");

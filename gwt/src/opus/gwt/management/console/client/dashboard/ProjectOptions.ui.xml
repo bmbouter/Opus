@@ -16,7 +16,7 @@
 				<g:HTMLPanel>
 					<g:Label ui:field="WarningLabel"></g:Label>
 				
-				<g:FormPanel ui:field="UserSettingsForm">
+				<g:FormPanel ui:field="optionsForm">
 					<g:FlexTable ui:field="formContainer">
 					
 					</g:FlexTable>
