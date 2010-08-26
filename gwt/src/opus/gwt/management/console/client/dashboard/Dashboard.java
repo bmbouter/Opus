@@ -83,15 +83,17 @@ public class Dashboard extends Composite {
 		for(int i =0; i < projInfo.getURLS().length(); i++){
 			urlsFlowPanel.add(new HTML("<a href='" + projInfo.getURLS().get(i) + "'>" + projInfo.getURLS().get(i) + "</a>"));	
 		}
-
-		ProjectSettingsData settings = projInfo.getAppSettings();
-		String a = settings.getApplicationSettings();
-		//Get list of apps
-		String[] apps = a.split(";;;\\s*");
-		//Create panel to display options for all apps
-		ProjectSettings options = projectDashboard.getOptionsPanel();
-		options.importProjectSettings(settings, apps);
-		
+		try {
+			ProjectSettingsData settings = projInfo.getAppSettings();
+			String a = settings.getApplicationSettings();
+			//Get list of apps
+			String[] apps = a.split(";;;\\s*");
+			//Create panel to display options for all apps
+			ProjectSettings options = projectDashboard.getOptionsPanel();
+			options.importProjectSettings(settings, apps);
+		} catch (Exception e) {
+			
+		}
 	}
 	
 	public boolean isActive(){

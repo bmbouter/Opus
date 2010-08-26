@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -33,6 +34,7 @@ public class ProjectSettings extends Composite {
 	private boolean active;
 	private ManagementConsole managementCon;
 	private ProjectDashboard projectDashboard;
+	private boolean hasSettings;
 	
 	private static ProjectSettingsUiBinder uiBinder = GWT
 			.create(ProjectSettingsUiBinder.class);
@@ -134,12 +136,19 @@ public class ProjectSettings extends Composite {
 
 		}
 		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
+		this.hasSettings = true;
 	}
 	
 	public void setActive(boolean active){
 		this.active = active;
 		if(!active){
-			WarningLabel.setText("You must fill out all the settings and click \"Activate\" button in order start using project.");
+			if(hasSettings){
+				WarningLabel.setText("You must fill out all the settings and click \"Save and Activate\" button in order start using project.");
+			} else {
+				WarningLabel.setText("This project is not active.  Press the Activate button to activate it.");
+				ActivateButton.setText("Activate");
+				SaveButton.setVisible(false);
+			}
 			WarningLabel.setStyleName(style.WarningLabel());
 		} else {
 			WarningLabel.setText("");
@@ -151,8 +160,8 @@ public class ProjectSettings extends Composite {
 	
 	@UiHandler("SaveButton")
 	void handleSaveButton(ClickEvent event){
-		//optionsForm.add(formContainer);
-		//projectDashboard.getDeckPanel().add(optionsForm);
+		optionsForm.add(formContainer);
+		RootPanel.get().add(optionsForm);
 		optionsForm.submit();
 	}
 	@UiHandler("ActivateButton")
@@ -166,9 +175,9 @@ public class ProjectSettings extends Composite {
 			a.setText("true");
 		}
 		formContainer.setWidget(formContainer.getRowCount(), 1, a);
-		//optionsForm.add(formContainer);
+		optionsForm.add(formContainer);
 
-		//projectDashboard.getDeckPanel().add(optionsForm);
+		RootPanel.get().add(optionsForm);
 		optionsForm.submit();
 	}
 	public final native ProjectSettingsData asProjectSettings(JavaScriptObject jso) /*-{
