@@ -153,7 +153,7 @@ public class ProjectSettings extends Composite {
 		} else {
 			WarningLabel.setText("");
 			ActivateButton.setText("Deactivate");
-			//SaveButton.
+			SaveButton.setVisible(false);
 			//Button.setText("Submit");
 		}
 	}

@@ -77,7 +77,7 @@ public class AppIcon extends Composite {
 	}
 	
 	public String getPath() {
-		String fullpath = path+versions.get(selectedVersion).getTag();
+		String fullpath = path+"@"+versions.get(selectedVersion).getTag();
 		return fullpath;
 	}
 	
