@@ -153,6 +153,11 @@ public class ProjectSettings extends Composite {
 
 		}
 		this.hasSettings = true;
+		setActive(projectDashboard.getDashboard().isActive());
+	}
+	
+	public void setHasSettings(boolean state) {
+		this.hasSettings = state;
 	}
 	
 	//ProjectDashboard.displayOptions() calls this function  

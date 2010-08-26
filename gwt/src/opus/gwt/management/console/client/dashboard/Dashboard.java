@@ -92,7 +92,8 @@ public class Dashboard extends Composite {
 			ProjectSettings options = projectDashboard.getOptionsPanel();
 			options.importProjectSettings(settings, apps);
 		} catch (Exception e) {
-			
+			projectDashboard.getOptionsPanel().setHasSettings(false);
+			projectDashboard.getOptionsPanel().setActive(this.active);
 		}
 	}
 	

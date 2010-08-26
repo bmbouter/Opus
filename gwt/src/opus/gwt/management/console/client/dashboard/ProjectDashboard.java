@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -158,8 +159,13 @@ public class ProjectDashboard extends Composite {
 			activeLabel.setStyleName(style.navigationLabel());
 			activeLabel = optionsLabel;
 			navigationMenuFocusFlag = DeckPanels.OPTIONSPANEL.ordinal();
-			projectSettings.setActive(dashboard.isActive());
+			//projectSettings.setActive(dashboard.isActive());
+			//Window.alert("just set this projects active status");
 		}
+	}
+	
+	public Dashboard getDashboard(){
+		return dashboard;
 	}
 	
 	public DeckPanel getDeckPanel(){
