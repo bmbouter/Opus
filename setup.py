@@ -35,6 +35,7 @@ if __name__ == "__main__":
             'opus.lib.profile',
             'opus.lib.profile.profilerapp',
             'opus.lib.prov',
+            'opus.lib.prov.drivers',
             'opus.lib.builder',
             'opus.lib.osutils',
             'opus.project',
@@ -53,4 +54,5 @@ if __name__ == "__main__":
         data_files = data_files,
         license='Apache License 2.0',
         long_description=open("README.txt",'r').read(),
+        requires=["Django(>=1.2)"],
     )

@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -33,6 +34,7 @@ public class ProjectSettings extends Composite {
 	private boolean active;
 	private ManagementConsole managementCon;
 	private ProjectDashboard projectDashboard;
+	private boolean hasSettings;
 	
 	private static ProjectSettingsUiBinder uiBinder = GWT
 			.create(ProjectSettingsUiBinder.class);
@@ -133,42 +135,54 @@ public class ProjectSettings extends Composite {
 			formContainer.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
 		}
-		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
+		this.hasSettings = true;
 	}
 	
+	//ProjectDashboard.displayOptions() calls this function  
 	public void setActive(boolean active){
 		this.active = active;
 		if(!active){
-			WarningLabel.setText("You must fill out all the settings and click \"Activate\" button in order start using project.");
+			if(hasSettings){
+				WarningLabel.setText("You must fill out all the settings and click \"Save and Activate\" button in order start using project.");
+			} else {
+				WarningLabel.setText("This project is not active.  Press the Activate button to activate it.");
+				ActivateButton.setText("Activate");
+				SaveButton.setVisible(false);
+			}
 			WarningLabel.setStyleName(style.WarningLabel());
 		} else {
 			WarningLabel.setText("");
 			ActivateButton.setText("Deactivate");
-			//SaveButton.
+			SaveButton.setVisible(false);
 			//Button.setText("Submit");
 		}
 	}
 	
 	@UiHandler("SaveButton")
 	void handleSaveButton(ClickEvent event){
-		//optionsForm.add(formContainer);
-		//projectDashboard.getDeckPanel().add(optionsForm);
+		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
+		optionsForm.add(formContainer);
+		RootPanel.get().add(optionsForm);
 		optionsForm.submit();
 	}
 	@UiHandler("ActivateButton")
 	void handleActivateButton(ClickEvent event){
-		TextBox a = new TextBox();
-		a.setVisible(false);
-		a.setName("active");
+		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
+		TextBox activeField = new TextBox();
+		activeField.setVisible(false);
+		activeField.setName("active");
 		if(this.active) {
-			a.setText("false");
+			activeField.setText("false");
+			//TextBox activate = new TextBox();
+			//activate.setName("activate");
+			//formContainer.setWidget(formContainer.getRowCount(), 1, activate);
 		} else {
-			a.setText("true");
+			activeField.setText("true");
 		}
-		formContainer.setWidget(formContainer.getRowCount(), 1, a);
-		//optionsForm.add(formContainer);
+		formContainer.setWidget(formContainer.getRowCount(), 1, activeField);
+		optionsForm.add(formContainer);
 
-		//projectDashboard.getDeckPanel().add(optionsForm);
+		RootPanel.get().add(optionsForm);
 		optionsForm.submit();
 	}
 	public final native ProjectSettingsData asProjectSettings(JavaScriptObject jso) /*-{
