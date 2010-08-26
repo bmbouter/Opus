@@ -93,7 +93,7 @@ public class DatabaseOptions extends Composite {
 			dbOptions.put("Oracle", "oracle");
 		}
 		for(String key : dbOptions.keySet()){
-			if( key == "Sqlite3" ){
+			if( key == "sqlite3" ){
 				dbengineListBox.insertItem(key, dbOptions.get(key), 0);
 				dbengineListBox.setSelectedIndex(0);
 			} else {
