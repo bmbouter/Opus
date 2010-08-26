@@ -39,6 +39,14 @@ class ProjectForm(forms.Form):
     """Form to ask for parameters for the project itself. These are options set
     once when the project is deployed. For things that can change later, see
     DeploymentForm (yes I think I got the names backwards)"""
+    def __init__(self, *args, **kwargs):
+        forms.Form.__init__(self, *args, **kwargs)
+        # Filter out the choices for idprovider according to
+        # settings.OPUS_ALLOWED_AUTH_APPS
+        choices = self.fields['idprovider'].choices
+        choices = [x for x in choices if x[0] in settings.OPUS_ALLOWED_AUTH_APPS]
+        self.fields['idprovider'].choices = choices
+
     admin = BooleanField(required=False,
             label="Install Admin interface?")
     idprovider = ChoiceField(required=True,

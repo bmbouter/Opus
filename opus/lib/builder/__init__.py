@@ -339,7 +339,7 @@ class ProjectEditor(object):
         if os.path.exists(wsgifile):
             os.utime(wsgifile, None)
 
-    def add_app(self, apppath, apptype):
+    def add_app(self, apppath, apptype, secureops="secureops"):
         """Adds an application to the project and touches the wsgi file. This
         takes effect immediately.
         Also invokes the project deployer's syncdb routine
@@ -376,7 +376,7 @@ class ProjectEditor(object):
 
         # Sync db
         deployer = opus.lib.deployer.ProjectDeployer(self.projectdir)
-        deployer.sync_database()
+        deployer.sync_database(secureops=secureops)
 
         # reload
         self._touch_wsgi()

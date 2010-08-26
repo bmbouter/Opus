@@ -116,4 +116,5 @@ def get_database_settings(request):
     r = {}
     r['OPUS_AUTO_POSTGRES_CONFIG'] = settings.OPUS_AUTO_POSTGRES_CONFIG
     r['OPUS_ALLOWED_DATABASES'] = settings.OPUS_ALLOWED_DATABASES
+    r['OPUS_ALLOWED_AUTH_APPS'] = settings.OPUS_ALLOWED_AUTH_APPS.keys()
     return render(r, request)

@@ -338,9 +338,8 @@ def create(request, projectname):
                 builder.set_admin_app()
             if pdata['idprovider'] != 'local':
                 log.debug(" ... and the idp app %r", pdata['idprovider'])
-                from opus.lib import apps
-                apppath = os.path.join(apps.__path__[0], pdata['idprovider'])
-                builder.add_app(apppath, 'file')
+                apptype, apppath = settings.OPUS_ALLOWED_AUTH_APPS[pdata['idprovider']]
+                builder.add_app(apppath, apptype)
 
             # Now actually execute the tasks. This is done in a try block which
             # catches all exceptions so that we can roll back failed partial
@@ -513,7 +512,8 @@ def addapp(request, project):
             # Go and add an app
             editor = opus.lib.builder.ProjectEditor(project.projectdir)
             editor.add_app(appform.cleaned_data['apppath'],
-                    appform.cleaned_data['apptype'])
+                    appform.cleaned_data['apptype'],
+                    secureops=settings.OPUS_SECUREOPS_COMMAND)
             editor.restart_celery(settings.OPUS_SECUREOPS_COMMAND)
             return render("deployment/addappform.html", dict(
                 message='Application added',
