@@ -40,8 +40,8 @@
 		}
 		.DeployListFlowPanel {
 			max-height: 100px;
-			width: auto;
-			display: inline-block;
+			width: 100%;
+			
 		}
 		.RootLayoutPanel{
 			margin: 0;
@@ -97,8 +97,8 @@
 			-webkit-border-radius: 10px 10px 0 0;
         	-moz-border-radius: 10px 10px 0 0;
 		}
-	</ui:style>
-	
+	</ui:style>	
+
 	<g:HTMLPanel ui:field="topHTMLPanel" styleName='{style.AppBrowser}'>
 		<g:Label ui:field="allAppsLabel" styleName="{style.navigationLabel1}">All</g:Label>
 		<g:Label ui:field="featuredAppsLabel" styleName="{style.navigationLabel2}">Featured</g:Label>

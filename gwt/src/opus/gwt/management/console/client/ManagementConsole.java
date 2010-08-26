@@ -82,7 +82,6 @@ public class ManagementConsole extends Composite {
 	
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
-		mainDeckPanel.setAnimationEnabled(true);
 		loginPanel = new Login(mainDeckPanel, this);
 		iconPanel = new IconPanel(this);
 		JSVarHandler = new JSVariableHandler();
