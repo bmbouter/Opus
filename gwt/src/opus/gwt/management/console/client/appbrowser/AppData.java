@@ -24,4 +24,5 @@ class AppData extends JavaScriptObject {                              // [1]
 			return ''+url;
 		} 
 	}-*/; 
+  public final native String getPath() /*-{ return this.path; }-*/;
 } 

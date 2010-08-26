@@ -14,4 +14,4 @@
 #   limitations under the License.                                           #
 ##############################################################################
 
-COMMUNITY_URL = "http://opus.ncsu.edu"
+COMMUNITY_URL = "http://apps.opus.ncsu.edu"
