@@ -135,7 +135,6 @@ public class ProjectSettings extends Composite {
 			formContainer.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
 		}
-		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 		this.hasSettings = true;
 	}
 	
@@ -161,20 +160,22 @@ public class ProjectSettings extends Composite {
 	
 	@UiHandler("SaveButton")
 	void handleSaveButton(ClickEvent event){
+		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 		optionsForm.add(formContainer);
 		RootPanel.get().add(optionsForm);
 		optionsForm.submit();
 	}
 	@UiHandler("ActivateButton")
 	void handleActivateButton(ClickEvent event){
+		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 		TextBox activeField = new TextBox();
 		activeField.setVisible(false);
 		activeField.setName("active");
 		if(this.active) {
 			activeField.setText("false");
-			TextBox activate = new TextBox();
-			activate.setName("activate");
-			formContainer.setWidget(formContainer.getRowCount(), 1, activate);
+			//TextBox activate = new TextBox();
+			//activate.setName("activate");
+			//formContainer.setWidget(formContainer.getRowCount(), 1, activate);
 		} else {
 			activeField.setText("true");
 		}
