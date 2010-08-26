@@ -88,7 +88,7 @@ public class applicationDeployer extends Composite {
 		this.navigationMenuPanel = navigationMenuPanel;
 		this.titleBarLabel = titleBarLabel;
 		this.deployerForm = new FormPanel();
-		this.appBrowser = new AppBrowserUiBinder(this,managementCon.getServerCommunicator());
+		this.appBrowser = new AppBrowserUiBinder(this, managementCon.getServerCommunicator());
 		//this.addApps = new AddAppsBuildProject(this, managementCon.getServerCommunicator());
 		this.projectOptions = new ProjectOptions(this);
 		this.databaseOptions = new DatabaseOptions(this, managementCon.getServerCommunicator());

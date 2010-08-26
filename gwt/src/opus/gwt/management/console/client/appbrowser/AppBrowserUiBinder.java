@@ -304,7 +304,7 @@ public class AppBrowserUiBinder extends Composite {
 			appFlowPanel.add(featuredIcons.get(i));
 		}
 	}
-
+	
 	@UiHandler("featuredAppsLabel")
 	void handleFeaturedAppsLabel(ClickEvent event){
 		handleFeaturedAppsLabelFunction();
