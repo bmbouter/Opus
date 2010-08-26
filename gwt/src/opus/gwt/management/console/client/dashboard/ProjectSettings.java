@@ -139,6 +139,7 @@ public class ProjectSettings extends Composite {
 		this.hasSettings = true;
 	}
 	
+	//ProjectDashboard.displayOptions() calls this function  
 	public void setActive(boolean active){
 		this.active = active;
 		if(!active){
@@ -166,15 +167,18 @@ public class ProjectSettings extends Composite {
 	}
 	@UiHandler("ActivateButton")
 	void handleActivateButton(ClickEvent event){
-		TextBox a = new TextBox();
-		a.setVisible(false);
-		a.setName("active");
+		TextBox activeField = new TextBox();
+		activeField.setVisible(false);
+		activeField.setName("active");
 		if(this.active) {
-			a.setText("false");
+			activeField.setText("false");
+			TextBox activate = new TextBox();
+			activate.setName("activate");
+			formContainer.setWidget(formContainer.getRowCount(), 1, activate);
 		} else {
-			a.setText("true");
+			activeField.setText("true");
 		}
-		formContainer.setWidget(formContainer.getRowCount(), 1, a);
+		formContainer.setWidget(formContainer.getRowCount(), 1, activeField);
 		optionsForm.add(formContainer);
 
 		RootPanel.get().add(optionsForm);
