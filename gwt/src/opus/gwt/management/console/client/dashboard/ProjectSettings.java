@@ -14,6 +14,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -69,7 +70,9 @@ public class ProjectSettings extends Composite {
 			});
 	}
 	
+	//Dashboard.handleProjectInformation() calls this method to import settings
 	public void importProjectSettings(ProjectSettingsData settings, String[] apps){
+		//Window.alert("importing settings");
 		for (int i=0; i<apps.length; i++){
 			int row = 0;
 			//Create header for app
@@ -79,16 +82,17 @@ public class ProjectSettings extends Composite {
 			formContainer.setWidget(row++, 0, appName);
 			//Get list of settings for app
 			String[] set = settings.getAppSettings(apps[i]).split(";;;\\s*");
+			//Window.alert(String.valueOf(set.length));
 			for (int j=0; j<set.length; j++){
 				String[] parts = set[j].split(",\\s*");
-				
-				if (parts[2].equals("char")){
+				//Window.alert(set[j]);
+				if (parts[2].equals("string")){
 					TextBox setting = new TextBox();
 					setting.setName(apps[i]+"-"+parts[0]);
 					//Check default value
 					if (parts.length > 3){
-						Window.alert("gotcha");
-						setting.setValue(parts[3]);
+						//Window.alert("gotcha");
+						//setting.setValue(parts[3]);
 						setting.setText(parts[3]);
 					}
 					Label settingLabel = new Label();
@@ -102,7 +106,7 @@ public class ProjectSettings extends Composite {
 					TextBox setting = new TextBox();
 					//Check default value
 					if (parts.length > 3){
-						setting.setValue(parts[3]);
+						//setting.setValue(parts[3]);
 						setting.setText(parts[3]);
 					}
 					setting.setName(apps[i]+"-"+parts[0]);
@@ -129,7 +133,20 @@ public class ProjectSettings extends Composite {
 					setting.setStyleName("SettingInput");
 					formContainer.setWidget(row, 0,settingLabel);
 					formContainer.setWidget(row++, 1,setting);
-				}				
+				} else if(parts[2].equals("bool")) {
+					CheckBox setting = new CheckBox();
+					if (parts.length > 3){
+						//setting.setValue(parts[3]);
+						setting.setValue(Boolean.valueOf(parts[3]));
+					}
+					setting.setName(apps[i]+"-"+parts[0]);
+					Label settingLabel = new Label();
+					settingLabel.setText(parts[1]);
+					settingLabel.addStyleName("SettingLabel");
+					setting.setStyleName("SettingInput");
+					formContainer.setWidget(row, 0,settingLabel);
+					formContainer.setWidget(row++, 1,setting);
+				}
 			}
 			formContainer.setHTML(row, 0, "<hr width=\"90%\">");
 			formContainer.getFlexCellFormatter().setColSpan(row++, 0, 2);

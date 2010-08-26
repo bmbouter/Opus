@@ -265,7 +265,7 @@ public class applicationDeployer extends Composite {
 		  formContainerPanel.add(numInitialForms);
 		  formContainerPanel.add(numMaxForms);
 		  for(int i=0; i < paths.size(); i++) {
-			  Window.alert(paths.get(i).toString());
+			  //Window.alert(paths.get(i).toString());
 			  RadioButton pathtype = new RadioButton("form-" + i + "-apptype");
 			  pathtype.setFormValue(apptypes.get(i));
 			  pathtype.setValue(true);
