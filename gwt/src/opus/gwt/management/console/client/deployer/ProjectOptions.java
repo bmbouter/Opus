@@ -16,6 +16,8 @@
 
 package opus.gwt.management.console.client.deployer;
 
+import java.util.HashMap;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -61,6 +63,18 @@ public class ProjectOptions extends Composite {
 		idProvider.addItem("LDAP","ldap");
 		idProvider.addItem("OpenId","openid");
 	}	
+
+	public void setAllowedAuthApps(String allowedAuthApps){
+		int size = idProvider.getItemCount();
+		for(int i=0; i < size; i++){
+			idProvider.removeItem(0);
+		}
+		String[] options = allowedAuthApps.split(",");
+		idProvider.addItem("");
+		for(String option : options){
+			idProvider.addItem(option, option);
+		}
+	}
 	
 	@UiHandler("idProvider")
 	void handleChangeIdProvider(ChangeEvent event){

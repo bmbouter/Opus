@@ -156,6 +156,7 @@ public class DatabaseOptions extends Composite {
 			dbOptions.put(option, option);
 		}
 		postgresAutoConfig = dbOptionsData.getAutoPostgresConfig();
+		appDeployer.getProjectOptions().setAllowedAuthApps(dbOptionsData.getAllowedAuthApps());
 		setupDBOptions();
 	}
 

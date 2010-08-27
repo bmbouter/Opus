@@ -31,5 +31,12 @@ public class DBOptionsData extends JavaScriptObject {
 		} 
 		return allowed; 
 	}-*/;
+	public final native String getAllowedAuthApps() /*-{
+		var allowed = "";
+		for(var i = 0; i < this.OPUS_ALLOWED_AUTH_APPS.length; i++){
+			allowed += this.OPUS_ALLOWED_AUTH_APPS[i] + ",";
+		} 
+		return allowed; 
+	}-*/;
 	 
 }
