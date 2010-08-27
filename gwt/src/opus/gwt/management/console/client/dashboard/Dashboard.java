@@ -24,6 +24,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -91,6 +92,9 @@ public class Dashboard extends Composite {
 			//Create panel to display options for all apps
 			ProjectSettings options = projectDashboard.getOptionsPanel();
 			options.importProjectSettings(settings, apps);
+			projectDashboard.getOptionsPanel().setHasSettings(true);
+			Window.alert(String.valueOf(this.active));
+			projectDashboard.getOptionsPanel().setActive(this.active);
 		} catch (Exception e) {
 			projectDashboard.getOptionsPanel().setHasSettings(false);
 			projectDashboard.getOptionsPanel().setActive(this.active);
