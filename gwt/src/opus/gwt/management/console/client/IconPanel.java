@@ -59,7 +59,7 @@ public class IconPanel extends Composite {
 	
 	public void addProjectIcon(String name) {
 		HTML project = new HTML();
-		project.setHTML("<img src='http://openiconlibrary.sourceforge.net/gallery2/Icons/devices/blockdevice-2.png' width='128' height='128'/><br/>"+name);
+		project.setHTML("<img src='defaulticon.png' width='128' height='128'/><br/>"+name);
 		
 		final String projectName = name;
 		

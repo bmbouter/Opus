@@ -67,6 +67,7 @@ public class ProjectSettings extends Composite {
 		optionsForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 			public void onSubmitComplete(SubmitCompleteEvent event) {
 		        managementCon.onDeployNewProject(projectName);
+		        RootPanel.detachNow(optionsForm);
 		    }
 			});
 	}
