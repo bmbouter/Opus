@@ -58,10 +58,6 @@ public class ProjectOptions extends Composite {
 	public ProjectOptions(applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.appDeployer = appDeployer;
-		idProvider.addItem("");
-		idProvider.addItem("Local","local");
-		idProvider.addItem("LDAP","ldap");
-		idProvider.addItem("OpenId","openid");
 	}	
 
 	public void setAllowedAuthApps(String allowedAuthApps){
@@ -70,7 +66,6 @@ public class ProjectOptions extends Composite {
 			idProvider.removeItem(0);
 		}
 		String[] options = allowedAuthApps.split(",");
-		idProvider.addItem("");
 		for(String option : options){
 			idProvider.addItem(option, option);
 		}
@@ -78,7 +73,7 @@ public class ProjectOptions extends Composite {
 	
 	@UiHandler("idProvider")
 	void handleChangeIdProvider(ChangeEvent event){
-		if(idProvider.getItemText(idProvider.getSelectedIndex()).equals("Local")){
+		if(idProvider.getItemText(idProvider.getSelectedIndex()).equals("local")){
 			adminCheckBox.setValue(true);
 			adminCheckBox.setEnabled(false);
 		} else {
