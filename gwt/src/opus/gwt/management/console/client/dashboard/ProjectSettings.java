@@ -7,6 +7,7 @@ import opus.gwt.management.console.client.resources.ProjectDashboardCss.ProjectD
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -81,11 +82,11 @@ public class ProjectSettings extends Composite {
 			appName.addStyleName("SettingsAppName");
 			formContainer.setWidget(row++, 0, appName);
 			//Get list of settings for app
-			String[] set = settings.getAppSettings(apps[i]).split(";;;\\s*");
-			//Window.alert(String.valueOf(set.length));
-			for (int j=0; j<set.length; j++){
-				String[] parts = set[j].split(",\\s*");
-				//Window.alert(set[j]);
+			
+			JsArray<JavaScriptObject> appsettings = settings.getAppSettings(apps[i]);
+			for(int j=0; j<appsettings.length(); j++){
+				JsArray<JavaScriptObject> p = settings.getSettingsArray(appsettings.get(j));
+				String[] parts = p.join(";;;").split(";;;\\s*");
 				if (parts[2].equals("string")){
 					TextBox setting = new TextBox();
 					setting.setName(apps[i]+"-"+parts[0]);
@@ -153,7 +154,7 @@ public class ProjectSettings extends Composite {
 
 		}
 		this.hasSettings = true;
-		setActive(projectDashboard.getDashboard().isActive());
+		//setActive(projectDashboard.getDashboard().isActive());
 	}
 	
 	public void setHasSettings(boolean state) {
@@ -182,6 +183,7 @@ public class ProjectSettings extends Composite {
 	
 	@UiHandler("SaveButton")
 	void handleSaveButton(ClickEvent event){
+		//SaveButton.getElement().setAttribute("name", "Save");
 		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 		optionsForm.add(formContainer);
 		RootPanel.get().add(optionsForm);

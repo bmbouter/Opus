@@ -1,5 +1,6 @@
 package opus.gwt.management.console.client.dashboard;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 
 public class ProjectSettingsData extends JavaScriptObject{
 	
@@ -13,11 +14,15 @@ public class ProjectSettingsData extends JavaScriptObject{
 		return apps.join(";;;");
 	}-*/;
 	
-	public final native String getAppSettings(String appname) /*-{
+	public final native JsArray<JavaScriptObject> getAppSettings(String appname) /*-{
 		var settings = this[appname];
-		return settings.join(";;;");
+		return settings;
 	}-*/;
 
+	public final native JsArray<JavaScriptObject> getSettingsArray(JavaScriptObject setting) /*-{
+		return setting;
+	}-*/;
+	
 	public final native JavaScriptObject getNext() /*-{
 		return current;
 	}-*/;
