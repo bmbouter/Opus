@@ -623,7 +623,7 @@ def gwt(request):
             dict(mediaprefix = settings.OPUS_GWT_MEDIA,
                 baseurl = settings.OPUS_APACHE_SERVERNAME_SUFFIX,
                 repourl = opus.COMMUNITY_URL,
-                deployerurl,
+                deployerurl = deployerurl,
                 project_token = token
                 ),
             request)
