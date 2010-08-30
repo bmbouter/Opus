@@ -16,3 +16,4 @@
 
 from ec2 import EC2Driver
 from opennebula14 import OpenNebula14Driver
+from deltacloud import DeltacloudDriver

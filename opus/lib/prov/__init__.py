@@ -39,5 +39,6 @@ import drivers
 
 DRIVERS = {
     "ec2":drivers.EC2Driver,
-    "opennebula1.4":drivers.OpenNebula14Driver
+    "deltacloud":drivers.DeltacloudDriver,
+    "opennebula1.4":drivers.OpenNebula14Driver,
 }
