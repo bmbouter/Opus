@@ -2,7 +2,6 @@ package opus.gwt.management.console.client.dashboard;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ManagementConsole;
-import opus.gwt.management.console.client.ServerCommunicator;
 import opus.gwt.management.console.client.resources.ProjectDashboardCss.ProjectDashboardStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -13,7 +12,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -29,7 +27,12 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 public class ProjectSettings extends Composite {
 
-	private ServerCommunicator communicator;
+	interface ProjectSettingsUiBinder extends UiBinder<Widget, ProjectSettings> {
+	}
+	
+	private static ProjectSettingsUiBinder uiBinder = GWT
+	.create(ProjectSettingsUiBinder.class);
+	
 	private final String optionsUrl = "deployments/projectName/confapps";
 	private String projectName;
 	private JSVariableHandler JSVarHandler;
@@ -38,18 +41,13 @@ public class ProjectSettings extends Composite {
 	private ProjectDashboard projectDashboard;
 	private boolean hasSettings;
 	
-	private static ProjectSettingsUiBinder uiBinder = GWT
-			.create(ProjectSettingsUiBinder.class);
-	
 	@UiField FlexTable formContainer;
 	@UiField FormPanel optionsForm;
 	@UiField Button SaveButton;
 	@UiField Button ActivateButton;
 	@UiField Label WarningLabel;
 	@UiField ProjectDashboardStyle style;
-	
-	interface ProjectSettingsUiBinder extends UiBinder<Widget, ProjectSettings> {
-	}
+
 
 	public ProjectSettings(String projectName, ManagementConsole manCon, ProjectDashboard projectDashboard) {
 		initWidget(uiBinder.createAndBindUi(this));

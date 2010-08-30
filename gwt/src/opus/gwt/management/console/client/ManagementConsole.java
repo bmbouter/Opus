@@ -66,7 +66,7 @@ public class ManagementConsole extends Composite {
 	private ServerCommunicator ServerComm;
 	private ManagementConsole managementCon;
 	private JSVariableHandler JSVarHandler;
-	private PopupPanel pp;
+	private PopupPanel projectListPopup;
 	private int projectCount;
 	
 	
@@ -85,26 +85,25 @@ public class ManagementConsole extends Composite {
 		loginPanel = new Login(mainDeckPanel, this);
 		iconPanel = new IconPanel(this);
 		JSVarHandler = new JSVariableHandler();
-		pp = new PopupPanel();
-		pp.setAutoHideEnabled(true);
+		projectListPopup = new PopupPanel();
+		setupProjectPopup();
 		ServerComm = new ServerCommunicator();
 		managementCon = this;
 		checkLogin();
-		pp.addCloseHandler(new CloseHandler<PopupPanel>(){
+	}
+	
+	private void setupProjectPopup(){
+		projectListPopup.setAutoHideEnabled(true);
+		projectListPopup.addCloseHandler(new CloseHandler<PopupPanel>(){
 			public void onClose(CloseEvent<PopupPanel> event){
 				dashboardsButton.setStyleName(style.topDashboardButton());
 			}
 		});
-
 	}
 	
-	private void checkLogin(){
+	public void checkLogin(){
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + checkLoginURL);
 		ServerComm.getJson(url, ServerComm, "handleUserInformation", this);
-	}
-	
-	public void loginComplete(){
-		checkLogin();
 	}
 	
 	private void createDashboardsPopup(){
@@ -144,10 +143,10 @@ public class ManagementConsole extends Composite {
 			dashboardsButton.setStyleName(style.topDashboardButtonActive());
 			int left = dashboardsButton.getAbsoluteLeft();
 			int top = dashboardsButton.getAbsoluteTop() + dashboardsButton.getOffsetHeight();
-			pp.setPopupPosition(left, top);
+			projectListPopup.setPopupPosition(left, top);
 			int width = dashboardsButton.getOffsetWidth();
-			pp.setWidth(Integer.toString(width) + "px");
-			pp.show();
+			projectListPopup.setWidth(Integer.toString(width) + "px");
+			projectListPopup.show();
 		}
 	}
 	
@@ -158,18 +157,18 @@ public class ManagementConsole extends Composite {
 		titleBarLabel.setText("");
 		mainDeckPanel.add(iconPanel);
 		mainDeckPanel.showWidget(0);
-		if(pp.isShowing()){
-			pp.hide();
+		if(projectListPopup.isShowing()){
+			projectListPopup.hide();
 		} else {
 			dashboardsButton.setStyleName(style.topDashboardButtonActive());
 			int left = dashboardsButton.getAbsoluteLeft();
 			int top = dashboardsButton.getAbsoluteTop() + dashboardsButton.getOffsetHeight();
-			pp.setPopupPosition(left, top);
+			projectListPopup.setPopupPosition(left, top);
 			int width = dashboardsButton.getOffsetWidth();
-			pp.setWidth(Integer.toString(width) + "px");
-			pp.show();
+			projectListPopup.setWidth(Integer.toString(width) + "px");
+			projectListPopup.show();
 		}
-		pp.hide();
+		projectListPopup.hide();
 	}
 	
 	@UiHandler("authenticationButton")
@@ -191,7 +190,7 @@ public class ManagementConsole extends Composite {
 	}
 	
 	public void handleProjectNames(JsArray<ProjectNames> ProjectNames){
-		pp.clear();
+		projectListPopup.clear();
 		projectCount = ProjectNames.length();
 		iconPanel.projectIconsFlowPanel.clear();
 		if(projectCount != 0){
@@ -214,28 +213,27 @@ public class ManagementConsole extends Composite {
 			        	mainDeckPanel.clear();
 			    		navigationMenuPanel.clear();
 			        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText(), managementCon); 
-			        	if(pp.isShowing()){
+			        	if(projectListPopup.isShowing()){
 			    			dashboardsButton.setStyleName(style.topDashboardButton());
-			    			pp.hide();
+			    			projectListPopup.hide();
 			    		}   	
 			        }
 			     });
 				FP.add(testLabel);
-				//Add to the icon panel
 				iconPanel.addProjectIcon(ProjectNames.get(i).getName());
 			}
-			pp.add(FP);
+			projectListPopup.add(FP);
 			mainDeckPanel.add(iconPanel);
 			mainDeckPanel.showWidget(0);
 		} else {
 			
 			deployNewButton.click();
 		}
-		pp.setStyleName(style.dashboardsPopup());
+		projectListPopup.setStyleName(style.dashboardsPopup());
 	}
 	
 	public void handleUserInformation(UserInformation userInfo){
-		if(userInfo.isAuthenticated()){
+		if( userInfo.isAuthenticated() ){
 			loggedInUserButton.setText("Logged in as: " + userInfo.getUsername());
 			loggedInUserButton.setVisible(true);
 			deployNewButton.setVisible(true);
@@ -257,13 +255,13 @@ public class ManagementConsole extends Composite {
 		mainDeckPanel.clear();
 		titleBarLabel.setText("");
 		navigationMenuPanel.clear();
-		loginPanel = new Login(mainDeckPanel, this);
-		mainDeckPanel.add(loginPanel);
-		mainDeckPanel.showWidget(0);
 		loggedInUserButton.setVisible(false);
 		authenticationButton.setVisible(false);
 		dashboardsButton.setVisible(false);
 		deployNewButton.setVisible(false);
+		loginPanel = new Login(mainDeckPanel, this);
+		mainDeckPanel.add(loginPanel);
+		mainDeckPanel.showWidget(0);
 	}
 	
 	public final native JsArray<ProjectNames> asArrayOfProjectNames(JavaScriptObject jso) /*-{
