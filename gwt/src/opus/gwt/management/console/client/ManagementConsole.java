@@ -68,6 +68,7 @@ public class ManagementConsole extends Composite {
 	private JSVariableHandler JSVarHandler;
 	private PopupPanel projectListPopup;
 	private int projectCount;
+	private String deletedProject;
 	
 	
 	@UiField Label titleBarLabel;
@@ -82,6 +83,7 @@ public class ManagementConsole extends Composite {
 	
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
+		deletedProject = "";
 		loginPanel = new Login(mainDeckPanel, this);
 		iconPanel = new IconPanel(this);
 		JSVarHandler = new JSVariableHandler();
@@ -119,8 +121,9 @@ public class ManagementConsole extends Composite {
     	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, projectName, managementCon);
 	}
 	
-	public void onProjectDelete(){
+	public void onProjectDelete(String deletedProject){
 		createDashboardsPopup();
+		this.deletedProject = deletedProject;
 		mainDeckPanel.clear();
 		navigationMenuPanel.clear();
 		titleBarLabel.setText("");
@@ -196,31 +199,33 @@ public class ManagementConsole extends Composite {
 		if(projectCount != 0){
 			FlowPanel FP = new FlowPanel();
 			for(int i = 0; i < ProjectNames.length(); i++){
-				final Label testLabel = new Label(ProjectNames.get(i).getName());
-				testLabel.setStyleName(style.popupLabel());
-				testLabel.addMouseOverHandler(new MouseOverHandler(){
-					public void onMouseOver(MouseOverEvent event){
-						testLabel.setStyleName(style.popupLabelActive());
-					}
-				});
-				testLabel.addMouseOutHandler(new MouseOutHandler(){
-					public void onMouseOut(MouseOutEvent event){
-						testLabel.setStyleName(style.popupLabel());
-					}
-				});
-				testLabel.addClickHandler(new ClickHandler() {
-			        public void onClick(ClickEvent event) {
-			        	mainDeckPanel.clear();
-			    		navigationMenuPanel.clear();
-			        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText(), managementCon); 
-			        	if(projectListPopup.isShowing()){
-			    			dashboardsButton.setStyleName(style.topDashboardButton());
-			    			projectListPopup.hide();
-			    		}   	
-			        }
-			     });
-				FP.add(testLabel);
-				iconPanel.addProjectIcon(ProjectNames.get(i).getName());
+				if( !ProjectNames.get(i).getName().equals(deletedProject)){
+					final Label testLabel = new Label(ProjectNames.get(i).getName());
+					testLabel.setStyleName(style.popupLabel());
+					testLabel.addMouseOverHandler(new MouseOverHandler(){
+						public void onMouseOver(MouseOverEvent event){
+							testLabel.setStyleName(style.popupLabelActive());
+						}
+					});
+					testLabel.addMouseOutHandler(new MouseOutHandler(){
+						public void onMouseOut(MouseOutEvent event){
+							testLabel.setStyleName(style.popupLabel());
+						}
+					});
+					testLabel.addClickHandler(new ClickHandler() {
+				        public void onClick(ClickEvent event) {
+				        	mainDeckPanel.clear();
+				    		navigationMenuPanel.clear();
+				        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText(), managementCon); 
+				        	if(projectListPopup.isShowing()){
+				    			dashboardsButton.setStyleName(style.topDashboardButton());
+				    			projectListPopup.hide();
+				    		}   	
+				        }
+				     });
+					FP.add(testLabel);
+					iconPanel.addProjectIcon(ProjectNames.get(i).getName());
+				}
 			}
 			projectListPopup.add(FP);
 			mainDeckPanel.add(iconPanel);
