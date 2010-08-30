@@ -147,29 +147,34 @@ public class AppBrowserUiBinder extends Composite {
 		if(this.featuredListLoaded){
 			String innerHTML = "";
 			for (int i=0; i<applications.length(); i++){
-				String name = applications.get(i).getName();
-				String desc =  applications.get(i).getDescription();
-				int pk = applications.get(i).getPk();
-				
-				String iconPath = applications.get(i).getIconURL();
-				String path = applications.get(i).getPath();
-				
-				if( iconPath.equals("") ){
-					iconPath = "http://openiconlibrary.sourceforge.net/gallery2/Icons/devices/blockdevice-2.png";
-				}
-				AppIcon appIcon = createAppIcon(name,desc,pk,iconPath,path);
-				
-				for (int j=0; j < featured.length; j++){
-
-					//Window.alert(String.valueOf(featured.length));
-					if (featured[j] == pk) {
-						featuredIcons.add(appIcon);
-						//featuredIcons.set(j, appIcon);
+				try {
+					String name = applications.get(i).getName();
+					String desc =  applications.get(i).getDescription();
+					int pk = applications.get(i).getPk();
+					String iconPath = applications.get(i).getIconURL();
+					String path = applications.get(i).getPath();
+					//Window.alert(String.valueOf(pk));
+					if( iconPath.equals("") ){
+						iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";
 					}
+					AppIcon appIcon = createAppIcon(name,desc,pk,iconPath,path);
+	
+					for (int j=0; j < featured.length; j++){
+	
+						//Window.alert(String.valueOf(featured.length));
+						if (featured[j] == pk) {
+							featuredIcons.add(appIcon);
+							//featuredIcons.set(j, appIcon);
+						}
+					}
+					appFlowPanel.add(appIcon);
+					allIcons.add(appIcon);
+				} catch (Exception e){
+					//DOTO:need to handle these exceptions somehow
+					//		Not sure;
 				}
-				appFlowPanel.add(appIcon);
-				allIcons.add(appIcon);
 
+				
 			}
 	
 			handleFeaturedAppsLabelFunction();
@@ -383,7 +388,7 @@ public class AppBrowserUiBinder extends Composite {
 	  public void importAppList(JsArray<ProjectData> projectData) {
 		  
 		  JsArray<VersionData>versions = projectData.get(0).getVersions();
-		  Window.alert("got inside importAppList");
+		  //Window.alert("got inside importAppList");
 
 		  deployList.clear();
 		  for (int i=0; i < versions.length(); i++){

@@ -283,7 +283,6 @@ public class applicationDeployer extends Composite {
 		  formContainerPanel.add(databaseOptions.databaseOptionsPanel);
 		 
 		  //Add all Database fields to the form for submissionsd
-		  formContainerPanel.add(deploymentOptions.activeCheckBox);
 		  formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 		  deployerForm.submit();
 	  }

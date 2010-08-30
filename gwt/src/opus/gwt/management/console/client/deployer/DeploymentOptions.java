@@ -44,13 +44,11 @@ public class DeploymentOptions extends Composite {
 	@UiField Button previousButton;
 	@UiField Label baseUrlLabel;
 	@UiField TextBox projectNameTextBox;
-	@UiField CheckBox activeCheckBox;
 
 	public DeploymentOptions(applicationDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.appDeployer = appDeployer;
 		baseUrlLabel.setText(appDeployer.getBaseURL());
-		activeCheckBox.setValue(true);
 		projectNameTextBox.setFocus(true);
 	}
 	

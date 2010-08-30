@@ -39,8 +39,8 @@ public class ServerCommunicator {
 	private String[] queryTypes;
 	
 	public ServerCommunicator() {
-		this.queue = new Object[20];
-		this.queryTypes = new String[20];
+		this.queue = new Object[50];
+		this.queryTypes = new String[50];
 		this.requestId = 0;
 	}
 	  /**
