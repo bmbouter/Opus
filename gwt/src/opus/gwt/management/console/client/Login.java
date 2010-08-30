@@ -65,10 +65,10 @@ public class Login extends Composite {
 	private void setupLoginForm(){
 		loginForm.setMethod(FormPanel.METHOD_POST);
 		loginForm.setVisible(false);
-		loginForm.setAction(JSVarHandler.getDeployerBaseURL()+ "/accounts/login");
+		loginForm.setAction(JSVarHandler.getDeployerBaseURL() + "/accounts/login");
 		loginForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        managementCon.loginComplete();
+		        managementCon.checkLogin();
 		      }
 		 });
 	}
@@ -101,12 +101,12 @@ public class Login extends Composite {
 
 	private void handleLoginButton(){
 		FlowPanel formHandler = new FlowPanel();
-		loginForm.add(formHandler);
 		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
         csrftoken.setName("csrfmiddlewaretoken");
         formHandler.add(csrftoken);
         formHandler.add(usernameTextBox);
         formHandler.add(passwordTextBox);
+        loginForm.add(formHandler);
         mainDeckPanel.add(loginForm);
 		loginForm.submit();
 	}

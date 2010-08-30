@@ -33,7 +33,6 @@ import com.google.gwt.user.client.Window;
 public class ServerCommunicator {
 	
 	private JavaScriptObject data;
-	private String error;
 	private int requestId;
 	private Object[] queue;
 	private String[] queryTypes;
@@ -53,7 +52,6 @@ public class ServerCommunicator {
 		queryTypes[requestId] = queryType;
 		requestJson(requestId, url, handler);
 		requestId++;
-		error = "";
 	}
 	
 	  public native static void requestJson(int requestId, String url,
@@ -68,7 +66,7 @@ public class ServerCommunicator {
 	   // [2] Define the callback function on the window object.
 	   window[callback] = function(jsonObj) {
 	   // [3]		
-	     handler.@opus.gwt.management.console.client.ServerCommunicator::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;I)(jsonObj, requestId);
+	     handler.@opus.gwt.management.console.client.ServerCommunicator::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;Ljava/lang/String;I)(jsonObj, "null", requestId);
 
 	     window[callback + "done"] = true;
 	   }
@@ -76,7 +74,7 @@ public class ServerCommunicator {
 	   // [4] JSON download has 1-second timeout.
 	   setTimeout(function() {
 	     if (!window[callback + "done"]) {
-	       handler.@opus.gwt.management.console.client.ServerCommunicator::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;I)(null, requestId);
+	       handler.@opus.gwt.management.console.client.ServerCommunicator::handleJsonResponse(Lcom/google/gwt/core/client/JavaScriptObject;Ljava/lang/String;I)(null, "timeout", requestId);
 	     }
 	     // [5] Cleanup. Remove script and callback elements.
 	     document.body.removeChild(script);
@@ -91,16 +89,18 @@ public class ServerCommunicator {
 	  /**
 	   * Handle the response to the request for stock data from a remote server.
 	   */
-	public void handleJsonResponse(JavaScriptObject jso, int rId) {
+	public void handleJsonResponse(JavaScriptObject jso, String error, int rId) {
 		String queryType = queryTypes[rId];
 
 		if (jso == null) {
-			Window.alert("no json returned for request # " + String.valueOf(rId) + " = " + queryType);
-			this.error = "Error occured while retrieving JSON.";
-	      return;
+			if( error.equals("timeout") ) {
+				Window.alert("JSON request timed out for request #" + String.valueOf(rId) + " = " + queryType);
+				return;
+			} else {
+				Window.alert("no json returned for request # " + String.valueOf(rId) + " = " + queryType);
+				return;	
+			}
 	    } else {
-	    	
-		    this.error = null;
 		    
 		    Object parent = queue[rId];
 		    

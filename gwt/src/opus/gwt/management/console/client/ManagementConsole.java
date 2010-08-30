@@ -66,8 +66,9 @@ public class ManagementConsole extends Composite {
 	private ServerCommunicator ServerComm;
 	private ManagementConsole managementCon;
 	private JSVariableHandler JSVarHandler;
-	private PopupPanel pp;
+	private PopupPanel projectListPopup;
 	private int projectCount;
+	private String deletedProject;
 	
 	
 	@UiField Label titleBarLabel;
@@ -82,29 +83,29 @@ public class ManagementConsole extends Composite {
 	
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
+		deletedProject = "";
 		loginPanel = new Login(mainDeckPanel, this);
 		iconPanel = new IconPanel(this);
 		JSVarHandler = new JSVariableHandler();
-		pp = new PopupPanel();
-		pp.setAutoHideEnabled(true);
+		projectListPopup = new PopupPanel();
+		setupProjectPopup();
 		ServerComm = new ServerCommunicator();
 		managementCon = this;
 		checkLogin();
-		pp.addCloseHandler(new CloseHandler<PopupPanel>(){
+	}
+	
+	private void setupProjectPopup(){
+		projectListPopup.setAutoHideEnabled(true);
+		projectListPopup.addCloseHandler(new CloseHandler<PopupPanel>(){
 			public void onClose(CloseEvent<PopupPanel> event){
 				dashboardsButton.setStyleName(style.topDashboardButton());
 			}
 		});
-
 	}
 	
-	private void checkLogin(){
+	public void checkLogin(){
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + checkLoginURL);
 		ServerComm.getJson(url, ServerComm, "handleUserInformation", this);
-	}
-	
-	public void loginComplete(){
-		checkLogin();
 	}
 	
 	private void createDashboardsPopup(){
@@ -120,8 +121,9 @@ public class ManagementConsole extends Composite {
     	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, projectName, managementCon);
 	}
 	
-	public void onProjectDelete(){
+	public void onProjectDelete(String deletedProject){
 		createDashboardsPopup();
+		this.deletedProject = deletedProject;
 		mainDeckPanel.clear();
 		navigationMenuPanel.clear();
 		titleBarLabel.setText("");
@@ -144,10 +146,10 @@ public class ManagementConsole extends Composite {
 			dashboardsButton.setStyleName(style.topDashboardButtonActive());
 			int left = dashboardsButton.getAbsoluteLeft();
 			int top = dashboardsButton.getAbsoluteTop() + dashboardsButton.getOffsetHeight();
-			pp.setPopupPosition(left, top);
+			projectListPopup.setPopupPosition(left, top);
 			int width = dashboardsButton.getOffsetWidth();
-			pp.setWidth(Integer.toString(width) + "px");
-			pp.show();
+			projectListPopup.setWidth(Integer.toString(width) + "px");
+			projectListPopup.show();
 		}
 	}
 	
@@ -158,18 +160,18 @@ public class ManagementConsole extends Composite {
 		titleBarLabel.setText("");
 		mainDeckPanel.add(iconPanel);
 		mainDeckPanel.showWidget(0);
-		if(pp.isShowing()){
-			pp.hide();
+		if(projectListPopup.isShowing()){
+			projectListPopup.hide();
 		} else {
 			dashboardsButton.setStyleName(style.topDashboardButtonActive());
 			int left = dashboardsButton.getAbsoluteLeft();
 			int top = dashboardsButton.getAbsoluteTop() + dashboardsButton.getOffsetHeight();
-			pp.setPopupPosition(left, top);
+			projectListPopup.setPopupPosition(left, top);
 			int width = dashboardsButton.getOffsetWidth();
-			pp.setWidth(Integer.toString(width) + "px");
-			pp.show();
+			projectListPopup.setWidth(Integer.toString(width) + "px");
+			projectListPopup.show();
 		}
-		pp.hide();
+		projectListPopup.hide();
 	}
 	
 	@UiHandler("authenticationButton")
@@ -191,51 +193,52 @@ public class ManagementConsole extends Composite {
 	}
 	
 	public void handleProjectNames(JsArray<ProjectNames> ProjectNames){
-		pp.clear();
+		projectListPopup.clear();
 		projectCount = ProjectNames.length();
 		iconPanel.projectIconsFlowPanel.clear();
 		if(projectCount != 0){
 			FlowPanel FP = new FlowPanel();
 			for(int i = 0; i < ProjectNames.length(); i++){
-				final Label testLabel = new Label(ProjectNames.get(i).getName());
-				testLabel.setStyleName(style.popupLabel());
-				testLabel.addMouseOverHandler(new MouseOverHandler(){
-					public void onMouseOver(MouseOverEvent event){
-						testLabel.setStyleName(style.popupLabelActive());
-					}
-				});
-				testLabel.addMouseOutHandler(new MouseOutHandler(){
-					public void onMouseOut(MouseOutEvent event){
-						testLabel.setStyleName(style.popupLabel());
-					}
-				});
-				testLabel.addClickHandler(new ClickHandler() {
-			        public void onClick(ClickEvent event) {
-			        	mainDeckPanel.clear();
-			    		navigationMenuPanel.clear();
-			        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText(), managementCon); 
-			        	if(pp.isShowing()){
-			    			dashboardsButton.setStyleName(style.topDashboardButton());
-			    			pp.hide();
-			    		}   	
-			        }
-			     });
-				FP.add(testLabel);
-				//Add to the icon panel
-				iconPanel.addProjectIcon(ProjectNames.get(i).getName());
+				if( !ProjectNames.get(i).getName().equals(deletedProject)){
+					final Label testLabel = new Label(ProjectNames.get(i).getName());
+					testLabel.setStyleName(style.popupLabel());
+					testLabel.addMouseOverHandler(new MouseOverHandler(){
+						public void onMouseOver(MouseOverEvent event){
+							testLabel.setStyleName(style.popupLabelActive());
+						}
+					});
+					testLabel.addMouseOutHandler(new MouseOutHandler(){
+						public void onMouseOut(MouseOutEvent event){
+							testLabel.setStyleName(style.popupLabel());
+						}
+					});
+					testLabel.addClickHandler(new ClickHandler() {
+				        public void onClick(ClickEvent event) {
+				        	mainDeckPanel.clear();
+				    		navigationMenuPanel.clear();
+				        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText(), managementCon); 
+				        	if(projectListPopup.isShowing()){
+				    			dashboardsButton.setStyleName(style.topDashboardButton());
+				    			projectListPopup.hide();
+				    		}   	
+				        }
+				     });
+					FP.add(testLabel);
+					iconPanel.addProjectIcon(ProjectNames.get(i).getName());
+				}
 			}
-			pp.add(FP);
+			projectListPopup.add(FP);
 			mainDeckPanel.add(iconPanel);
 			mainDeckPanel.showWidget(0);
 		} else {
 			
 			deployNewButton.click();
 		}
-		pp.setStyleName(style.dashboardsPopup());
+		projectListPopup.setStyleName(style.dashboardsPopup());
 	}
 	
 	public void handleUserInformation(UserInformation userInfo){
-		if(userInfo.isAuthenticated()){
+		if( userInfo.isAuthenticated() ){
 			loggedInUserButton.setText("Logged in as: " + userInfo.getUsername());
 			loggedInUserButton.setVisible(true);
 			deployNewButton.setVisible(true);
@@ -257,13 +260,13 @@ public class ManagementConsole extends Composite {
 		mainDeckPanel.clear();
 		titleBarLabel.setText("");
 		navigationMenuPanel.clear();
-		loginPanel = new Login(mainDeckPanel, this);
-		mainDeckPanel.add(loginPanel);
-		mainDeckPanel.showWidget(0);
 		loggedInUserButton.setVisible(false);
 		authenticationButton.setVisible(false);
 		dashboardsButton.setVisible(false);
 		deployNewButton.setVisible(false);
+		loginPanel = new Login(mainDeckPanel, this);
+		mainDeckPanel.add(loginPanel);
+		mainDeckPanel.showWidget(0);
 	}
 	
 	public final native JsArray<ProjectNames> asArrayOfProjectNames(JavaScriptObject jso) /*-{
