@@ -122,8 +122,9 @@ public class ManagementConsole extends Composite {
 	}
 	
 	public void onProjectDelete(String deletedProject){
-		createDashboardsPopup();
 		this.deletedProject = deletedProject;
+		createDashboardsPopup();
+		iconPanel.removeProjectIcon(deletedProject);
 		mainDeckPanel.clear();
 		navigationMenuPanel.clear();
 		titleBarLabel.setText("");
@@ -202,16 +203,32 @@ public class ManagementConsole extends Composite {
 				if( !ProjectNames.get(i).getName().equals(deletedProject)){
 					final Label testLabel = new Label(ProjectNames.get(i).getName());
 					testLabel.setStyleName(style.popupLabel());
+					if( i == ProjectNames.length() - 1 ){
+						testLabel.addStyleName(style.lastLabel());	
+						testLabel.addMouseOverHandler(new MouseOverHandler(){
+							public void onMouseOver(MouseOverEvent event){
+								testLabel.setStyleName(style.popupLabelActive());
+								testLabel.addStyleName(style.lastLabel());
+							}
+						});
+						testLabel.addMouseOutHandler(new MouseOutHandler(){
+							public void onMouseOut(MouseOutEvent event){
+								testLabel.setStyleName(style.popupLabel());
+								testLabel.addStyleName(style.lastLabel());
+							}
+						});
+					} else {
 					testLabel.addMouseOverHandler(new MouseOverHandler(){
 						public void onMouseOver(MouseOverEvent event){
-							testLabel.setStyleName(style.popupLabelActive());
-						}
-					});
-					testLabel.addMouseOutHandler(new MouseOutHandler(){
-						public void onMouseOut(MouseOutEvent event){
-							testLabel.setStyleName(style.popupLabel());
-						}
-					});
+								testLabel.setStyleName(style.popupLabelActive());
+							}
+						});
+						testLabel.addMouseOutHandler(new MouseOutHandler(){
+							public void onMouseOut(MouseOutEvent event){
+								testLabel.setStyleName(style.popupLabel());
+							}
+						});
+					}
 					testLabel.addClickHandler(new ClickHandler() {
 				        public void onClick(ClickEvent event) {
 				        	mainDeckPanel.clear();

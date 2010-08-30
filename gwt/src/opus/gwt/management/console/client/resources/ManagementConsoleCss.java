@@ -28,5 +28,6 @@ public class ManagementConsoleCss extends Widget {
 	    String topDashboardButton();
 	    String projectIcon();
 	    String projectIconActive();
+	    String lastLabel();
 	  }
 }

@@ -193,7 +193,6 @@ public class applicationDeployer extends Composite {
 			
 			String username = projectOptions.usernameTextBox.getValue();
 			String email = projectOptions.emailTextBox.getValue();
-			Boolean admin = projectOptions.adminCheckBox.getValue();
 			
 			String databaseEngine = databaseOptions.dbengineListBox.getItemText(databaseOptions.dbengineListBox.getSelectedIndex());
 			String databaseName = databaseOptions.nameTextBox.getValue();
@@ -221,12 +220,6 @@ public class applicationDeployer extends Composite {
 			}
 			
 			html += "<p><b>Django Admin Interface:</b>";
-
-			if (admin == true) {
-				html += "Yes</p>";
-			} else {
-				html += "No</p>";
-			}
 			
 			if (!databaseEngine.contains("sqlite")){
 				html += "<p><b>Database Engine:</b> " + databaseEngine + "</p>";

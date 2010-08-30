@@ -170,6 +170,9 @@
 	cursor: hand;
 	background: orange;	
 }
+.lastLabel {
+	border-bottom: none;
+}
 .loginPanel{
 	color: black;
 	margin: 15% 0% 0% 30%;

@@ -16,6 +16,8 @@
 
 package opus.gwt.management.console.client;
 
+import java.util.HashMap;
+
 import opus.gwt.management.console.client.dashboard.ProjectDashboard;
 import opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
 
@@ -36,8 +38,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IconPanel extends Composite {
-
-	@UiField ManagementConsoleStyle style;
 	
 	private static IconPanelUiBinder uiBinder = GWT
 			.create(IconPanelUiBinder.class);
@@ -45,16 +45,19 @@ public class IconPanel extends Composite {
 	interface IconPanelUiBinder extends UiBinder<Widget, IconPanel> {
 	}
 	
-	
 	private ManagementConsole console;
 	private ProjectDashboard projectDashboard;
+	private HashMap<String, Integer> iconMap;
 	
 	@UiField ScrollPanel iconScrollPanel;
 	@UiField FlowPanel projectIconsFlowPanel;
+	@UiField ManagementConsoleStyle style;
 
+	
 	public IconPanel(ManagementConsole console) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.console = console;
+		iconMap = new HashMap<String, Integer>();
 	}
 	
 	public void addProjectIcon(String name) {
@@ -62,7 +65,6 @@ public class IconPanel extends Composite {
 		project.setHTML("<img src='/gwt/projectdefaulticon.png' width='128' height='128'/><br/>"+name);
 		
 		final String projectName = name;
-		
 		
 		final FocusPanel testLabel = new FocusPanel();
 		testLabel.add(project);
@@ -82,14 +84,14 @@ public class IconPanel extends Composite {
 	        	console.mainDeckPanel.clear();
 	        	console.navigationMenuPanel.clear();
 	        	projectDashboard = new ProjectDashboard(console.titleBarLabel, console.navigationMenuPanel, console.mainDeckPanel, projectName, console); 
-
-	        	/*if(pp.isShowing()){
-	    			dashboardsButton.setStyleName(style.topDashboardButton());
-	    			pp.hide();
-	    		} */ 
 	        	testLabel.setStyleName(style.projectIcon());
 	        }
 	     });
 		projectIconsFlowPanel.add(testLabel);	
+		iconMap.put(name, projectIconsFlowPanel.getWidgetIndex(testLabel));
+	}
+	
+	public void removeProjectIcon(String name){
+		projectIconsFlowPanel.remove(iconMap.remove(name));
 	}
 }
