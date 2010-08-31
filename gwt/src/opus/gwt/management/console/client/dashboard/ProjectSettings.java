@@ -15,6 +15,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -44,7 +45,7 @@ public class ProjectSettings extends Composite {
 	private ManagementConsole managementCon;
 	private ProjectDashboard projectDashboard;
 	private boolean hasSettings;
-	private TextBox textboxes[];
+	private ArrayList<String> textboxes;
 	
 	@UiField FlexTable formContainer;
 	@UiField FormPanel optionsForm;
@@ -61,7 +62,7 @@ public class ProjectSettings extends Composite {
 		this.managementCon = manCon;
 		this.projectDashboard = projectDashboard;
 		this.optionsForm = new FormPanel();
-		//this.textboxes = new 
+		this.textboxes = new ArrayList<String>();
 		setupOptionsForm();
 	}
 	
@@ -95,6 +96,7 @@ public class ProjectSettings extends Composite {
 				if (parts[2].equals("string")){
 					TextBox setting = new TextBox();
 					setting.setName(apps[i]+"-"+parts[0]);
+					setting.getElement().setId(apps[i]+parts[0]);
 					//Check default value
 					if (parts.length > 3){
 						//Window.alert("gotcha");
@@ -107,7 +109,7 @@ public class ProjectSettings extends Composite {
 					setting.setStyleName("SettingInput");
 					formContainer.setWidget(row, 0,settingLabel);
 					formContainer.setWidget(row++, 1,setting);
-					
+					textboxes.add(setting.getElement().getId());
 					//textboxes[textboxes.length] = setting;
 					//textboxes.add(setting);
 				} else if(parts[2].equals("int")){
@@ -118,13 +120,14 @@ public class ProjectSettings extends Composite {
 						setting.setText(parts[3]);
 					}
 					setting.setName(apps[i]+"-"+parts[0]);
+					setting.getElement().setId(apps[i]+parts[0]);
 					Label settingLabel = new Label();
 					settingLabel.setText(parts[1]);
 					settingLabel.addStyleName("SettingLabel");
 					setting.setStyleName("SettingInput");
 					formContainer.setWidget(row, 0,settingLabel);
 					formContainer.setWidget(row++, 1,setting);
-					//textboxes[textboxes.length] = setting;
+					textboxes.add(setting.getElement().getId());
 					//textboxes.add(setting);
 				} else if(parts[2].equals("choice")){
 					ListBox setting = new ListBox();
@@ -190,14 +193,19 @@ public class ProjectSettings extends Composite {
 	}
 	
 	private boolean validateForm(){
-		for(TextBox t : textboxes){
-			if (t.getVisibleLength() == 0) {
+		for(String t : textboxes){
+			//Window.alert(getValue(t));
+			/*if (DOM.getElementById(t).getInnerText().length() == 0) {
 				Window.alert("All settings are required.");
 				return false;
-			}
+			}*/
 		}
 		return true;
 	}
+	
+	public final native String getValue(String id) /*-{ 
+		alert("hello");
+		return document.getElementById(id).value; }-*/;
 	
 	@UiHandler("SaveButton")
 	void handleSaveButton(ClickEvent event){
