@@ -18,6 +18,8 @@ package opus.gwt.management.console.client.dashboard;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ServerCommunicator;
+import opus.gwt.management.console.client.overlays.ProjectInformation;
+import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;

@@ -14,45 +14,16 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
-.titleBar {
-	padding: 0.5% 0% 0% 1%;
-    color: white;
-    font-size: 3.4em;
-    width: 100%;
-    height: 100%;
-    margin: 0%;
-    text-shadow:10px 10px 5px #0F0F0F;
-    font-family: "Droid Serif";
-}
-.navigationMenu {
-	width: 84%;
-	height: 100%;
-	margin-top: 2%;
-	margin-left: 12%;
-	margin-right: auto;
-	margin-bottom: auto;
-	min-width: 90%;
-}
-.navigationLabel {
-	width: 100%;
-	color: white;
-	padding: 0.45em 0.45em 0.45em 0.5em;
-	font-size: 1em;
-	word-wrap: break-word;
-	min-width: 90%;
-}
-.navigationLabelActive {
-	width: 100%;
-	color: white;
-	background: orange;
-	padding: 0.45em 0.45em 0.45em 0.5em;
-	font-size: 1em;
-	border-radius: 5px 0 0 5px;
-	-moz-border-radius: 5px 0 0 5px;
-	word-wrap: break-word;
-	min-width: 80%;
-}
-.mainDeckPanel{
-	width: 97.60%;
-	height: 96.50%;
-}
+package opus.gwt.management.console.client.overlays;
+
+import com.google.gwt.core.client.JavaScriptObject;
+
+
+public class ModelProperties extends JavaScriptObject {                              // [1]
+  // Overlay types always have protected, zero argument constructors.
+  protected ModelProperties() {}                                              // [2]
+
+  // JSNI methods to get stock data.
+  public final native JavaScriptObject getFields() /*-{ return this.fields; }-*/; // [3]
+ 
+} 

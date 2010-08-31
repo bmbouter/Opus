@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ServerCommunicator;
+import opus.gwt.management.console.client.overlays.DatabaseOptionsData;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -48,7 +49,7 @@ public class DatabaseOptions extends Composite {
 
 	final String dbOptionsURL = "/json/database/?callback=";
 	
-	private applicationDeployer appDeployer;
+	private ProjectDeployer appDeployer;
 	private HashMap<String, String> dbOptions;
 	private boolean optionsFlag;
 	private JSVariableHandler JSVarHandler;
@@ -65,7 +66,7 @@ public class DatabaseOptions extends Composite {
 	@UiField Button previousButton;	
 	@UiField DockLayoutPanel databaseOptionsPanel;
 	
-	public DatabaseOptions(applicationDeployer appDeployer, ServerCommunicator serverComm) {
+	public DatabaseOptions(ProjectDeployer appDeployer, ServerCommunicator serverComm) {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
 		postgresAutoConfig = false;
@@ -147,7 +148,7 @@ public class DatabaseOptions extends Composite {
 		}
 	}
 	
-	public void handleDBOptions(DBOptionsData dbOptionsData){
+	public void handleDBOptions(DatabaseOptionsData dbOptionsData){
 		optionsFlag = false;
 		
 		String[] options = dbOptionsData.getAllowedDatabases().split(",");
@@ -160,7 +161,7 @@ public class DatabaseOptions extends Composite {
 		setupDBOptions();
 	}
 
-	public final native DBOptionsData asArrayOfDBOptionsData(JavaScriptObject jso) /*-{
+	public final native DatabaseOptionsData asArrayOfDBOptionsData(JavaScriptObject jso) /*-{
 		return jso;
 	}-*/;
 }

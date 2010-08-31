@@ -2,6 +2,7 @@ package opus.gwt.management.console.client.dashboard;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ManagementConsole;
+import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 import opus.gwt.management.console.client.resources.ProjectDashboardCss.ProjectDashboardStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -209,7 +210,6 @@ public class ProjectSettings extends Composite {
 		optionsForm.submit();
 	}
 	public final native ProjectSettingsData asProjectSettings(JavaScriptObject jso) /*-{
-		alert("ssss");
 		return jso;
 	}-*/;
 

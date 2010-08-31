@@ -17,7 +17,8 @@
 package opus.gwt.management.console.client;
 
 import opus.gwt.management.console.client.dashboard.ProjectDashboard;
-import opus.gwt.management.console.client.deployer.applicationDeployer;
+import opus.gwt.management.console.client.deployer.ProjectDeployer;
+import opus.gwt.management.console.client.overlays.ProjectNames;
 import opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -59,7 +60,7 @@ public class ManagementConsole extends Composite {
 	private final String checkLoginURL = "/json/username/?a&callback=";
 	private final String projectsURL = "/json/?a&callback=";
 	
-	private applicationDeployer appDeployer;
+	private ProjectDeployer appDeployer;
 	private ProjectDashboard projectDashboard;
 	private Login loginPanel;
 	private IconPanel iconPanel;
@@ -138,7 +139,7 @@ public class ManagementConsole extends Composite {
 	void handleDeployNewProjectClick(ClickEvent event){
 		mainDeckPanel.clear();
 		navigationMenuPanel.clear();
-		appDeployer = new applicationDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel, managementCon);
+		appDeployer = new ProjectDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel, managementCon);
 	}
 	
 	@UiHandler("dashboardsButton")

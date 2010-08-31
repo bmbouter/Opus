@@ -35,5 +35,9 @@ public class JSVariableHandler {
 	public native String getProjectToken()/*-{
 		return $wnd.projectToken;
 	}-*/;
+	
+	public native String getBuildProjectURL()/*-{
+		return $wnd.buildProjectURL;
+	}-*/;
 
 }
