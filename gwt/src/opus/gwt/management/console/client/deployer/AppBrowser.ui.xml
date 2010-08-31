@@ -6,14 +6,14 @@
 	<g:HTMLPanel ui:field="topHTMLPanel" styleName='{style.AppBrowser}'>
 		<g:Label ui:field="allAppsLabel" styleName="{style.navigationLabel1}">All</g:Label>
 		<g:Label ui:field="featuredAppsLabel" styleName="{style.navigationLabel2}">Featured</g:Label>
-			<div class="AppList">
-				<div class="ListGrid" id="ListGrid">
+			<div class="{style.AppList}">
+				<div class="{style.ListGrid}" id="ListGrid">
 					<g:DeckPanel ui:field="mainDeckPanel">
 					
 					</g:DeckPanel>			
 				</div>
 			</div>
-			<div class="AppInfo">
+			<div class="{style.AppInfo}">
 				<g:HTML ui:field="AppInfo" styleName='{style.appInfo}'></g:HTML>
 				<br/>
 				<g:VerticalPanel ui:field="VersionInfo" styleName='{style.appInfo}'>
@@ -22,7 +22,7 @@
 				<g:Button ui:field="AppActionButton" styleName='{style.AppActionButtonHidden}'>
 				</g:Button>
 			</div>
-			<div class="DeployList">
+			<div class="{style.DeployList}">
 				<g:FlowPanel ui:field="DeployListFlowPanel" styleName='{style.DeployListFlowPanel}'>
 					
 				</g:FlowPanel>
