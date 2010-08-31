@@ -73,34 +73,20 @@ public class AppBrowser extends Composite {
 	private boolean featuredListLoaded;
 	private boolean gridPopulationDelayed;
 	private JsArray<AppData> applicationData;
+	private AppIcon currentSelection;
+	private Boolean isInDeployList;
+	private ArrayList<AppIcon> deployList;
 	
-	@UiField
-	HTMLPanel topHTMLPanel;
-	@UiField 
-
-	VerticalPanel VersionInfo;
-	@UiField
-	HTML AppInfo;
-	@UiField
-	Button AppActionButton;
-	@UiField
-	Button DeployButton;
-	@UiField
-	Button RemoveButton;
-	@UiField
-	FlowPanel DeployListFlowPanel;
-	@UiField
-	DeckPanel mainDeckPanel;
-	@UiField 
-	Label allAppsLabel;
-	@UiField 
-	Label featuredAppsLabel;
+	@UiField VerticalPanel VersionInfo;
+	@UiField HTML AppInfo;
+	@UiField Button AppActionButton;
+	@UiField Button DeployButton;
+	@UiField Button RemoveButton;
+	@UiField FlowPanel DeployListFlowPanel;
+	@UiField DeckPanel mainDeckPanel;
+	@UiField Label allAppsLabel;
+	@UiField Label featuredAppsLabel;
 	@UiField AppBrowserStyle style;
-	
-	AppIcon currentSelection;
-	Boolean isInDeployList;
-	
-	ArrayList<AppIcon> deployList;
 	
 	
 	public AppBrowser(ProjectDeployer appDeployer, ServerCommunicator jsonCom) {
@@ -122,8 +108,8 @@ public class AppBrowser extends Composite {
 		mainDeckPanel.add(appFlowPanel);
 		mainDeckPanel.add(featuredAppFlowPanel);
 		mainDeckPanel.showWidget(1);
-		allAppsLabel.setStyleName(style.navigationLabel1());
-		featuredAppsLabel.setStyleName(style.navigationLabel2Active());
+		allAppsLabel.setStyleName(style.allAppsLabel());
+		featuredAppsLabel.setStyleName(style.featuredAppsLabelActive());
 		navigationselection = 2;
 		featuredIcons = new ArrayList<AppIcon>();
 		allIcons = new ArrayList<AppIcon>();
@@ -267,8 +253,8 @@ public class AppBrowser extends Composite {
 
 	@UiHandler("allAppsLabel")
 	void handleAllAppsLabel(ClickEvent event){
-		allAppsLabel.setStyleName(style.navigationLabel1Active());
-		featuredAppsLabel.setStyleName(style.navigationLabel2());
+		allAppsLabel.setStyleName(style.allAppsLabelActive());
+		featuredAppsLabel.setStyleName(style.featuredAppsLabel());
 		mainDeckPanel.showWidget(0);
 		navigationselection = 1;
 		for (int i=0; i<featuredIcons.size(); i++){
@@ -282,8 +268,8 @@ public class AppBrowser extends Composite {
 	}
 	
 	public void handleFeaturedAppsLabelFunction(){
-		allAppsLabel.setStyleName(style.navigationLabel1());
-		featuredAppsLabel.setStyleName(style.navigationLabel2Active());
+		allAppsLabel.setStyleName(style.allAppsLabel());
+		featuredAppsLabel.setStyleName(style.featuredAppsLabelActive());
 		mainDeckPanel.showWidget(1);
 		navigationselection = 2;
 		for (int i=0; i<featuredIcons.size(); i++){

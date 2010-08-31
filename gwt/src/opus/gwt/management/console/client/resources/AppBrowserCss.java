@@ -5,14 +5,14 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AppBrowserCss extends Widget {
 	public interface AppBrowserStyle extends CssResource {
-		String navigationLabel1();
-		String navigationLabel2Active();
+		String featuredAppsLabel();
+		String featuredAppsLabelActive();
 		String appIcon();
 		String appIconSmall();
 		String appIconActive();
 		String AppActionButton();
 		String appIconSmallActive();
-		String navigationLabel1Active();
-		String navigationLabel2();
+		String allAppsLabelActive();
+		String allAppsLabel();
 	}
 }

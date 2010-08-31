@@ -62,7 +62,7 @@ public class IconPanel extends Composite {
 	
 	public void addProjectIcon(String name) {
 		HTML project = new HTML();
-		project.setHTML("<img src='/gwt/projectdefaulticon.png' width='128' height='128'/><br/>"+name);
+		project.setHTML("<img src='/gwt/projectdefaulticon.png' width='64' height='64'/><br/>"+name);
 		
 		final String projectName = name;
 		
