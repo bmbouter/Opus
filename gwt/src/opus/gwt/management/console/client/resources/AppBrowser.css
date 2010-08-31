@@ -1,157 +1,151 @@
-/*
-body {font-family: sans-serif; font-size:13px}
-
-.AppList {
-	float: left;
-	width: 55%;	
+.AppActionButton {
+	width: 100px;
+	height: 50px;
+}
+.important {
+	font-weight: bold;
+}
+.appBrowser {
+	width: 96%;
+	height: 60%;
+	margin:	 2% 1% 1% 1%;
+	border: solid grey 2px;
+	padding: 10px;
+	-webkit-border-radius: 10px;
+   	-moz-border-radius: 10px;
+   	background: white;
 }
 .appInfo {
 	float: left;
 	width: 45%;
 }
-.AppIcon {
-	margin-left: auto;
-	margin-right: auto;
-	float: left;
+.AppActionButtonHidden {
+	display: none;
+}
+.DeployButtonHidden {
+	bottom: 15px;
+	right: 10px;
+	width: 60px;
+	height: 40px;
+	float: right;
+}
+.RemoveButton {
+	float: right;
+	bottom: 70px;
+	right: 10px;
+	width: 60px;
+	height: 40px;
+	color: red;
+}
+.DeployListFlowPanel {
+	max-height: 100px;
+	width: 98%;
+}
+.RootLayoutPanel{
+	margin: 0;
+	padding: 0;
+}
+.allAppsLabel {
+	background: #CED5F5;
+	color: azure;
 	width: 100px;
-	padding: 10px;
-	align: left;	
+	float:left;
+	padding: 3px;
+	margin-left: 2px;
+	margin-top: 10px;
+	-webkit-border-radius: 10px 10px 0 0;
+    -moz-border-radius: 10px 10px 0 0; 
+    text-align: center;
+    cursor: pointer;
+    cursor: hand;
 }
-.ListGrid {
-	height: 350px;
-	overflow-x: hidden;
-	overflow-y: scroll;
+.featuredAppsLabel {
+	margin-top: 10px;
+	margin-left: 40px;
+	background: #CED5F5;
+	color: azure;
+	width: 100px;
+	float:left;
+	padding: 3px;
+	-webkit-border-radius: 10px 10px 0 0;
+    -moz-border-radius: 10px 10px 0 0;
+    text-align: center;
+    cursor: pointer;
+    cursor: hand;
 }
-
-
+.allAppsLabelActive {
+	margin-top: 10px;
+	margin-left: 2px;
+	background: grey;
+	color: azure;
+	width: 100px;
+	float:left;
+	padding: 3px;
+	-webkit-border-radius: 10px 10px 0 0;
+    -moz-border-radius: 10px 10px 0 0;
+    text-align: center;
+}
+.featuredAppsLabelActive {
+	margin-left: 40px;
+	margin-top: 10px;
+	background: grey;
+	color: azure;
+	width: 100px;
+	float: left;
+	padding: 3px;
+	-webkit-border-radius: 10px 10px 0 0;
+   	-moz-border-radius: 10px 10px 0 0;
+   	text-align: center;
+}
 .DeployList {
 	margin-left: auto;
 	margin-right: auto;
-	width: 98%;
-	height: 108px;
+	width: 96.5%;
+	margin: 2% 1% 2% 1%;
+	height: 120px;
 	border: solid #F5CC7F 2px;
-	margin-left: 0px;
-	margin-top: 360px;
 	overflow-x: hidden;
 	overflow-y: hidden;
-	position: relative;
 	padding: 10px;
 	background: #F5CC7F;
 	border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
+	border-bottom: 2px solid #AD905A;
+	border-right: 2px solid #AD905A;
 }
-
-.DeployButton {
-	position: absolute;
-	bottom: 15px;
-	right: 10px;
-	width: 60px;
-	height: 40px;
+.AppList {
+	float: left;
+	width: 65%;	
+	height: 100%;
 }
-.RemoveButton {
-	position: absolute;
-	bottom: 70px;
-	right: 10px;
-	width: 60px;
-	height: 60px;
+.AppInfo {
+	width: 30%;
+	height: 100%;
+	float: left;
 }
-.DeployButtonHidden {
-	display: none;	
+.ListGrid {
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: scroll;
 }
-.navigationLabel1 {
-	margin-top: -34px;
-	margin-left: 124px;
-	background: #CED5F5;
-	border: none;
-	color: grey;
-	width: 100px;
-	float:left;
-	padding: 3px;
-	-webkit-border-radius: 10px 10px 0 0;
-    -moz-border-radius: 10px 10px 0 0;
-	text-align: center;
-	cursor: pointer;
+.innerSubMainPanel {
+	border: 4px solid orange;
+	margin-left: 0%;
+	margin-top: 0.5%;
+	margin-right: 0.5%;
+	magin-bottom: 0.5%;
+	height: 100%;
+	width: 100%; 
+	background: white;
+	border-radius: 10px;
+	-webkt-border-radius: 10px;
+	-moz-border-radius: 10px;
+	font-size: 0.8em;
 }
-.navigationLabel2 {
-	margin-top: -34px;
-	margin-left: 10px;
-	background: #CED5F5;
-	border: none;
-	color: grey;
-	width: 100px;
-	float:left;
-	padding: 3px;
-	-webkit-border-radius: 10px 10px 0 0;
-    -moz-border-radius: 10px 10px 0 0;
-	text-align: center;
-	cursor: pointer;
-}
-.navigationLabel1Active {
-	margin-top: -34px;
-	margin-left: 124px;
-	background: grey;
-	border: none;
-	color: azure;
-	width: 100px;
-	float:left;
-	padding: 3px;
-	-webkit-border-radius: 10px 10px 0 0;
-    -moz-border-radius: 10px 10px 0 0;
-    text-align: center;
-    cursor: pointer;
-}
-.navigationLabel2Active {
-	margin-top: -34px;
-	margin-left: 10px;
-	background:  grey;
-	border: none;
-	color: azure;
-	width: 100px;
-	float:left;
-	padding: 3px;
-	-webkit-border-radius: 10px 10px 0 0;
-    -moz-border-radius: 10px 10px 0 0;
-    text-align: center;
-    cursor: pointer;
-}
-.AppBrowser {
-	width: 880px;
-	height: 400px;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 20px;
-	border: solid orange 2px;
-	padding: 10px;
-	-webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    background: white;
-}
-.SettingsAppName{
-	font-family:sans-serif;
-	font-size: 20px;
-	padding-bottom: 10px;
-	padding-top: 10px;
-}
-.SettingLabel{
-	float:left;
-}
-.SettingInput{
-	float:left;
-}
-.appActionButtonHidden {
-	display: none;
-}
-.deployListFlowPanel {
-	max-height: 100px;
-	width: 100%;	
-}*/
-.AppActionButton {
-	position: absolute;
-	bottom: 210px;
-	right: 70px;
-	width: 100px;
-	height: 50px;
+img {
+	width: 64px;
+	height: 64px;
 }
 .appIcon {
 	color: black;	
@@ -185,6 +179,7 @@ body {font-family: sans-serif; font-size:13px}
 	border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
+        color: white;
 }
 .appIconSmall {
 	color: black;	
@@ -192,8 +187,8 @@ body {font-family: sans-serif; font-size:13px}
 	cursor: pointer;
 	cursor: hand;
 	float: left;
-	max-width: 100px;
 	min-width: 100px;
+	height: 100px;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	padding-left: 5px;
@@ -201,16 +196,21 @@ body {font-family: sans-serif; font-size:13px}
 	border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
+	background: white;
+	margin: 0 10px 0 0;
+	border: 1px solid #f0f0f0;
+	border-bottom: 2px solid #ccc;
+	border-right: 2px solid #ccc;
 }
 .appIconSmallActive{
-	color: black;	
+	color: white;	
 	text-align: center;
 	cursor: pointer;
 	cursor: hand;
 	background: grey;
 	float: left;
-	max-width: 100px;
 	min-width: 100px;
+	height: 100px;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	padding-left: 5px;
@@ -218,133 +218,10 @@ body {font-family: sans-serif; font-size:13px}
 	border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
+	border: 1px solid #f0f0f0;
+	border-bottom: 2px solid #ccc;
+	border-right: 2px solid #ccc;
+	margin: 0 10px 0 0;	
 }
-.important {
-	font-weight: bold;
-}
-.AppBrowser {
-	width: 100%;
-	height: 100%;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 20px;
-	border: solid orange 2px;
-	padding: 10px;
-	-webkit-border-radius: 10px;
-      	-moz-border-radius: 10px;
-      	background: white;
-}
-.AppInfo {
-	padding-left: 20px;
-}
-.appInfo {
-	float: left;
-	width: 45%;
-}
-.AppActionButtonHidden {
-	display: none;
-}
-.DeployButtonHidden {
-	position: absolute;
-	bottom: 15px;
-	right: 10px;
-	width: 60px;
-	height: 40px;	
-}
-.RemoveButton {
-	position: absolute;
-	bottom: 70px;
-	right: 10px;
-	width: 60px;
-	height: 40px;
-	color: red;
-}
-.DeployListFlowPanel {
-	max-height: 100px;
-	width: 100%;
-	
-}
-.RootLayoutPanel{
-	margin: 0;
-	padding: 0;
-}
-.navigationLabel1 {
-	margin-top: -37px;
-	margin-left: 10px;
-	background: #CED5F5;
-	color: azure;
-	width: 100px;
-	float:left;
-	padding: 3px;
-	-webkit-border-radius: 10px 10px 0 0;
-    -moz-border-radius: 10px 10px 0 0; 
-    text-align: center;
-    cursor: pointer;
-    cursor: hand;
-}
-.navigationLabel2 {
-	margin-top: -37px;
-	margin-left: 120px;
-	background: #CED5F5;
-	color: azure;
-	width: 100px;
-	float:left;
-	padding: 3px;
-	-webkit-border-radius: 10px 10px 0 0;
-    -moz-border-radius: 10px 10px 0 0;
-    text-align: center;
-    cursor: pointer;
-    cursor: hand;
-}
-.navigationLabel1Active {
-	margin-top: -37px;
-	margin-left: 10px;
-	background: orange;
-	color: azure;
-	width: 100px;
-	float:left;
-	padding: 3px;
-	-webkit-border-radius: 10px 10px 0 0;
-    -moz-border-radius: 10px 10px 0 0;
-    text-align: center;
-}
-.navigationLabel2Active {
-	margin-top: -37px;
-	margin-left: 120px;
-	background: orange;
-	color: azure;
-	width: 100px;
-	float:left;
-	padding: 3px;
-	-webkit-border-radius: 10px 10px 0 0;
-   	-moz-border-radius: 10px 10px 0 0;
-   	text-align: center;
-}
-.DeployList {
-	margin-left: auto;
-	margin-right: auto;
-	width: 98%;
-	height: 108px;
-	border: solid #F5CC7F 2px;
-	margin-left: 0px;
-	margin-top: 360px;
-	overflow-x: hidden;
-	overflow-y: hidden;
-	position: relative;
-	padding: 10px;
-	background: #F5CC7F;
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-}
-.AppList {
-	float: left;
-	width: 55%;	
-	height: 82%;
-}
-.ListGrid {
-	height: 95%;
-	overflow-x: hidden;
-	overflow-y: scroll;
-}
+
 

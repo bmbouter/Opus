@@ -257,7 +257,7 @@ public class ManagementConsole extends Composite {
 	
 	public void handleUserInformation(UserInformation userInfo){
 		if( userInfo.isAuthenticated() ){
-			loggedInUserButton.setText("Logged in as: " + userInfo.getUsername());
+			loggedInUserButton.setText(userInfo.getUsername());
 			loggedInUserButton.setVisible(true);
 			deployNewButton.setVisible(true);
 			dashboardsButton.setVisible(true);

@@ -34,7 +34,7 @@ public class ProjectSettings extends Composite {
 	private static ProjectSettingsUiBinder uiBinder = GWT
 	.create(ProjectSettingsUiBinder.class);
 	
-	private final String optionsUrl = "deployments/projectName/confapps";
+	private final String optionsUrl = "/deployments/projectName/confapps";
 	private String projectName;
 	private JSVariableHandler JSVarHandler;
 	private boolean active;

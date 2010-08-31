@@ -3,9 +3,10 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="../resources/AppBrowser.css" type="opus.gwt.management.console.client.resources.AppBrowserCss.AppBrowserStyle"/>
 
-	<g:HTMLPanel ui:field="topHTMLPanel" styleName='{style.AppBrowser}'>
-		<g:Label ui:field="allAppsLabel" styleName="{style.navigationLabel1}">All</g:Label>
-		<g:Label ui:field="featuredAppsLabel" styleName="{style.navigationLabel2}">Featured</g:Label>
+	<g:HTMLPanel styleName='{style.innerSubMainPanel}'>
+		<g:Label ui:field="featuredAppsLabel" styleName="{style.featuredAppsLabel}">Featured</g:Label>
+		<g:Label ui:field="allAppsLabel" styleName="{style.allAppsLabel}">All</g:Label>
+		<g:HTMLPanel styleName='{style.appBrowser}'>
 			<div class="{style.AppList}">
 				<div class="{style.ListGrid}" id="ListGrid">
 					<g:DeckPanel ui:field="mainDeckPanel">
@@ -22,14 +23,14 @@
 				<g:Button ui:field="AppActionButton" styleName='{style.AppActionButtonHidden}'>
 				</g:Button>
 			</div>
-			<div class="{style.DeployList}">
-				<g:FlowPanel ui:field="DeployListFlowPanel" styleName='{style.DeployListFlowPanel}'>
-					
-				</g:FlowPanel>
-				<g:Button ui:field="RemoveButton" styleName='{style.RemoveButton}' text="Remove"/>
-				<g:Button ui:field="DeployButton" styleName='{style.DeployButtonHidden}' text="Next">
-				</g:Button>
-			</div>
+		</g:HTMLPanel>
+		<div class="{style.DeployList}">
+			<g:FlowPanel ui:field="DeployListFlowPanel" styleName='{style.DeployListFlowPanel}'>
+				
+			</g:FlowPanel>
+			<g:Button ui:field="RemoveButton" styleName='{style.RemoveButton}' text="Remove"/>
+			<g:Button ui:field="DeployButton" styleName='{style.DeployButtonHidden}' text="Next">
+			</g:Button>
+		</div>
 	</g:HTMLPanel>
-
 </ui:UiBinder> 
