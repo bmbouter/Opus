@@ -250,43 +250,7 @@ public class AppBrowser extends Composite {
 			RemoveButton.setEnabled(false);
 		}
 	}
-	/*
-	@UiHandler("DeployButton")
-	void handleDeployButton(ClickEvent event){	
-		  if (deployList.size() > 0) {
-			  VerticalPanel formContainerPanel = new VerticalPanel();
-			  this.buildForm.add(formContainerPanel);
-			  ListBox versions = new ListBox();
-			  versions.setName("versions");
-			  formContainerPanel.add(versions);
-			  //check how many were manually added
-			  int count = 0;
-			  for(int i = 0; i < deployList.size(); i++){
-				  versions.addItem(deployList.get(i).getPk());
-			  }
-			  TextBox name = new TextBox();
-			  name.setName("name");
-			  formContainerPanel.add(name);
-			  Hidden numApps = new Hidden();
-			  numApps.setName("form-TOTAL_FORMS");
-			  numApps.setValue(String.valueOf(count));
-			  formContainerPanel.add(numApps);
-			  Hidden numInitialForms = new Hidden();
-			  numInitialForms.setName("form-INITIAL_FORMS");
-			  numInitialForms.setValue("0");
-			  Hidden numMaxForms = new Hidden();
-			  numMaxForms.setName("form-MAX_NUM_FORMS");
-			  formContainerPanel.add(numInitialForms);
-			  formContainerPanel.add(numMaxForms);
-			 
-			  formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
-			  
-			  RootPanel.get().add(buildForm);
-			  buildForm.submit();
-			  //Window.alert(buildForm.getMethod());
-		  }
-	}
-	*/
+
 	@UiHandler("allAppsLabel")
 	void handleAllAppsLabel(ClickEvent event){
 		allAppsLabel.setStyleName(style.allAppsLabelActive());
