@@ -16,23 +16,17 @@
 
 package opus.gwt.management.console.client;
 
-import opus.gwt.management.console.client.appbrowser.AppBrowserUiBinder;
-import opus.gwt.management.console.client.appbrowser.AppIcon;
 import opus.gwt.management.console.client.dashboard.Dashboard;
 import opus.gwt.management.console.client.deployer.AddAppsBuildProject;
+import opus.gwt.management.console.client.deployer.AppBrowser;
+import opus.gwt.management.console.client.deployer.AppIcon;
 import opus.gwt.management.console.client.deployer.DatabaseOptions;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
 
 public class ServerCommunicator {
 	
-	private JavaScriptObject data;
 	private int requestId;
 	private Object[] queue;
 	private String[] queryTypes;
@@ -123,65 +117,21 @@ public class ServerCommunicator {
 		    	ManagementConsole mc = (ManagementConsole)parent;
 		    	mc.handleUserInformation(mc.asJSOUserInformation(jso));
 		    } else if (queryType.equals("importAppList")) {	    	
-		    	AppBrowserUiBinder p = (AppBrowserUiBinder)parent;
+		    	AppBrowser p = (AppBrowser)parent;
 		    	p.importAppList(p.asArrayOfProjectData(jso));
 		    } else if (queryType.equals("handleDBOptions")){
 		    	DatabaseOptions db = (DatabaseOptions)parent;
 		    	db.handleDBOptions(db.asArrayOfDBOptionsData(jso));
 		    } else if (queryType == "getAppInfo") {
-		    	AppBrowserUiBinder p = (AppBrowserUiBinder)parent;
+		    	AppBrowser p = (AppBrowser)parent;
 		    	p.populateAppGrid(p.asArrayOfAppData(jso));
 		    } else if(queryType == "getVersionInfo"){
 		    	AppIcon p = (AppIcon)parent;
 		    	p.handleVersionInfo(p.asArrayOfVersionData(jso));
 		    } else if(queryType == "getFeaturedList"){
-		    	AppBrowserUiBinder p = (AppBrowserUiBinder)parent;
+		    	AppBrowser p = (AppBrowser)parent;
 		    	p.populateFeaturedList(jso);
 		    }
 	    }
 	  }
-	  
-	  public JavaScriptObject getData(){
-		  return data;
-	  }
-	  
-	  public void doPost(String url, String postData) {
-		    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, url);
-		    Window.alert("Posted data = " + postData);
-		    try {
-		      Request response = builder.sendRequest(postData, new RequestCallback() {
-
-		        public void onError(Request request, Throwable exception) {
-		          //Window.alert("Post Exception: " + exception.getLocalizedMessage());
-		        }
-
-		        public void onResponseReceived(Request request, Response response) {
-		        	//Window.alert("Post response = " + response.toString());
-		        	//Window.alert("Post response status =" + response.getStatusCode());
-		        }
-		      });
-		      
-		    } catch (RequestException e) {
-		      //Window.alert("Failed to send the request: " + e.getMessage());
-		    }   
-	  }
-	  
-	  public void doGet(String url) {
-		    RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
-
-		    try {
-		      Request response = builder.sendRequest(null, new RequestCallback() {
-		        public void onError(Request request, Throwable exception) {
-		          // Code omitted for clarity
-		        }
-
-		        public void onResponseReceived(Request request, Response response) {
-		          // Code omitted for clarity
-		        }
-		      });
-		    } catch (RequestException e) {
-		      // Code omitted for clarity
-		    }
-		  }
-
 }

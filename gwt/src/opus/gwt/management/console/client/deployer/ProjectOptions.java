@@ -41,7 +41,7 @@ public class ProjectOptions extends Composite {
 			UiBinder<Widget, ProjectOptions> {
 	}
 	
-	private applicationDeployer appDeployer;
+	private ProjectDeployer appDeployer;
 	
 	@UiField TextBox usernameTextBox;
 	@UiField TextBox emailTextBox;
@@ -52,7 +52,7 @@ public class ProjectOptions extends Composite {
 	@UiField DockLayoutPanel projectOptionsPanel;
 	@UiField ListBox idProvider;
 	
-	public ProjectOptions(applicationDeployer appDeployer) {
+	public ProjectOptions(ProjectDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.appDeployer = appDeployer;
 	}	
