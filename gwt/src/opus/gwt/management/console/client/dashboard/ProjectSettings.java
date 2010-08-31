@@ -1,5 +1,7 @@
 package opus.gwt.management.console.client.dashboard;
 
+import java.util.ArrayList;
+
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ManagementConsole;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
@@ -13,6 +15,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -41,6 +44,7 @@ public class ProjectSettings extends Composite {
 	private ManagementConsole managementCon;
 	private ProjectDashboard projectDashboard;
 	private boolean hasSettings;
+	private TextBox textboxes[];
 	
 	@UiField FlexTable formContainer;
 	@UiField FormPanel optionsForm;
@@ -57,6 +61,7 @@ public class ProjectSettings extends Composite {
 		this.managementCon = manCon;
 		this.projectDashboard = projectDashboard;
 		this.optionsForm = new FormPanel();
+		//this.textboxes = new 
 		setupOptionsForm();
 	}
 	
@@ -102,7 +107,9 @@ public class ProjectSettings extends Composite {
 					setting.setStyleName("SettingInput");
 					formContainer.setWidget(row, 0,settingLabel);
 					formContainer.setWidget(row++, 1,setting);
-
+					
+					//textboxes[textboxes.length] = setting;
+					//textboxes.add(setting);
 				} else if(parts[2].equals("int")){
 					TextBox setting = new TextBox();
 					//Check default value
@@ -117,7 +124,8 @@ public class ProjectSettings extends Composite {
 					setting.setStyleName("SettingInput");
 					formContainer.setWidget(row, 0,settingLabel);
 					formContainer.setWidget(row++, 1,setting);
-					
+					//textboxes[textboxes.length] = setting;
+					//textboxes.add(setting);
 				} else if(parts[2].equals("choice")){
 					ListBox setting = new ListBox();
 					setting.setName(apps[i]+"-"+parts[0]);
@@ -181,33 +189,47 @@ public class ProjectSettings extends Composite {
 		}
 	}
 	
+	private boolean validateForm(){
+		for(TextBox t : textboxes){
+			if (t.getVisibleLength() == 0) {
+				Window.alert("All settings are required.");
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	@UiHandler("SaveButton")
 	void handleSaveButton(ClickEvent event){
-		//SaveButton.getElement().setAttribute("name", "Save");
-		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
-		optionsForm.add(formContainer);
-		RootPanel.get().add(optionsForm);
-		optionsForm.submit();
+		if(validateForm()){
+			//SaveButton.getElement().setAttribute("name", "Save");
+			formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
+			optionsForm.add(formContainer);
+			RootPanel.get().add(optionsForm);
+			optionsForm.submit();
+		}
 	}
 	@UiHandler("ActivateButton")
 	void handleActivateButton(ClickEvent event){
-		formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
-		TextBox activeField = new TextBox();
-		activeField.setVisible(false);
-		activeField.setName("active");
-		if(this.active) {
-			activeField.setText("false");
-			//TextBox activate = new TextBox();
-			//activate.setName("activate");
-			//formContainer.setWidget(formContainer.getRowCount(), 1, activate);
-		} else {
-			activeField.setText("true");
+		if(validateForm()){
+			formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
+			TextBox activeField = new TextBox();
+			activeField.setVisible(false);
+			activeField.setName("active");
+			if(this.active) {
+				activeField.setText("false");
+				//TextBox activate = new TextBox();
+				//activate.setName("activate");
+				//formContainer.setWidget(formContainer.getRowCount(), 1, activate);
+			} else {
+				activeField.setText("true");
+			}
+			formContainer.setWidget(formContainer.getRowCount(), 1, activeField);
+			optionsForm.add(formContainer);
+	
+			RootPanel.get().add(optionsForm);
+			optionsForm.submit();
 		}
-		formContainer.setWidget(formContainer.getRowCount(), 1, activeField);
-		optionsForm.add(formContainer);
-
-		RootPanel.get().add(optionsForm);
-		optionsForm.submit();
 	}
 	public final native ProjectSettingsData asProjectSettings(JavaScriptObject jso) /*-{
 		return jso;
