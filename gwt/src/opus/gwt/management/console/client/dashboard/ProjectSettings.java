@@ -92,7 +92,7 @@ public class ProjectSettings extends Composite {
 			JsArray<JavaScriptObject> appsettings = settings.getAppSettings(apps[i]);
 			for(int j=0; j<appsettings.length(); j++){
 				JsArray<JavaScriptObject> p = settings.getSettingsArray(appsettings.get(j));
-				String[] parts = p.join(";;;").split(";;;\\s*");
+				String[] parts = p.join(";;").split(";;\\s*");
 				if (parts[2].equals("string")){
 					TextBox setting = new TextBox();
 					setting.setName(apps[i]+"-"+parts[0]);
@@ -134,13 +134,7 @@ public class ProjectSettings extends Composite {
 					setting.setName(apps[i]+"-"+parts[0]);
 					Label settingLabel = new Label();
 					settingLabel.setText(parts[1]);
-					for(int k=3; k<parts.length; k++){
-						setting.addItem(parts[++k], parts[k-1]);
-						
-						if(parts[++k].equals("true")){
-							setting.setItemSelected(setting.getItemCount()-1, true);
-						}
-					}
+					setting.getElement().setInnerHTML(parts[3]);
 					settingLabel.addStyleName("SettingLabel");
 					setting.setStyleName("SettingInput");
 					formContainer.setWidget(row, 0,settingLabel);
@@ -187,7 +181,7 @@ public class ProjectSettings extends Composite {
 		} else {
 			WarningLabel.setText("");
 			ActivateButton.setText("Deactivate");
-			SaveButton.setVisible(false);
+			SaveButton.setVisible(true);
 			//Button.setText("Submit");
 		}
 	}
