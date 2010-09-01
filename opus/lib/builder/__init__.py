@@ -222,6 +222,9 @@ class ProjectBuilder(object):
 # override Opus's configuration, but this is not recommended.
 from opus.lib.conf import load_settings
 load_settings(globals())
+
+import djcelery
+djcelery.setup_loader()
 """)
 
         # Randomizing SECRET_KEY is taken care of for us by new_from_template,
