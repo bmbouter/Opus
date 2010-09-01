@@ -365,7 +365,7 @@ import sys
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 os.environ['OPUS_SETTINGS_FILE'] = {settingspath!r}
-os.environ['CELERY_LOADER'] = 'djcelery'
+os.environ['CELERY_LOADER'] = 'django'
 
 {additionalpaths}
 
