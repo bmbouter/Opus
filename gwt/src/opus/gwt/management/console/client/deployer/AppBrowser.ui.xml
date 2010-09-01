@@ -4,8 +4,10 @@
 	<ui:style src="../resources/AppBrowser.css" type="opus.gwt.management.console.client.resources.AppBrowserCss.AppBrowserStyle"/>
 
 	<g:HTMLPanel styleName='{style.innerSubMainPanel}'>
-		<g:Label ui:field="featuredAppsLabel" styleName="{style.featuredAppsLabel}">Featured</g:Label>
-		<g:Label ui:field="allAppsLabel" styleName="{style.allAppsLabel}">All</g:Label>
+		<g:HTMLPanel styleName='{style.tabPanel}'>
+			<g:Label ui:field="featuredAppsLabel" styleName="{style.featuredAppsLabel}">Featured</g:Label>
+			<g:Label ui:field="allAppsLabel" styleName="{style.allAppsLabel}">All</g:Label>
+		</g:HTMLPanel>
 		<g:HTMLPanel styleName='{style.appBrowser}'>
 			<div class="{style.AppList}">
 				<div class="{style.ListGrid}" id="ListGrid">
@@ -24,6 +26,7 @@
 				</g:Button>
 			</div>
 		</g:HTMLPanel>
+		<g:Label styleName="{style.projectConfigLabel}">New Project Apps</g:Label>
 		<div class="{style.DeployList}">
 			<g:FlowPanel ui:field="DeployListFlowPanel" styleName='{style.DeployListFlowPanel}'>
 				

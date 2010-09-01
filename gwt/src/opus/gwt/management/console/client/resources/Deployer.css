@@ -30,7 +30,6 @@
 	padding: 0.45em 0.45em 0.45em 0.5em;
 	word-wrap: break-word;
 	min-width: 90%;
-	font-size: 0.8em;
 	font-family: "Droid Serif";
 }
 .navigationLabelActive {
@@ -43,7 +42,6 @@
 	word-wrap: break-word;
 	min-width: 80%;
 	font-family: "Droid Serif";
-	font-size: 0.8em;
 }
 .mainDeckPanel{
 	width: 97.60%;

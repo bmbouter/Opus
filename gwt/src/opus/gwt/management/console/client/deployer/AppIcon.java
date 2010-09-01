@@ -71,7 +71,7 @@ public class AppIcon extends Composite {
 	
 	public String getShortDescription(){
 		if(this.desc.length() > 75) {
-			return this.desc.substring(0, 75);
+			return this.desc.substring(0, 75) + "...";
 		} else {
 			return this.desc;
 		}
