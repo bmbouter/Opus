@@ -616,7 +616,7 @@ class ProjectUndeployer(object):
             self._restart_apache(secureops)
 
     def stop_celery(self, secureops="secureops"):
-        """Shuts down supervisord, and removes the user/vhost from rabbitmq"""
+        """Shuts down supervisord"""
         # Check if the pid file exists. If not, nothing to do
         pidfilename = os.path.join(self.projectdir, "run", "supervisord.pid")
         if os.path.exists(pidfilename):
@@ -633,6 +633,8 @@ class ProjectUndeployer(object):
             if ret:
                 raise DeploymentException("Could not stop supervisord. {0}".format(output))
 
+    def delete_celery(self, secureops="secureops"):
+        """Removes the user/vhost from rabbitmq"""
         # Delete the user/vhost.
         log.info("removing rabbitmq user/vhost")
         proc = subprocess.Popen([secureops,"-b",
@@ -656,7 +658,7 @@ class ProjectUndeployer(object):
         """Sends a sigterm to all processes owned by the user, waits 10 or so
         seconds, then sends a sigkill to all. This is called by delete_user if
         there are still processes running, so no need to call it directly
-        normally
+        during undeployment.
 
         """
         log.info("Killing all processes owned by project %s...", self.projectname)
