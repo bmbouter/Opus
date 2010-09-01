@@ -20,6 +20,14 @@ import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ServerCommunicator;
+import opus.gwt.management.console.client.overlays.AppData;
+import opus.gwt.management.console.client.overlays.DependencyData;
+import opus.gwt.management.console.client.overlays.ModelProperties;
+import opus.gwt.management.console.client.overlays.ProjectCommunityApplication;
+import opus.gwt.management.console.client.overlays.ProjectData;
+import opus.gwt.management.console.client.overlays.ProjectFieldData;
+import opus.gwt.management.console.client.overlays.ProjectManualApplication;
+import opus.gwt.management.console.client.overlays.VersionData;
 import opus.gwt.management.console.client.resources.ProjectBuilderCss.ProjectBuilderStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -67,11 +75,11 @@ public class AddAppsBuildProject extends Composite {
 	private ArrayList<String> types = new ArrayList<String>();
 	private ServerCommunicator jsonCom;
 
-	private ApplicationDetailDialog appInfoDialog = new ApplicationDetailDialog();
+	private ApplicationPopup appInfoDialog = new ApplicationPopup();
 	private AddOtherApplication addOtherDialog = new AddOtherApplication(this);
 	private AddProjectFromURL addProject = new AddProjectFromURL(this);
 	
-	private applicationDeployer appDeployer;
+	private ProjectDeployer appDeployer;
 	private JSVariableHandler JSVarHandler;
 	
 	@UiField Button searchButton;
@@ -87,7 +95,7 @@ public class AddAppsBuildProject extends Composite {
 	@UiField ProjectBuilderStyle style;
 
 	
-	public AddAppsBuildProject(applicationDeployer appDeployer, ServerCommunicator jsonCom) {
+	public AddAppsBuildProject(ProjectDeployer appDeployer, ServerCommunicator jsonCom) {
 		JSVarHandler = new JSVariableHandler();
 		JSON_URL = URL.encode(JSVarHandler.getRepoBaseURL() + searchURL);
 		initWidget(uiBinder.createAndBindUi(this));

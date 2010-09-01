@@ -64,8 +64,9 @@ public class DeleteProject extends Composite {
 	private void setupDeleteForm(String projectTitle){
 		deleteForm.setMethod(FormPanel.METHOD_POST);
 		deleteForm.setVisible(false);
-		deleteForm.setAction(JSVarHandler.getDeployerBaseURL()+ deleteProjectURL.replaceAll("/projectTitle/", "/" + projectTitle +"/"));
+		deleteForm.setAction(JSVarHandler.getDeployerBaseURL() + deleteProjectURL.replaceAll("/projectTitle/", "/" + projectTitle +"/"));
 		titlePanel.add(deleteForm);
+		final String deletedProject = projectTitle;
 		deleteForm.addSubmitHandler(new FormPanel.SubmitHandler() {
 		      public void onSubmit(SubmitEvent event) {
 		        deleteForm.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
@@ -73,7 +74,7 @@ public class DeleteProject extends Composite {
 		 });
 		deleteForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        managementCon.onProjectDelete();
+		        managementCon.onProjectDelete(deletedProject);
 		      }
 		 });
 	}

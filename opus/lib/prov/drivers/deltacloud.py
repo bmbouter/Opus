@@ -14,86 +14,41 @@
 #   limitations under the License.                                           #
 ##############################################################################
 
-import httplib
-import re
-import mimetools
 import base64
+from urlparse import urlparse
+from xml.parsers.expat import ExpatError
 from xml.dom.minidom import parseString
-import xml.parsers.expat
+import httplib
+import urllib
+import mimetools
 
-from log import log
-from image import Image
-from instance import Instance
-from flavor import Flavor
-from realm import Realm
-from state import State
-from storage_snapshot import StorageSnapshot
-from storage_volume import StorageVolume
-from transition import Transition
+from opus.lib.prov import DriverBase
+from opus.lib.prov import Image, Instance, Realm
+from opus.lib.prov.exceptions import ParsingError, ServerError
 
-# Maps resource names to their classes
-resource_classes = {
-    "flavor": Flavor,
-    "image": Image,
-    "instance": Instance,
-    "realm": Realm,
-    "state": State,
-    "storage_snapshot": StorageSnapshot,
-    "storage_volume": StorageVolume,
-    #"transition": Transition,
-}
+from xml_tools import xml_get_text, xml_get_elements_dictionary
+import driver_tools
 
-ENCODE_TEMPLATE= """--%(boundary)s
-Content-Disposition: form-data; name="%(name)s"
+class DeltacloudDriver(DriverBase):
+    """A driver for RedHat's Deltacloud cloud api."""
 
-%(value)s
-""".replace('\n','\r\n')
-
-class Deltacloud(object):
-    """Represents a deltacloud api server."""
-
-    # This is used to seperate host and path for a given api_uri
-    url_regex = re.compile(r"""
-        ^https?://  # Ignore preceeding http(s)
-        (.*?)       # Host url
-        (/.*)$      # Path
-    """, re.VERBOSE)
-
-    def __init__(self, name, password, api_uri):
+    def __init__(self, name=None, password=None, uri=None):
         self.name = name
         self.password = password
-        self.api_uri = api_uri
 
-        # This information will be gathered when self.connect() is called
-        self._auth_string = None
-        self.entry_points = {}
-        self.driver = None
+        # Exctract information from given uri
+        url_components = urlparse(uri)
+        self.uri = uri
+        self._scheme = url_components.scheme
+        self._host = url_components.netloc
+        self._path = url_components.path
 
-        self.connected = False
+        # This auth_header is put in the header of every request
+        auth_base64 = base64.encodestring("%s:%s" % (name, password))
+        auth_base64 = auth_base64.replace("\n", "")
+        self._auth_header = "Basic %s" % auth_base64
 
-    def connect(self):
-
-        if self.connected:
-            return
-        self.connected = True
-
-        if self.api_uri.startswith("http://"):
-            self.secure = False
-        elif self.api_uri.startswith("https://"):
-            self.secure = True
-        else:
-            raise ValueError('api_uri must start with "http://" or "https://".  Given: "%s"' % self.api_uri)
-
-        matches = Deltacloud.url_regex.match(self.api_uri)
-        self.api_entry_host = matches.group(1)
-        self.api_entry_path = matches.group(2)
-
-        # _auth_string will be used in every request header to authenticate
-        self._auth_string = "%s:%s" % (self.name, self.password)
-        self._auth_string = base64.encodestring(self._auth_string)
-        self._auth_string = self._auth_string.replace("\n", "")
-
-        self._discover_entry_points()
+        self._entry_points = self._discover_entry_points()
 
     def _discover_entry_points(self):
         """Fills in self.entry_points
@@ -103,26 +58,32 @@ class Deltacloud(object):
         (images, realms, instances, etc.)
 
         """
-        dom = self._request(self.api_entry_path)
+        entry_points = {}
+        dom = self._request(self._path)
         if dom.documentElement.tagName != "api":
-            print "Not a valid deltacloud api entry point!"
-            # TODO: This should handle the error better
-            raise ValueError("Deltacloud api entry point doesn't appear to be valid!")
+            raise ParsingError("Not a valid deltacloud api entry point!")
         self.driver = dom.documentElement.getAttribute("driver")
         for entry_point in dom.getElementsByTagName('link'):
             rel = entry_point.getAttribute("rel")
             uri = entry_point.getAttribute("href")
-            self.entry_points[rel] = uri
+            entry_points[rel] = uri
         dom.unlink()
+        return entry_points
 
-        # There seems to be an inconsistancy in the naming of storage
-        # snapshots/volumes.  In the url it's one thing, but in the xml it's
-        # another.  We'll make sure the name is always gotten correct.
-        self.entry_points['storage-snapshots'] = self.entry_points['storage_snapshots']
-        self.entry_points['storage-volumes'] = self.entry_points['storage_volumes']
+    def _get_resources(self, singular_resource_name, opts={}):
+        """Returns a list of xml representations for the given resource."""
+
+        plural_resource_name = singular_resource_name+"s"
+        entry_point_url = self._entry_points[plural_resource_name]
+        dom = self._request(entry_point_url, "GET", opts)
+
+        if dom.documentElement.tagName != plural_resource_name:
+            raise ParsingError('Entry point for "%s" has something wrong with it!' % plural_resource_name)
+
+        return  dom.getElementsByTagName(singular_resource_name)
 
     def _request(self, location="", method="GET", query_args={}, form_data={}):
-        """Send request to deltacloud and return a response dom object.
+        """Send request and return a response dom object.
 
         The returned dom object should be unlinked after it's done being used:
         >>> dom = self._request("/some/path")
@@ -130,203 +91,256 @@ class Deltacloud(object):
 
         """
         headers = {
-            #"Accept": "text/xml",
-            #"Authorization": self._auth_string,
+            "Accept": "application/xml",
+            "Authorization": self._auth_header,
         }
 
         # Handle both absolute and relative urls
-        matches = Deltacloud.url_regex.match(location)
-        if matches == None: # Relative
-            host = self.api_entry_host
-            path = location
-        else: # Absolute
-            host = matches.group(1)
-            path = matches.group(2)
+        url_components = urlparse(location)
+        host = url_components.netloc
+        location = url_components.path
+        if not host:
+            host = self._host
 
         # Format query_string
-        query_list = map(lambda key,value: key+"="+value,
-                         query_args.keys(),
-                         query_args.values()
-                        )
-        if query_list:
-            query_string = '?'+'&'.join(query_list)
-        else:
+        query_string = "?%s" % urllib.urlencode(query_args)
+        if query_string is "?":
             query_string = ""
 
         # Handle form_data
+        ENCODE_TEMPLATE= """--%(boundary)s
+        Content-Disposition: form-data; name="%(name)s"
+
+        %(value)s
+        """.replace('\n','\r\n').replace(" "*4, "")
         if method=="POST" and form_data:
             # Thanks for the good form data example at:
             # http://code.google.com/p/urllib3/source/browse/urllib3/filepost.py
-            BOUNDARY = mimetools.choose_boundary()
+            boundary = mimetools.choose_boundary()
             body = ""
             for key, value in form_data.iteritems():
                 body += ENCODE_TEMPLATE % {
-                    'boundary': BOUNDARY,
+                    'boundary': boundary,
                     'name': str(key),
                     'value': str(value),
                 }
-            body += "--%s--\n\r" % BOUNDARY
-            content_type = "multipart/form-data; boundary=%s" % BOUNDARY
+            body += "--%s--\n\r" % boundary
+            content_type = "multipart/form-data; boundary=%s" % boundary
             headers['Content-Type'] = content_type
         else:
             body = None
 
         # The actual request
         #print (host, method, path+query_string, body, headers)
-        if self.secure:
+        if self._scheme is "https":
             connection = httplib.HTTPSConnection(host)
         else:
             connection = httplib.HTTPConnection(host)
-        connection.request(method, path+query_string, body=body, headers=headers)
+        connection.request(method, location+query_string, body=body, headers=headers)
+        #print self._host, method, location+query_string, body, headers, self._scheme
         response = connection.getresponse()
-        connection.close()
         text = response.read()
-        #print text
+        connection.close()
         if response.status < 200 or response.status >= 400:
-            # Response was not successful (status 2xx or 3xx).  3xx is included
-            # because sometimes deltacloud returns a redirect even when the
-            # action is completed.
-            #TODO: Handle error better
-            raise ValueError("Status code returned by deltacloud was %s." % response.status)
+            # Response was not successful (status 2xx or 3xx).
+            raise ServerError("Status returned from Deltacloud was %s." % response.status)
+
         try:
             return parseString(text)
-        except xml.parsers.expat.ExpatError:
-            log.error("There was a problem parsing the following xml from deltacloud:\n'''%s'''" % text)
-            raise
-
-    def _get_resources(self, singular_resource_name, opts={}):
-        plural_resource_name = singular_resource_name+"s"
-        resource_class = resource_classes[singular_resource_name]
-        entry_point_url = self.entry_points[plural_resource_name]
-
-        if not self.connected:
-            self.connect()
-
-        dom = self._request(entry_point_url, "GET", opts)
-        if dom.documentElement.tagName != plural_resource_name:
-            print 'Entry point for "%s" has something wrong with it!' % plural_resource_name
-            #TODO: Handle this error better
-            raise ValueError
-
-        resource_object_list = []
-        for dom in dom.getElementsByTagName(singular_resource_name):
-            resource_object_list.append(resource_class(self, dom))
-        dom.unlink()
-        return resource_object_list
-
-    def _get_resource_by_id(self, singular_resource_name, id):
-        return self._get_resources(singular_resource_name, {"id":id})[0]
+        except ExpatError as e:
+            raise ParsingError('This xml could not be parsed: """%s"""' % text, e)
 
     ##### Images #####
 
-    def images(self, opts={}):
-        """Return a list of all images."""
-        return self._get_resources("image", opts)
+    def images(self, filter={}):
+        """Return a list of all ``image`` objects.
+
+        If ``filter`` is specified, it must be a dictionary.  The results are
+        then filtered so key==value in the returned object.  Possible
+        options for key are:
+
+        - "id"
+        - "owner_id"
+        - "name"
+        - "architecture"
+
+        """
+        images_xml = self._get_resources("image", filter)
+        images = []
+        for image_xml in images_xml:
+            images.append(_xml_to_image(image_xml, self))
+        return driver_tools.filter_images(images, filter)
 
     def image(self, id):
-        """Return a specific image object."""
-        return self._get_resource_by_id("image", id)
-
-    def fetch_image(self, uri):
-        """Return an image baised on its url."""
-        raise NotImplementedError()
+        """Return a specific ``Image`` object."""
+        images_xml = self._get_resources("image", {"id":id})
+        return _xml_to_image(images_xml[0], self)
 
     ##### Instances #####
 
-    def instances(self, opts={}):
-        """Return a list of all instances."""
-        return self._get_resources("instance", opts)
+    def instances(self, filter={}):
+        """Return a list of all instances.
+
+        If ``filter`` is specified, it must be a dictionary.  The results are
+        then filtered so key==value in the returned object.  Possible
+        options for key are:
+
+        - "id"
+        - "state"
+
+        """
+        instances_xml = self._get_resources("instance", filter)
+        instances = []
+        for instance_xml in instances_xml:
+            instances.append(_xml_to_instance(instance_xml, self))
+        return driver_tools.filter_instances(instances, filter)
 
     def instance(self, id):
-        """Return a specific instance object."""
-        return self._get_resource_by_id("instance", id)
+        """Return a specific ``Instance`` object."""
+        instances_xml = self._get_resources("instance", {"id":id})
+        return _xml_to_instance(instances_xml[0], self)
 
-    def create_instance(self, image_id, opts={}):
-        """Create an instance and return it's instance object."""
+    ##### Instance Actions #####
+
+    def instance_create(self, image_id, realm_id=None):
+        """Instantiates an image and return the created ``Instance`` object.
+
+        Returns the ``Instance`` object of the created instance.
+
+        """
         form_data = {"image_id":image_id}
-        if "name" in opts:
-            form_data["name"] = opts["name"]
-        if "realm_id" in opts:
+        if realm_id:
             form_data["realm_id"] = opts["realm_id"]
-        if "flavor_id" in opts:
-            form_data["flavor_id"] = opts["flavor_id"]
 
-        entry_point = self.entry_points["instances"]
-        dom = self._request(entry_point, "POST", {}, form_data)
+        entry_point = self._entry_points["instances"]
+        dom = self._request(entry_point, "POST", form_data=form_data)
         if dom.documentElement.tagName != "instance":
-            print "Entry point for instances has something wrong with it!"
-            #TODO: Handle this error better
-            raise ValueError
-        instance = Instance(self, dom)
+           raise ParsingError('Entry point for "instances" has something wrong with it!')
+        instance = _xml_to_instance(dom.firstChild, self)
         dom.unlink()
         return instance
 
-    def fetch_instance(self, uri):
-        """Return an instance baised on its url."""
+    def _instance_action(self, action, instance_id):
+        instance = self.instance(instance_id)
+        # instance._action_urls is set in the _xml_to_instance function
+        try:
+            self._request(instance._action_urls[action], "POST")
+        except KeyError:
+            raise ServerError('The action: "%s" is not available for instance id "%s".' % (action, instance_id))
+        return True
+
+    def instance_start(self, instance_id):
+        """Takes an existing ``instance_id`` and starts it.
+
+        Returns ``True`` on success.  Returns ``False``, or raises an exception
+        on failure.
+
+        """
+        return self._instance_action("start", instance_id)
+
+    def instance_stop(self, instance_id):
+        """Takes an existing ``instance_id`` and stops or shuts it down.
+
+        Returns ``True`` on success.  Returns ``False``, or raises an exception
+        on failure.
+
+        """
+        return self._instance_action("stop", instance_id)
+
+    def instance_reboot(self, instance_id):
+        """Takes an existing ``instance_id`` and reboots it.
+
+        Returns ``True`` on success.  Returns ``False``, or raises an exception
+        on failure.
+
+        """
+        return self._instance_action("reboot", instance_id)
+
+    def instance_destroy(self, instance_id):
+        """Takes an existing ``instance_id`` and destroys it.
+
+        The instance_id will no longer be valid after this call.  Any lingering
+        ``Instance`` objects will become invalid and shouldn't be used.
+
+        Returns ``True`` on success.  Returns ``False``, or raises an exception
+        on failure.
+
+        """
         raise NotImplementedError()
-
-    ##### Instance States #####
-
-    def instance_states(self):
-        """Return different states which an image can have."""
-        raise NotImplementedError()
-
-    def instance_state(self, name):
-        """Returns True if the instance state name exists."""
-        return name in self.instance_states()
-
-    ##### Flavors #####
-
-    def flavors(self, opts={}):
-        """Return a list of all flavors."""
-        return self._get_resources("flavor", opts)
-
-    def flavor(self, id):
-        """Return a specific flavor object."""
-        return self._get_resource_by_id("flavor", id)
-
-    def fetch_flavor(self, uri):
-        """Return a flavor baised on its url."""
-        raise NotImplementedError()
+        return self._instance_action("destroy", instance_id)
 
     ##### Realms #####
 
-    def realms(self, opts={}):
-        """Return a list of all realms."""
-        return self._get_resources("realm", opts)
+    def realms(self, filter={}):
+        """Return a list of all ``Realm`` objects.
+
+        If ``filter`` is specified, it must be a dictionary.  The results are
+        then filtered so key==value in the returned object.  Possible
+        options for key are:
+
+        - "id"
+
+        """
+        realms_xml = self._get_resources("realm", filter)
+        realms = []
+        for realm_xml in realms_xml:
+            realms.append(_xml_to_realm(realm_xml, self))
+        return driver_tools.filter_realms(realms, filter)
 
     def realm(self, id):
-        """Return a specific realm object."""
-        return self._get_resource_by_id("realm", id)
+        """Return a specific ``Realm`` object."""
+        realms_xml = self._get_resources("realm", {"id":id})
+        return _xml_to_realm(realms_xml[0], self)
 
-    def fetch_realm(self, uri):
-        """Return a realm baised on its url."""
-        raise NotImplementedError()
 
-    ##### Storage Volumes #####
+def _id_from_url(url):
+    return url.strip("/").split("/")[-1]
 
-    def storage_volumes(self, opts={}):
-        """Return a list of all storage volumes."""
-        return self._get_resources("storage-volume", opts)
+def _xml_to_image(xml, driver):
+    return Image(
+        xml.getAttribute("id"),
+        driver,
+        xml_get_text(xml, "owner_id")[0],
+        xml_get_text(xml, "name")[0],
+        xml_get_text(xml, "description")[0],
+        xml_get_text(xml, "architecture")[0],
+    )
 
-    def storage_volume(self, id):
-        """Return a specific storage volume object."""
-        return self._get_resource_by_id("storage-volume", id)
+def _xml_to_instance(xml, driver):
 
-    def fetch_storage_volume(self, uri):
-        """Return a storage volume baised on its url."""
-        raise NotImplementedError()
+    # Get image_id
+    image_id = _id_from_url( xml.getElementsByTagName("image")[0].getAttribute("href") )
 
-    ##### Storage Volumes #####
+    # Get realm_id
+    realm_id = _id_from_url( xml.getElementsByTagName("realm")[0].getAttribute("href") )
 
-    def storage_snapshots(self, opts={}):
-        """Return a list of all storage snapshots."""
-        return self._get_resources("storage-snapshot", opts)
+    # Get Addresses
+    public_addresses_element = xml.getElementsByTagName("public_addresses")[0]
+    private_addresses_element = xml.getElementsByTagName("private_addresses")[0]
+    public_addresses = xml_get_text(public_addresses_element, "address")
+    private_addresses = xml_get_text(private_addresses_element, "address")
 
-    def storage_snapshot(self, id):
-        """Return a specific storage snapshot."""
-        return self._get_resource_by_id("storage-snapshot", id)
+    instance = Instance(
+        xml.getAttribute("id"),
+        driver,
+        xml_get_text(xml, "owner_id")[0],
+        xml_get_text(xml, "name")[0],
+        image_id,
+        realm_id,
+        xml_get_text(xml, "state")[0],
+        public_addresses,
+        private_addresses,
+    )
+    # We set _action_urls here because we need it later when modifying the
+    # instance's state.
+    instance._action_urls = xml_get_elements_dictionary(xml, "link", "rel", "href")
+    return instance
 
-    def fetch_storage_snapshot(self, uri):
-        """Return a storage snapshot baised on its url."""
-        raise NotImplementedError()
+def _xml_to_realm(xml, driver):
+    return Realm(
+        xml.getAttribute("id"),
+        driver,
+        xml_get_text(xml, "name")[0],
+        xml_get_text(xml, "state")[0] is "AVAILABLE",
+        -1,
+    )

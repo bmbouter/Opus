@@ -24,35 +24,26 @@
     text-shadow:10px 10px 5px #0F0F0F;
     font-family: "Droid Serif";
 }
-.navigationMenu {
-	width: 84%;
-	height: 100%;
-	margin-top: 2%;
-	margin-left: 12%;
-	margin-right: auto;
-	margin-bottom: auto;
-	min-width: 90%;
-}
 .navigationLabel {
 	width: 100%;
 	color: white;
 	padding: 0.45em 0.45em 0.45em 0.5em;
-	font-size: 1em;
 	word-wrap: break-word;
 	min-width: 90%;
+	font-family: "Droid Serif";
 }
 .navigationLabelActive {
 	width: 100%;
 	color: white;
 	background: orange;
 	padding: 0.45em 0.45em 0.45em 0.5em;
-	font-size: 1em;
 	border-radius: 5px 0 0 5px;
 	-moz-border-radius: 5px 0 0 5px;
 	word-wrap: break-word;
 	min-width: 80%;
+	font-family: "Droid Serif";
 }
 .mainDeckPanel{
-	width: 97.50%;
+	width: 97.60%;
 	height: 96.50%;
 }

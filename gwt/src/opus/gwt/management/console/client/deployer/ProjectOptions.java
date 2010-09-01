@@ -41,36 +41,33 @@ public class ProjectOptions extends Composite {
 			UiBinder<Widget, ProjectOptions> {
 	}
 	
-	private applicationDeployer appDeployer;
+	private ProjectDeployer appDeployer;
 	
 	@UiField TextBox usernameTextBox;
 	@UiField TextBox emailTextBox;
 	@UiField PasswordTextBox passwordTextBox;
 	@UiField PasswordTextBox passwordConfirmTextBox;
-	@UiField CheckBox adminCheckBox;
 	@UiField Button nextButton;
 	@UiField Button previousButton;
 	@UiField DockLayoutPanel projectOptionsPanel;
 	@UiField ListBox idProvider;
 	
-	public ProjectOptions(applicationDeployer appDeployer) {
+	public ProjectOptions(ProjectDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.appDeployer = appDeployer;
-		idProvider.addItem("");
-		idProvider.addItem("Local","local");
-		idProvider.addItem("LDAP","ldap");
-		idProvider.addItem("OpenId","openid");
 	}	
-	
-	@UiHandler("idProvider")
-	void handleChangeIdProvider(ChangeEvent event){
-		if(idProvider.getItemText(idProvider.getSelectedIndex()).equals("Local")){
-			adminCheckBox.setValue(true);
-			adminCheckBox.setEnabled(false);
-		} else {
-			adminCheckBox.setEnabled(true);			
+
+	public void setAllowedAuthApps(String allowedAuthApps){
+		int size = idProvider.getItemCount();
+		for(int i=0; i < size; i++){
+			idProvider.removeItem(0);
+		}
+		String[] options = allowedAuthApps.split(",");
+		for(String option : options){
+			idProvider.addItem(option, option);
 		}
 	}
+	
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
@@ -84,19 +81,13 @@ public class ProjectOptions extends Composite {
 	}
 	
 	public boolean validateFields(){
-		if(!usernameTextBox.getText().isEmpty()){
+		if( !usernameTextBox.getText().isEmpty() ){
 			if(passwordTextBox.getText().isEmpty()){
 				Window.alert("Password required to create Superuser");
 				return false;
 			} 
 			if(emailTextBox.getText().isEmpty()){
 				Window.alert("Superuser Email required to create Superuser.");
-				return false;
-			}
-		}
-		if(adminCheckBox.getValue()){
-			if(usernameTextBox.getText().isEmpty() || passwordTextBox.getText().isEmpty() || emailTextBox.getText().isEmpty()){
-				Window.alert("Django Admin Interface requires the creation of a superuser.");
 				return false;
 			}
 		}

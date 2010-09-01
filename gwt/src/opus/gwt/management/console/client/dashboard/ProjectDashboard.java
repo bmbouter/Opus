@@ -158,8 +158,13 @@ public class ProjectDashboard extends Composite {
 			activeLabel.setStyleName(style.navigationLabel());
 			activeLabel = optionsLabel;
 			navigationMenuFocusFlag = DeckPanels.OPTIONSPANEL.ordinal();
-			projectSettings.setActive(dashboard.isActive());
+			//projectSettings.setActive(dashboard.isActive());
+			//Window.alert("just set this projects active status");
 		}
+	}
+	
+	public Dashboard getDashboard(){
+		return dashboard;
 	}
 	
 	public DeckPanel getDeckPanel(){

@@ -18,6 +18,8 @@ package opus.gwt.management.console.client.dashboard;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ServerCommunicator;
+import opus.gwt.management.console.client.overlays.ProjectInformation;
+import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -83,15 +85,21 @@ public class Dashboard extends Composite {
 		for(int i =0; i < projInfo.getURLS().length(); i++){
 			urlsFlowPanel.add(new HTML("<a href='" + projInfo.getURLS().get(i) + "'>" + projInfo.getURLS().get(i) + "</a>"));	
 		}
-
-		ProjectSettingsData settings = projInfo.getAppSettings();
-		String a = settings.getApplicationSettings();
-		//Get list of apps
-		String[] apps = a.split(";;;\\s*");
-		//Create panel to display options for all apps
-		ProjectSettings options = projectDashboard.getOptionsPanel();
-		options.importProjectSettings(settings, apps);
-		
+		try {
+			ProjectSettingsData settings = projInfo.getAppSettings();
+			String a = settings.getApplicationSettings();
+			//Get list of apps
+			String[] apps = a.split(";;;\\s*");
+			//Create panel to display options for all apps
+			ProjectSettings options = projectDashboard.getOptionsPanel();
+			options.importProjectSettings(settings, apps);
+			projectDashboard.getOptionsPanel().setHasSettings(true);
+			//Window.alert(String.valueOf(this.active));
+			projectDashboard.getOptionsPanel().setActive(this.active);
+		} catch (Exception e) {
+			projectDashboard.getOptionsPanel().setHasSettings(false);
+			projectDashboard.getOptionsPanel().setActive(this.active);
+		}
 	}
 	
 	public boolean isActive(){

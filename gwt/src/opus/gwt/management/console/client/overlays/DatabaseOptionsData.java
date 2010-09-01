@@ -1,4 +1,4 @@
-##############################################################################
+/*############################################################################
 # Copyright 2010 North Carolina State University                             #
 #                                                                            #
 #   Licensed under the Apache License, Version 2.0 (the "License");          #
@@ -12,8 +12,31 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. #
 #   See the License for the specific language governing permissions and      #
 #   limitations under the License.                                           #
-##############################################################################
+############################################################################*/
 
-from ec2 import EC2Driver
-from opennebula14 import OpenNebula14Driver
-from deltacloud import DeltacloudDriver
+package opus.gwt.management.console.client.overlays;
+
+import com.google.gwt.core.client.JavaScriptObject;
+
+public class DatabaseOptionsData extends JavaScriptObject {
+	protected DatabaseOptionsData() {}                                 
+
+	public final native boolean getAutoPostgresConfig() /*-{ 
+		return this.OPUS_AUTO_POSTGRES_CONFIG; 
+	}-*/;
+	public final native String getAllowedDatabases() /*-{
+		var allowed = "";
+		for(var i = 0; i < this.OPUS_ALLOWED_DATABASES.length; i++){
+			allowed += this.OPUS_ALLOWED_DATABASES[i] + ",";
+		} 
+		return allowed; 
+	}-*/;
+	public final native String getAllowedAuthApps() /*-{
+		var allowed = "";
+		for(var i = 0; i < this.OPUS_ALLOWED_AUTH_APPS.length; i++){
+			allowed += this.OPUS_ALLOWED_AUTH_APPS[i] + ",";
+		} 
+		return allowed; 
+	}-*/;
+	 
+}

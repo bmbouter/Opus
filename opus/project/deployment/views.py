@@ -609,11 +609,17 @@ def gwt(request):
         token = request.GET['token']
     else:
         token = None
+
+    if request.is_secure():
+        deployerurl = "https://" + request.get_host()
+    else:
+        deployerurl = "http://" + request.get_host()
+
     return render("OPUSManagementConsoleGWT.html",
             dict(mediaprefix = settings.OPUS_GWT_MEDIA,
                 baseurl = settings.OPUS_APACHE_SERVERNAME_SUFFIX,
                 repourl = opus.COMMUNITY_URL,
-                deployerurl = request.build_absolute_uri(),
+                deployerurl = deployerurl,
                 project_token = token
                 ),
             request)

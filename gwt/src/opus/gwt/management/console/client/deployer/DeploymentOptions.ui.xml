@@ -48,12 +48,7 @@
 												<g:Label ui:field='baseUrlLabel' styleName="{style.configParameter}"></g:Label>
 											</g:FlowPanel>
 										</g:north>
-										<g:north size='2'>
-											<g:FlowPanel>
-												<g:Label styleName="{style.configParameter}">Activate Project on Launch?</g:Label>
-												<g:CheckBox ui:field="activeCheckBox" name='active' styleName="{style.configParameter}"></g:CheckBox>
-											</g:FlowPanel>
-										</g:north>
+										
 									</g:DockLayoutPanel>	
 
 							</g:west>

@@ -1,4 +1,4 @@
-##############################################################################
+/*############################################################################
 # Copyright 2010 North Carolina State University                             #
 #                                                                            #
 #   Licensed under the Apache License, Version 2.0 (the "License");          #
@@ -12,8 +12,16 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. #
 #   See the License for the specific language governing permissions and      #
 #   limitations under the License.                                           #
-##############################################################################
+############################################################################*/
 
-from ec2 import EC2Driver
-from opennebula14 import OpenNebula14Driver
-from deltacloud import DeltacloudDriver
+package opus.gwt.management.console.client.resources;
+
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.user.client.ui.Widget;
+
+public class DeployerCss extends Widget {
+	  public interface DeployerStyle extends CssResource {
+	    String navigationLabel();
+	    String navigationLabelActive();
+	  }
+}
