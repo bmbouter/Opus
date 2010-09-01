@@ -496,7 +496,7 @@ int main(int argc, char **argv)
             printf("Unknown secureops option\n");
             return help();
         }
-        if (ret == -1) {
+        if (ret == -1 && errno != ESRCH) {
             printf("Sending of signal failed. pid was %d. errno: %d", pid, errno);
             return 1;
         }
