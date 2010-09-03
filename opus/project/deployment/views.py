@@ -178,6 +178,7 @@ def _get_initial_edit_data(project):
     initial['dbhost'] = database['HOST']
     initial['dbport'] = database['PORT']
     initial['active'] = project.active
+    initial['debug'] = project.config['DEBUG']
     return initial
 
 @login_required
@@ -207,6 +208,9 @@ def edit(request, project):
                 elif field == "dbport":
                     database['PORT'] = cd['dbport']
                     log.debug("dbport changed to %s", cd['dbport'])
+
+
+            project.set_debug(cd['debug'])
 
             messages = []
 
@@ -378,6 +382,10 @@ def create(request, projectname):
 
                 # Deploy it now! But don't activate it.
                 deployment.deploy(info, False)
+
+                deployment.set_debug(dform.cleaned_data['debug'])
+                deployment.save()
+
             except Exception, e:
                 # The project didn't deploy for whatever reason. Delete the
                 # project directory and re-raise the exception

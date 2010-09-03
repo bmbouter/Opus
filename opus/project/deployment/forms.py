@@ -108,6 +108,7 @@ class DeploymentForm(forms.Form):
     dbhost = CharField(required=False)
     dbport = IntegerField(required=False)
     active = BooleanField(required=False, initial=True)
+    debug = BooleanField(required=False, initial=True)
 
     def __init__(self, *args, **kwargs):
         noactive = kwargs.pop("noactive", False)
