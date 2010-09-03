@@ -132,7 +132,7 @@ class DeltacloudDriver(DriverBase):
 
         # The actual request
         #print (host, method, path+query_string, body, headers)
-        if self._scheme is "https":
+        if self._scheme.startswith("https"):
             connection = httplib.HTTPSConnection(host)
         else:
             connection = httplib.HTTPConnection(host)
