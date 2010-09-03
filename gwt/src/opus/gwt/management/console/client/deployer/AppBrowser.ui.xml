@@ -2,7 +2,6 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="../resources/AppBrowser.css" type="opus.gwt.management.console.client.resources.AppBrowserCss.AppBrowserStyle"/>
-
 	<g:HTMLPanel styleName='{style.innerSubMainPanel}'>
 		<g:HTMLPanel styleName='{style.tabPanel}'>
 			<g:Label ui:field="featuredAppsLabel" styleName="{style.featuredAppsLabel}">Featured</g:Label>
@@ -26,7 +25,9 @@
 				</g:Button>
 			</div>
 		</g:HTMLPanel>
-		<g:Label styleName="{style.projectConfigLabel}">New Project Apps</g:Label>
+		<g:HTMLPanel styleName='{style.projectConfigLabel}'>
+			<u>New Project Apps</u>
+		</g:HTMLPanel>
 		<div class="{style.DeployList}">
 			<g:FlowPanel ui:field="DeployListFlowPanel" styleName='{style.DeployListFlowPanel}'>
 				

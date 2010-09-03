@@ -58,7 +58,7 @@ public class AppBrowser extends Composite {
 	
 	private final String featuredURL =  "/json/featured/?a&callback=";
 	private final String appListURL = "/json/search/application/?a&callback=";
-	private final String tokenURL = "project/configuration/token/?callback=";
+	private final String tokenURL = "/project/configuration/token/?callback=";
 
 	private ServerCommunicator communicator;
 	private JSVariableHandler JSVarHandler;
