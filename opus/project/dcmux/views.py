@@ -22,7 +22,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from collections import namedtuple
 
 import opus.lib.log
-log = opus.lib.log.getLogger()
+log = opus.lib.log.get_logger()
 from models import Provider, Policy, DownstreamImage, UpstreamImage, Instance
 
 HardwareProfile = namedtuple("HardwareProfile", "id")
