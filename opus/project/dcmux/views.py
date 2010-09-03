@@ -38,7 +38,6 @@ def primary_entry_point(request):
     resource_names = [
         "primary_entry_point",
         "hardware_profiles",
-        #"instance_states",
         "realms",
         "images",
         "instances",
@@ -51,10 +50,10 @@ def primary_entry_point(request):
     return render_to_response(
         'dcmux/primary_entry.xml',
         {"links": links},
-        mimetype="text/xml",
+        mimetype="application/xml",
     )
 
-def hardware_profiles(request, name=None):
+def hardware_profile_list(request, name=None):
     """Lists all hardware profiles, or the given one if id!=None.
 
     In dcmux, there is one hardware profile.  The real hardware profile
@@ -73,10 +72,10 @@ def hardware_profiles(request, name=None):
                 "hardware_profiles_uri": uri_lookup(request, "hardware_profiles"),
                 "hardware_profiles": hardware_profiles,
             },
-            mimetype="text/xml",
+            mimetype="application/xml",
     )
 
-def realms(request, id=None):
+def realm_list(request, id=None):
     """List all realms, or the given realm if id!=None."""
 
     if id == None:
@@ -88,6 +87,7 @@ def realms(request, id=None):
             # id wasn't an int, which it should be
             realms = []
         except ObjectDoesNotExist:
+            # id not found in database
             realms = []
 
     return render_to_response(
@@ -96,10 +96,10 @@ def realms(request, id=None):
             "realms_uri": uri_lookup(request, "realms"),
             "realms": realms,
         },
-        mimetype="text/xml",
+        mimetype="application/xml",
     )
 
-def images(request, id=None):
+def image_list(request, id=None):
     """List all downstream images, or the given image if id!=None."""
 
     if id == None:
@@ -111,6 +111,7 @@ def images(request, id=None):
             # id wasn't an int, which it should be
             images = []
         except ObjectDoesNotExist:
+            # id not found in database
             images = []
 
     return render_to_response(
@@ -119,10 +120,10 @@ def images(request, id=None):
             "images_uri": uri_lookup(request, "images"),
             "images": images,
         },
-        mimetype="text/xml",
+        mimetype="application/xml",
     )
 
-def instances(request, id=None):
+def instance_list(request, id=None):
     """List all instances, or the given instance if id!=None."""
 
     if id == None:
@@ -134,6 +135,7 @@ def instances(request, id=None):
             # id wasn't an int, which it should be
             instances = []
         except ObjectDoesNotExist:
+            # id not found in database
             instances = []
 
     return render_to_response(
@@ -142,8 +144,15 @@ def instances(request, id=None):
             "instances_uri": uri_lookup(request, "instances"),
             "instances": instances,
         },
-        mimetype="text/xml",
+        mimetype="application/xml",
     )
+
+def instance_create():
+    raise NotImplementedError() #TODO
+    # Get multipart-form data: image_id, realm_id, hwp_name, name
+    # Get prov driver from policy
+    # Get start instance
+    driver.instance_create(upstream_image.id, provider.realm)
 
 def instance_action(request, id, action):
     """Perform an action on an instance.
@@ -155,11 +164,11 @@ def instance_action(request, id, action):
     """
 
     if action.lower() == "reboot":
-        raise NotImplementedError()
+        raise NotImplementedError() #TODO
     elif action.lower() == "start":
-        raise NotImplementedError()
+        raise NotImplementedError() #TODO
     elif action.lower() == "stop":
-        raise NotImplementedError()
+        raise NotImplementedError() #TODO
     else:
         #TODO
         pass
