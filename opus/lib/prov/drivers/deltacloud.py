@@ -210,7 +210,7 @@ class DeltacloudDriver(DriverBase):
         """
         form_data = {"image_id":image_id}
         if realm_id:
-            form_data["realm_id"] = opts["realm_id"]
+            form_data["realm_id"] = realm_id
 
         entry_point = self._entry_points["instances"]
         dom = self._request(entry_point, "POST", form_data=form_data)
