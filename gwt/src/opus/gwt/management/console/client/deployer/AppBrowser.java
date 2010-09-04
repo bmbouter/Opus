@@ -138,14 +138,16 @@ public class AppBrowser extends Composite {
 				try {
 					String name = applications.get(i).getName();
 					String desc =  applications.get(i).getDescription();
+					String email = applications.get(i).getEmail();
+					String author = applications.get(i).getAuthor();
 					int pk = applications.get(i).getPk();
 					String iconPath = applications.get(i).getIconURL();
 					String path = applications.get(i).getPath();
-					//Window.alert(String.valueOf(pk));
+					
 					if( iconPath.equals("") ){
 						iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";
 					}
-					AppIcon appIcon = createAppIcon(name,desc,pk,iconPath,path);
+					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path);
 	
 					for (int j=0; j < featured.length; j++){
 	
@@ -178,18 +180,19 @@ public class AppBrowser extends Composite {
 		
 	}
 	
-	public void setAppInfo(String description, FormPanel versions) {
-		//AppInfo.add(new HTML(description));
-		AppInfo.setHTML(description);
+	public void setAppInfo(AppIcon icon) {
+		AppInfo.setHTML("<div class='" + style.appInfoContainer() + "'><img align='left' src='" + icon.getIcon() + "' />"
+				+ "<h1>" + icon.getName() + "</h1><h2>Author: " + icon.getAuthor() + "</h2>" 
+				+ "<h2>Email: " + icon.getEmail() + "</h2><br />" + icon.getDescription() + "</div>");
 		VersionInfo.clear();
-		VersionInfo.add(versions);
+		VersionInfo.add(icon.getVersions());
 		//AppInfo.setHTML(description + versions.toString());
 		//Window.alert(versions.toString());
 		
 	}
 	
-	public AppIcon createAppIcon(String name, String info, int pk, String iconPath, String appPath) { 
-		final AppIcon icon = new AppIcon(name, iconPath,info,pk,appPath);
+	public AppIcon createAppIcon(String name, String email, String author, String info, int pk, String iconPath, String appPath) { 
+		final AppIcon icon = new AppIcon(name, email, author, iconPath, info, pk, appPath);
 		icon.setIconHTML("<img align='left' src='"+iconPath+"'/><b>"+name+"</b><br/>"+icon.getShortDescription());
 		icon.setStyleName(style.appIcon());
 		
@@ -215,7 +218,8 @@ public class AppBrowser extends Composite {
 	        		if (deployList.contains(icon) == false) {
 	        			icon.setStyleName(style.appIconActive());
 	        			currentSelection = icon;
-	        			setAppInfo(icon.getDescription(),icon.getVersions());
+	        			//setAppInfo(icon.getDescription(),icon.getVersions());
+	        			setAppInfo(icon);
 		        		AppActionButton.setText("Add to Deploy List");
 			        	AppActionButton.setStyleName(style.AppActionButton());
 			        	AppActionButton.setVisible(true);
@@ -223,7 +227,8 @@ public class AppBrowser extends Composite {
 	        		} else {
 	        			icon.setStyleName(style.appIconSmallActive());
 	        			currentSelection = icon;
-	        			setAppInfo(icon.getDescription(), icon.getVersions());
+	        			//setAppInfo(icon.getDescription(), icon.getVersions());
+	        			setAppInfo(icon);
 		        		AppActionButton.setText("Remove from Deploy List");
 		        		AppActionButton.setVisible(false);
 		        		RemoveButton.setEnabled(true);
@@ -412,7 +417,7 @@ public class AppBrowser extends Composite {
 	  
 	  public ArrayList<String> getAppTypes() {
 		  ArrayList<String> types = new ArrayList<String>();
-		  for (int i=0; i<deployList.size(); i++){
+		  for (int i=0; i < deployList.size(); i++){
 			  types.add(deployList.get(i).getType());
 		  }
 		  return types;

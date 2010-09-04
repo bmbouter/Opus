@@ -1,3 +1,30 @@
+.appInfoContainer h1 {
+    font-weight: bold;
+    font-size: 20px;
+    padding: 0 5px 0 0;
+    margin-bottom: 3px;
+    color: #F2A938;
+}
+.appInfoContainer h2 {
+    font-weight: normal;
+    font-size: 14px;
+    padding: 0 5px 0 0;
+    margin-bottom: 3px;
+    margin-top: 0;
+}
+
+.appInfo {
+	padding-left: 20px;
+}
+
+.appInfo img {
+    margin: 0 10px 10px 0;
+}
+
+.appInfoContainer {
+    margin-bottom: 20px;
+}
+
 .AppActionButton {
 	width: 100px;
 	height: 50px;
@@ -20,9 +47,7 @@
    	font-size: 1em;
    	position: relative;
 }
-.appInfo {
-	width: 45%;
-}
+
 .AppActionButtonHidden {
 	display: none;
 }
@@ -30,7 +55,7 @@
 	position: absolute;
 	top: 55%;
 	right: 1%;
-	width: 4%;
+	min-width: 5%;
 	height: 30%;
 }
 .RemoveButton {
@@ -38,7 +63,7 @@
 	float: right;
 	top: 15%;
 	right: 1%;
-	width: 4%;
+	min-width: 5%;
 	height: 30%;
 	color: red;
 }
@@ -114,13 +139,13 @@
 .DeployList {
 	margin-left: auto;
 	margin-right: auto;
-	width: 96.5%;
+	width: 95.5%;
 	margin: 1% 1% 2% 1%;
-	height: 18%;
+	height: 15%;
 	border: solid #F5CC7F 2px;
 	overflow-x: hidden;
 	overflow-y: hidden;
-	padding: 10px;
+	padding: 1%;
 	background: #F5CC7F;
 	border-radius: 10px;
 	-webkit-border-radius: 10px;
@@ -131,11 +156,11 @@
 }
 .AppList {
 	float: left;
-	width: 65%;	
+	width: 60%;	
 	height: 100%;
 }
 .AppInfo {
-	width: 35%;
+	width: 40%;
 	height: 100%;
 	float: left;
 	positon: relative;
@@ -197,17 +222,14 @@ img {
 	cursor: pointer;
 	cursor: hand;
 	float: left;
-	min-width: 100px;
-	height: 100px;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	padding-left: 5px;
-	padding-right: 5px;
+	min-width: 7%;
+	height: 90%;
+	padding: 1% 1% 1% 1%;
 	border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	background: white;
-	margin: 0 10px 0 0;
+	margin: 0 1% 0 0;
 	border: 1px solid #f0f0f0;
 	border-bottom: 2px solid #ccc;
 	border-right: 2px solid #ccc;
@@ -219,19 +241,16 @@ img {
 	cursor: hand;
 	background: grey;
 	float: left;
-	min-width: 100px;
-	height: 100px;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	padding-left: 5px;
-	padding-right: 5px;
+	min-width: 7%;
+	height: 90%;
+	padding: 1% 1% 1% 1%;
 	border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	border: 1px solid #f0f0f0;
 	border-bottom: 2px solid #ccc;
 	border-right: 2px solid #ccc;
-	margin: 0 10px 0 0;	
+	margin: 0 1% 0 0;	
 }
 .tabPanel {
 	height: 3%;	

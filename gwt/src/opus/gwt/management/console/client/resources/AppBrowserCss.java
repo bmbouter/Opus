@@ -14,5 +14,6 @@ public class AppBrowserCss extends Widget {
 		String appIconSmallActive();
 		String allAppsLabelActive();
 		String allAppsLabel();
+		String appInfoContainer();
 	}
 }

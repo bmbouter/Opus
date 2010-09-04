@@ -68,7 +68,7 @@
 									</g:north>
 									<g:north size='2'>
 										<g:HTMLPanel>
-											<u>Authentication Provider Setup</u>
+											<u>How your users will authenticate</u>
 										</g:HTMLPanel>
 									</g:north>
 									<g:north size='2'>
