@@ -20,7 +20,7 @@
 	<ui:style src="resources/ManagementConsole.css" type="opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle"/>
 	<g:RootLayoutPanel styleName="{style.rootPanel}">
 		<g:layer>
-			<g:DeckPanel ui:field='{mainDeckPanel}'>
+			<g:DeckPanel ui:field='mainDeckPanel'>
 			</g:DeckPanel>
 		</g:layer>
 	</g:RootLayoutPanel>

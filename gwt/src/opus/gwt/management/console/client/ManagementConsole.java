@@ -65,7 +65,7 @@ public class ManagementConsole extends Composite {
 	private ProjectDashboard projectDashboard;
 	private Login loginPanel;
 	private IconPanel iconPanel;
-	private ServerCommunicator ServerComm;
+	private ServerCommunicator serverComm;
 	private ManagementConsole managementCon;
 	private JSVariableHandler JSVarHandler;
 	private PopupPanel projectListPopup;
@@ -73,26 +73,26 @@ public class ManagementConsole extends Composite {
 	private String deletedProject;
 	
 	
-	@UiField Label titleBarLabel;
-	@UiField FlowPanel navigationMenuPanel;
+	//@UiField Label titleBarLabel;
+	//@UiField FlowPanel navigationMenuPanel;
 	@UiField DeckPanel mainDeckPanel;
 	@UiField ManagementConsoleStyle style;
-	@UiField Button deployNewButton;
-	@UiField Button dashboardsButton;
-	@UiField FlowPanel topMenuFlowPanel;
-	@UiField Button loggedInUserButton;
-	@UiField Button authenticationButton;
+	//@UiField Button deployNewButton;
+	//@UiField Button dashboardsButton;
+	//@UiField FlowPanel topMenuFlowPanel;
+	//@UiField Button loggedInUserButton;
+	//@UiField Button authenticationButton;
 	
 	public ManagementConsole() {
 		initWidget(uiBinder.createAndBindUi(this));
-		deletedProject = "";
-		loginPanel = new Login(mainDeckPanel, this);
-		iconPanel = new IconPanel(this);
 		JSVarHandler = new JSVariableHandler();
-		projectListPopup = new PopupPanel();
-		setupProjectPopup();
-		ServerComm = new ServerCommunicator();
+		serverComm = new ServerCommunicator();
 		managementCon = this;
+		loginPanel = new Login(serverComm);
+		//iconPanel = new IconPanel(this);
+		//deletedProject = "";
+		//projectListPopup = new PopupPanel();
+		//setupProjectPopup();
 		checkLogin();
 	}
 	
@@ -107,7 +107,7 @@ public class ManagementConsole extends Composite {
 	
 	public void checkLogin(){
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + checkLoginURL);
-		ServerComm.getJson(url, ServerComm, "handleUserInformation", this);
+		serverComm.getJson(url, serverComm, "handleUserInformation", this);
 	}
 	
 	private void createDashboardsPopup(){

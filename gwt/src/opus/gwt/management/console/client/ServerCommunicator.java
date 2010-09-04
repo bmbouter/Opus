@@ -36,10 +36,7 @@ public class ServerCommunicator {
 		this.queryTypes = new String[50];
 		this.requestId = 0;
 	}
-	  /**
-	   * Make call to remote server.
-	   */
-	
+
 	public void getJson(String url, ServerCommunicator handler, String queryType, Object parent){
 		//Window.alert(url + "     ---    " + String.valueOf(requestId));
 		queue[requestId] = parent;
@@ -48,8 +45,7 @@ public class ServerCommunicator {
 		requestId++;
 	}
 	
-	  public native static void requestJson(int requestId, String url,
-	      ServerCommunicator handler) /*-{
+	  public native static void requestJson(int requestId, String url, ServerCommunicator handler) /*-{
 	   var callback = "callback" + requestId;
 		//alert(url+callback)
 	   // [1] Create a script element.
