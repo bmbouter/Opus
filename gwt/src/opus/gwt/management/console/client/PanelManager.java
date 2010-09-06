@@ -16,6 +16,8 @@
 
 package opus.gwt.management.console.client;
 
+import java.util.HashMap;
+
 import opus.gwt.management.console.client.dashboard.ProjectDashboard;
 import opus.gwt.management.console.client.deployer.ProjectDeployer;
 import opus.gwt.management.console.client.overlays.ProjectNames;
@@ -37,24 +39,31 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 
-public class ManagementConsole extends Composite {
+
+public class PanelManager extends Composite {
 
 	private static ManagementConsoleUiBinder uiBinder = GWT
 			.create(ManagementConsoleUiBinder.class);
 
 	interface ManagementConsoleUiBinder extends
-			UiBinder<Widget, ManagementConsole> {
+			UiBinder<Widget, PanelManager> {
 	}
 
 	private final String logoutURL = "/accounts/logout/";
@@ -63,37 +72,51 @@ public class ManagementConsole extends Composite {
 	
 	private ProjectDeployer appDeployer;
 	private ProjectDashboard projectDashboard;
-	private Login loginPanel;
+	private Authentication authenticationPanel;
 	private IconPanel iconPanel;
 	private ServerCommunicator serverComm;
-	private ManagementConsole managementCon;
+	private PanelManager panelManager;
 	private JSVariableHandler JSVarHandler;
 	private PopupPanel projectListPopup;
 	private int projectCount;
 	private String deletedProject;
+	private HashMap<String, Integer> mainPanels;
 	
-	
-	//@UiField Label titleBarLabel;
-	//@UiField FlowPanel navigationMenuPanel;
-	@UiField DeckPanel mainDeckPanel;
+	@UiField Label titleBarLabel;
+	@UiField FlowPanel navigationMenuPanel;
 	@UiField ManagementConsoleStyle style;
-	//@UiField Button deployNewButton;
-	//@UiField Button dashboardsButton;
-	//@UiField FlowPanel topMenuFlowPanel;
-	//@UiField Button loggedInUserButton;
-	//@UiField Button authenticationButton;
+	@UiField Button deployNewButton;
+	@UiField Button dashboardsButton;
+	@UiField FlowPanel topMenuFlowPanel;
+	@UiField Button loggedInUserButton;
+	@UiField Button authenticationButton;
+	@UiField DeckPanel mainDeckPanel;
 	
-	public ManagementConsole() {
+	public PanelManager() {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
 		serverComm = new ServerCommunicator();
-		managementCon = this;
-		loginPanel = new Login(serverComm);
+		panelManager = this;
+		authenticationPanel = new Authentication(panelManager);
+		handleAuthentication();
+		//handleAuthentication();
 		//iconPanel = new IconPanel(this);
 		//deletedProject = "";
 		//projectListPopup = new PopupPanel();
-		//setupProjectPopup();
-		checkLogin();
+		//setupProjectPopup();	
+	}
+	
+	private void handleAuthentication(){
+		mainDeckPanel.insert(authenticationPanel, 0);
+		authenticationPanel.startAuthentication();
+	}
+	
+	public void passControl(){
+		mainDeckPanel.showWidget(1);
+	}
+	
+	public void showPanel(Object panel){
+		mainDeckPanel.showWidget(mainDeckPanel.getWidgetIndex((Widget) panel));
 	}
 	
 	private void setupProjectPopup(){
@@ -105,14 +128,9 @@ public class ManagementConsole extends Composite {
 		});
 	}
 	
-	public void checkLogin(){
-		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + checkLoginURL);
-		serverComm.getJson(url, serverComm, "handleUserInformation", this);
-	}
-	
 	private void createDashboardsPopup(){
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + projectsURL);
-		ServerComm.getJson(url, ServerComm, "handleProjectNames", this);	
+		serverComm.getJson(url, serverComm, "handleProjectNames", this);	
 	}
 	
 	public void onDeployNewProject(String projectName){
@@ -120,7 +138,7 @@ public class ManagementConsole extends Composite {
 		mainDeckPanel.clear();
 		navigationMenuPanel.clear();
 		titleBarLabel.setText("");
-    	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, projectName, managementCon);
+    	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, projectName, panelManager);
 	}
 	
 	public void onProjectDelete(String deletedProject){
@@ -133,14 +151,18 @@ public class ManagementConsole extends Composite {
 	}
 	
 	public ServerCommunicator getServerCommunicator(){
-		return ServerComm;
+		return serverComm;
+	}
+	
+	public JSVariableHandler getJSVariableHandler(){
+		return JSVarHandler;
 	}
 	
 	@UiHandler("deployNewButton")
 	void handleDeployNewProjectClick(ClickEvent event){
 		mainDeckPanel.clear();
 		navigationMenuPanel.clear();
-		appDeployer = new ProjectDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel, managementCon);
+		appDeployer = new ProjectDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel, panelManager);
 	}
 	
 	@UiHandler("dashboardsButton")
@@ -183,7 +205,7 @@ public class ManagementConsole extends Composite {
 			FormPanel logoutForm = new FormPanel();
 			logoutForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 			      public void onSubmitComplete(SubmitCompleteEvent event) {
-			        checkLogin();
+			        handleAuthentication();
 			      }
 			 });
 			logoutForm.setMethod(FormPanel.METHOD_GET);
@@ -235,7 +257,7 @@ public class ManagementConsole extends Composite {
 				        public void onClick(ClickEvent event) {
 				        	mainDeckPanel.clear();
 				    		navigationMenuPanel.clear();
-				        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText(), managementCon); 
+				        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText(), panelManager); 
 				        	if(projectListPopup.isShowing()){
 				    			dashboardsButton.setStyleName(style.topDashboardButton());
 				    			projectListPopup.hide();
@@ -255,26 +277,7 @@ public class ManagementConsole extends Composite {
 		}
 		projectListPopup.setStyleName(style.dashboardsPopup());
 	}
-	
-	public void handleUserInformation(UserInformation userInfo){
-		if( userInfo.isAuthenticated() ){
-			loggedInUserButton.setText(userInfo.getUsername());
-			loggedInUserButton.setVisible(true);
-			deployNewButton.setVisible(true);
-			dashboardsButton.setVisible(true);
-			authenticationButton.setVisible(true);
-			mainDeckPanel.clear();
-			navigationMenuPanel.clear();
-			createDashboardsPopup();
-			String token = JSVarHandler.getProjectToken();
-			if (token != null) {
-				deployNewButton.click();
-			}
-		} else {
-			showLoginPanel();
-		}
-	}
-	
+		
 	private void showLoginPanel(){
 		mainDeckPanel.clear();
 		titleBarLabel.setText("");
@@ -283,16 +286,12 @@ public class ManagementConsole extends Composite {
 		authenticationButton.setVisible(false);
 		dashboardsButton.setVisible(false);
 		deployNewButton.setVisible(false);
-		loginPanel = new Login(mainDeckPanel, this);
-		mainDeckPanel.add(loginPanel);
+		authenticationPanel = new Authentication(panelManager);
+		mainDeckPanel.add(authenticationPanel);
 		mainDeckPanel.showWidget(0);
 	}
 	
 	public final native JsArray<ProjectNames> asArrayOfProjectNames(JavaScriptObject jso) /*-{
     	return jso;
   	}-*/;
-	
-	public final native UserInformation asJSOUserInformation(JavaScriptObject jso) /*-{
-		return jso;
-	}-*/;
 }

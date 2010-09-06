@@ -1,0 +1,39 @@
+.loginPanel {
+	width: 40em;
+	margin: 15em auto 0 auto;
+}
+.header {
+	color: orange;
+	font-size: 3em;
+	text-align: center;	
+	font-weight: bold;
+	margin-bottom: 2em;
+	padding: 0 0 0.2em 0;
+	text-shadow: 3px 3px 5px #B87700;
+	border-bottom: 2px ridge #CCCCCC;
+	-webkit-box-reflect: below 0 literal('-webkit-gradient(linear, left top, left bottom, from(transparent), to(white), color-stop(.4, transparent))');
+}
+.fieldWrapper {
+	font-size: 1em;
+	float: left;
+	width: 100%;
+	margin-bottom: 0.4em;
+}
+.fieldLabel{
+	text-align: right;
+	float: left;
+	width: 40%;
+	margin: 0 auto;
+	padding: 0.35em 0.4em 0 0;
+	font-weight: bold;
+}
+.loginButton{
+	width: 4em;
+	margin: 0 0 0 16em;
+	/*margin: 0 0 0 5.25%;
+	border-radius: 5px;
+	border: #F08000;
+	box-shadow:2px 2px 10px #B86200;
+	background:	literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F08000), to(#F08000), color-stop(.5,#B86200))');
+    background:	literal('-moz-linear-gradient(0% 0% 90deg, #F08000, #F08000, #B86200 50%)');*/ 
+}

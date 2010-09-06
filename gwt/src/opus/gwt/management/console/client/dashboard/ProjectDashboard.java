@@ -16,7 +16,7 @@
 
 package opus.gwt.management.console.client.dashboard;
 
-import opus.gwt.management.console.client.ManagementConsole;
+import opus.gwt.management.console.client.PanelManager;
 import opus.gwt.management.console.client.resources.ProjectDashboardCss.ProjectDashboardStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -58,7 +58,7 @@ public class ProjectDashboard extends Composite {
 	@UiField Label optionsLabel;
 	@UiField ProjectDashboardStyle style;
 	
-	public ProjectDashboard(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, String projectTitle, ManagementConsole managementCon){
+	public ProjectDashboard(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, String projectTitle, PanelManager managementCon){
 		initWidget(uiBinder.createAndBindUi(this));
 		this.titleBarLabel = titleBarLabel;
 		this.navigationMenuPanel = navigationMenuPanel;

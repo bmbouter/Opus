@@ -18,10 +18,34 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="resources/ManagementConsole.css" type="opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle"/>
-	<g:RootLayoutPanel styleName="{style.rootPanel}">
+	
+	<g:RootLayoutPanel styleName='{style.rootLayoutPanel}'>
 		<g:layer>
-			<g:DeckPanel ui:field='mainDeckPanel'>
+			<g:DeckPanel ui:field='mainDeckPanel' styleName="{style.mainDeckPanel}">
+					<g:DockLayoutPanel ui:field='subMainPanel' styleName="{style.subMainPanel}" unit='PCT'>
+						<g:north size='3'>
+							<g:FlowPanel ui:field="topMenuFlowPanel" styleName="{style.topMenuPanel}">
+								<g:Button ui:field="dashboardsButton" visible='false' styleName="{style.topDashboardButton}">My Projects</g:Button>
+								<g:Button ui:field="deployNewButton" visible='false' styleName="{style.topDeployNewButton}">Deploy New Project</g:Button>
+								<g:Button ui:field="authenticationButton" visible='false' styleName="{style.authenticationButton}">Logout</g:Button>
+								<g:Button ui:field="loggedInUserButton" visible='false' styleName="{style.loggedInAsLabel}"></g:Button>
+							</g:FlowPanel>
+						</g:north>
+						<g:north size='8'>
+							<g:Label ui:field='titleBarLabel' styleName="{style.titleBar}"> 
+							</g:Label>
+						</g:north>
+						<g:west size ='12'>
+							<g:FlowPanel ui:field='navigationMenuPanel' styleName="{style.navigationMenu}">
+							</g:FlowPanel>
+						</g:west>
+						<g:east size='88'>	
+							<g:DeckPanel ui:field="mainDePanel" styleName="{style.mainDeckPanel}">
+							</g:DeckPanel>
+						</g:east>		
+					</g:DockLayoutPanel>
 			</g:DeckPanel>
 		</g:layer>
 	</g:RootLayoutPanel>
+	
 </ui:UiBinder> 

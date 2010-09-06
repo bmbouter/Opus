@@ -17,7 +17,7 @@
 package opus.gwt.management.console.client.dashboard;
 
 import opus.gwt.management.console.client.JSVariableHandler;
-import opus.gwt.management.console.client.ManagementConsole;
+import opus.gwt.management.console.client.PanelManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -47,13 +47,13 @@ public class DeleteProject extends Composite {
 	
 	private JSVariableHandler JSVarHandler;
 	private FormPanel deleteForm;
-	private ManagementConsole managementCon;
+	private PanelManager managementCon;
 	
 	@UiField Button deleteProjectButton;
 	@UiField HTMLPanel mainDeleteProjectPanel;
 	@UiField FlowPanel titlePanel;
 	
-	public DeleteProject(String projectTitle, ManagementConsole managementCon) {
+	public DeleteProject(String projectTitle, PanelManager managementCon) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.managementCon = managementCon;
 		JSVarHandler = new JSVariableHandler();

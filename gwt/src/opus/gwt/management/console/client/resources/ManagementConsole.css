@@ -14,6 +14,18 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
+
+.rootLayoutPanel {
+	margin: 0;
+	padding: 0;
+}
+.mainDeckPanel {
+	background: white;
+	margin: 0;
+	padding: 0;	
+}
+
+
 .mainPanel {
   	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E3E3E3), to(#8F8F8F), color-stop(.6,#999999))');
   	background-image: literal('-moz-linear-gradient(0% 0% 90deg, #E3E3E3, #8F8F8F, #999999 60%)');

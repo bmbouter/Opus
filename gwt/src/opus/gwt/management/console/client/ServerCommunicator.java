@@ -21,6 +21,7 @@ import opus.gwt.management.console.client.deployer.AddAppsBuildProject;
 import opus.gwt.management.console.client.deployer.AppBrowser;
 import opus.gwt.management.console.client.deployer.AppIcon;
 import opus.gwt.management.console.client.deployer.DatabaseOptions;
+import opus.gwt.management.console.client.overlays.UserInformation;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Window;
@@ -94,24 +95,24 @@ public class ServerCommunicator {
 		    
 		    Object parent = queue[rId];
 		    
-		    if (queryType.equals("updateTable")) {
-		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
-		    	p.updateTable(p.asArrayOfAppData(jso));
+		    if (queryType.equals("handleUserInformation")) {
+		    	Authentication auth = (Authentication)parent;
+		    	auth.handleUserInformation(asUserInformation(jso));
 		    } else if (queryType.equals("updateFieldList")) {
 		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
 		    	p.updateFieldList(p.asModelProperties(jso));
 		    } else if (queryType.equals("handleVersions")) {
 		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
 		    	p.handleVersions(p.asArrayOfVersionData(jso));
-		    } else if (queryType.equals("handleProjectNames")) {
-		    	ManagementConsole mc = (ManagementConsole)parent;
-		    	mc.handleProjectNames(mc.asArrayOfProjectNames(jso));
+		    /*} else if (queryType.equals("handleProjectNames")) {
+		    	PanelManager mc = (PanelManager)parent;
+		    	mc.handleProjectNames(mc.asArrayOfProjectNames(jso));*/
 		    } else if (queryType.equals("handleProjectInformation")) {
 		    	Dashboard db = (Dashboard)parent;
 		    	db.handleProjectInformation(db.asJSOProjectInformation(jso));
-		    } else if (queryType.equals("handleUserInformation")) {
-		    	ManagementConsole mc = (ManagementConsole)parent;
-		    	mc.handleUserInformation(mc.asJSOUserInformation(jso));
+		    } else if (queryType.equals("updateTable")) {
+		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
+		    	p.updateTable(p.asArrayOfAppData(jso)); 
 		    } else if (queryType.equals("importAppList")) {	    	
 		    	AppBrowser p = (AppBrowser)parent;
 		    	p.importAppList(p.asArrayOfProjectData(jso));
@@ -130,4 +131,8 @@ public class ServerCommunicator {
 		    }
 	    }
 	  }
+	
+	public final native UserInformation asUserInformation(JavaScriptObject jso) /*-{
+		return jso;
+	}-*/;
 }

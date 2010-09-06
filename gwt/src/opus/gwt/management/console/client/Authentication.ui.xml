@@ -17,25 +17,25 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="resources/ManagementConsole.css" />
-	<g:DockLayoutPanel ui:field='loginPanel' unit='EM' styleName="{style.loginPanel}">
-		<g:north size='2.5'>
-			<g:FlowPanel>
-				<g:Label styleName="{style.loginElement}">Username:</g:Label>
-				<g:TextBox ui:field="usernameTextBox" name='username' styleName="{style.loginTextBox}"></g:TextBox>
-			</g:FlowPanel>
-		</g:north>
-		<g:north size='2.5'>
-			<g:FlowPanel>
-				<g:Label styleName="{style.loginElement}">Password:</g:Label>
-				<g:PasswordTextBox ui:field="passwordTextBox" name='password' styleName="{style.loginTextBox}"></g:PasswordTextBox>
-			</g:FlowPanel>
-		</g:north>
-		<g:north size='2'>
-			<g:Button ui:field="loginButton" styleName="{style.loginButton}">Login</g:Button>
-		</g:north>
-		<g:north size='2'>
-			<g:Hidden ui:field="csrftoken"></g:Hidden>
-		</g:north>
-	</g:DockLayoutPanel>
+	<ui:style src="resources/Authentication.css" />
+	
+	<g:SimplePanel>
+		<g:HTMLPanel  ui:field='loginPanel' styleName="{style.loginPanel}">
+			<g:HTMLPanel styleName="{style.header}">
+				Opus Management Console
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.fieldWrapper}">
+				<label class="{style.fieldLabel}">Username:</label>
+				<g:TextBox ui:field="usernameTextBox" name='username'></g:TextBox>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.fieldWrapper}">
+				<label class="{style.fieldLabel}">Password:</label>
+				<g:PasswordTextBox ui:field="passwordTextBox" name='password'></g:PasswordTextBox>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.fieldWrapper}">
+				<g:Button ui:field="loginButton" styleName="{style.loginButton}">Login</g:Button>
+				<g:Hidden ui:field="csrftoken"></g:Hidden>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:SimplePanel>
 </ui:UiBinder> 

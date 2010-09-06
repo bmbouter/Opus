@@ -28,12 +28,12 @@ public class OPUSManagementConsoleGWT implements EntryPoint {
 	 * returns an error.
 	 */
 
-	private ManagementConsole managementConsole = new ManagementConsole(); 
+	private PanelManager panelManager = new PanelManager(); 
 	
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		RootPanel.get().add(managementConsole);
+		RootPanel.get().add(panelManager);
 	}
 }

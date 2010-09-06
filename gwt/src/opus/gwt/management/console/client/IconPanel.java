@@ -45,7 +45,7 @@ public class IconPanel extends Composite {
 	interface IconPanelUiBinder extends UiBinder<Widget, IconPanel> {
 	}
 	
-	private ManagementConsole console;
+	private PanelManager console;
 	private ProjectDashboard projectDashboard;
 	private HashMap<String, Integer> iconMap;
 	
@@ -54,7 +54,7 @@ public class IconPanel extends Composite {
 	@UiField ManagementConsoleStyle style;
 
 	
-	public IconPanel(ManagementConsole console) {
+	public IconPanel(PanelManager console) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.console = console;
 		iconMap = new HashMap<String, Integer>();

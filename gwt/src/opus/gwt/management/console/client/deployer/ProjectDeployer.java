@@ -19,7 +19,7 @@ package opus.gwt.management.console.client.deployer;
 import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
-import opus.gwt.management.console.client.ManagementConsole;
+import opus.gwt.management.console.client.PanelManager;
 import opus.gwt.management.console.client.dashboard.ProjectSettings;
 import opus.gwt.management.console.client.resources.DeployerCss.DeployerStyle;
 
@@ -62,7 +62,7 @@ public class ProjectDeployer extends Composite {
 	
 	private int navigationMenuFocusFlag;
 	private String createdProjectName;
-	private ManagementConsole managementCon;
+	private PanelManager managementCon;
 	
 	private Label activeLabel;
 	private FormPanel deployerForm;
@@ -78,7 +78,7 @@ public class ProjectDeployer extends Composite {
 	@UiField Label confirmBPLabel;
 	@UiField DeployerStyle style;
 	
-	public ProjectDeployer(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, ManagementConsole managementCon) {
+	public ProjectDeployer(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, PanelManager managementCon) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.managementCon = managementCon;
 		createdProjectName = "";

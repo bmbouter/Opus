@@ -27,6 +27,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -38,20 +39,20 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
-public class Login extends Composite {
-
-	private static LoginUiBinder uiBinder = GWT.create(LoginUiBinder.class);
-
-	interface LoginUiBinder extends UiBinder<Widget, Login> {
-	}
+public class Authentication extends Composite {
 	
-	private final String loginURL = "/accounts/login";
+	private static AuthenticationUiBinder uiBinder = GWT.create(AuthenticationUiBinder.class);
+	interface AuthenticationUiBinder extends UiBinder<Widget, Authentication> {}
+	
+	private final String loginURL = "/accounts/login/";
 	private final String checkLoginURL = "/json/username/?a&callback=";
 
 	private FormPanel loginForm; 
 	private JSVariableHandler JSVarHandler;
-	private ManagementConsole managementCon;
 	private ServerCommunicator serverComm;
+	private PanelManager panelManager;
+	private boolean loggedIn;
+	private String username;
 	
 	@UiField Hidden csrftoken;
 	@UiField Button loginButton;
@@ -59,30 +60,54 @@ public class Login extends Composite {
 	@UiField PasswordTextBox passwordTextBox;
 
 
-	public Login(ServerCommunicator serverComm) {
+	public Authentication(PanelManager panelManager) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.serverComm = serverComm;
-		JSVarHandler = new JSVariableHandler();
+		this.serverComm = panelManager.getServerCommunicator();
+		JSVarHandler = panelManager.getJSVariableHandler();
+		this.panelManager = panelManager;
 		loginForm = new FormPanel();
-		setupLoginForm();
+		loggedIn = false;
+		username = "";
 	}
 
+	public void startAuthentication(){
+		setupLoginForm();
+		getUserInfo();
+	}
+	
 	private void setupLoginForm(){
 		loginForm.setMethod(FormPanel.METHOD_POST);
 		loginForm.setVisible(false);
 		loginForm.setAction(JSVarHandler.getDeployerBaseURL() + loginURL);
 		loginForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        managementCon.checkLogin();
+		        getUserInfo();
 		      }
 		 });
 	}
 	
-	public void checkLogin(){
+	private void getUserInfo(){
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + checkLoginURL);
 		serverComm.getJson(url, serverComm, "handleUserInformation", this);
 	}
 	
+	public void handleUserInformation(UserInformation userInfo){
+		if( userInfo.isAuthenticated() ){
+			Window.alert("Authenticated");
+			username = userInfo.getUsername();
+			loggedIn = true;
+			panelManager.passControl();
+		} else {
+			Window.alert("not authenticated");
+			loggedIn = false;
+			panelManager.showPanel(this);	
+		}
+	}
+		
+	public void finishAuthentication(String username){
+		this.username = username;
+	}
+		
 	@UiHandler("loginButton")
 	void onLoginClick(ClickEvent event) {
 		handleLoginButton();
@@ -120,23 +145,11 @@ public class Login extends Composite {
 		loginForm.submit();
 	}
 	
-	public void handleUserInformation(UserInformation userInfo){
-		if( userInfo.isAuthenticated() ){
-			loggedInUserButton.setText(userInfo.getUsername());
-			loggedInUserButton.setVisible(true);
-			deployNewButton.setVisible(true);
-			dashboardsButton.setVisible(true);
-			authenticationButton.setVisible(true);
-			mainDeckPanel.clear();
-			navigationMenuPanel.clear();
-			createDashboardsPopup();
-			String token = JSVarHandler.getProjectToken();
-			if (token != null) {
-				deployNewButton.click();
-			}
-		} else {
-			showLoginPanel();
-		}
+	public boolean isLoggedIn(){
+		return loggedIn;
 	}
 	
+	public String getUsername(){
+		return username;
+	}
 }

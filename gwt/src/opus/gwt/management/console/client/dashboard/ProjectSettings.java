@@ -3,7 +3,7 @@ package opus.gwt.management.console.client.dashboard;
 import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
-import opus.gwt.management.console.client.ManagementConsole;
+import opus.gwt.management.console.client.PanelManager;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 import opus.gwt.management.console.client.resources.ProjectDashboardCss.ProjectDashboardStyle;
 
@@ -42,7 +42,7 @@ public class ProjectSettings extends Composite {
 	private String projectName;
 	private JSVariableHandler JSVarHandler;
 	private boolean active;
-	private ManagementConsole managementCon;
+	private PanelManager managementCon;
 	private ProjectDashboard projectDashboard;
 	private boolean hasSettings;
 	private ArrayList<String> textboxes;
@@ -55,7 +55,7 @@ public class ProjectSettings extends Composite {
 	@UiField ProjectDashboardStyle style;
 
 
-	public ProjectSettings(String projectName, ManagementConsole manCon, ProjectDashboard projectDashboard) {
+	public ProjectSettings(String projectName, PanelManager manCon, ProjectDashboard projectDashboard) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.projectName = projectName;
 		this.JSVarHandler = new JSVariableHandler();
