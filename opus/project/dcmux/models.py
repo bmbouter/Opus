@@ -16,18 +16,17 @@
 
 from django.db import models
 
-from opus.lib.prov.deltacloud_old import Deltacloud
-
+from opus.lib.prov import DRIVERS
 
 class Provider(models.Model):
-    """A deltacloud cloud services provider.
-
-    This represents something that implements the deltacloud api.
-
-    """
+    """A cloud services provider."""
 
     # A human readable descriptive name
     name = models.CharField(max_length=60, unique=True)
+
+    # The opus.lib.prov driver that this provider uses
+    # Must be one of the items in opus.lib.prov.DRIVERS
+    driver = models.CharField(max_length=60)
 
     # A valid URI entry point for this provider
     uri = models.URLField()
@@ -38,10 +37,11 @@ class Provider(models.Model):
     # Password to use with this provider
     password = models.CharField(max_length=60)
 
-    def get_deltacloud_client(self):
-        """Returns a deltacloud client object configured for this provider."""
+    def get_client(self):
+        """Returns a driver client object configured for this provider."""
 
-        d = Deltacloud(self.username, self.password, self.uri)
+        Driver = DRIVERS[self.driver]
+        d = Drivers(self.username, self.password, self.uri)
         d.connect()
         return d
 
@@ -59,10 +59,6 @@ class UpstreamImage(models.Model):
 
     # The real image id on the provider
     image_id = models.CharField(max_length=60)
-
-    # A valid hardware profile for this provider, or blank for the default
-    # hardware profile
-    hardware_profile = models.CharField(max_length=60)
 
     # The DownstreamImage which will represent this UpstreamImage
     downstream_image = models.ForeignKey("DownstreamImage")
@@ -130,10 +126,10 @@ class Instance(models.Model):
     _cached_instance_object = None
     @property
     def _instance_object(self):
-        """Get the deltacloud client instance object for this instance."""
+        """Get the instance object for this instance."""
 
         if self._cached_instance_object == None:
-            client = self.provider.get_deltacloud_client()
+            client = self.provider.get_client()
             self._cached_instance_object = client.instance(self.instance_id)
 
         return self._cached_instance_object
@@ -173,6 +169,9 @@ class Policy(models.Model):
     # State will be AVAILABLE or UNAVAILABLE
     state = models.CharField(max_length=12, choices=STATE_CHOICES)
 
+    def get_next_provider():
+        raise NotImplementedError()
+
     def __str__(self):
         return self.name
 
@@ -190,3 +189,6 @@ class SingleProviderPolicy(Policy):
     class Meta:
         verbose_name = "Single provider policy"
         verbose_name_plural = "Single provider policies"
+
+    def get_next_provider():
+        return self.provider

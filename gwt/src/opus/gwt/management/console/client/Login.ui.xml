@@ -21,7 +21,7 @@
 	<g:DockLayoutPanel ui:field='loginPanel' unit='EM' styleName="{style.loginPanel}">
 		<g:north size='2.5'>
 			<g:FlowPanel>
-				<g:Label styleName="{style.loginElement}">Username:</g:Label>
+				<g:Label styleName="{style.loginElement}">Username</g:Label>
 				<g:TextBox ui:field="usernameTextBox" name='username' styleName="{style.loginTextBox}"></g:TextBox>
 			</g:FlowPanel>
 		</g:north>

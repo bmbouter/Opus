@@ -237,12 +237,21 @@ function opusmanagementconsolegwt(){
   $stats && $stats({moduleName:'opusmanagementconsolegwt', sessionId:$sessionId_0, subSystem:'startup', evtGroup:'bootstrap', millis:(new Date).getTime(), type:'selectingPermutation'});
   if (!isHostedMode()) {
     try {
+<<<<<<< HEAD
       unflattenKeylistIntoAnswers(['ie6'], '1B51AAC9E3E9FFC2CB3BDEFB8E4F052B');
       unflattenKeylistIntoAnswers(['gecko1_8'], '3337AC693E9B529CFE0C29E74B3EE119');
       unflattenKeylistIntoAnswers(['opera'], '71C4F7AA12078FC5F56DC42EE4EBC896');
       unflattenKeylistIntoAnswers(['ie8'], '9721C91DE60529F3BF73F1601A5492B5');
       unflattenKeylistIntoAnswers(['gecko'], '9B8611A634742CBE65D438A62DF1D42C');
       unflattenKeylistIntoAnswers(['safari'], 'F838C109C737CFA8BE6760295C976864');
+=======
+      unflattenKeylistIntoAnswers(['gecko1_8'], '114A2D724E495C71B0F017B048B46C09');
+      unflattenKeylistIntoAnswers(['ie6'], '1ED4CB0D9C97B5478D6F3A81B69EFD1B');
+      unflattenKeylistIntoAnswers(['opera'], '365EBE8AE86BB24167F052D6932D5CEB');
+      unflattenKeylistIntoAnswers(['gecko'], '792CB104BED6DAAB09B05CBA0376214A');
+      unflattenKeylistIntoAnswers(['ie8'], '8D46E0DE0429707D825E63764ABFFCF0');
+      unflattenKeylistIntoAnswers(['safari'], 'DA6BC80F4CC76BC80C1B6C289E8CEBB2');
+>>>>>>> e1e2fd64d916b974e75820ffdcdd3ff1b68600c5
       strongName = answers[computePropValue('user.agent')];
       initialHtml = strongName + '.cache.html';
     }

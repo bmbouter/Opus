@@ -34,12 +34,12 @@
 				<g:DockLayoutPanel unit='PCT' styleName="{style.addAppsMainPanel}"> 
 					<g:north size="94">
 						<g:DockLayoutPanel unit='PCT'>
-							<g:west size='75'>
+							<g:west size='70'>
 								<g:DockLayoutPanel unit='EM' ui:field='projectOptionsPanel' styleName="{style.form}">
 									<g:north size ='3'>
 										<g:HTMLPanel>
 											<u>Superuser Setup</u>
-											<br>Superuser setup is not required.  Please see notes in the right hand panel.</br>
+											<br>Superuser setup is required if you wish to be able to assign local groups and permissions.</br>
 										</g:HTMLPanel>
 									</g:north>
 									<g:north size='2'>
@@ -60,11 +60,16 @@
 											<g:PasswordTextBox name='superpasswordconfirm' ui:field='passwordConfirmTextBox' styleName='{style.configParameter}'/>
 										</g:FlowPanel>
 									</g:north>
-									<g:north size='2'>
+									<g:north size='4'>
 										<g:FlowPanel>
 											<g:Label styleName='{style.configParameter}'>Email</g:Label>
 											<g:TextBox name ='superemail' ui:field='emailTextBox' styleName='{style.configParameter}'/>
 										</g:FlowPanel>
+									</g:north>
+									<g:north size='2'>
+										<g:HTMLPanel>
+											<u>How your users will authenticate</u>
+										</g:HTMLPanel>
 									</g:north>
 									<g:north size='2'>
 										<g:FlowPanel>
@@ -75,7 +80,7 @@
 									</g:north>
 								</g:DockLayoutPanel>
 							</g:west>
-							<g:west size='25'>
+							<g:west size='30'>
 								<g:DockLayoutPanel styleName="{style.infoPanel}" unit='PCT'>
 									<g:north size='90'>
 										<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.infoScrollPanel}">
@@ -86,7 +91,6 @@
 												<p>Username - Enter valid username for DJango Admin Superuser</p>
 												<p>Password - valid password for Superuser</p>
 												<p>Email - contact email address for Superuser</p>
-												<p>Django Admin Interface - Choose 'Yes' to enable the Django Admin interface</p>
 											</g:HTML>
 											</g:FlowPanel>
 										</g:ScrollPanel>

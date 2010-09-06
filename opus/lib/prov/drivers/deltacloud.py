@@ -132,7 +132,7 @@ class DeltacloudDriver(DriverBase):
 
         # The actual request
         #print (host, method, path+query_string, body, headers)
-        if self._scheme is "https":
+        if self._scheme.startswith("https"):
             connection = httplib.HTTPSConnection(host)
         else:
             connection = httplib.HTTPConnection(host)
@@ -140,6 +140,7 @@ class DeltacloudDriver(DriverBase):
         #print self._host, method, location+query_string, body, headers, self._scheme
         response = connection.getresponse()
         text = response.read()
+        print text
         connection.close()
         if response.status < 200 or response.status >= 400:
             # Response was not successful (status 2xx or 3xx).
@@ -210,7 +211,7 @@ class DeltacloudDriver(DriverBase):
         """
         form_data = {"image_id":image_id}
         if realm_id:
-            form_data["realm_id"] = opts["realm_id"]
+            form_data["realm_id"] = realm_id
 
         entry_point = self._entry_points["instances"]
         dom = self._request(entry_point, "POST", form_data=form_data)
@@ -341,6 +342,6 @@ def _xml_to_realm(xml, driver):
         xml.getAttribute("id"),
         driver,
         xml_get_text(xml, "name")[0],
-        xml_get_text(xml, "state")[0] is "AVAILABLE",
+        xml_get_text(xml, "state")[0].startswith("AVAILABLE"),
         -1,
     )

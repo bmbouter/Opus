@@ -19,6 +19,7 @@ package opus.gwt.management.console.client;
 import opus.gwt.management.console.client.dashboard.ProjectDashboard;
 import opus.gwt.management.console.client.deployer.ProjectDeployer;
 import opus.gwt.management.console.client.overlays.ProjectNames;
+import opus.gwt.management.console.client.overlays.UserInformation;
 import opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
 
 import com.google.gwt.core.client.GWT;

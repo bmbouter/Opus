@@ -14,11 +14,11 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
-package opus.gwt.management.console.client;
+package opus.gwt.management.console.client.overlays;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-class UserInformation extends JavaScriptObject {                              // [1]
+public class UserInformation extends JavaScriptObject {                              // [1]
 	  // Overlay types always have protected, zero argument constructors.
 	  protected UserInformation() {}
 
