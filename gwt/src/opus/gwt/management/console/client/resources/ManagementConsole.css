@@ -69,7 +69,7 @@
 	height: 98%;
 	padding: 10% 0 0 6%;
 	margin-top: 20px;
-	margin-right: -1px;
+	font-size: 1em;
 }
 .mainDeckPanel{
 	width: 98%;
@@ -91,7 +91,6 @@
 	float: left;
 	border-right: 1px solid gray;
 	margin-left: 0.75%;
-	font-family: "Droid Serif";
 	height: 100%;
 }
 .topDashboardButtonActive{
@@ -108,7 +107,6 @@
 	-moz-border-radius: 5px 5px 0 0;
 	margin-left: 0.65%;
 	height: 100%;
-	font-family: "Droid Serif";
 }
 .topDeployNewButton{
 	cursor: pointer;
@@ -117,7 +115,6 @@
 	border: none;
 	color: white;
 	float: left;
-	font-family: "Droid Serif";
 	height: 100%;
 }
 .loggedInAsLabel{
@@ -127,7 +124,6 @@
 	color: orange;
 	margin-right: 0.2%;
 	height: 100%;
-	font-family: "Droid Serif";
 	float: right;
 }
 .authenticationButton{

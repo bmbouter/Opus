@@ -86,8 +86,6 @@ class ProjectBuilder(object):
 
         self.apps = []
 
-        self.admin = False
-
     def add_app(self, src, srctype):
         """Adds an app to the configuration. srctype is a string specifying the
         source type. Source types are defined in opus.lib.builder.sources.  For
@@ -103,11 +101,6 @@ class ProjectBuilder(object):
             src = os.path.abspath(src)
             
         self.apps.append(App(src, srctype))
-
-    def set_admin_app(self, on=True):
-        """Call this to turn the admin app on or off for this project. It is
-        off by default"""
-        self.admin = on
 
     def create(self, target):
         """Create a new Django project inside the given directory target,
@@ -229,6 +222,9 @@ class ProjectBuilder(object):
 # override Opus's configuration, but this is not recommended.
 from opus.lib.conf import load_settings
 load_settings(globals())
+
+import djcelery
+djcelery.setup_loader()
 """)
 
         # Randomizing SECRET_KEY is taken care of for us by new_from_template,
@@ -255,8 +251,7 @@ load_settings(globals())
             if keyword.iskeyword(app):
                 raise BuildException("App name cannot be a keyword")
             newapps.append(app)
-        if self.admin:
-            newapps.append("django.contrib.admin")
+        newapps.append("django.contrib.admin")
         self.config['INSTALLED_APPS'] += newapps
 
         # Add default template context preprocessors, so that applications can
@@ -292,8 +287,7 @@ load_settings(globals())
         with open(urlsfile, 'r') as fileobj:
             urls = fileobj.readlines()
 
-        if self.admin:
-            urls.append("""
+        urls.append("""
 from django.contrib import admin
 admin.autodiscover()
 """)
@@ -308,8 +302,7 @@ admin.autodiscover()
         urls.append("    url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),\n")
         urls.append("    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', name='logout'),\n")
         # Add the admin interface view
-        if self.admin:
-            urls.append("    url(r'^admin/', include(admin.site.urls)),\n")
+        urls.append("    url(r'^admin/', include(admin.site.urls)),\n")
         urls.append(")\n")
         
 

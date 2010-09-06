@@ -24,7 +24,7 @@ deploying a project:
 * Restarts Apache (gracefully, of course)
 
 The entire process is fully automated. Additionally, the entire procedure is
-reversable to tear down and destroy a project. Applications can also be added,
+reversible to tear down and destroy a project. Applications can also be added,
 removed, or updated on a live project.
 
 Applications for installation in a managed project can come either from a local
@@ -113,7 +113,7 @@ as possible.
 
 Below, there are several references to the "Opus user." This refers to the
 Linux user that the Opus application will be running as. Typically, this is
-the same user that Apache uses, and is "apache" throught examples in this
+the same user that Apache uses, and is "apache" throughout examples in this
 documentation, but since mod_wsgi can be configured to run projects as another
 user (with daemon mode), we use the term "Opus user" instead.
 
@@ -394,7 +394,13 @@ Opus user. e.g.::
 
     sudo -u apache ./manage.py celeryd
 
-See the Celery documentation for how to run this as a system daemon.
+See the Celery documentation for how to run this as a system daemon. We
+recommend using a package called supervisord, which can be pip-installed since
+it's a pure python process manager.
+
+For your convenience, since supervisord doesn't come with an init script,
+here's the one we use:
+http://github.com/bmbouter/supervisord_init_script/blob/master/supervisord
 
 Misc Notes
 ----------

@@ -333,9 +333,6 @@ def create(request, projectname):
                     continue
                 log.debug(" ... with app %r", appdata['apppath'])
                 builder.add_app(appdata['apppath'], appdata['apptype'])
-            if pdata['admin'] or pdata['idprovider'] == 'local':
-                log.debug(" ... and the admin app")
-                builder.set_admin_app()
             if pdata['idprovider'] != 'local':
                 log.debug(" ... and the idp app %r", pdata['idprovider'])
                 apptype, apppath = settings.OPUS_ALLOWED_AUTH_APPS[pdata['idprovider']]
@@ -417,8 +414,7 @@ def create(request, projectname):
             metaobj = json.load(metadata)
             # Fill the app form set with this initial data
             appsform = forms.AppFormSet(initial=metaobj['applist'])
-            pform = forms.ProjectForm(initial={'admin': 
-                metaobj.get('admin', False)})
+            pform = forms.ProjectForm()
 
     return render("deployment/newform.html", dict(
             pform=pform,

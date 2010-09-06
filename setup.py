@@ -22,7 +22,7 @@ for dirpath, dirnames, filenames in os.walk(tocopy):
 if __name__ == "__main__":
     setup(
         name='Opus',
-        version='0.1',
+        version='0.2.0',
         url="https://fedorahosted.org/opus/",
         maintainer="North Carolina State University",
         maintainer_email="opus-devel@lists.fedorahosted.org",

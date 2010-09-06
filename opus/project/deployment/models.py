@@ -234,11 +234,6 @@ class DeployedProject(models.Model):
         d.setup_celery(settings.OPUS_SECUREOPS_COMMAND,
                 pythonpath=self._get_path_additions())
 
-        # Schedule celery to start supervisord. Somehow if supervisord is
-        # started directly by mod_wsgi, strange things happen to supervisord's
-        # signal handlers
-        opus.project.deployment.tasks.start_supervisord.delay(self.projectdir)
-
         if active:
             self.activate(d)
 
@@ -251,7 +246,8 @@ class DeployedProject(models.Model):
 
     def activate(self, d=None):
         """Activate this project. This writes out the apache config with the
-        current parameters. Also writes out the wsgi file.
+        current parameters. Also writes out the wsgi file. Finally, starts the
+        supervisord process which starts celeryd and celerybeat
 
         This is normally done during deployment, but this is useful to call
         after any change that affects the apache config so that the changes
@@ -278,6 +274,12 @@ class DeployedProject(models.Model):
                 ssl_chain=settings.OPUS_SSL_CHAIN,
                 )
 
+        # Schedule celery to start supervisord. Somehow if supervisord is
+        # started directly by mod_wsgi, strange things happen to supervisord's
+        # signal handlers
+        opus.project.deployment.tasks.start_supervisord.delay(self.projectdir)
+
+
     def deactivate(self):
         """Removes the apache configuration file and restarts apache.
 
@@ -285,6 +287,13 @@ class DeployedProject(models.Model):
         destroyer = opus.lib.deployer.ProjectUndeployer(self.projectdir)
         destroyer.remove_apache_conf(settings.OPUS_APACHE_CONFD,
                 secureops=settings.OPUS_SECUREOPS_COMMAND)
+        destroyer.stop_celery(
+                secureops=settings.OPUS_SECUREOPS_COMMAND)
+
+        # Make sure all processes are stopped
+        opus.project.deployment.tasks.kill_processes.apply_async(
+                args=[self.pk],
+                countdown=5)
 
     def destroy(self):
         """Destroys the project. Deletes it off the drive, removes the system
@@ -309,6 +318,9 @@ class DeployedProject(models.Model):
                 secureops=settings.OPUS_SECUREOPS_COMMAND)
 
         destroyer.stop_celery(
+                secureops=settings.OPUS_SECUREOPS_COMMAND)
+
+        destroyer.delete_celery(
                 secureops=settings.OPUS_SECUREOPS_COMMAND)
 
         # This also kills off any remaining processes owned by that user

@@ -45,3 +45,10 @@ def destroy_project_by_name(projectname):
 def start_supervisord(projectdir):
     d = ProjectDeployer(projectdir)
     d.start_supervisord(settings.OPUS_SECUREOPS_COMMAND)
+
+@task
+def kill_processes(projectid):
+    project = opus.project.deployment.models.DeployedProject.objects.get(pk=projectid)
+    log.info("Killing all processes for %s", project.name)
+    destroyer = opus.lib.deployer.ProjectUndeployer(project.projectdir)
+    destroyer.kill_processes(settings.OPUS_SECUREOPS_COMMAND)

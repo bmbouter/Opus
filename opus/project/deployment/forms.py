@@ -47,13 +47,11 @@ class ProjectForm(forms.Form):
         choices = [x for x in choices if x[0] in settings.OPUS_ALLOWED_AUTH_APPS]
         self.fields['idprovider'].choices = choices
 
-    admin = BooleanField(required=False,
-            label="Install Admin interface?")
     idprovider = ChoiceField(required=True,
             widget=Select(),
             label="What type of authentication should be installed?",
             choices = (
-                ("local", "Local Authentication (implies admin interface)"),
+                ("local", "Local Authentication"),
                 ("openid", "Open ID"),
                 ("ldap", "LDAP"),
             )

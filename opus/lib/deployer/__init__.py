@@ -38,17 +38,6 @@ from opus.lib.log import get_logger
 import opus.lib.deployer.ssl
 log = get_logger()
 
-# Things the deployer needs to do:
-# - confuring the database / syncing the database / creating admin user
-# - configuring apache/wsgi
-# - configuring permissions / creating system user
-# - restarting webserver
-# - configuring template directory
-# - configuring media directory (both setting.py and apache)
-
-# Items TODO:
-# - Media configuration
-
 class DeploymentException(Exception):
     pass
 
@@ -376,6 +365,7 @@ import sys
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 os.environ['OPUS_SETTINGS_FILE'] = {settingspath!r}
+os.environ['CELERY_LOADER'] = 'django'
 
 {additionalpaths}
 
@@ -521,7 +511,7 @@ pidfile=%(here)s/run/supervisord.pid
 loglevel=debug
 
 [program:celeryd]
-command=python %(here)s/manage.py celeryd --loglevel=INFO
+command=django-admin.py celeryd --loglevel=INFO
 directory=%(here)s
 numprocs=1
 stdout_logfile=%(here)s/log/celeryd.log
@@ -530,10 +520,10 @@ autostart=true
 autorestart=true
 startsecs=10
 stopwaitsecs = 600
-environment=PYTHONPATH={path!r},OPUS_SETTINGS_FILE={opussettings!r}
+environment=PYTHONPATH="{path}:%(here)s",OPUS_SETTINGS_FILE={opussettings!r},DJANGO_SETTINGS_MODULE=settings
 
 [program:celerybeat]
-command=python %(here)s/manage.py celerybeat --loglevel=INFO -s %(here)s/sqlite/celerybeat-schedule.db
+command=django-admin.py celerybeat --loglevel=INFO -s %(here)s/sqlite/celerybeat-schedule.db
 directory=%(here)s
 numprocs=1
 stdout_logfile=%(here)s/log/celerybeat.log
@@ -542,7 +532,7 @@ autostart=true
 autorestart=true
 startsecs=10
 stopwaitsecs = 600
-environment=PYTHONPATH={path!r},OPUS_SETTINGS_FILE={opussettings!r}
+environment=PYTHONPATH="{path}:%(here)s",OPUS_SETTINGS_FILE={opussettings!r},DJANGO_SETTINGS_MODULE=settings
 """.format(path=pythonpath,
         opussettings=str(os.path.join(self.projectdir, "opussettings.json")))
 
@@ -616,7 +606,7 @@ class ProjectUndeployer(object):
             self._restart_apache(secureops)
 
     def stop_celery(self, secureops="secureops"):
-        """Shuts down supervisord, and removes the user/vhost from rabbitmq"""
+        """Shuts down supervisord"""
         # Check if the pid file exists. If not, nothing to do
         pidfilename = os.path.join(self.projectdir, "run", "supervisord.pid")
         if os.path.exists(pidfilename):
@@ -633,6 +623,8 @@ class ProjectUndeployer(object):
             if ret:
                 raise DeploymentException("Could not stop supervisord. {0}".format(output))
 
+    def delete_celery(self, secureops="secureops"):
+        """Removes the user/vhost from rabbitmq"""
         # Delete the user/vhost.
         log.info("removing rabbitmq user/vhost")
         proc = subprocess.Popen([secureops,"-b",
@@ -656,7 +648,7 @@ class ProjectUndeployer(object):
         """Sends a sigterm to all processes owned by the user, waits 10 or so
         seconds, then sends a sigkill to all. This is called by delete_user if
         there are still processes running, so no need to call it directly
-        normally
+        during undeployment.
 
         """
         log.info("Killing all processes owned by project %s...", self.projectname)
