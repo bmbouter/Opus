@@ -153,22 +153,7 @@ public class AppBrowser extends Composite {
 					if( iconPath.equals("") ){
 						iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";
 					}
-<<<<<<< HEAD
-					AppIcon appIcon = createAppIcon(name,desc,pk,iconPath,path);
-					
-					
-=======
 					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path);
-	
-					for (int j=0; j < featured.length; j++){
-	
-						//Window.alert(String.valueOf(featured.length));
-						if (featured[j] == pk) {
-							featuredIcons.add(appIcon);
-							//featuredIcons.set(j, appIcon);
-						}
-					}
->>>>>>> e1e2fd64d916b974e75820ffdcdd3ff1b68600c5
 					appFlowPanel.add(appIcon);
 					allIcons.add(appIcon);
 					IconMap.put(appIcon.getAppPk(), appIcon);
@@ -182,7 +167,7 @@ public class AppBrowser extends Composite {
 			for (int j=0; j < featured.length; j++){
 				
 				AppIcon icon = IconMap.get(String.valueOf(featured[j]));
-				AppIcon featuredIcon = createAppIcon(icon.getName(),icon.getDescription(), Integer.valueOf(icon.getAppPk()), icon.getIcon(), icon.getPath());
+				AppIcon featuredIcon = createAppIcon(icon.getName(),icon.getEmail(), icon.getAuthor(), icon.getDescription(), Integer.valueOf(icon.getAppPk()), icon.getIcon(), icon.getPath());
 				FeaturedIconMap.put(featuredIcon.getAppPk(), featuredIcon);
 
 				featuredAppFlowPanel.add(featuredIcon);
@@ -239,7 +224,6 @@ public class AppBrowser extends Composite {
         					FeaturedIconMap.get(currentSelection.getAppPk()).setStyleName(style.appIcon());
         				}
 	        		}
-<<<<<<< HEAD
 	        		/*if (deployListReplacements.contains(icon)){
 	        			int index = deployListReplacements.indexOf(icon);
 	        			deployList.get(index).setStyleName(style.appIconSmallActive());
@@ -250,14 +234,7 @@ public class AppBrowser extends Composite {
 	        			if (FeaturedIconMap.containsKey(icon.getAppPk())){
         					FeaturedIconMap.get(icon.getAppPk()).setStyleName(style.appIconActive());
         				}
-	        			setAppInfo(icon.getDescription(),icon.getVersions());
-=======
-	        		if (deployList.contains(icon) == false) {
-	        			icon.setStyleName(style.appIconActive());
-	        			currentSelection = icon;
-	        			//setAppInfo(icon.getDescription(),icon.getVersions());
 	        			setAppInfo(icon);
->>>>>>> e1e2fd64d916b974e75820ffdcdd3ff1b68600c5
 		        		AppActionButton.setText("Add to Deploy List");
 			        	AppActionButton.setStyleName(style.AppActionButton());
 			        	AppActionButton.setVisible(true);
@@ -338,7 +315,7 @@ public class AppBrowser extends Composite {
 		} else {
 			
 			//create new icon and add it to the deploy list
-			AppIcon iconForDeployList = createAppIcon(currentSelection.getName(),currentSelection.getDescription(), Integer.valueOf(currentSelection.getAppPk()), currentSelection.getIcon(), currentSelection.getPath());
+			AppIcon iconForDeployList = createAppIcon(currentSelection.getName(),currentSelection.getEmail(),currentSelection.getAuthor(),currentSelection.getDescription(), Integer.valueOf(currentSelection.getAppPk()), currentSelection.getIcon(), currentSelection.getPath());
 			iconForDeployList.setStyleName(style.appIconSmallActive());
 			iconForDeployList.setIconHTML("<img src='"+currentSelection.getIcon()+"'><br/>"+currentSelection.getName());
 			DeployListMap.put(iconForDeployList.getAppPk(),iconForDeployList);
@@ -414,21 +391,16 @@ public class AppBrowser extends Composite {
 	  
 	  public ArrayList<String> getAppTypes() {
 		  ArrayList<String> types = new ArrayList<String>();
-<<<<<<< HEAD
 		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
 			  types.add(e.getValue().getType());
-=======
-		  for (int i=0; i < deployList.size(); i++){
-			  types.add(deployList.get(i).getType());
->>>>>>> e1e2fd64d916b974e75820ffdcdd3ff1b68600c5
 		  }
 		  return types;
 	  }
 	  
 	  public ArrayList<String> getApps() {
 		  ArrayList<String> apps = new ArrayList<String>();
-		  for (int i=0; i<deployList.size(); i++){
-			  apps.add(deployList.get(i).getName());
+		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
+			  apps.add(e.getValue().getName());
 		  }
 		  return apps;
 	  }
