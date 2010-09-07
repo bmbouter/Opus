@@ -4,7 +4,7 @@ var $gwt_version = "2.0.3";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '6D952870C9936B3AE369C2672C457FA2';
+var $strongName = '949531B91B0CE83FCFAAEB1A36A3FAD7';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -8519,7 +8519,7 @@ function $createAppIcon(this$static, name_0, email, author, info, pk, iconPath){
   icon = $AppIcon(new AppIcon, name_0, email, author, iconPath, info, pk);
   icon.iconHTML.element.innerHTML = "<img align='left' src='" + iconPath + "'/><b>" + name_0 + '<\/b><br/>' + $getShortDescription(icon) || '';
   icon.element['className'] = 'G10k6x65IN';
-  versionsURL = encode($wnd.repoBaseURL + '/json/application/' + pk + '/versions/?a') + '&callback=';
+  versionsURL = encode($wnd.repoBaseURL + $replaceAll('/json/application/pk/versions/?callback=', 'pk', '' + pk));
   $getJson(this$static.communicator, versionsURL, this$static.communicator, 'getVersionInfo', icon);
   $addDomHandler(icon.iconPanel, $AppBrowser$1(new AppBrowser$1, this$static, icon), ($clinit_73() , $clinit_73() , TYPE_0));
   return icon;
@@ -8622,7 +8622,7 @@ function $populateAppGrid(this$static, applications){
   var $e0, appIcon, author, desc, email, featuredIcon, i, icon, iconPath, j, name_0, pk, token, url;
   this$static.applicationData = applications;
   if (this$static.featuredListLoaded) {
-    for (i = 0; i < applications.length - 1; ++i) {
+    for (i = 0; i < applications.length; ++i) {
       try {
         name_0 = applications[i].fields.name;
         desc = applications[i].fields.description;
@@ -8635,6 +8635,7 @@ function $populateAppGrid(this$static, applications){
         appIcon = $createAppIcon(this$static, name_0, email, author, desc, pk, iconPath);
         $add_2(this$static.appFlowPanel, appIcon);
         $put_0(this$static.IconMap, appIcon.pk_0, appIcon);
+        $wnd.alert(appIcon.pk_0);
       }
        catch ($e0) {
         $e0 = caught_0($e0);
@@ -8664,6 +8665,7 @@ function $populateFeaturedList(this$static, jso){
   var i, s;
   s = $split(jso.toString?jso.toString():'[JavaScriptObject]', ',\\s*', 0);
   this$static.featured = initDim(_3I_classLit, 205, -1, s.length, 1);
+  $wnd.alert('' + s.length);
   for (i = 0; i < s.length; ++i) {
     this$static.featured[i] = valueOf(__parseAndValidateInt(s[i], 10, -2147483648, 2147483647)).value_0;
   }
