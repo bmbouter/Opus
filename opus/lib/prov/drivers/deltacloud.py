@@ -140,6 +140,7 @@ class DeltacloudDriver(DriverBase):
         #print self._host, method, location+query_string, body, headers, self._scheme
         response = connection.getresponse()
         text = response.read()
+        print text
         connection.close()
         if response.status < 200 or response.status >= 400:
             # Response was not successful (status 2xx or 3xx).
@@ -341,6 +342,6 @@ def _xml_to_realm(xml, driver):
         xml.getAttribute("id"),
         driver,
         xml_get_text(xml, "name")[0],
-        xml_get_text(xml, "state")[0] is "AVAILABLE",
+        xml_get_text(xml, "state")[0].startswith("AVAILABLE"),
         -1,
     )
