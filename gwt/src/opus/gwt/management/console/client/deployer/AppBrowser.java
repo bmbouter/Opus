@@ -61,6 +61,7 @@ public class AppBrowser extends Composite {
 	private final String featuredURL =  "/json/featured/?a&callback=";
 	private final String appListURL = "/json/search/application/?a&callback=";
 	private final String tokenURL = "/project/configuration/token/?callback=";
+	private final String versionURL = "/json/application/pk/versions/?callback=";
 
 	private ServerCommunicator communicator;
 	private JSVariableHandler JSVarHandler;
@@ -136,7 +137,7 @@ public class AppBrowser extends Composite {
 		this.applicationData = applications;
 		if(this.featuredListLoaded){
 			String innerHTML = "";
-			for (int i=0; i<applications.length()-1; i++){
+			for (int i=0; i<applications.length(); i++){
 				try {
 					String name = applications.get(i).getName();
 					String desc =  applications.get(i).getDescription();
@@ -152,6 +153,7 @@ public class AppBrowser extends Composite {
 					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path);
 					appFlowPanel.add(appIcon);
 					IconMap.put(appIcon.getAppPk(), appIcon);
+					//Window.alert(appIcon.getAppPk());
 				} catch (Exception e){
 					//DOTO:need to handle these exceptions somehow
 					//		Not sure;
@@ -160,7 +162,8 @@ public class AppBrowser extends Composite {
 				
 			}
 			for (int j=0; j < featured.length; j++){
-				
+				//Window.alert(String.valueOf(featured[j]));
+
 				AppIcon icon = IconMap.get(String.valueOf(featured[j]));
 				AppIcon featuredIcon = createAppIcon(icon.getName(),icon.getEmail(), icon.getAuthor(), icon.getDescription(), Integer.valueOf(icon.getAppPk()), icon.getIcon(), icon.getPath());
 				FeaturedIconMap.put(featuredIcon.getAppPk(), featuredIcon);
@@ -197,7 +200,7 @@ public class AppBrowser extends Composite {
 		icon.setIconHTML("<img align='left' src='"+iconPath+"'/><b>"+name+"</b><br/>"+icon.getShortDescription());
 		icon.setStyleName(style.appIcon());
 		
-		final String versionsURL = URL.encode(JSVarHandler.getRepoBaseURL() + "/json/application/" + String.valueOf(pk) + "/versions/?a") + "&callback=";
+		final String versionsURL = URL.encode(JSVarHandler.getRepoBaseURL() + versionURL.replaceAll("pk", String.valueOf(pk)));
 		
 		communicator.getJson(versionsURL, communicator, "getVersionInfo", icon);
 		
@@ -333,6 +336,7 @@ public class AppBrowser extends Composite {
 		//comment
 		String[] s = jso.toString().split(",\\s*");
 		featured = new int[s.length];
+		//Window.alert(String.valueOf(s.length));
 		for (int i=0; i<s.length; i++){
 			featured[i] = Integer.valueOf(s[i]);
 		}

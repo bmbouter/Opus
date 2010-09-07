@@ -4,7 +4,7 @@ var $gwt_version = "2.0.3";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '6CFB394E71527222DA9874FF7522A374';
+var $strongName = '16881C00C8675C67E159889C3321CFD1';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -8311,12 +8311,12 @@ function $addProject(this$static, url){
   $getJson(this$static.communicator, url, this$static.communicator, 'importAppList', this$static);
 }
 
-function $createAppIcon(this$static, name_0, email, author, info, pk, iconPath){
+function $createAppIcon(this$static, name_0, email, author, info, pk, iconPath, appPath){
   var icon, versionsURL;
-  icon = $AppIcon(new AppIcon, name_0, email, author, iconPath, info, pk);
+  icon = $AppIcon(new AppIcon, name_0, email, author, iconPath, info, pk, appPath);
   icon.iconHTML.element.innerHTML = "<img align='left' src='" + iconPath + "'/><b>" + name_0 + '<\/b><br/>' + $getShortDescription(icon) || '';
   icon.element['className'] = 'G10k6x65IN';
-  versionsURL = encode($wnd.repoBaseURL + '/json/application/' + pk + '/versions/?a') + '&callback=';
+  versionsURL = encode($wnd.repoBaseURL + $replaceAll('/json/application/pk/versions/?callback=', 'pk', '' + pk));
   $getJson(this$static.communicator, versionsURL, this$static.communicator, 'getVersionInfo', icon);
   $addDomHandler(icon.iconPanel, $AppBrowser$1(new AppBrowser$1, this$static, icon), ($clinit_74() , $clinit_74() , TYPE_0));
   return icon;
@@ -8327,7 +8327,7 @@ function $getAppPaths(this$static){
   paths = $ArrayList(new ArrayList);
   for (e$iterator = $AbstractHashMap$EntrySetIterator(new AbstractHashMap$EntrySetIterator, $AbstractHashMap$EntrySet(new AbstractHashMap$EntrySet, this$static.DeployListMap).this$0); $hasNext_3(e$iterator.iter);) {
     e = e$iterator.last = dynamicCast($next_5(e$iterator.iter), 52);
-    $add_6(paths, $getPath(dynamicCast(e.getValue(), 58)));
+    $add_6(paths, dynamicCast(e.getValue(), 58).path_0);
   }
   return paths;
 }
@@ -8367,7 +8367,7 @@ function $handleAppActionButton(this$static){
     this$static.AppActionButton.element.style.display = '';
   }
    else {
-    iconForDeployList = $createAppIcon(this$static, this$static.currentSelection.name_0, this$static.currentSelection.email_0, this$static.currentSelection.author_0, this$static.currentSelection.desc, valueOf(__parseAndValidateInt(this$static.currentSelection.pk_0, 10, -2147483648, 2147483647)).value_0, this$static.currentSelection.icon, $getPath(this$static.currentSelection));
+    iconForDeployList = $createAppIcon(this$static, this$static.currentSelection.name_0, this$static.currentSelection.email_0, this$static.currentSelection.author_0, this$static.currentSelection.desc, valueOf(__parseAndValidateInt(this$static.currentSelection.pk_0, 10, -2147483648, 2147483647)).value_0, this$static.currentSelection.icon, this$static.currentSelection.path_0);
     iconForDeployList.element['className'] = 'G10k6x65LN';
     iconForDeployList.iconHTML.element.innerHTML = "<img src='" + this$static.currentSelection.icon + "'><br/>" + this$static.currentSelection.name_0 || '';
     $put_0(this$static.DeployListMap, iconForDeployList.pk_0, iconForDeployList);
@@ -8416,10 +8416,10 @@ function $importAppList(this$static, projectData){
 }
 
 function $populateAppGrid(this$static, applications){
-  var $e0, appIcon, author, desc, email, featuredIcon, i, icon, iconPath, j, name_0, pk, token, url;
+  var $e0, appIcon, author, desc, email, featuredIcon, i, icon, iconPath, j, name_0, path, pk, token, url;
   this$static.applicationData = applications;
   if (this$static.featuredListLoaded) {
-    for (i = 0; i < applications.length - 1; ++i) {
+    for (i = 0; i < applications.length; ++i) {
       try {
         name_0 = applications[i].fields.name;
         desc = applications[i].fields.description;
@@ -8427,9 +8427,9 @@ function $populateAppGrid(this$static, applications){
         author = applications[i].fields.author;
         pk = applications[i].pk;
         iconPath = $getIconURL(applications[i]);
-        applications[i].fields.path;
+        path = applications[i].fields.path;
         $equals_2(iconPath, '') && (iconPath = 'https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png');
-        appIcon = $createAppIcon(this$static, name_0, email, author, desc, pk, iconPath);
+        appIcon = $createAppIcon(this$static, name_0, email, author, desc, pk, iconPath, path);
         $add_2(this$static.appFlowPanel, appIcon);
         $put_0(this$static.IconMap, appIcon.pk_0, appIcon);
       }
@@ -8441,7 +8441,7 @@ function $populateAppGrid(this$static, applications){
     }
     for (j = 0; j < this$static.featured.length; ++j) {
       icon = dynamicCast($get_3(this$static.IconMap, '' + this$static.featured[j]), 58);
-      featuredIcon = $createAppIcon(this$static, icon.name_0, icon.email_0, icon.author_0, icon.desc, valueOf(__parseAndValidateInt(icon.pk_0, 10, -2147483648, 2147483647)).value_0, icon.icon, icon.versions_0[icon.selectedVersion].path);
+      featuredIcon = $createAppIcon(this$static, icon.name_0, icon.email_0, icon.author_0, icon.desc, valueOf(__parseAndValidateInt(icon.pk_0, 10, -2147483648, 2147483647)).value_0, icon.icon, icon.path_0);
       $put_0(this$static.FeaturedIconMap, featuredIcon.pk_0, featuredIcon);
       $add_2(this$static.featuredAppFlowPanel, featuredIcon);
     }
@@ -8632,7 +8632,7 @@ _ = AppBrowser_AppBrowserUiBinderUiBinderImpl$5.prototype = new Object_0;
 _.onClick = onClick_18;
 _.typeId$ = 169;
 _.val$owner = null;
-function $AppIcon(this$static, name_0, email, author, iconURL, description, pk){
+function $AppIcon(this$static, name_0, email, author, iconURL, description, pk, path){
   var attachRecord0, domId0, domId0Element, f_HTMLPanel1, iconHTML, iconPanel;
   $initWidget(this$static, (!style_9 && (style_9 = new opus_gwt_management_console_client_deployer_AppIcon_AppIconUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$1) , domId0 = $createUniqueId($doc) , iconHTML = $HTML(new HTML) , iconPanel = $FocusPanel(new FocusPanel) , f_HTMLPanel1 = $HTMLPanel(new HTMLPanel, "<span id='" + domId0 + "'><\/span>") , $add_3(iconPanel, iconHTML) , attachRecord0 = attachToDom(f_HTMLPanel1.element) , domId0Element = $doc.getElementById(domId0) , $detach(attachRecord0) , $removeFromParent_0(iconPanel) , $add_5(f_HTMLPanel1.children, iconPanel) , domId0Element.parentNode.replaceChild(iconPanel.element, domId0Element) , $setParent(iconPanel, f_HTMLPanel1) , this$static.iconHTML = iconHTML , this$static.iconPanel = iconPanel , $ensureInjected_6((!style_9 && (style_9 = new opus_gwt_management_console_client_deployer_AppIcon_AppIconUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$1) , style_9)) , f_HTMLPanel1));
   this$static.versionForm = $FormPanel(new FormPanel);
@@ -8644,11 +8644,8 @@ function $AppIcon(this$static, name_0, email, author, iconURL, description, pk){
   this$static.icon = iconURL;
   this$static.desc = description;
   this$static.pk_0 = '' + pk;
+  this$static.path_0 = path;
   return this$static;
-}
-
-function $getPath(this$static){
-  return this$static.versions_0[this$static.selectedVersion].path;
 }
 
 function $getShortDescription(this$static){
@@ -8661,16 +8658,15 @@ function $getShortDescription(this$static){
 }
 
 function $handleVersionInfo(this$static, data){
-  var button, i, j;
+  var button, i;
   $add_4(this$static.formContainer, $HTML_0(new HTML, 'Versions:'));
   for (i = 0; i < data.length; ++i) {
-    j = i;
     button = $RadioButton(new RadioButton, 'versions');
     button.inputElem.setAttribute('value', '' + i);
     i == 0 && $setValue_1(button, ($clinit_275() , $clinit_275() , TRUE), false);
     $setInnerText_0(($clinit_28() , button.labelElem), data[i].version);
     $add_4(this$static.formContainer, button);
-    $addDomHandler(button, $AppIcon$1(new AppIcon$1, this$static, j), ($clinit_74() , $clinit_74() , TYPE_0));
+    $addDomHandler(button, new AppIcon$1, ($clinit_74() , $clinit_74() , TYPE_0));
   }
   this$static.versions_0 = data;
 }
@@ -8678,10 +8674,7 @@ function $handleVersionInfo(this$static, data){
 function $setSelectedVersion(this$static, pk){
   var i;
   for (i = 0; i < this$static.versions_0.length; ++i) {
-    if (valueOf(__parseAndValidateInt(this$static.versions_0[i].pk, 10, -2147483648, 2147483647)).value_0 == pk) {
-      this$static.selectedVersion = i;
-      i = this$static.versions_0.length;
-    }
+    valueOf(__parseAndValidateInt(this$static.versions_0[i].pk, 10, -2147483648, 2147483647)).value_0 == pk && (i = this$static.versions_0.length);
   }
 }
 
@@ -8698,18 +8691,11 @@ _.icon = null;
 _.iconHTML = null;
 _.iconPanel = null;
 _.name_0 = null;
+_.path_0 = null;
 _.pk_0 = null;
-_.selectedVersion = 0;
 _.versionForm = null;
 _.versions_0 = null;
-function $AppIcon$1(this$static, this$0, val$j){
-  this$static.this$0 = this$0;
-  this$static.val$j = val$j;
-  return this$static;
-}
-
 function onClick_19(event_0){
-  this.this$0.selectedVersion = this.val$j;
 }
 
 function AppIcon$1(){
@@ -8718,8 +8704,6 @@ function AppIcon$1(){
 _ = AppIcon$1.prototype = new Object_0;
 _.onClick = onClick_19;
 _.typeId$ = 171;
-_.this$0 = null;
-_.val$j = 0;
 function $ApplicationPopup(this$static){
   var applicationPopup, versionsFlexTable;
   !style_10 && (style_10 = new opus_gwt_management_console_client_deployer_ApplicationPopup_ApplicationDetailInformationUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$1);
@@ -8816,12 +8800,12 @@ function $handleDBOptions(this$static, dbOptionsData){
   $setupDBOptions(this$static);
 }
 
---></script>
-<script><!--
 function $handleNextButton(this$static){
   $validateFields(this$static) && $handleDeploymentOptionsLabel(this$static.appDeployer);
 }
 
+--></script>
+<script><!--
 function $setDBOptionParams(this$static){
   var item;
   item = $getItemText(this$static.dbengineListBox, this$static.dbengineListBox.element.selectedIndex);

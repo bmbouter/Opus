@@ -98,7 +98,7 @@ public class AppIcon extends Composite {
 	}
 	
 	public String getPath() {
-		return versions.get(selectedVersion).getPath();
+		return path;
 	}
 	
 	public FormPanel getVersions(){
