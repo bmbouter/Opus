@@ -153,7 +153,7 @@ public class AppBrowser extends Composite {
 					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path);
 					appFlowPanel.add(appIcon);
 					IconMap.put(appIcon.getAppPk(), appIcon);
-					Window.alert(appIcon.getAppPk());
+					//Window.alert(appIcon.getAppPk());
 				} catch (Exception e){
 					//DOTO:need to handle these exceptions somehow
 					//		Not sure;
@@ -336,7 +336,7 @@ public class AppBrowser extends Composite {
 		//comment
 		String[] s = jso.toString().split(",\\s*");
 		featured = new int[s.length];
-		Window.alert(String.valueOf(s.length));
+		//Window.alert(String.valueOf(s.length));
 		for (int i=0; i<s.length; i++){
 			featured[i] = Integer.valueOf(s[i]);
 		}
