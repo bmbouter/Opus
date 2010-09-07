@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import opus.gwt.management.console.client.dashboard.ProjectDashboard;
 import opus.gwt.management.console.client.deployer.ProjectDeployer;
+import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.overlays.ProjectNames;
 import opus.gwt.management.console.client.overlays.UserInformation;
 import opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
@@ -70,9 +71,11 @@ public class PanelManager extends Composite {
 	private final String checkLoginURL = "/json/username/?a&callback=";
 	private final String projectsURL = "/json/?a&callback=";
 	
+	private Authentication authenticationPanel;
+	private NavigationPanel navigationPanel;
+	
 	private ProjectDeployer appDeployer;
 	private ProjectDashboard projectDashboard;
-	private Authentication authenticationPanel;
 	private IconPanel iconPanel;
 	private ServerCommunicator serverComm;
 	private PanelManager panelManager;
@@ -98,8 +101,9 @@ public class PanelManager extends Composite {
 		serverComm = new ServerCommunicator();
 		panelManager = this;
 		authenticationPanel = new Authentication(panelManager);
-		handleAuthentication();
+		navigationPanel = new NavigationPanel();
 		//handleAuthentication();
+		showNavigation();
 		//iconPanel = new IconPanel(this);
 		//deletedProject = "";
 		//projectListPopup = new PopupPanel();
@@ -109,6 +113,11 @@ public class PanelManager extends Composite {
 	private void handleAuthentication(){
 		mainDeckPanel.insert(authenticationPanel, 0);
 		authenticationPanel.startAuthentication();
+	}
+	
+	private void showNavigation(){
+		mainDeckPanel.insert(navigationPanel, 0);
+		mainDeckPanel.showWidget(0);
 	}
 	
 	public void passControl(){

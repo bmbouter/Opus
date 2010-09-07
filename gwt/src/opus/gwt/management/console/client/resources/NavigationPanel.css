@@ -1,0 +1,40 @@
+.navigationContainer{
+	margin: 0;
+	padding: 0;
+	border-bottom: 2px solid #386E2D;
+	height: 2em;
+	width: 100%;
+	background: #28D61C	;
+}
+.logo {
+	color: white;
+	font-size: 1.25em;
+	padding: 0 0 0.2em 0;
+	width: 14em;
+	float: left;
+	margin: 0.1em 0 0 1em;
+}
+.buttonT {
+	cursor: pointer;
+	cursot: hand;
+	border: none;
+	float: right;
+	background: transparent;
+}
+.topDashboardButton{
+	border-right: 1px solid gray;
+}
+.topDeployNewButton{
+	border-right: 1px solid gray;
+}
+.loggedInUserButton{
+	border-right: 1px solid gray;
+}
+.authenticationButton{
+	cursor: pointer;
+	cursot: hand;
+	border: none;
+	float: right;
+	border: none;
+	background: transparent;
+}	

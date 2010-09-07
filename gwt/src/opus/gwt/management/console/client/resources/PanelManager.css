@@ -83,7 +83,11 @@
 	margin-top: 20px;
 	font-size: 1em;
 }
-
+.mainDeckPanel{
+	width: 99%;
+	height: 97.5%;
+	padding: 0 0 0 0;
+}
 .topMenuPanel{
 	background: black;
 	border-radius: 10px 10px 0 0;
