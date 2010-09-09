@@ -102,8 +102,8 @@ public class PanelManager extends Composite {
 		panelManager = this;
 		authenticationPanel = new Authentication(panelManager);
 		navigationPanel = new NavigationPanel();
-		//handleAuthentication();
-		showNavigation();
+		handleAuthentication();
+		//showNavigation();
 		//iconPanel = new IconPanel(this);
 		//deletedProject = "";
 		//projectListPopup = new PopupPanel();
