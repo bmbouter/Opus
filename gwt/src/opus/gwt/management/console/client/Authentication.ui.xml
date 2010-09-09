@@ -27,15 +27,16 @@
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.fieldWrapper}">
 					<label class="{style.fieldLabel}">Username:</label>
-					<g:TextBox ui:field="usernameTextBox" name='username'></g:TextBox>
+					<g:TextBox ui:field="usernameTextBox" name='username' />
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.fieldWrapper}">
 					<label class="{style.fieldLabel}">Password:</label>
-					<g:PasswordTextBox ui:field="passwordTextBox" name='password'></g:PasswordTextBox>
+					<g:PasswordTextBox ui:field="passwordTextBox" name='password' />
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.fieldWrapper}">
+					<g:Label ui:field="errorLabel" visible="false" styleName="{style.errorLabel}">Username and/or Password are invalid.</g:Label>
 					<g:Button ui:field="loginButton" styleName="{style.loginButton}">Login</g:Button>
-					<g:Hidden ui:field="csrftoken"></g:Hidden>
+					<g:Hidden ui:field="csrftoken" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:FormPanel>

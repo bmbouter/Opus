@@ -27,13 +27,13 @@
 	padding: 0.35em 0.4em 0 0;
 	font-weight: bold;
 }
+.errorLabel {
+	width: 20em;
+	margin: 0.6em 0 1em 10em;
+	color: red;
+	font-weight: bold;
+}
 .loginButton{
 	width: 4em;
 	margin: 0 0 0 16em;
-	/*margin: 0 0 0 5.25%;
-	border-radius: 5px;
-	border: #F08000;
-	box-shadow:2px 2px 10px #B86200;
-	background:	literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F08000), to(#F08000), color-stop(.5,#B86200))');
-    background:	literal('-moz-linear-gradient(0% 0% 90deg, #F08000, #F08000, #B86200 50%)');*/ 
 }

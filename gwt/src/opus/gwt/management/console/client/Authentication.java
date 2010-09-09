@@ -30,11 +30,9 @@ import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -53,23 +51,24 @@ public class Authentication extends Composite {
 	private PanelManager panelManager;
 	private boolean loggedIn;
 	private String username;
+	private boolean firstLoginAttempt;
 	
 	@UiField Hidden csrftoken;
 	@UiField Button loginButton;
 	@UiField TextBox usernameTextBox;
 	@UiField PasswordTextBox passwordTextBox;
 	@UiField FormPanel authenticationForm;
+	@UiField Label errorLabel;
 
 
 	public Authentication(PanelManager panelManager) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.serverComm = panelManager.getServerCommunicator();
-		JSVarHandler = panelManager.getJSVariableHandler();
 		this.panelManager = panelManager;
-		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
-        csrftoken.setName("csrfmiddlewaretoken");
+		JSVarHandler = panelManager.getJSVariableHandler();
 		loggedIn = false;
 		username = "";
+		firstLoginAttempt = true;
 	}
 
 	public void startAuthentication(){
@@ -83,8 +82,12 @@ public class Authentication extends Composite {
 		authenticationForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
 		        getUserInfo();
+		        if( firstLoginAttempt )
+		        	firstLoginAttempt = false;
 		      }
 		 });
+		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
+        csrftoken.setName("csrfmiddlewaretoken");
 	}
 	
 	private void getUserInfo(){
@@ -94,14 +97,18 @@ public class Authentication extends Composite {
 	
 	public void handleUserInformation(UserInformation userInfo){
 		if( userInfo.isAuthenticated() ){
-			Window.alert("Authenticated");
 			username = userInfo.getUsername();
 			loggedIn = true;
 			panelManager.passControl();
 		} else {
-			Window.alert("not authenticated");
 			loggedIn = false;
-			panelManager.showPanel(this);	
+			panelManager.showPanel(this);
+			usernameTextBox.setFocus(true);
+			if( !firstLoginAttempt ){
+				errorLabel.setVisible(true);
+				usernameTextBox.setText("");
+				passwordTextBox.setText("");
+			} 
 		}
 	}
 		
