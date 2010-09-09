@@ -66,20 +66,21 @@ public class Authentication extends Composite {
 		this.serverComm = panelManager.getServerCommunicator();
 		JSVarHandler = panelManager.getJSVariableHandler();
 		this.panelManager = panelManager;
-		authenticationForm = new FormPanel();
+		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
+        csrftoken.setName("csrfmiddlewaretoken");
 		loggedIn = false;
 		username = "";
 	}
 
 	public void startAuthentication(){
-		setupauthenticationForm();
+		setupAuthenticationForm();
 		getUserInfo();
 	}
 	
-	private void setupauthenticationForm(){
+	private void setupAuthenticationForm(){
 		authenticationForm.setMethod(FormPanel.METHOD_POST);
-		authenticationForm.setVisible(false);
-		authenticationForm.setAction(JSVarHandler.getDeployerBaseURL() + loginURL);
+		//authenticationForm.setVisible(false);
+		authenticationForm.setAction(loginURL);
 		authenticationForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
 		        getUserInfo();
@@ -136,13 +137,13 @@ public class Authentication extends Composite {
 	}
 
 	private void handleLoginButton(){
-		FlowPanel formHandler = new FlowPanel();
-		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
-        csrftoken.setName("csrfmiddlewaretoken");
-        formHandler.add(csrftoken);
-        formHandler.add(usernameTextBox);
-        formHandler.add(passwordTextBox);
-        authenticationForm.add(formHandler);
+		//FlowPanel formHandler = new FlowPanel();
+		//csrftoken.setValue(Cookies.getCookie("csrftoken")); 
+        //csrftoken.setName("csrfmiddlewaretoken");
+        //formHandler.add(csrftoken);
+        //formHandler.add(usernameTextBox);
+        //formHandler.add(passwordTextBox);
+        //authenticationForm.add(formHandler);
 		authenticationForm.submit();
 	}
 	

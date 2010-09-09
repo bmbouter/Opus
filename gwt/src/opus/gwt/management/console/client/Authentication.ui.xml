@@ -20,7 +20,7 @@
 	<ui:style src="resources/Authentication.css" />
 	
 	<g:SimplePanel>
-		<g:FormPanel  ui:field='authenticationForm'> 
+		<g:FormPanel ui:field='authenticationForm'> 
 			<g:HTMLPanel styleName="{style.loginPanel}">
 				<g:HTMLPanel styleName="{style.header}">
 					Opus Management Console
