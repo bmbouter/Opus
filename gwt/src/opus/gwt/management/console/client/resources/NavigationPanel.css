@@ -25,16 +25,14 @@
 	color: white;
 	height: 100%;
 }
-.authenticationButton{
-	cursor: pointer;
-	cursot: hand;
-	border: none;
-	float: right;
-	border: none;
-	background: transparent;
-	color: white;
+.logoutPanel {
 	height: 100%;
-}	
+	margin: 0;
+	float: right;
+}
+.logoutButton{
+	border: none;
+}
 .username {
 	color: orange;
 }

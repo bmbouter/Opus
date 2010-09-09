@@ -60,12 +60,8 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 public class PanelManager extends Composite {
 
-	private static ManagementConsoleUiBinder uiBinder = GWT
-			.create(ManagementConsoleUiBinder.class);
-
-	interface ManagementConsoleUiBinder extends
-			UiBinder<Widget, PanelManager> {
-	}
+	private static ManagementConsoleUiBinder uiBinder = GWT.create(ManagementConsoleUiBinder.class);
+	interface ManagementConsoleUiBinder extends UiBinder<Widget, PanelManager> {}
 
 	private final String logoutURL = "/accounts/logout/";
 	private final String checkLoginURL = "/json/username/?a&callback=";

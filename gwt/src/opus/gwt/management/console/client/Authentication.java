@@ -79,7 +79,6 @@ public class Authentication extends Composite {
 	
 	private void setupAuthenticationForm(){
 		authenticationForm.setMethod(FormPanel.METHOD_POST);
-		//authenticationForm.setVisible(false);
 		authenticationForm.setAction(loginURL);
 		authenticationForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
@@ -104,10 +103,6 @@ public class Authentication extends Composite {
 			loggedIn = false;
 			panelManager.showPanel(this);	
 		}
-	}
-		
-	public void finishAuthentication(String username){
-		this.username = username;
 	}
 		
 	@UiHandler("loginButton")
@@ -137,13 +132,6 @@ public class Authentication extends Composite {
 	}
 
 	private void handleLoginButton(){
-		//FlowPanel formHandler = new FlowPanel();
-		//csrftoken.setValue(Cookies.getCookie("csrftoken")); 
-        //csrftoken.setName("csrfmiddlewaretoken");
-        //formHandler.add(csrftoken);
-        //formHandler.add(usernameTextBox);
-        //formHandler.add(passwordTextBox);
-        //authenticationForm.add(formHandler);
 		authenticationForm.submit();
 	}
 	
