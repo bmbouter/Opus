@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -47,7 +48,6 @@ public class Authentication extends Composite {
 	private final String loginURL = "/accounts/login/";
 	private final String checkLoginURL = "/json/username/?a&callback=";
 
-	private FormPanel loginForm; 
 	private JSVariableHandler JSVarHandler;
 	private ServerCommunicator serverComm;
 	private PanelManager panelManager;
@@ -58,6 +58,7 @@ public class Authentication extends Composite {
 	@UiField Button loginButton;
 	@UiField TextBox usernameTextBox;
 	@UiField PasswordTextBox passwordTextBox;
+	@UiField FormPanel authenticationForm;
 
 
 	public Authentication(PanelManager panelManager) {
@@ -65,21 +66,21 @@ public class Authentication extends Composite {
 		this.serverComm = panelManager.getServerCommunicator();
 		JSVarHandler = panelManager.getJSVariableHandler();
 		this.panelManager = panelManager;
-		loginForm = new FormPanel();
+		authenticationForm = new FormPanel();
 		loggedIn = false;
 		username = "";
 	}
 
 	public void startAuthentication(){
-		setupLoginForm();
+		setupauthenticationForm();
 		getUserInfo();
 	}
 	
-	private void setupLoginForm(){
-		loginForm.setMethod(FormPanel.METHOD_POST);
-		loginForm.setVisible(false);
-		loginForm.setAction(JSVarHandler.getDeployerBaseURL() + loginURL);
-		loginForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+	private void setupauthenticationForm(){
+		authenticationForm.setMethod(FormPanel.METHOD_POST);
+		authenticationForm.setVisible(false);
+		authenticationForm.setAction(JSVarHandler.getDeployerBaseURL() + loginURL);
+		authenticationForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
 		        getUserInfo();
 		      }
@@ -141,8 +142,8 @@ public class Authentication extends Composite {
         formHandler.add(csrftoken);
         formHandler.add(usernameTextBox);
         formHandler.add(passwordTextBox);
-        loginForm.add(formHandler);
-		loginForm.submit();
+        authenticationForm.add(formHandler);
+		authenticationForm.submit();
 	}
 	
 	public boolean isLoggedIn(){

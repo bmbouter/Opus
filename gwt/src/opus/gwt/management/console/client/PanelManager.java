@@ -121,7 +121,7 @@ public class PanelManager extends Composite {
 	}
 	
 	public void passControl(){
-		mainDeckPanel.showWidget(1);
+		showNavigation();
 	}
 	
 	public void showPanel(Object panel){
