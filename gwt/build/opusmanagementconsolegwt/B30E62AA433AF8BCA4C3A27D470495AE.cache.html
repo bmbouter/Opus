@@ -4,7 +4,7 @@ var $gwt_version = "2.0.3";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '82421B3EEA32CD2D229600F14925BA3C';
+var $strongName = 'B30E62AA433AF8BCA4C3A27D470495AE';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -4517,7 +4517,8 @@ _ = FormPanel$1.prototype = new Object_0;
 _.execute_0 = execute_11;
 _.typeId$ = 73;
 _.this$0 = null;
-function $FormPanel$SubmitCompleteEvent(this$static){
+function $FormPanel$SubmitCompleteEvent(this$static, resultsHtml){
+  this$static.resultHtml = resultsHtml;
   return this$static;
 }
 
@@ -4541,6 +4542,7 @@ _ = FormPanel$SubmitCompleteEvent.prototype = new GwtEvent;
 _.dispatch = dispatch_8;
 _.getAssociatedType = getAssociatedType_9;
 _.typeId$ = 0;
+_.resultHtml = null;
 var TYPE_8 = null;
 function $clinit_216(){
   $clinit_216 = nullMethod;
@@ -7095,6 +7097,7 @@ function $Authentication$1(this$static, this$0){
 }
 
 function onSubmitComplete(event_0){
+  $wnd.alert(event_0.resultHtml);
   $getUserInfo(this.this$0);
   this.this$0.firstLoginAttempt && (this.this$0.firstLoginAttempt = false);
 }
@@ -9335,7 +9338,7 @@ function $ensureInjected_14(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_67();
-    $push_0(toInject, '.G191d1pzF{width:40em;margin:15em auto 0 auto;}.G191d1pzD{color:orange;font-size:3em;text-align:center;font-weight:bold;margin-bottom:2em;padding:0 0 0.2em 0;text-shadow:3px 3px 5px #b87700;border-bottom:2px ridge #ccc;-webkit-box-reflect:below 0 -webkit-gradient(linear, left top, left bottom, from(transparent), to(white), color-stop(.4, transparent));}.G191d1pzC{font-size:1em;float:left;width:100%;margin-bottom:0.4em;}.G191d1pzB{text-align:right;float:left;width:40%;margin:0 auto;padding:0.35em 0.4em 0 0;font-weight:bold;}.G191d1pzA{width:20em;margin:0.6em 0 1em 10em;color:red;font-weight:bold;}.G191d1pzE{width:4em;margin:0 0 0 16em;}');
+    $push_0(toInject, '.G191d1pzF{width:40em;margin:15em auto 0 auto;}.G191d1pzD{color:orange;font-size:3em;text-align:center;font-weight:bold;margin-bottom:2em;padding:0 0 0.2em 0;text-shadow:3px 3px 5px #b87700;border-bottom:2px ridge #ccc;-webkit-box-reflect:below 0 -webkit-gradient(linear, left top, left bottom, from(transparent), to(white), color-stop(.4, transparent));}.G191d1pzC{font-size:1em;float:left;width:100%;margin-bottom:0.4em;}.G191d1pzB{text-align:right;float:left;width:40%;margin:0 auto;padding:0.35em 0.4em 0 0;font-weight:bold;}.G191d1pzA{width:20em;margin:0.6em 0 1em 10em;color:red;font-weight:bold;}.G191d1pzE{cursor:pointer;cursor:hand;width:4em;margin:0 0 0 16em;}');
     schedule();
     return true;
   }
