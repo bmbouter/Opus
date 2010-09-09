@@ -8,10 +8,10 @@
 	 		<g:HTMLPanel styleName="{style.logo}">
 	 			Opus Management Console
 	 		</g:HTMLPanel>
-	 		<g:Button ui:field="authenticationButton" addStyleNames="{style.authenticationButton} (style.buttonT}">Logout</g:Button>	 			
-	 		<g:Button ui:field="dashboardsButton" addStyleNames="{style.topDashboardButton} (style.buttonT}">My Projects</g:Button>
-			<g:Button ui:field="deployNewButton" addStyleNames="(style.buttonT} {style.topDeployNewButton}">Deploy New Project</g:Button>
-			<g:Button ui:field="loggedInUserButton" addStyleNames=" (style.buttonT} {style.loggedInUserButton}">edhelms</g:Button>
+	 		<g:Button ui:field="authenticationButton" styleName="{style.authenticationButton}">Logout</g:Button>	 			
+	 		<g:Button ui:field="dashboardsButton" styleName="{style.button}">My Projects</g:Button>
+			<g:Button ui:field="deployNewButton" styleName="{style.button}">Deploy New Project</g:Button>
+			<g:Button ui:field="loggedInUserButton" styleName="{style.button} {style.username}"></g:Button>
 	 	</g:HTMLPanel>
 	</g:SimplePanel>
 </ui:UiBinder> 

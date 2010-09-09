@@ -1,10 +1,11 @@
 .navigationContainer{
 	margin: 0;
 	padding: 0;
-	border-bottom: 2px solid #386E2D;
-	height: 2em;
+	border-bottom: 2px solid #CCCCCC;
+	height: 2.5em;
 	width: 100%;
-	background: #28D61C	;
+	background: black;
+	color: white;
 }
 .logo {
 	color: white;
@@ -12,23 +13,17 @@
 	padding: 0 0 0.2em 0;
 	width: 14em;
 	float: left;
-	margin: 0.1em 0 0 1em;
+	margin: 0.3em 0 0 0.5em;
 }
-.buttonT {
+.button {
 	cursor: pointer;
 	cursot: hand;
 	border: none;
 	float: right;
 	background: transparent;
-}
-.topDashboardButton{
 	border-right: 1px solid gray;
-}
-.topDeployNewButton{
-	border-right: 1px solid gray;
-}
-.loggedInUserButton{
-	border-right: 1px solid gray;
+	color: white;
+	height: 100%;
 }
 .authenticationButton{
 	cursor: pointer;
@@ -37,4 +32,9 @@
 	float: right;
 	border: none;
 	background: transparent;
+	color: white;
+	height: 100%;
 }	
+.username {
+	color: orange;
+}
