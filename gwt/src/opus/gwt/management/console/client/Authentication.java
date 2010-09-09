@@ -80,9 +80,9 @@ public class Authentication extends Composite {
 	private void setupAuthenticationForm(){
 		authenticationForm.setMethod(FormPanel.METHOD_POST);
 		authenticationForm.setAction(loginURL);
+		authenticationForm.getElement().setAttribute("target", "_self");
 		authenticationForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		    	Window.alert(event.getResults());
 		        getUserInfo();
 		        if( firstLoginAttempt )
 		        	firstLoginAttempt = false;

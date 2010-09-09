@@ -4,7 +4,7 @@ var $gwt_version = "2.0.3";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = 'FDAB05DB59A49BF488648D09E2467099';
+var $strongName = 'FF5FA4246F1353578B3DCC8AF50151A6';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -4455,8 +4455,7 @@ _ = FormPanel$1.prototype = new Object_0;
 _.execute_0 = execute_9;
 _.typeId$ = 72;
 _.this$0 = null;
-function $FormPanel$SubmitCompleteEvent(this$static, resultsHtml){
-  this$static.resultHtml = resultsHtml;
+function $FormPanel$SubmitCompleteEvent(this$static){
   return this$static;
 }
 
@@ -4480,7 +4479,6 @@ _ = FormPanel$SubmitCompleteEvent.prototype = new GwtEvent;
 _.dispatch = dispatch_8;
 _.getAssociatedType = getAssociatedType_9;
 _.typeId$ = 0;
-_.resultHtml = null;
 var TYPE_8 = null;
 function $clinit_209(){
   $clinit_209 = nullMethod;
@@ -5417,13 +5415,13 @@ function RootPanel$1(){
 
 _ = RootPanel$1.prototype = new Object_0;
 _.execute_1 = execute_11;
---></script>
-<script><!--
 _.typeId$ = 0;
 function onClose_0(closeEvent){
   detachWidgets();
 }
 
+--></script>
+<script><!--
 function RootPanel$2(){
 }
 
@@ -6568,12 +6566,12 @@ function getKey_0(){
   return this.key;
 }
 
---></script>
-<script><!--
 function getValue_0(){
   return this.this$0.stringMap[':' + this.key];
 }
 
+--></script>
+<script><!--
 function new_$(this$outer, key){
   return $AbstractHashMap$MapEntryString(new AbstractHashMap$MapEntryString, key, this$outer);
 }
@@ -6998,6 +6996,7 @@ function $onKeyPressUsername(this$static, event_0){
 function $startAuthentication(this$static){
   this$static.authenticationForm.element.method = 'post';
   this$static.authenticationForm.element.action = '/accounts/login/';
+  this$static.authenticationForm.element.setAttribute('target', '_self');
   $addHandler_1(this$static.authenticationForm, $Authentication$1(new Authentication$1, this$static), getType_11());
   this$static.csrftoken.element.value = getCookie('csrftoken');
   $setName_1(this$static.csrftoken, 'csrfmiddlewaretoken');
@@ -7024,7 +7023,6 @@ function $Authentication$1(this$static, this$0){
 }
 
 function onSubmitComplete(event_0){
-  $wnd.alert(event_0.resultHtml);
   $getUserInfo(this.this$0);
   this.this$0.firstLoginAttempt && (this.this$0.firstLoginAttempt = false);
 }
@@ -7240,10 +7238,10 @@ _.mainDeckPanel = null;
 _.navigationMenuPanel = null;
 _.navigationPanel = null;
 _.panelManager = null;
---></script>
-<script><!--
 _.projectCount = 0;
 _.serverComm = null;
+--></script>
+<script><!--
 _.titleBarLabel = null;
 function $PanelManager$2(this$static, this$0){
   this$static.this$0 = this$0;
