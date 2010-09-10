@@ -1,5 +1,6 @@
 package opus.gwt.management.console.client.deployer;
 
+
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.overlays.VersionData;
 
@@ -8,9 +9,13 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -26,10 +31,14 @@ public class AppIcon extends Composite {
 	interface AppIconUiBinder extends UiBinder<Widget, AppIcon> {
 	}
 
-	@UiField FocusPanel iconPanel;
-	@UiField HTML iconHTML;
+	@UiField
+	FocusPanel iconPanel;
+	@UiField
+	HTML iconHTML;
 	
 	private String name;
+	private String email;
+	private String author;
 	private String icon;
 	private String path;
 	private String desc;
@@ -40,17 +49,20 @@ public class AppIcon extends Composite {
 	private VerticalPanel formContainer;
 	private int selectedVersion;
 
-	public AppIcon(String name, String iconURL, String description, int pk, String path) {
+	
+	public AppIcon(String name, String email, String author, String iconURL, String description, int pk, String path) {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
 		versionForm = new FormPanel();
 		formContainer = new VerticalPanel();
 		versionForm.add(formContainer);
 		this.name = name;
+		this.email = email;
+		this.author = author;
 		this.icon = iconURL;
 		this.desc = description;
-		this.path = path;
 		this.pk = String.valueOf(pk);
+		this.path = path;
 	}
 	
 	public void setIconHTML(String html) {
@@ -59,6 +71,14 @@ public class AppIcon extends Composite {
 	
 	public String getName(){
 		return this.name;
+	}
+	
+	public String getEmail() {
+		return this.email;
+	}
+	
+	public String getAuthor() {
+		return this.author;
 	}
 	
 	public String getIcon() {
@@ -78,8 +98,7 @@ public class AppIcon extends Composite {
 	}
 	
 	public String getPath() {
-		String fullpath = path+"@"+versions.get(selectedVersion).getTag();
-		return fullpath;
+		return path;
 	}
 	
 	public FormPanel getVersions(){
@@ -91,8 +110,8 @@ public class AppIcon extends Composite {
 	}
 	
 	public void setSelectedVersion(int pk){
-		for (int i=0; i<versions.length(); i++){
-			if (Integer.valueOf(versions.get(i).getVersionPk()) == pk){
+		for(int i=0; i < versions.length(); i++){
+			if(Integer.valueOf(versions.get(i).getVersionPk()) == pk){
 				selectedVersion = i;
 				i = versions.length();
 			}
@@ -103,10 +122,9 @@ public class AppIcon extends Composite {
 		return this.pk;
 	}
 	
-	public String getType() {
+	public String getType(){
 		return "git";
 	}
-	
 	
 	public void handleVersionInfo(JsArray <VersionData> data){
 		//Window.alert(String.valueOf(data.length()));
@@ -133,7 +151,7 @@ public class AppIcon extends Composite {
 	}
 	
 	public void whatIsSelected(){
-		Window.alert(String.valueOf(selectedVersion));
+		//Window.alert(String.valueOf(selectedVersion));
 	}
 	
 	public final native JsArray<VersionData> asArrayOfVersionData(JavaScriptObject jso) /*-{
@@ -142,7 +160,7 @@ public class AppIcon extends Composite {
 /*
 	@UiHandler("button")
 	void onClick(ClickEvent e) {
-		Window.alert("Hello!");
+		//Window.alert("Hello!");
 	}
 */
 	

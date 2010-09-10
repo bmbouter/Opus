@@ -1,7 +1,6 @@
 <realms>
     {% for realm in realms %}
-        <realm href="{{ realms_uri }}/{{ realm.id }}">
-            <id>{{ realm.id }}</id>
+        <realm href="{{ realms_uri }}/{{ realm.id }}" id="{{ realm.id }}">
             <name>{{ realm.name }}</name>
             <state>{{ realm.state }}</state>
             <limit/>
