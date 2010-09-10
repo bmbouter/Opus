@@ -44,7 +44,7 @@ public class Authentication extends Composite {
 	private static AuthenticationUiBinder uiBinder = GWT.create(AuthenticationUiBinder.class);
 	interface AuthenticationUiBinder extends UiBinder<Widget, Authentication> {}
 	
-	private final String loginURL = "/accounts/login/";
+	private final String loginURL = "/accounts/login/?next=/deployments/";
 	private final String checkLoginURL = "/json/username/?a&callback=";
 
 	private JSVariableHandler JSVarHandler;
@@ -80,7 +80,6 @@ public class Authentication extends Composite {
 	private void setupAuthenticationForm(){
 		authenticationForm.setMethod(FormPanel.METHOD_POST);
 		authenticationForm.setAction(loginURL);
-		authenticationForm.getElement().setAttribute("target", "_self");
 		authenticationForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
 		        getUserInfo();
