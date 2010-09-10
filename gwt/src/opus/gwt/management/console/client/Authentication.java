@@ -44,7 +44,7 @@ public class Authentication extends Composite {
 	private static AuthenticationUiBinder uiBinder = GWT.create(AuthenticationUiBinder.class);
 	interface AuthenticationUiBinder extends UiBinder<Widget, Authentication> {}
 	
-	private final String loginURL = "/accounts/login/?next=/deployments/";
+	private final String loginURL = "/accounts/login/";
 	private final String checkLoginURL = "/json/username/?a&callback=";
 
 	private JSVariableHandler JSVarHandler;
@@ -82,9 +82,10 @@ public class Authentication extends Composite {
 		authenticationForm.setAction(loginURL);
 		authenticationForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        getUserInfo();
-		        if( firstLoginAttempt )
-		        	firstLoginAttempt = false;
+		    	  	if( firstLoginAttempt )
+		    	  		firstLoginAttempt = false;
+		    	  	hideIFrame(authenticationForm.getTarget());
+		        	getUserInfo();
 		      }
 		 });
 		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
@@ -115,7 +116,7 @@ public class Authentication extends Composite {
 		
 	@UiHandler("loginButton")
 	void onLoginClick(ClickEvent event) {
-		handleLoginButton();
+		authenticationForm.submit();
 	}
 
 	@UiHandler("loginButton")
@@ -139,9 +140,9 @@ public class Authentication extends Composite {
 		}
 	}
 
-	private void handleLoginButton(){
-		authenticationForm.submit();
-	}
+	public native static void hideIFrame(String target)/*-{
+
+	}-*/;
 	
 	public boolean isLoggedIn(){
 		return loggedIn;

@@ -4,7 +4,7 @@ var $gwt_version = "2.0.3";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '7B6F34650BF5358AE454FF0F99B35A85';
+var $strongName = '8EE824AB7316B10A50917DF4801AF0D0';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -7330,11 +7330,14 @@ function $onKeyPressUsername(this$static, event_0){
 
 function $startAuthentication(this$static){
   this$static.authenticationForm.element.method = 'post';
-  this$static.authenticationForm.element.action = '/accounts/login/?next=/deployments/';
+  this$static.authenticationForm.element.action = '/accounts/login/';
   $addHandler_1(this$static.authenticationForm, $Authentication$1(new Authentication$1, this$static), getType_11());
   this$static.csrftoken.element.value = getCookie('csrftoken');
   $setName_1(this$static.csrftoken, 'csrfmiddlewaretoken');
   $getUserInfo(this$static);
+}
+
+function hideIFrame(){
 }
 
 function Authentication(){
@@ -7357,8 +7360,9 @@ function $Authentication$1(this$static, this$0){
 }
 
 function onSubmitComplete(event_0){
-  $getUserInfo(this.this$0);
   this.this$0.firstLoginAttempt && (this.this$0.firstLoginAttempt = false);
+  hideIFrame(this.this$0.authenticationForm.element.target);
+  $getUserInfo(this.this$0);
 }
 
 function Authentication$1(){
