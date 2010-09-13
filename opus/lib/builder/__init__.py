@@ -36,7 +36,7 @@ import opus.lib.deployer
 import opus.lib.log
 log = opus.lib.log.get_logger()
 
-App = namedtuple('App', ('path', 'pathtype'))
+App = namedtuple('App', ('name', 'path', 'pathtype'))
 
 class BuildException(Exception):
     """Something went wrong when assembling a project"""
@@ -86,13 +86,15 @@ class ProjectBuilder(object):
 
         self.apps = []
 
-    def add_app(self, src, srctype):
+    def add_app(self, name, src, srctype):
         """Adds an app to the configuration. srctype is a string specifying the
         source type. Source types are defined in opus.lib.builder.sources.  For
         example, if srctype is 'file', src is a local filesystem path. If
         srctype is 'git', src is a git URL.
 
         """
+        if keyword.iskeyword(name):
+            raise BuildException("App name cannot be a keyword")
         if srctype == 'file':
             # Extra file checks
             if not os.path.isdir(src):
@@ -100,7 +102,7 @@ class ProjectBuilder(object):
             # Properly strips trailing slashes
             src = os.path.abspath(src)
             
-        self.apps.append(App(src, srctype))
+        self.apps.append(App(name, src, srctype))
 
     def create(self, target):
         """Create a new Django project inside the given directory target,
@@ -165,6 +167,7 @@ class ProjectBuilder(object):
         projectdir =  os.path.join(target, self.projectname)
 
         # Create a template and a log directory
+        os.mkdir(os.path.join(projectdir, opus.lib.builder.sources.APPDIR))
         os.mkdir(os.path.join(projectdir, "log"))
         os.mkdir(os.path.join(projectdir, "templates"))
         os.mkdir(os.path.join(projectdir, "templates", "registration"))
@@ -235,11 +238,10 @@ djcelery.setup_loader()
     def _copy_apps(self):
         # Copies all the apps into the project
         # Returns a list of project names that were created
-        before = set(os.listdir(self.projectdir))
+        newapps = []
         for app in self.apps:
-            opus.lib.builder.sources.copy_functions[app.pathtype](app.path, self.projectdir)
-        after = set(os.listdir(self.projectdir))
-        newapps = list(after - before)
+            opus.lib.builder.sources.install_app(app.path, app.name, app.pathtype, self.projectdir)
+            newapps.append(app.name)
         return newapps
 
     def _configure_settings(self, appnames):
@@ -332,27 +334,22 @@ class ProjectEditor(object):
         if os.path.exists(wsgifile):
             os.utime(wsgifile, None)
 
-    def add_app(self, apppath, apptype, secureops="secureops"):
+    def add_app(self, appname, apppath, apptype, secureops="secureops"):
         """Adds an application to the project and touches the wsgi file. This
         takes effect immediately.
         Also invokes the project deployer's syncdb routine
 
         """
-        before = set(os.listdir(self.projectdir))
-        opus.lib.builder.sources.copy_functions[apptype](apppath, self.projectdir)
-        after = set(os.listdir(self.projectdir))
-        newapps = list(after - before)
-        if len(newapps) != 1:
-            raise BuildException("Project dir changed when adding the app. Bailing")
 
-        newapp = newapps[0]
 
-        if keyword.iskeyword(newapp):
+        if keyword.iskeyword(appname):
             raise BuildException("App name cannot be a keyword")
+
+        opus.lib.builder.sources.install_app(apppath, appname, apptype, self.projectdir)
 
         # Now add the app to installed apps
         config = self._get_config()
-        config["INSTALLED_APPS"].append(newapp)
+        config["INSTALLED_APPS"].append(appname)
         config.save()
 
         # Add a line in urls.py for it
@@ -360,12 +357,12 @@ class ProjectEditor(object):
             urls.write("urlpatterns += "\
                     "patterns('', url(r'^{appname}/', "\
                     "include('{appname}.urls')))\n"\
-                    .format(appname=newapp))
+                    .format(appname=appname))
 
         # If the app has a media directory, add a symlink for it
-        if os.path.exists(os.path.join(self.projectdir, newapp, "media")):
-            os.symlink(os.path.join("..",newapp,"media"),
-                    os.path.join(self.projectdir, "media",newapp))
+        if os.path.exists(os.path.join(self.projectdir, appname, "media")):
+            os.symlink(os.path.join("..",appname,"media"),
+                    os.path.join(self.projectdir, "media",appname))
 
         # Sync db
         deployer = opus.lib.deployer.ProjectDeployer(self.projectdir)
@@ -377,18 +374,20 @@ class ProjectEditor(object):
     def restart_celery(self, secureops="secureops"):
         """Call this after you're done adding, upgrading, or deleting apps to
         reload the celery daemon"""
-        log.info("Restarting supervisord/celery")
-        proc = subprocess.Popen([secureops,"-s",
-                "opus"+self.projectname,
-                self.projectdir,
-                "-H",
-                ],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT)
-        output = proc.communicate()[0]
-        ret = proc.wait()
-        if ret:
-            raise BuildException("Could not restart supervisord. {0}".format(output))
+        pidfile = os.path.join(self.projectdir, "run", "supervisord.pid")
+        if os.path.exists(pidfile):
+            log.info("Restarting supervisord/celery")
+            proc = subprocess.Popen([secureops,"-s",
+                    "opus"+self.projectname,
+                    self.projectdir,
+                    "-H",
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT)
+            output = proc.communicate()[0]
+            ret = proc.wait()
+            if ret:
+                raise BuildException("Could not restart supervisord. {0}".format(output))
 
     def del_app(self, appname):
         """Removes an application from the project. This takes effect
@@ -431,7 +430,9 @@ class ProjectEditor(object):
         self._touch_wsgi()
 
         # Deletes the app dir
-        appdir = os.path.join(self.projectdir, appname)
+        os.unlink(os.path.join(self.projectdir, appname))
+        appdir = os.path.join(self.projectdir, opus.lib.builder.sources.APPDIR,
+                appname)
         shutil.rmtree(appdir)
 
     def upgrade_app(self, appname, to):

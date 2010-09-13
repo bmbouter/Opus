@@ -178,6 +178,7 @@ def _get_initial_edit_data(project):
     initial['dbhost'] = database['HOST']
     initial['dbport'] = database['PORT']
     initial['active'] = project.active
+    initial['debug'] = project.config['DEBUG']
     return initial
 
 @login_required
@@ -207,6 +208,9 @@ def edit(request, project):
                 elif field == "dbport":
                     database['PORT'] = cd['dbport']
                     log.debug("dbport changed to %s", cd['dbport'])
+
+
+            project.set_debug(cd['debug'])
 
             messages = []
 
@@ -332,11 +336,13 @@ def create(request, projectname):
                     # Left blank, nothing to add
                     continue
                 log.debug(" ... with app %r", appdata['apppath'])
-                builder.add_app(appdata['apppath'], appdata['apptype'])
+                builder.add_app(appdata['appname'], appdata['apppath'],
+                        appdata['apptype'])
             if pdata['idprovider'] != 'local':
                 log.debug(" ... and the idp app %r", pdata['idprovider'])
-                apptype, apppath = settings.OPUS_ALLOWED_AUTH_APPS[pdata['idprovider']]
-                builder.add_app(apppath, apptype)
+                appname, apptype, apppath = \
+                        settings.OPUS_ALLOWED_AUTH_APPS[pdata['idprovider']]
+                builder.add_app(appname, apppath, apptype)
 
             # Now actually execute the tasks. This is done in a try block which
             # catches all exceptions so that we can roll back failed partial
@@ -378,6 +384,10 @@ def create(request, projectname):
 
                 # Deploy it now! But don't activate it.
                 deployment.deploy(info, False)
+
+                deployment.set_debug(dform.cleaned_data['debug'])
+                deployment.save()
+
             except Exception, e:
                 # The project didn't deploy for whatever reason. Delete the
                 # project directory and re-raise the exception
@@ -507,7 +517,8 @@ def addapp(request, project):
         if appform.is_valid():
             # Go and add an app
             editor = opus.lib.builder.ProjectEditor(project.projectdir)
-            editor.add_app(appform.cleaned_data['apppath'],
+            editor.add_app(appform.cleaned_data['appname'],
+                    appform.cleaned_data['apppath'],
                     appform.cleaned_data['apptype'],
                     secureops=settings.OPUS_SECUREOPS_COMMAND)
             editor.restart_celery(settings.OPUS_SECUREOPS_COMMAND)

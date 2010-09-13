@@ -30,11 +30,13 @@ public class ServerCommunicator {
 	private int requestId;
 	private Object[] queue;
 	private String[] queryTypes;
+	private ServerCommunicator serverComm;
 	
 	public ServerCommunicator() {
 		this.queue = new Object[50];
 		this.queryTypes = new String[50];
 		this.requestId = 0;
+		this.serverComm = this;
 	}
 	  /**
 	   * Make call to remote server.
@@ -44,7 +46,7 @@ public class ServerCommunicator {
 		//Window.alert(url + "     ---    " + String.valueOf(requestId));
 		queue[requestId] = parent;
 		queryTypes[requestId] = queryType;
-		requestJson(requestId, url, handler);
+		requestJson(requestId, url, serverComm);
 		requestId++;
 	}
 	

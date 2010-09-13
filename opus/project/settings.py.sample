@@ -198,15 +198,15 @@ OPUS_SSL_CHAIN = ""
 
 # This is a list of authentication apps that deployed projects will be allowed
 # to choose from. Comment out lines from this mapping to disable one. Edit the
-# (sourcetype, source) tuple to change where the apps come from. sourcetype is
-# one of 'git' or 'file'. source is either a filesystem path to the
-# application, or a git URI in the form of <URI>[@<REF>] 
+# (name, sourcetype, source) tuple to change where the apps come from.
+# sourcetype is one of 'git' or 'file'. source is either a filesystem path to
+# the application, or a git URI in the form of <URI>[#<REF>] 
 # The 'local' authentication app installs the admin app, there is no value to
 # configure for it.
 # Note: If you want to add a *new* authentication app, you must also add an
 # entry to the ProjectForm in deployment/forms.py
 OPUS_ALLOWED_AUTH_APPS = {
     'local': None,
-    'openid': ('git', 'git://github.com/edhelms/django_openid_opus.git'),
-    'ldap': ('git', 'git://github.com/edhelms/django_ldap_opus.git'),
+    'openid': ('django_openid_opus', 'git', 'git://github.com/edhelms/django_openid_opus.git'),
+    'ldap': ('django_ldap_opus', 'git', 'git://github.com/edhelms/django_ldap_opus.git'),
 }
