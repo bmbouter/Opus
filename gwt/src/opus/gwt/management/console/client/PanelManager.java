@@ -70,7 +70,7 @@ public class PanelManager extends Composite {
 	private Authentication authenticationPanel;
 	private NavigationPanel navigationPanel;
 	
-	private ProjectDeployer appDeployer;
+	private ProjectDeployer projectDeployer;
 	private ProjectDashboard projectDashboard;
 	private IconPanel iconPanel;
 	private ServerCommunicator serverComm;
@@ -98,8 +98,10 @@ public class PanelManager extends Composite {
 		panelManager = this;
 		authenticationPanel = new Authentication(panelManager);
 		navigationPanel = new NavigationPanel();
-		handleAuthentication();
-		//showNavigation();
+		projectDeployer = new ProjectDeployer(panelManager);
+		//handleAuthentication();
+		showNavigation();
+		deployProject();
 		//iconPanel = new IconPanel(this);
 		//deletedProject = "";
 		//projectListPopup = new PopupPanel();
@@ -113,6 +115,11 @@ public class PanelManager extends Composite {
 	
 	private void showNavigation(){
 		mainDeckPanel.insert(navigationPanel, 0);
+		mainDeckPanel.showWidget(0);
+	}
+	
+	private void deployProject(){
+		mainDeckPanel.insert(projectDeployer, 0);
 		mainDeckPanel.showWidget(0);
 	}
 	
@@ -167,7 +174,7 @@ public class PanelManager extends Composite {
 	void handleDeployNewProjectClick(ClickEvent event){
 		mainDeckPanel.clear();
 		navigationMenuPanel.clear();
-		appDeployer = new ProjectDeployer(titleBarLabel, navigationMenuPanel, mainDeckPanel, panelManager);
+		projectDeployer = new ProjectDeployer(panelManager);
 	}
 	
 	@UiHandler("dashboardsButton")

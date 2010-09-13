@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.PanelManager;
 import opus.gwt.management.console.client.dashboard.ProjectSettings;
-import opus.gwt.management.console.client.resources.DeployerCss.DeployerStyle;
+import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -62,128 +62,54 @@ public class ProjectDeployer extends Composite {
 	
 	private int navigationMenuFocusFlag;
 	private String createdProjectName;
-	private PanelManager managementCon;
+	private PanelManager panelManager;
 	
-	private Label activeLabel;
+	
 	private FormPanel deployerForm;
-	private DeckPanel mainDeckPanel;
 	private FlowPanel navigationMenuPanel;
 	private Label titleBarLabel;
 	private JSVariableHandler JSVarHandler;
 		
-	@UiField Label addAppsLabel;
-	@UiField Label projectOptionsLabel;
-	@UiField Label databaseOptionsLabel;
-	@UiField Label deploymentOptionsLabel;
-	@UiField Label confirmBPLabel;
-	@UiField DeployerStyle style;
+	@UiField ProjectDeployerStyle style;
+	@UiField DeckPanel deployerDeckPanel;
 	
-	public ProjectDeployer(Label titleBarLabel, FlowPanel navigationMenuPanel, DeckPanel mainDeckPanel, PanelManager managementCon) {
+	public ProjectDeployer(PanelManager panelManager) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.managementCon = managementCon;
+		this.panelManager = panelManager;
 		createdProjectName = "";
-		this.mainDeckPanel = mainDeckPanel;
-		this.navigationMenuPanel = navigationMenuPanel;
-		this.titleBarLabel = titleBarLabel;
 		this.deployerForm = new FormPanel();
-		this.appBrowser = new AppBrowser(this, managementCon.getServerCommunicator());
+		this.appBrowser = new AppBrowser(this, panelManager.getServerCommunicator());
 		this.projectOptions = new ProjectOptions(this);
-		this.databaseOptions = new DatabaseOptions(this, managementCon.getServerCommunicator());
+		this.databaseOptions = new DatabaseOptions(this, panelManager.getServerCommunicator());
 		this.deploymentOptions = new DeploymentOptions(this);
 		this.confirmBP = new ConfirmProject(deployerForm, this);
-		this.activeLabel = addAppsLabel;
 		this.navigationMenuFocusFlag = 0;
-		activeLabel.setStyleName(style.navigationLabelActive());
 		JSVarHandler = new JSVariableHandler();
-		setupMainDeckPanel();
-		setupNavigationMenuPanel();
-		setupTitleBarLabel();
+		setupdeployerDeckPanel();
 		setupDeployerForm();
 	}
 	
-	private void setupMainDeckPanel(){
-		//mainDeckPanel.add(projectSettings);
-		mainDeckPanel.add(appBrowser);
-		mainDeckPanel.add(projectOptions);
-		mainDeckPanel.add(databaseOptions);
-		mainDeckPanel.add(deploymentOptions);
-		mainDeckPanel.add(confirmBP);
-		mainDeckPanel.add(deployerForm);
-		mainDeckPanel.showWidget(0);
+	private void setupdeployerDeckPanel(){
+		//deployerDeckPanel.add(projectSettings);
+		deployerDeckPanel.add(appBrowser);
+		deployerDeckPanel.add(projectOptions);
+		deployerDeckPanel.add(databaseOptions);
+		deployerDeckPanel.add(deploymentOptions);
+		deployerDeckPanel.add(confirmBP);
+		deployerDeckPanel.add(deployerForm);
+		deployerDeckPanel.showWidget(1);
 		appBrowser.setHeight("");
 		appBrowser.setWidth("");
-	}
-	
-	private void setupNavigationMenuPanel(){
-		navigationMenuPanel.add(addAppsLabel);
-		navigationMenuPanel.add(projectOptionsLabel);
-		navigationMenuPanel.add(databaseOptionsLabel);
-		navigationMenuPanel.add(deploymentOptionsLabel);
-		navigationMenuPanel.add(confirmBPLabel);
-	}
-	
-	private void setupTitleBarLabel(){
-		titleBarLabel.setText("Deploy New Project");
 	}
 	
 	private void setupDeployerForm(){
 		 deployerForm.setMethod(FormPanel.METHOD_POST);
 		  deployerForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        managementCon.onDeployNewProject(createdProjectName);
+		        panelManager.onDeployNewProject(createdProjectName);
 		      }
 		    });
 	}
-	
-	 void handleAddAppsLabel(){
-		  if(navigationMenuFocusFlag != 0){
-			  addAppsLabel.setStyleName(style.navigationLabelActive());
-			  mainDeckPanel.showWidget(0);
-			  activeLabel.setStyleName(style.navigationLabel());
-			  activeLabel = addAppsLabel;
-			  navigationMenuFocusFlag = 0;
-		  }
-	  }
-	  
-	 public void handleProjectOptionsLabel(){
-		  if(navigationMenuFocusFlag != 1){
-			  projectOptionsLabel.setStyleName(style.navigationLabelActive());
-			  mainDeckPanel.showWidget(1);
-			  activeLabel.setStyleName(style.navigationLabel());
-			  activeLabel = projectOptionsLabel;
-			  navigationMenuFocusFlag = 1;
-		  }
-	  }
-	  
-	  void handleDatabaseOptionsLabel(){
-		  if(navigationMenuFocusFlag != 2){
-			  databaseOptionsLabel.setStyleName(style.navigationLabelActive());
-			  mainDeckPanel.showWidget(2);
-			  activeLabel.setStyleName(style.navigationLabel());
-			  activeLabel = databaseOptionsLabel;
-			  navigationMenuFocusFlag = 2;
-		  }
-	  }
-	  
-	  void handleDeploymentOptionsLabel(){
-		  if(navigationMenuFocusFlag != 3){
-			  deploymentOptionsLabel.setStyleName(style.navigationLabelActive());
-			  mainDeckPanel.showWidget(3);
-			  activeLabel.setStyleName(style.navigationLabel());
-			  activeLabel = deploymentOptionsLabel;
-			  navigationMenuFocusFlag = 3;
-		  }
-	  }
-	  
-	  void handleConfirmBPLabel(){
-		  if(navigationMenuFocusFlag != 4){
-			  confirmBPLabel.setStyleName(style.navigationLabelActive());
-			  mainDeckPanel.showWidget(4);
-			  activeLabel.setStyleName(style.navigationLabel());
-			  activeLabel = confirmBPLabel;
-			  navigationMenuFocusFlag = 4;
-		  }
-	  }
 	  
 	  void handleConfirmBuildProjectLoad() {
 			
@@ -202,33 +128,33 @@ public class ProjectDeployer extends Composite {
 			
 			ArrayList<String> apps = appBrowser.getApps();
 			String html = "<p><b>List of Applications:</b> <ul>";
-			
-			for (int i = 0; i < apps.size(); i++){
-				html += "<li>" + apps.get(i) + "</li>";
-			}
-			
-			html += "</ul></p>";
-			
-			if (username.length() > 0 ) {
-				html += "<p><b>Super Username:</b> " + username + "</p>";
-			}
-			if (email.length() > 0) {
-				html += "<p><b>Email:</b> " + email + "</p>";
-			}
-			
-			html += "<p><b>Django Admin Interface:</b>";
-			
-			if (!databaseEngine.contains("sqlite")){
-				html += "<p><b>Database Engine:</b> " + databaseEngine + "</p>";
-				html += "<p><b>DB Name:</b> " + databaseName +"</p>";
-				html += "<p><b>DB Password:</b> " + databasePassword + "</p>";
-				html += "<p><b>DB Host:</b> " + databaseHost + "</p>";
-				html += "<p><b>DB Port:</b> " + databasePort + "</p>";
-			} else {
-				html += "<p><b>Database Engine:</b> " + databaseEngine + "</p>";
-			}
-			
-			html += "<p><b>Deploy as: </b>" + projectName + "</p>";
+		
+		for (int i = 0; i < apps.size(); i++){
+			html += "<li>" + apps.get(i) + "</li>";
+		}
+		
+		html += "</ul></p>";
+		
+		if (username.length() > 0 ) {
+			html += "<p><b>Super Username:</b> " + username + "</p>";
+		}
+		if (email.length() > 0) {
+			html += "<p><b>Email:</b> " + email + "</p>";
+		}
+		
+		html += "<p><b>Django Admin Interface:</b>";
+		
+		if (!databaseEngine.contains("sqlite")){
+			html += "<p><b>Database Engine:</b> " + databaseEngine + "</p>";
+			html += "<p><b>DB Name:</b> " + databaseName +"</p>";
+			html += "<p><b>DB Password:</b> " + databasePassword + "</p>";
+			html += "<p><b>DB Host:</b> " + databaseHost + "</p>";
+			html += "<p><b>DB Port:</b> " + databasePort + "</p>";
+		} else {
+			html += "<p><b>Database Engine:</b> " + databaseEngine + "</p>";
+		}
+		
+		html += "<p><b>Deploy as: </b>" + projectName + "</p>";
 			confirmBP.confirmationScrollPanel.clear();
 			confirmBP.confirmationScrollPanel.add(new HTML(html,true));
 	  }
@@ -264,7 +190,7 @@ public class ProjectDeployer extends Composite {
 			  formContainerPanel.add(pathtype);
 			  formContainerPanel.add(path);
 		  }
-		  
+	  
 		  //Add all project options fields to the form for submission
 		  formContainerPanel.add(projectOptions.projectOptionsPanel);
 		  
@@ -273,9 +199,9 @@ public class ProjectDeployer extends Composite {
 		 
 		  //Add all Database fields to the form for submissionsd
 		  formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
-		  deployerForm.submit();
+			  deployerForm.submit();
 	  }
-
+	
 	  public ProjectOptions getProjectOptions() {
 		  return projectOptions;
 	  }

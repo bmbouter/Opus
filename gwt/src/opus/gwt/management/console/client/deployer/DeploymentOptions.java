@@ -67,13 +67,13 @@ public class DeploymentOptions extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			appDeployer.handleConfirmBPLabel();
+			//appDeployer.handleConfirmBPLabel();
 			appDeployer.handleConfirmBuildProjectLoad();
 		}
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		appDeployer.handleDatabaseOptionsLabel();
+		//appDeployer.handleDatabaseOptionsLabel();
 	}
 }

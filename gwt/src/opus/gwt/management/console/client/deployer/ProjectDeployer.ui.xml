@@ -16,13 +16,13 @@
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="../resources/Deployer.css" type="opus.gwt.management.console.client.resources.DeployerCss.DeployerStyle"/>
-	<g:HTMLPanel>
-		<g:Label ui:field="addAppsLabel" styleName="{style.navigationLabel}">Step 1: Add Applications</g:Label>
-		<g:Label ui:field="projectOptionsLabel" styleName="{style.navigationLabel}">Step 2: Project Options</g:Label>
-		<g:Label ui:field="databaseOptionsLabel" styleName="{style.navigationLabel}">Step 3: Database Options</g:Label>
-		<g:Label ui:field="deploymentOptionsLabel" styleName="{style.navigationLabel}">Step 4: Deployment Options</g:Label>
-		<g:Label ui:field="confirmBPLabel" styleName="{style.navigationLabel}">Step 5: Confirm Selections</g:Label>
-	</g:HTMLPanel>
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:c="urn:import:opus.gwt.management.console.client.navigation">
+	<ui:style src="../resources/ProjectDeployer.css" type="opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle"/>
+	
+	<g:FlowPanel>
+		<c:NavigationPanel></c:NavigationPanel>
+		<g:DeckPanel ui:field="deployerDeckPanel" styleName="{style.deployerDeckPanel}">
+		</g:DeckPanel>
+	</g:FlowPanel>
 </ui:UiBinder> 

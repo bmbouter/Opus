@@ -30,7 +30,7 @@
 }
 .errorLabel {
 	width: 20em;
-	margin: 0.6em 0 1em 10em;
+	margin: 0.6em 0 1em 11em;
 	color: red;
 	font-weight: bold;
 }
@@ -38,5 +38,5 @@
 	cursor: pointer;
 	cursor: hand;
 	width: 4em;
-	margin: 0 0 0 16em;
+	margin: 0 0 0 19.5em;
 }

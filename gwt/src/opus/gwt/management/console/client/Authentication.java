@@ -84,7 +84,6 @@ public class Authentication extends Composite {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
 		    	  	if( firstLoginAttempt )
 		    	  		firstLoginAttempt = false;
-		    	  	hideIFrame(authenticationForm.getTarget());
 		        	getUserInfo();
 		      }
 		 });
@@ -139,10 +138,6 @@ public class Authentication extends Composite {
 			loginButton.click();
 		}
 	}
-
-	public native static void hideIFrame(String target)/*-{
-
-	}-*/;
 	
 	public boolean isLoggedIn(){
 		return loggedIn;

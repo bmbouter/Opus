@@ -243,7 +243,7 @@ public class AppBrowser extends Composite {
 	
 	@UiHandler("DeployButton")
 	void handleNextButton(ClickEvent event){
-		appDeployer.handleProjectOptionsLabel();
+		//appDeployer.handleProjectOptionsLabel();
 	}
 	
 	@UiHandler("RemoveButton")

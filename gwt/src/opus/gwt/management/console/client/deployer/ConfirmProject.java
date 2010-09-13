@@ -50,7 +50,7 @@ public class ConfirmProject extends Composite {
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		appDeployer.handleDeploymentOptionsLabel();
+		//appDeployer.handleDeploymentOptionsLabel();
 	}
 	
 	@UiHandler("confirmButton")

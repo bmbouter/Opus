@@ -14,36 +14,14 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
-.titleBar {
-	padding: 0.5% 0% 0% 1%;
-    color: white;
-    font-size: 3.4em;
-    width: 100%;
-    height: 100%;
-    margin: 0%;
-    text-shadow:10px 10px 5px #0F0F0F;
-    font-family: "Droid Serif";
-}
-.navigationLabel {
-	width: 100%;
-	color: white;
-	padding: 0.45em 0.45em 0.45em 0.5em;
-	word-wrap: break-word;
-	min-width: 90%;
-	font-family: "Droid Serif";
-}
-.navigationLabelActive {
-	width: 100%;
-	color: white;
-	background: orange;
-	padding: 0.45em 0.45em 0.45em 0.5em;
-	border-radius: 5px 0 0 5px;
-	-moz-border-radius: 5px 0 0 5px;
-	word-wrap: break-word;
-	min-width: 80%;
-	font-family: "Droid Serif";
-}
-.mainDeckPanel{
-	width: 92.60%;
-	height: 96.50%;
+package opus.gwt.management.console.client.resources;
+
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.user.client.ui.Widget;
+
+public class ProjectDeployerCss extends Widget {
+	  public interface ProjectDeployerStyle extends CssResource {
+	    String navigationLabel();
+	    String navigationLabelActive();
+	  }
 }

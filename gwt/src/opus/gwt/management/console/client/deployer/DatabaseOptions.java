@@ -123,13 +123,13 @@ public class DatabaseOptions extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			appDeployer.handleDeploymentOptionsLabel();
+			//appDeployer.handleDeploymentOptionsLabel();
 		}
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		appDeployer.handleProjectOptionsLabel();
+		//appDeployer.handleProjectOptionsLabel();
 	}
 	
 	private boolean validateFields(){

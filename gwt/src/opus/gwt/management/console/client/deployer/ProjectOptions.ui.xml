@@ -17,108 +17,52 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="../resources/ProjectBuilder.css"/>
-	<g:HTMLPanel styleName="{style.innerSubMainPanel}">
-		<g:DockLayoutPanel unit='PCT' styleName="{style.topSubMainPanel}">
-			<g:north size='7'>
-				<g:FlowPanel styleName="{style.pagePanel}">
-					<g:Label  styleName="{style.pageSteps}">
-						Step 2 of 5:
-					</g:Label>
-					<g:Label  styleName="{style.pageTitle}">
-						Project Options
-					</g:Label>
-				</g:FlowPanel>
-			</g:north>
-			<g:north size='93'>
-				<g:DockLayoutPanel unit='PCT' styleName="{style.addAppsMainPanel}"> 
-					<g:north size="94">
-						<g:DockLayoutPanel unit='PCT'>
-							<g:west size='70'>
-								<g:DockLayoutPanel unit='EM' ui:field='projectOptionsPanel' styleName="{style.form}">
-									<g:north size ='3'>
-										<g:HTMLPanel>
-											<u>Superuser Setup</u>
-											<br>Superuser setup is required if you wish to be able to assign local groups and permissions.</br>
-										</g:HTMLPanel>
-									</g:north>
-									<g:north size='2'>
-										<g:FlowPanel>
-											<g:Label styleName='{style.configParameter}'>Username</g:Label>
-											<g:TextBox name='superusername' ui:field='usernameTextBox' styleName='{style.configParameter}'/>
-										</g:FlowPanel>
-									</g:north>
-									<g:north size='2'>
-										<g:FlowPanel>
-											<g:Label styleName='{style.configParameter}'>Password</g:Label>
-											<g:PasswordTextBox name='superpassword' ui:field='passwordTextBox' styleName='{style.configParameter}'/>
-										</g:FlowPanel>
-									</g:north>
-									<g:north size='2'>
-										<g:FlowPanel>
-											<g:Label styleName='{style.configParameter}'>Password Confirm</g:Label>
-											<g:PasswordTextBox name='superpasswordconfirm' ui:field='passwordConfirmTextBox' styleName='{style.configParameter}'/>
-										</g:FlowPanel>
-									</g:north>
-									<g:north size='4'>
-										<g:FlowPanel>
-											<g:Label styleName='{style.configParameter}'>Email</g:Label>
-											<g:TextBox name ='superemail' ui:field='emailTextBox' styleName='{style.configParameter}'/>
-										</g:FlowPanel>
-									</g:north>
-									<g:north size='2'>
-										<g:HTMLPanel>
-											<u>How your users will authenticate</u>
-										</g:HTMLPanel>
-									</g:north>
-									<g:north size='2'>
-										<g:FlowPanel>
-											<g:Label styleName="{style.configParameter}">Identity Provider:</g:Label>
-											<g:ListBox name="idprovider" ui:field="idProvider" styleName="{style.configParameter}">
-											</g:ListBox>
-										</g:FlowPanel>
-									</g:north>
-								</g:DockLayoutPanel>
-							</g:west>
-							<g:west size='30'>
-								<g:DockLayoutPanel styleName="{style.infoPanel}" unit='PCT'>
-									<g:north size='90'>
-										<g:ScrollPanel ui:field="deployListScrollPanel" styleName="{style.infoScrollPanel}">
-											<g:FlowPanel>
-											<g:HTML>
-												<font color='red'>NOTE: Creating a Superuser will bypass all permission checks.</font>
-												<p><font color='red'>NOTE: Django Admin Interface requires the creation of a superuser.</font></p>
-												<p>Username - Enter valid username for DJango Admin Superuser</p>
-												<p>Password - valid password for Superuser</p>
-												<p>Email - contact email address for Superuser</p>
-											</g:HTML>
-											</g:FlowPanel>
-										</g:ScrollPanel>
-									</g:north>		
-								</g:DockLayoutPanel>
-							</g:west>						
-						</g:DockLayoutPanel>
-					</g:north>
-					<g:north size='5'>
-						<g:DockLayoutPanel unit='PCT' styleName="{style.buttonPanel}">
-							<g:west size='45'>
-								<g:HTML></g:HTML>
-							</g:west>
-							<g:west size='15'>
-								<g:Button ui:field="previousButton" text="Previous" styleName="{style.stepsButton}"/>
-							</g:west>
-							<g:west size='2'>
-								<g:HTML></g:HTML>
-							</g:west>
-							<g:west size='15'>
-								<g:Button ui:field="nextButton" text="Next" styleName="{style.stepsButton}"/>
-							</g:west>
-						</g:DockLayoutPanel>
-					</g:north>					
-				</g:DockLayoutPanel>
-			</g:north>
+	<ui:style src="../resources/ProjectOptions.css"/>
+	
+	<g:SimplePanel>			
+		<g:HTMLPanel ui:field='projectOptionsPanel' styleName='{style.optionsPanel}'>
+			<g:HTMLPanel styleName="{style.fieldWrapper}">
+				<u>Superuser Setup</u>
+				<br>Superuser setup is required if you wish to be able to assign local groups and permissions.</br>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.fieldWrapper}">
+				<label class='{style.fieldLabel}'>Username</label>
+				<g:TextBox name='superusername' ui:field='usernameTextBox'/>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.fieldWrapper}">
+				<label class='{style.fieldLabel}'>Password</label>
+				<g:PasswordTextBox name='superpassword' ui:field='passwordTextBox'/>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.fieldWrapper}">
+				<label class='{style.fieldLabel}'>Password Confirm</label>
+				<g:PasswordTextBox name='superpasswordconfirm' ui:field='passwordConfirmTextBox' />
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.fieldWrapper}">
+				<label class='{style.fieldLabel}'>Email</label>
+				<g:TextBox name ='superemail' ui:field='emailTextBox' />
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.fieldWrapper}">
+				<u>How your users will authenticate</u>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.fieldWrapper}">
+				<label class="{style.fieldLabel}">Identity Provider:</label>
+				<g:ListBox name="idprovider" ui:field="idProvider" styleName="{style.fieldLabel}" />
+			</g:HTMLPanel>	
+			<g:DockLayoutPanel unit='PCT'>
+				<g:west size='45'>
+					<g:HTML></g:HTML>
+				</g:west>
+				<g:west size='15'>
+					<g:Button ui:field="previousButton" text="Previous"/>
+				</g:west>
+				<g:west size='2'>
+					<g:HTML></g:HTML>
+				</g:west>
+				<g:west size='15'>
+					<g:Button ui:field="nextButton" text="Next"/>
+				</g:west>
+			</g:DockLayoutPanel>
+		</g:HTMLPanel>
+	</g:SimplePanel>
 
-			
-		</g:DockLayoutPanel>
-	</g:HTMLPanel>
 </ui:UiBinder> 

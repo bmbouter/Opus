@@ -114,7 +114,7 @@ public class AddAppsBuildProject extends Composite {
 	}
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
-		appDeployer.handleProjectOptionsLabel();
+		//appDeployer.handleProjectOptionsLabel();
 	}
 
 	@UiHandler("addOtherButton")
