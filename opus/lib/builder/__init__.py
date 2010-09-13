@@ -167,6 +167,7 @@ class ProjectBuilder(object):
         projectdir =  os.path.join(target, self.projectname)
 
         # Create a template and a log directory
+        os.mkdir(os.path.join(projectdir, opus.lib.builder.sources.APPDIR))
         os.mkdir(os.path.join(projectdir, "log"))
         os.mkdir(os.path.join(projectdir, "templates"))
         os.mkdir(os.path.join(projectdir, "templates", "registration"))

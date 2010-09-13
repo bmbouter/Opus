@@ -87,6 +87,8 @@ def fromgit(src, dst):
         upgradegit(dst, rev)
 
 def fromhg(src, dst):
+    if src.startswith("-") or dst.startswith("-"):
+        raise ValueError("Bad src or dst")
     proc = subprocess.Popen(["hg", "clone", src, dst],
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
             )
