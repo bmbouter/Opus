@@ -59,12 +59,14 @@ class ProjectForm(forms.Form):
 
 class AppForm(forms.Form):
     """Form to ask for parameters about one app within a project"""
+    appname = IdentifierField(required=True)
     apppath = CharField(required=True)
     apptype = ChoiceField(
             required=True,
             widget=RadioSelect(),
             choices = (
                 ("git", "Git Repository URL"),
+                ("hg", "Mercurial URL"),
                 ("file", "Local Filesystem Path"),
             )
         )

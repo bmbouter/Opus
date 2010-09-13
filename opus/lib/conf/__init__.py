@@ -19,7 +19,6 @@ Opus configuraiton related functions go in this package.
 
 """
 
-import inspect
 import json
 import os
 import os.path
