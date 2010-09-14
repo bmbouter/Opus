@@ -3,12 +3,13 @@
         <instance href="{{ instances_uri }}/{{ instance.id }}" id="{{ instance.id }}">
             <owner_id>{{ instance.owner_id }}</owner_id>
             <name>{{ instance.name }}</name>
+            <image href="{{ images_uri }}/{{ instance.image_id }}" />
             <hardware_profile href="{{ instance.hardware_profile }}"/>
             <realm href="{{ instance.policy }}" />
             <state>{{ instance.state }}</state>
             <actions>
-                {% for actions in instance.actions %}
-                    <link rel="{{ action.name }}" href="{{ action.uri }}" />
+                {% for action in instance.actions %}
+                    <link rel="{{ action }}" href="{{ instances_uri }}/{{ instance.id }}/{{ action }}" />
                 {% endfor %}
             </actions>
             <public_addresses>
