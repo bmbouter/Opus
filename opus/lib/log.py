@@ -163,7 +163,7 @@ def get_logger(name=None):
         if logdir:
             # Set up a handler to a separate file
             applogfile = os.path.join(logdir, name+".log")
-            h = logging.FileHandler(applogfile, delay=True)
+            h = logging.FileHandler(applogfile)
             h.setFormatter(MyFormatter(color=False))
             applogger.addHandler(h)
 
