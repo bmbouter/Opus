@@ -4,7 +4,7 @@ var $gwt_version = "2.0.3";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '182398CE01C637751E9DFD8E1B24C8C1';
+var $strongName = 'E9A1D8DBE75199AC33BE63B1C90F6FBF';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -8516,9 +8516,9 @@ function $addProject(this$static, url){
   $getJson(this$static.communicator, url, 'importAppList', this$static);
 }
 
-function $createAppIcon(this$static, name_0, email, author, info, pk, iconPath, appPath){
+function $createAppIcon(this$static, name_0, email, author, info, pk, iconPath, appPath, type){
   var icon, versionsURL;
-  icon = $AppIcon(new AppIcon, name_0, email, author, iconPath, info, pk, appPath);
+  icon = $AppIcon(new AppIcon, name_0, email, author, iconPath, info, pk, appPath, type);
   icon.iconHTML.element.innerHTML = "<img align='left' src='" + iconPath + "'/><b>" + name_0 + '<\/b><br/>' + $getShortDescription(icon) || '';
   icon.element['className'] = 'G10k6x65LN';
   versionsURL = encode($wnd.repoBaseURL + $replaceAll('/json/application/pk/versions/?callback=', 'pk', '' + pk));
@@ -8542,7 +8542,7 @@ function $getAppTypes(this$static){
   types = $ArrayList(new ArrayList);
   for (e$iterator = $AbstractHashMap$EntrySetIterator(new AbstractHashMap$EntrySetIterator, $AbstractHashMap$EntrySet(new AbstractHashMap$EntrySet, this$static.DeployListMap).this$0); $hasNext_3(e$iterator.iter);) {
     e = e$iterator.last = dynamicCast($next_5(e$iterator.iter), 52);
-    $add_6(types, (dynamicCast(e.getValue(), 58) , 'git'));
+    $add_6(types, dynamicCast(e.getValue(), 58).type_0);
   }
   return types;
 }
@@ -8572,7 +8572,7 @@ function $handleAppActionButton(this$static){
     this$static.AppActionButton.element.style.display = '';
   }
    else {
-    iconForDeployList = $createAppIcon(this$static, this$static.currentSelection.name_0, this$static.currentSelection.email_0, this$static.currentSelection.author_0, this$static.currentSelection.desc, valueOf(__parseAndValidateInt(this$static.currentSelection.pk_0, 10, -2147483648, 2147483647)).value_0, this$static.currentSelection.icon, this$static.currentSelection.path_0);
+    iconForDeployList = $createAppIcon(this$static, this$static.currentSelection.name_0, this$static.currentSelection.email_0, this$static.currentSelection.author_0, this$static.currentSelection.desc, valueOf(__parseAndValidateInt(this$static.currentSelection.pk_0, 10, -2147483648, 2147483647)).value_0, this$static.currentSelection.icon, this$static.currentSelection.path_0, this$static.currentSelection.type_0);
     iconForDeployList.element['className'] = 'G10k6x65ON';
     iconForDeployList.iconHTML.element.innerHTML = "<img src='" + this$static.currentSelection.icon + "'><br/>" + this$static.currentSelection.name_0 || '';
     $put_0(this$static.DeployListMap, iconForDeployList.pk_0, iconForDeployList);
@@ -8621,7 +8621,7 @@ function $importAppList(this$static, projectData){
 }
 
 function $populateAppGrid(this$static, applications){
-  var $e0, appIcon, author, desc, email, featuredIcon, i, icon, iconPath, j, name_0, path, pk, token, url;
+  var $e0, appIcon, author, desc, email, featuredIcon, i, icon, iconPath, j, name_0, path, pk, token, type, url;
   this$static.applicationData = applications;
   if (this$static.featuredListLoaded) {
     for (i = 0; i < applications.length; ++i) {
@@ -8633,8 +8633,9 @@ function $populateAppGrid(this$static, applications){
         pk = applications[i].pk;
         iconPath = $getIconURL(applications[i]);
         path = applications[i].fields.path;
+        type = applications[i].fields.type;
         $equals_2(iconPath, '') && (iconPath = 'https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png');
-        appIcon = $createAppIcon(this$static, name_0, email, author, desc, pk, iconPath, path);
+        appIcon = $createAppIcon(this$static, name_0, email, author, desc, pk, iconPath, path, type);
         $add_2(this$static.appFlowPanel, appIcon);
         $put_0(this$static.IconMap, appIcon.pk_0, appIcon);
       }
@@ -8646,7 +8647,7 @@ function $populateAppGrid(this$static, applications){
     }
     for (j = 0; j < this$static.featured.length; ++j) {
       icon = dynamicCast($get_3(this$static.IconMap, '' + this$static.featured[j]), 58);
-      featuredIcon = $createAppIcon(this$static, icon.name_0, icon.email_0, icon.author_0, icon.desc, valueOf(__parseAndValidateInt(icon.pk_0, 10, -2147483648, 2147483647)).value_0, icon.icon, icon.path_0);
+      featuredIcon = $createAppIcon(this$static, icon.name_0, icon.email_0, icon.author_0, icon.desc, valueOf(__parseAndValidateInt(icon.pk_0, 10, -2147483648, 2147483647)).value_0, icon.icon, icon.path_0, icon.type_0);
       $put_0(this$static.FeaturedIconMap, featuredIcon.pk_0, featuredIcon);
       $add_2(this$static.featuredAppFlowPanel, featuredIcon);
     }
@@ -8837,7 +8838,7 @@ _ = AppBrowser_AppBrowserUiBinderUiBinderImpl$5.prototype = new Object_0;
 _.onClick = onClick_18;
 _.typeId$ = 171;
 _.val$owner = null;
-function $AppIcon(this$static, name_0, email, author, iconURL, description, pk, path){
+function $AppIcon(this$static, name_0, email, author, iconURL, description, pk, path, type){
   var attachRecord0, domId0, domId0Element, f_HTMLPanel1, iconHTML, iconPanel;
   $initWidget(this$static, (!style_9 && (style_9 = new opus_gwt_management_console_client_deployer_AppIcon_AppIconUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$1) , domId0 = $createUniqueId($doc) , iconHTML = $HTML(new HTML) , iconPanel = $FocusPanel(new FocusPanel) , f_HTMLPanel1 = $HTMLPanel(new HTMLPanel, "<span id='" + domId0 + "'><\/span>") , $add_3(iconPanel, iconHTML) , attachRecord0 = attachToDom(f_HTMLPanel1.element) , domId0Element = $doc.getElementById(domId0) , $detach(attachRecord0) , $removeFromParent_0(iconPanel) , $add_5(f_HTMLPanel1.children, iconPanel) , domId0Element.parentNode.replaceChild(iconPanel.element, domId0Element) , $setParent(iconPanel, f_HTMLPanel1) , this$static.iconHTML = iconHTML , this$static.iconPanel = iconPanel , $ensureInjected_6((!style_9 && (style_9 = new opus_gwt_management_console_client_deployer_AppIcon_AppIconUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$1) , style_9)) , f_HTMLPanel1));
   this$static.versionForm = $FormPanel(new FormPanel);
@@ -8850,6 +8851,7 @@ function $AppIcon(this$static, name_0, email, author, iconURL, description, pk, 
   this$static.desc = description;
   this$static.pk_0 = '' + pk;
   this$static.path_0 = path;
+  this$static.type_0 = type;
   return this$static;
 }
 
@@ -8898,6 +8900,7 @@ _.iconPanel = null;
 _.name_0 = null;
 _.path_0 = null;
 _.pk_0 = null;
+_.type_0 = null;
 _.versionForm = null;
 _.versions_0 = null;
 function onClick_19(event_0){
@@ -9009,14 +9012,14 @@ function $handleNextButton(this$static){
   $validateFields(this$static) && $handleDeploymentOptionsLabel(this$static.appDeployer);
 }
 
+--></script>
+<script><!--
 function $setDBOptionParams(this$static){
   var item;
   item = $getItemText(this$static.dbengineListBox, this$static.dbengineListBox.element.selectedIndex);
   $equals_2(item, 'sqlite3')?(this$static.dboptionsPanel.element.style.display = 'none' , undefined):this$static.postgresAutoConfig && $equals_2(item, 'postgresql_psycopg2')?(this$static.dboptionsPanel.element.style.display = 'none' , undefined):(this$static.dboptionsPanel.element.style.display = '' , undefined);
 }
 
---></script>
-<script><!--
 function $setupDBOptions(this$static){
   var key, key$iterator, outerIter, entry;
   if (this$static.optionsFlag) {
@@ -9298,6 +9301,7 @@ function $handleConfirmDeployProject(this$static){
     pathtype = $RadioButton(new RadioButton, 'form-' + i + '-apptype');
     pathtype.inputElem.setAttribute('value', dynamicCast((checkIndex(i, apptypes.size) , apptypes.array[i]), 1));
     $setValue_1(pathtype, ($clinit_278() , $clinit_278() , TRUE), false);
+    $wnd.alert(dynamicCast((checkIndex(i, apptypes.size) , apptypes.array[i]), 1));
     path = $TextBox(new TextBox);
     path.element['name'] = 'form-' + i + '-apppath';
     $setValue_3(path, dynamicCast((checkIndex(i, paths.size) , paths.array[i]), 1), false);
