@@ -17,16 +17,19 @@
 from django.db import models
 
 from opus.lib.prov import DRIVERS
+import opus.lib.log
+log = opus.lib.log.get_logger()
 
 class Provider(models.Model):
     """A cloud services provider."""
+    DRIVER_CHOICES = ((driver, driver) for driver in DRIVERS)
 
     # A human readable descriptive name
     name = models.CharField(max_length=60, unique=True)
 
     # The opus.lib.prov driver that this provider uses
     # Must be one of the items in opus.lib.prov.DRIVERS
-    driver = models.CharField(max_length=60)
+    driver = models.CharField(max_length=60, choices=DRIVER_CHOICES)
 
     # A valid URI entry point for this provider
     uri = models.URLField()
@@ -37,16 +40,20 @@ class Provider(models.Model):
     # Password to use with this provider
     password = models.CharField(max_length=60)
 
+    # Realm to use with this provider.
+    # Blank if default
+    realm = models.CharField(max_length=60, blank=True)
+
     def get_client(self):
         """Returns a driver client object configured for this provider."""
 
         Driver = DRIVERS[self.driver]
-        d = Drivers(self.username, self.password, self.uri)
-        d.connect()
+        d = Driver(self.username, self.password, self.uri)
         return d
 
     class Meta:
         unique_together = ("uri", "username", "password")
+        app_label = "dcmux"
 
     def __str__(self):
         return self.name
@@ -65,6 +72,7 @@ class UpstreamImage(models.Model):
 
     class Meta:
         unique_together = ("provider", "image_id")
+        app_label = "dcmux"
 
     def __str__(self):
         return 'image_id %s on provider "%s"' % (self.image_id, self.provider)
@@ -84,10 +92,13 @@ class DownstreamImage(models.Model):
     # owner_id not implemented
 
     # A long, pretty description of this image
-    description = models.TextField()
+    description = models.TextField(blank=True)
 
     # The architecture that is presented to the end user while using this image
     architecture = models.CharField(max_length=60, unique=True)
+
+    class Meta:
+        app_label = "dcmux"
 
     def __str__(self):
         return self.name
@@ -115,6 +126,7 @@ class Instance(models.Model):
     policy = models.ForeignKey("Policy")
 
     class Meta:
+        app_label = "dcmux"
         unique_together = ("provider", "instance_id")
 
     def __str__(self):
@@ -123,39 +135,54 @@ class Instance(models.Model):
     ###### Virtual Attributes ######
     # These attributes are recieved from the instance's provider
 
-    _cached_instance_object = None
     @property
-    def _instance_object(self):
+    def driver_instance_object(self):
         """Get the instance object for this instance."""
 
-        if self._cached_instance_object == None:
+        if not hasattr(self, "_cached_driver_instance_object"):
             client = self.provider.get_client()
-            self._cached_instance_object = client.instance(self.instance_id)
+            self._cached_driver_instance_object = client.instance(self.instance_id)
 
-        return self._cached_instance_object
+        return self._cached_driver_instance_object
 
     @property
     def state(self):
-        return self._instance_object.state
+        return self._driver_instance_object.state
 
     @property
     def actions(self):
-        return self._instance_object.actions
+        return self._driver_instance_object.actions
 
     @property
     def public_addresses(self):
-        return self._instance_object.public_addresses
+        return self._driver_instance_object.public_addresses
 
     @property
     def private_addresses(self):
-        return self._instance_object.private_addresses
+        return self._driver_instance_object.private_addresses
+
+    @property
+    def actions(self):
+        actions = ["destroy"]
+        if self.state.lower() == "stopped":
+            actions.append("start")
+        elif self.state.lower() == "running":
+            actions.extend(["stop", "reboot"])
+        elif self.state.lower() == "pending":
+            pass
+        else:
+            pass #TODO: Error
+        return actions
+
 
 class Policy(models.Model):
     """Base class for policies.
 
     This will be represented on the front end as a realm.  Policies allow
     intelligent decisions to be made about which Provider a DownsteamImage is
-    deployed on.
+    deployed on. Subclassing allows for the get_next_provider function to be
+    implemented to do any sort of intelligent decision making needed as far as
+    which provider is used.
 
     """
     STATE_CHOICES = (
@@ -169,26 +196,25 @@ class Policy(models.Model):
     # State will be AVAILABLE or UNAVAILABLE
     state = models.CharField(max_length=12, choices=STATE_CHOICES)
 
-    def get_next_provider():
-        raise NotImplementedError()
+    # A long, pretty description of this image
+    description = models.TextField(blank=True)
+
+    # type is here as a pointer to the child class.  It contains the child
+    # class's name.  It is not set by the user, but instead set by a signal.
+    type = models.CharField(max_length=60, editable=False, blank=True)
+
+    def get_next_provider(self, image_id):
+        """Gets the provider that should be used next for creating an instance.
+
+        This function should be written by the child class.
+
+        """
+        # Call the child class's get_next_provider function
+        PolicyClass = getattr(self, self.type.lower())
+        return PolicyClass.get_next_provider(image_id)
+
+    class Meta:
+        app_label = "dcmux"
 
     def __str__(self):
         return self.name
-
-class SingleProviderPolicy(Policy):
-    """A policy that maps one to one with a provider.
-
-    When an instance is started using this policy, it will always go to the
-    provider which is given for the policy.
-
-    """
-
-    # The associated provider
-    provider = models.ForeignKey("Provider")
-
-    class Meta:
-        verbose_name = "Single provider policy"
-        verbose_name_plural = "Single provider policies"
-
-    def get_next_provider():
-        return self.provider
