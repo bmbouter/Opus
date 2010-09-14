@@ -17,6 +17,7 @@
 package opus.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.PanelManager;
@@ -55,6 +56,7 @@ public class ProjectDeployer extends Composite {
 	private DatabaseOptions databaseOptions;
 	private DeploymentOptions deploymentOptions;
 	private ConfirmProject confirmBP;
+	private HashMap<String, Integer> childPanels;
 
 	private ProjectSettings projectSettings;
 	
@@ -63,7 +65,6 @@ public class ProjectDeployer extends Composite {
 	private int navigationMenuFocusFlag;
 	private String createdProjectName;
 	private PanelManager panelManager;
-	
 	
 	private FormPanel deployerForm;
 	private FlowPanel navigationMenuPanel;
@@ -75,6 +76,7 @@ public class ProjectDeployer extends Composite {
 	
 	public ProjectDeployer(PanelManager panelManager) {
 		initWidget(uiBinder.createAndBindUi(this));
+		childPanels = new HashMap<String, Integer>();
 		this.panelManager = panelManager;
 		createdProjectName = "";
 		this.deployerForm = new FormPanel();
@@ -110,7 +112,15 @@ public class ProjectDeployer extends Composite {
 		      }
 		    });
 	}
-	  
+	
+	public void showNextPanel(Object panel){
+		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex((Widget) panel) + 1);
+	}
+
+	public void showPreviousPanel(Object panel){
+		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex((Widget) panel) - 1);
+	}
+	
 	  void handleConfirmBuildProjectLoad() {
 			
 			
