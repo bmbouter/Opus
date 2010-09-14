@@ -23,11 +23,11 @@ be located in the directory specified by the LOG_DIR Django setting.
 If stdout is a tty, for example in the Django dev server, log messages will
 also redirect to stdout using color coding for different levels.
 
-Each application should get its own logger with the getLogger() function.  Here
+Each application should get its own logger with the get_logger() function.  Here
 is an example:
 
 >>> import opus.lib.log
->>> log = opus.lib.log.getLogger()
+>>> log = opus.lib.log.get_logger("appname")
 >>> log.debug("Debug Message here!")
 
 This will put the message into two files: master.log and appname.log
