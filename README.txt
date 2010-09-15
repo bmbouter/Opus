@@ -1,3 +1,27 @@
+================================
+Table of Contents
+================================
+ - `Opus`_
+    - `About Opus`_
+    - `Source Tree`_
+    - `Requirements`_
+    - `Installing`_
+        - `Prerequisites`_
+            - `Configuring Postgres`_
+            - `Configuring RabbitMQ`_
+        - `Installing Opus`_
+        - `Secure Ops`_
+        - `Settings`_
+        - `Database Sync`_
+        - `Deployment`_
+        - `Apache Configuration`_
+        - `Celery Daemon`_
+        - `Misc Notes`_
+    - `After Installation`_
+        - `Admin Interface`_
+        - `Deploying Projects`_
+            - `App Formats`_
+        - `GWT Interface`_
 
 =============
     Opus
@@ -100,9 +124,6 @@ To build the Google Web Toolkit component, you need
 
 * Java
 * GWT SDK
-
-To use OpenID Authentication:
-* .. _python-openid: http://pypi.python.org/pypi/python-openid/
 
 ----------
 Installing

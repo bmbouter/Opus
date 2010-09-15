@@ -14,6 +14,11 @@
  *          1 if something went wrong
  *          2 if one but not all files failed to have permissions set
  */
+
+#ifndef APACHECTL
+#define APACHECTL "/usr/sbin/apachectl"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -153,7 +158,7 @@ int main(int argc, char **argv)
         return help();
     }
     if (strcmp(argv[1], "-r") == 0) {
-        execl("/bin/sh", "/usr/sbin/apachectl", "/usr/sbin/apachectl", "graceful", (char *)NULL);
+        execl("/bin/sh", APACHECTL, APACHECTL, "graceful", (char *)NULL);
         return 1;
     }
 

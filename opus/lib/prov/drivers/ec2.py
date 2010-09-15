@@ -46,6 +46,19 @@ class EC2Driver(DriverBase):
         self.uri = uri
 
         # The connection that all of the ec2 communication goes through
+        try:
+            self.ec2 = EC2Connection(self.name, self.password)
+        except (EC2ResponseError, AWSConnectionError) as e:
+            raise ServerError(e)
+
+        '''The following is code that will allow you to specify a uri that an
+        ec2 or ec2-like interface is running.  It should work.  However, it has
+        caused nothing but trouble for Opus, because you can't set a setting to
+        None.  (Don't ask me exactly why, some javascript thing that I don't
+        have to deal with.)  Anyways, we're probably going to use libcloud in
+        the near future, so I figure leaving this feature out for now is not a
+        big deal.'''
+        '''
         if uri is None:
             region = None
         else:
@@ -54,6 +67,7 @@ class EC2Driver(DriverBase):
             self.ec2 = EC2Connection(self.name, self.password, region=region)
         except (EC2ResponseError, AWSConnectionError) as e:
             raise ServerError(e)
+        '''
 
     ##### Images #####
 
