@@ -101,6 +101,9 @@ To build the Google Web Toolkit component, you need
 * Java
 * GWT SDK
 
+To use OpenID Authentication:
+* .. _python-openid: http://pypi.python.org/pypi/python-openid/
+
 ----------
 Installing
 ----------

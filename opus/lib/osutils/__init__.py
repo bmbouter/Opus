@@ -16,7 +16,7 @@
 
 from opus.lib.ssh_tools import NodeUtil
 from opus.lib import log
-log = log.getLogger()
+log = log.get_logger("opus.lib.osutils")
 
 
 def get_os_object(ip, ssh_key):

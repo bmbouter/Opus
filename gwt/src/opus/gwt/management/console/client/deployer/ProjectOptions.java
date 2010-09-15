@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -34,14 +35,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ProjectOptions extends Composite {
 
-	private static BuildProjectPage2UiBinder uiBinder = GWT
-			.create(BuildProjectPage2UiBinder.class);
-
-	interface BuildProjectPage2UiBinder extends
-			UiBinder<Widget, ProjectOptions> {
-	}
+	private static BuildProjectPage2UiBinder uiBinder = GWT.create(BuildProjectPage2UiBinder.class);
+	interface BuildProjectPage2UiBinder extends UiBinder<Widget, ProjectOptions> {}
 	
-	private ProjectDeployer appDeployer;
+	private ProjectDeployer projectDeployer;
 	
 	@UiField TextBox usernameTextBox;
 	@UiField TextBox emailTextBox;
@@ -52,9 +49,10 @@ public class ProjectOptions extends Composite {
 	@UiField DockLayoutPanel projectOptionsPanel;
 	@UiField ListBox idProvider;
 	
-	public ProjectOptions(ProjectDeployer appDeployer) {
+	
+	public ProjectOptions(ProjectDeployer projectDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.appDeployer = appDeployer;
+		this.projectDeployer = projectDeployer;
 	}	
 
 	public void setAllowedAuthApps(String allowedAuthApps){
@@ -71,13 +69,13 @@ public class ProjectOptions extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			appDeployer.handleDatabaseOptionsLabel();
+			projectDeployer.handleDatabaseOptionsLabel();
 		}
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		appDeployer.handleAddAppsLabel();
+		projectDeployer.handleAddAppsLabel();
 	}
 	
 	public boolean validateFields(){
