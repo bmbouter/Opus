@@ -408,7 +408,6 @@ public class AppBrowser extends Composite {
 			  String name = e.getValue().getPath();
 			  String[] name_split = name.split("/");
 			  name = name_split[name_split.length - 1].split(".git")[0];
-			  Window.alert(name);
 			  names.add(name);
 		  }
 		  return names;
