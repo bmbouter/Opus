@@ -147,14 +147,16 @@ commands to create a user for Opus::
     CREATE USER opus WITH PASSWORD 'putpasswordhere' CREATEROLE CREATEDB;
     CREATE DATABASE opus OWNER opus;
 
-You will now need to generate an ssl cert and key, name them `server.crt` and
+You now may need to generate an ssl cert and key (if your system package
+didn't for you, Ubuntu's package does), name them `server.crt` and
 `server.key` and put them in the Postgres data directory. It's okay if it's
 self signed. You can do this by going to `/etc/pki/tls/certs` and using the
 provided makefile. Make sure the files have permissions 600 and are owned by
 the Postgres user.
 
-Then you need to go into the data directory, and edit the `postgres.conf` file
-to enable ssl. Uncomment the ssl line and change it to `on`.
+Then you need to find and edit the `postgres.conf` which is usually in the
+postgresql data directory, and enable ssl if it isn't already. Uncomment the
+ssl line and change it to `on`.
 
 Then later when configuring database options, make sure to put "localhost" for
 the database host, instead of leaving it blank. Otherwise, it will attempt to
@@ -212,14 +214,21 @@ and restart Apache. This is all done with a small simple C program compiled and
 set to run with suid root.
 
 This file is not compiled by setup.py. You will need to compile and install it
-yourself.
+yourself (or see instructions on using the Makefile below). This binary must:
 
-Compile this file and set its suid flag. It should be owned by root, and only
-executable by the Opus user (by setting the group appropriately).  A Makefile
-is provided for convenience. It will compile the file using gcc and then use
-sudo to change the ownership and permissions of the file. If your system is
-configured differently, for example with a different Apache user, then you will
-need to either modify the Makefile or compile it yourself.
+* Be set to suid root. 
+* Owned by root
+* Executable by the Opus user (by setting group execute permissions)
+* NOT executable by any other user! (security risk)
+* Have the path to Apache's apachectl script set (defined in a macro at the
+  top of the file)
+
+A Makefile is provided for convenience. It will compile the file using gcc and
+then use sudo to change the ownership and permissions of the file. It is just
+an example.
+
+If you use the Makefile, be sure to change the parameters at the top for your
+system. See the comments at the top of the Makefile.
 
 Once the binary is compiled and working, take note of where it's installed to.
 It doesn't need to be installed to a system-wide location, but it does need to
@@ -327,12 +336,14 @@ Here is an example of the opus.conf Apache configuration::
     WSGIDaemonProcess OPUS
 
     <VirtualHost *:80>
+        ServerName example.com
         Alias /gwt /var/www/opusenv/share/opus/build
         Alias /adminmedia /usr/lib/python2.6/site-packages/django/contrib/admin/media
         WSGIProcessGroup OPUS
         WSGIScriptAlias / /var/lib/opus/project/wsgi/opus.wsgi
     </VirtualHost>
     <VirtualHost *:443>
+        ServerName example.com
         Alias /gwt /var/www/opusenv/share/opus/build
         Alias /adminmedia /usr/lib/python2.6/site-packages/django/contrib/admin/media
         WSGIProcessGroup OPUS
@@ -359,7 +370,7 @@ Apache Configuration
 --------------------
 Apache needs to have a few configuration items apart from the standard
 Django+mod_wsgi deployment. Somewhre in your Apache config, set the following
-items.
+items if you haven't already (the above example has these items already)
 
 * As shown in the above example, A NameVirtualHost line must be present for
   the ports that Opus will be deploying projects to. For example, if you have
@@ -389,18 +400,26 @@ Celery Daemon
 -------------
 In order for the asynchronous tasks that Opus uses to run, you must start the
 Celery daemon. This can be done by running `manage.py celeryd` which is found
-in the opus/lib/project directory. This will most likely need to be run as the
-Opus user. e.g.::
+in the opus/lib/project directory. This will need to be run as the Opus user.
+e.g.::
 
     sudo -u apache ./manage.py celeryd
 
 See the Celery documentation for how to run this as a system daemon. We
-recommend using a package called supervisord, which can be pip-installed since
-it's a pure python process manager.
+recommend using a package called supervisord, which is a process manager
+written in pure python. You can install it with::
 
-For your convenience, since supervisord doesn't come with an init script,
-here's the one we use:
+    pip install supervisor
+
+For your convenience, a sample supervisord.conf is provided under
+opus/project/supervisord.conf. You may need to edit the paths in the conf
+file, but otherwise it's good to go.
+
+Also for your convenience, since supervisord doesn't come with an init script,
+here's the one we use to start supervisord at boot:
 http://github.com/bmbouter/supervisord_init_script/blob/master/supervisord
+If you use this, make sure you add a user directive to the supervisord.conf so
+that supervisord changes to the Opus user and doesn't run as root!
 
 Misc Notes
 ----------
@@ -466,12 +485,13 @@ anything about a project except its name.
 App Formats
 ```````````
 Projects currently have two mechanisms for importing applications. Opus can
-either copy an application from a location on the local filesystem, or use Git
-to clone a remote repository. In both cases, the directory or Git repository
-must have a layout just like created by `django-admin.py startapp`. That is,
-the __init__.py, urls.py, models.py, and such must be in the top level. The app
-is copied (or cloned) right into the project directory and expects it to fit
-right in place.
+either copy an application from a location on the local filesystem, or use
+Git/Mercurial to clone a remote repository.
+
+In either case, you must tell Opus the name of the application *package* that
+you are adding. Opus does not attempt to guess the package name, since some
+repositories may have more than one app, or may be named differently than the
+app.
 
 More application sources are easily added, we plan to have more in the future.
 
