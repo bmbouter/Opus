@@ -100,7 +100,7 @@ public class PanelManager extends Composite {
 		navigationPanel = new NavigationPanel();
 		projectDeployer = new ProjectDeployer(panelManager);
 		//handleAuthentication();
-		showNavigation();
+		//showNavigation();
 		deployProject();
 		//iconPanel = new IconPanel(this);
 		//deletedProject = "";

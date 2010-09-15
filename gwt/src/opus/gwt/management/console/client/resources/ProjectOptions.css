@@ -14,17 +14,61 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
+h1 {
+	font-size: 1.5em;
+	margin: 0px;
+	padding: 0px;
+}
+
+input:focus {
+	outline: none;
+}
+
 .optionsPanel{
 	margin: 0 0 0 20em;
 	border: 2px solid orange;
+	min-height: 200px;
 }
+
 .fieldWrapper {
-	font-size: 1em;
+	font-size: .8em;
 	margin: 0 0 0.4em 0;
 }
-.fieldLabel{
-	text-align: right;
+
+.formWrapper {
+	width: 500px;
+}
+
+.formWrapper .fieldWrapper {
+	
+}
+
+.formWrapper input {
+	height: 1.6em;
+	width: 150px;
+	/* Activate these later for styling
+	background-color: #C2C2C2;
+	display: inline-block;
+	font-size: .8em;
+	border: 1px #999999 solid;
+	*/
+}
+
+.formWrapper input:focus {
+	
+}
+
+.fieldLabel {
 	width: 10em;
 	margin: 0 auto;
-	padding: 0.35em 0.4em 0 0;
+	padding: 0.35em 0 0 0;
+}
+
+.textBox {
+	color: inherit;
+}
+
+.tooltip {
+	padding: 5px;
+	color: #FFFFFF;
 }
