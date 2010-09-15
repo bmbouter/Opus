@@ -243,6 +243,7 @@ public class ProjectDeployer extends Composite {
 		  
 		  ArrayList<String> paths = appBrowser.getAppPaths();
 		  ArrayList<String> apptypes = appBrowser.getAppTypes();
+		  ArrayList<String> appNames = appBrowser.getAppNames();
 		  Hidden numApps = new Hidden();
 		  numApps.setName("form-TOTAL_FORMS");
 		  numApps.setValue(String.valueOf(paths.size()));
@@ -259,12 +260,15 @@ public class ProjectDeployer extends Composite {
 			  RadioButton pathtype = new RadioButton("form-" + i + "-apptype");
 			  pathtype.setFormValue(apptypes.get(i));
 			  pathtype.setValue(true);
-			  Window.alert(apptypes.get(i));
 			  TextBox path = new TextBox();
 			  path.setName("form-" + i +"-apppath");
 			  path.setValue(paths.get(i));
+			  TextBox appName = new TextBox();
+			  appName.setName("form-" + i + "-appname");
+			  appName.setValue(appNames.get(i));
 			  formContainerPanel.add(pathtype);
 			  formContainerPanel.add(path);
+			  formContainerPanel.add(appName);
 		  }
 		  
 		  //Add all project options fields to the form for submission
