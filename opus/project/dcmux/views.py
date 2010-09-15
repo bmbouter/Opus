@@ -15,15 +15,16 @@
 ##############################################################################
 
 from django.core.urlresolvers import reverse
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.csrf import csrf_exempt
 
 from collections import namedtuple
 
 import opus.lib.log
 log = opus.lib.log.get_logger()
-from models import Provider, Policy, DownstreamImage, UpstreamImage, Instance
+from opus.project.dcmux.models import Provider, Policy, DownstreamImage, UpstreamImage, Instance
 
 HardwareProfile = namedtuple("HardwareProfile", "id")
 
@@ -123,6 +124,20 @@ def image_list(request, id=None):
         mimetype="application/xml",
     )
 
+@csrf_exempt
+def instance(request):
+    """Lists all instances (GET) or creates an instance (POST).
+
+    See the instance_list and instance_create function for more information on
+    this.
+
+    """
+
+    if request.method.startswith("POST"):
+        return instance_create(request)
+    else:
+        return instance_list(request)
+
 def instance_list(request, id=None):
     """List all instances, or the given instance if id!=None."""
 
@@ -141,18 +156,70 @@ def instance_list(request, id=None):
     return render_to_response(
         'dcmux/instances.xml',
         {
+            "images_uri": uri_lookup(request, "images"),
             "instances_uri": uri_lookup(request, "instances"),
             "instances": instances,
         },
         mimetype="application/xml",
     )
 
-def instance_create():
-    raise NotImplementedError() #TODO
+def instance_create(request):
+    """Creates an instance with the policy given by realm_id.
+
+    Uses image_id and realm_id from the application/x-www-form-urlencoded
+    format.  Both of these fields are required.
+
+    """
+
     # Get multipart-form data: image_id, realm_id, hwp_name, name
-    # Get prov driver from policy
-    # Get start instance
-    driver.instance_create(upstream_image.id, provider.realm)
+    try:
+        image_id = request.POST["image_id"]
+        realm_id = request.POST["realm_id"]
+    except KeyError:
+        return HttpResponseBadRequest("Both an image_id and a realm_id must be specified.")
+
+    try:
+        policy = Policy.objects.get(id=realm_id)
+    except ObjectDoesNotExist:
+        return HttpResponseBadRequest("The requested realm_id was not found.")
+    provider = policy.get_next_provider(image_id)
+    driver = provider.get_client()
+    try:
+        downstream_image = DownstreamImage.objects.get(id=image_id)
+    except ObjectDoesNotExist:
+        return HttpResponseBadRequest("The requested image_id was not found.")
+    try:
+        upstream_image = UpstreamImage.objects.get(
+            downstream_image=downstream_image,
+            provider=provider,
+        )
+    except ObjectDoesNotExist:
+        return HttpResponseBadRequest("There is no downstream image matching this provider.")
+    if provider.realm:
+        realm = provider.realm
+    else:
+        realm = None
+
+    instance = driver.instance_create(upstream_image.image_id, realm)
+
+    database_instance = Instance(
+        image = downstream_image,
+        owner_id = "",
+        name = "",
+        provider = provider,
+        instance_id = instance.id,
+        policy = policy,
+    )
+    database_instance.save()
+
+    return render_to_response(
+        'dcmux/instances.xml',
+        {
+            "instances_uri": uri_lookup(request, "instances"),
+            "instances": [instance],
+        },
+        mimetype="application/xml",
+    )
 
 def instance_action(request, id, action):
     """Perform an action on an instance.
@@ -163,12 +230,36 @@ def instance_action(request, id, action):
 
     """
 
+    instance = Instance.objects.get(id=id)
+
     if action.lower() == "reboot":
-        raise NotImplementedError() #TODO
+        instance_reboot(request, instance)
     elif action.lower() == "start":
-        raise NotImplementedError() #TODO
+        instance_start(request, instance)
     elif action.lower() == "stop":
-        raise NotImplementedError() #TODO
+        instance_stop(request, instance)
+    elif action.lower() == "destroy":
+        instance_destroy(request, instance)
     else:
-        #TODO
-        pass
+        pass #TODO
+
+def instance_reboot(request, instance):
+    if instance.state.lower != "running":
+        pass #TODO: Error
+    instance.reboot()
+    #TODO: catch errors
+
+def instance_start(request, instance):
+    if instance.state.lower != "stopped":
+        pass #TODO: Error
+    instance.start()
+    #TODO: catch errors
+
+def instance_stop(request, instance):
+    if instance.state.lower != "running":
+        pass #TODO: Error
+    instance.stop()
+
+def instance_destroy(request, instance):
+    instance.destroy()
+    #TODO: catch errors

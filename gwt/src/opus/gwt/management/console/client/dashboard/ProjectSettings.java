@@ -80,8 +80,9 @@ public class ProjectSettings extends Composite {
 	//Dashboard.handleProjectInformation() calls this method to import settings
 	public void importProjectSettings(ProjectSettingsData settings, String[] apps){
 		//Window.alert("importing settings");
+		int row = 0;
 		for (int i=0; i<apps.length; i++){
-			int row = 0;
+			
 			//Create header for app
 			Label appName = new Label();
 			appName.setText(apps[i]);
@@ -91,6 +92,7 @@ public class ProjectSettings extends Composite {
 			
 			JsArray<JavaScriptObject> appsettings = settings.getAppSettings(apps[i]);
 			for(int j=0; j<appsettings.length(); j++){
+				//Window.alert(String.valueOf(j));
 				JsArray<JavaScriptObject> p = settings.getSettingsArray(appsettings.get(j));
 				String[] parts = p.join(";;").split(";;\\s*");
 				if (parts[2].equals("string")){

@@ -27,6 +27,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -258,6 +259,7 @@ public class ProjectDeployer extends Composite {
 			  RadioButton pathtype = new RadioButton("form-" + i + "-apptype");
 			  pathtype.setFormValue(apptypes.get(i));
 			  pathtype.setValue(true);
+			  Window.alert(apptypes.get(i));
 			  TextBox path = new TextBox();
 			  path.setName("form-" + i +"-apppath");
 			  path.setValue(paths.get(i));

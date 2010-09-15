@@ -21,7 +21,7 @@ from opus.lib.ssh_tools import NodeUtil, HostNotConnectableError
 from generic import Generic
 
 from opus.lib import log
-log = log.getLogger()
+log = log.get_logger("opus.lib.osutils")
 
 class Windows(Generic):
     def __init__(self, ip, ssh_key):

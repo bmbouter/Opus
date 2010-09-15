@@ -43,6 +43,7 @@ public class AppIcon extends Composite {
 	private String path;
 	private String desc;
 	private String pk;
+	private String type;
 	private JsArray <VersionData> versions;
 	private JSVariableHandler JSVarHandler;
 	private FormPanel versionForm;
@@ -50,7 +51,7 @@ public class AppIcon extends Composite {
 	private int selectedVersion;
 
 	
-	public AppIcon(String name, String email, String author, String iconURL, String description, int pk, String path) {
+	public AppIcon(String name, String email, String author, String iconURL, String description, int pk, String path, String type) {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
 		versionForm = new FormPanel();
@@ -63,6 +64,7 @@ public class AppIcon extends Composite {
 		this.desc = description;
 		this.pk = String.valueOf(pk);
 		this.path = path;
+		this.type = type;
 	}
 	
 	public void setIconHTML(String html) {
@@ -123,7 +125,7 @@ public class AppIcon extends Composite {
 	}
 	
 	public String getType(){
-		return "git";
+		return this.type;
 	}
 	
 	public void handleVersionInfo(JsArray <VersionData> data){

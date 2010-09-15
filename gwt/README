@@ -1,0 +1,27 @@
+If you'd don't want to use and IDE such as Eclipse, there are other instructions for installing GWT. 
+
+ - Instructions from Google on setting up Google Web Toolkit. http://code.google.com/webtoolkit/gettingstarted.html
+
+Part of the instructions are from "Instructions from Google on setting up Eclipse with GWT plugin." http://code.google.com/webtoolkit/gettingstarted.html
+
+If you do not already have Eclipse, you may download it from the Eclipse Website (http://www.eclipse.org/downloads/). We suggest downloading Eclipse 3.5 (Galileo). For Mac users, we recommend the Cocoa build.
+
+The Google Plugin for Eclipse 3.5 is installed using the following update site. If you are using an earlier version of Eclipse, replace the 3.5 version number with your version (3.3 or 3.4). For detailed instructions on installing plugins in Eclipse, see instructions for Eclipse 3.5, Eclipse 3.4, or Eclipse 3.3. http://code.google.com/eclipse/docs/install-eclipse-3.5.html, http://code.google.com/eclipse/docs/install-eclipse-3.4.html, http://code.google.com/eclipse/docs/install-eclipse-3.3.html
+
+    http://dl.google.com/eclipse/plugin/3.5
+
+In the Install dialog, you will see an option to install the Plugin as well as the GWT and App Engine SDKs. Choosing the SDK options will install a GWT and/or App Engine SDK within your Eclipse plugin directory as a convenience. 
+
+Once the plugin is installed 
+
+1. Go to File -> Import. The following dialog will appear.
+2. Select Existing Projects into Workspace.
+3. Click the radio button next to Select root directory and click the Browse button on the following dialog.
+4. Navigate to the "gwt" directory where this README is located. Click "Choose" to select it.
+5. Project list will contain "OPUSManagementConsole".
+6. Click "Finish"
+
+Right-click on "OPUSManagementConsole" project and select Debug As > Web Application from the popup menu.
+This creates a Web Application launch configuration for you and launches it. The web application launch configuration will start a local web server and GWT development mode server.
+
+You will find a Web Application view next to the console window. Inside you will find the URL for the development mode server. Paste this URL into Firefox, Internet Explorer, Chrome, or Safari. If this is your first time using that browser with the development mode server, it will prompt you to install the Google Web Toolkit Developer Plugin. Follow the instructions in the browser to install.
