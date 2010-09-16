@@ -31,7 +31,6 @@ import opus.gwt.management.console.client.overlays.VersionData;
 import opus.gwt.management.console.client.resources.ProjectBuilderCss.ProjectBuilderStyle;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

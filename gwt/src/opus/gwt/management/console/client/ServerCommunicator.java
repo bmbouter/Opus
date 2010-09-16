@@ -30,7 +30,6 @@ import opus.gwt.management.console.client.overlays.ProjectFieldData;
 import opus.gwt.management.console.client.overlays.ProjectInformation;
 import opus.gwt.management.console.client.overlays.ProjectManualApplication;
 import opus.gwt.management.console.client.overlays.ProjectNames;
-import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 import opus.gwt.management.console.client.overlays.UserInformation;
 import opus.gwt.management.console.client.overlays.VersionData;
 
