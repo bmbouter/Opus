@@ -60,9 +60,9 @@ public class AppBrowser extends Composite {
 	private final String appListURL = "/json/search/application/?a&callback=";
 	private final String tokenURL = "/project/configuration/token/?callback=";
 
-	private ServerCommunicator communicator;
+	private ServerCommunicator serverComm;
 	private JSVariableHandler JSVarHandler;
-	private ProjectDeployer appDeployer;
+	private ProjectDeployer projectDeployer;
 	private FormPanel buildForm;
 	private FlowPanel appFlowPanel;
 	private FlowPanel featuredAppFlowPanel;
@@ -89,17 +89,17 @@ public class AppBrowser extends Composite {
 	@UiField AppBrowserStyle style;
 	
 	
-	public AppBrowser(ProjectDeployer appDeployer, ServerCommunicator jsonCom) {
+	public AppBrowser(ProjectDeployer projectDeployer, ServerCommunicator serverComm) {
 		this.featuredListLoaded = false;
 		this.gridPopulationDelayed = false;
 		initWidget(uiBinder.createAndBindUi(this));
-		this.appDeployer = appDeployer;
+		this.projectDeployer = projectDeployer;
 		JSVarHandler = new JSVariableHandler();
-		communicator = jsonCom;
+		this.serverComm = serverComm;
 		String url = URL.encode(JSVarHandler.getRepoBaseURL()+ featuredURL);
-		communicator.getJson(url, communicator, "getFeaturedList", this);
+		serverComm.getJson(url, serverComm, "getFeaturedList", this);
 		url = URL.encode(JSVarHandler.getRepoBaseURL() + appListURL);
-		communicator.getJson(url, communicator, "getAppInfo", this);
+		serverComm.getJson(url, serverComm, "getAppInfo", this);
 		deployList = new ArrayList<AppIcon>();
 		buildForm = new FormPanel();
 		setupBuildForm();
@@ -125,10 +125,6 @@ public class AppBrowser extends Composite {
 		buildForm.setVisible(false);
 		buildForm.setAction(JSVarHandler.getBuildProjectURL());
 	}
-	
-	public final native JsArray<AppData> asArrayOfAppData(JavaScriptObject jso) /*-{
-	    return jso;
-	}-*/;
 	
 	public void populateAppGrid(JsArray <AppData> applications) {
 		this.applicationData = applications;
@@ -172,7 +168,7 @@ public class AppBrowser extends Composite {
 			if (token != null) {
 				String url =URL.encode(JSVarHandler.getRepoBaseURL() + tokenURL.replaceAll("token", token));
 				//Window.alert(url);
-				communicator.getJson(url, communicator, "importAppList", this);
+				serverComm.getJson(url, serverComm, "importAppList", this);
 			}
 		} else {
 			this.gridPopulationDelayed = true;
@@ -198,7 +194,7 @@ public class AppBrowser extends Composite {
 		
 		final String versionsURL = URL.encode(JSVarHandler.getRepoBaseURL() + "/json/application/" + String.valueOf(pk) + "/versions/?a") + "&callback=";
 		
-		communicator.getJson(versionsURL, communicator, "getVersionInfo", icon);
+		serverComm.getJson(versionsURL, serverComm, "getVersionInfo", icon);
 		
 		icon.iconPanel.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
@@ -243,7 +239,7 @@ public class AppBrowser extends Composite {
 	
 	@UiHandler("DeployButton")
 	void handleNextButton(ClickEvent event){
-		//appDeployer.handleProjectOptionsLabel();
+		projectDeployer.showNextPanel(this);
 	}
 	
 	@UiHandler("RemoveButton")
@@ -375,7 +371,7 @@ public class AppBrowser extends Composite {
 	}
 	
 	  public void addProject(String url){
-		  communicator.getJson(url, communicator, "importAppList", this);
+		  serverComm.getJson(url, serverComm, "importAppList", this);
 	  }
 	  
 	  public void importAppList(JsArray<ProjectData> projectData) {
@@ -430,8 +426,4 @@ public class AppBrowser extends Composite {
 		  }
 		  return apps;
 	  }
-	  
-	  public final native JsArray<ProjectData> asArrayOfProjectData(JavaScriptObject jso) /*-{
-		  return jso;
-	  }-*/;
 }

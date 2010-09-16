@@ -302,8 +302,4 @@ public class PanelManager extends Composite {
 		mainDeckPanel.add(authenticationPanel);
 		mainDeckPanel.showWidget(0);
 	}
-	
-	public final native JsArray<ProjectNames> asArrayOfProjectNames(JavaScriptObject jso) /*-{
-    	return jso;
-  	}-*/;
 }

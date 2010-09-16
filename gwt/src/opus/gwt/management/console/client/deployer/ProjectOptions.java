@@ -70,6 +70,10 @@ public class ProjectOptions extends Composite {
 		}
 	}
 	
+	public void setFocus(){
+		usernameTextBox.setFocus(true);
+	}
+	
 	@UiHandler("usernameTextBox")
 	void handleOnFocus(FocusEvent event) {
 		tooltip.show();

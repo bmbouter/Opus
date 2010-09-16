@@ -233,8 +233,4 @@ public class ProjectSettings extends Composite {
 			optionsForm.submit();
 		}
 	}
-	public final native ProjectSettingsData asProjectSettings(JavaScriptObject jso) /*-{
-		return jso;
-	}-*/;
-
 }

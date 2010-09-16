@@ -21,9 +21,21 @@ import opus.gwt.management.console.client.deployer.AddAppsBuildProject;
 import opus.gwt.management.console.client.deployer.AppBrowser;
 import opus.gwt.management.console.client.deployer.AppIcon;
 import opus.gwt.management.console.client.deployer.DatabaseOptions;
+import opus.gwt.management.console.client.overlays.AppData;
+import opus.gwt.management.console.client.overlays.DatabaseOptionsData;
+import opus.gwt.management.console.client.overlays.ModelProperties;
+import opus.gwt.management.console.client.overlays.ProjectCommunityApplication;
+import opus.gwt.management.console.client.overlays.ProjectData;
+import opus.gwt.management.console.client.overlays.ProjectFieldData;
+import opus.gwt.management.console.client.overlays.ProjectInformation;
+import opus.gwt.management.console.client.overlays.ProjectManualApplication;
+import opus.gwt.management.console.client.overlays.ProjectNames;
+import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 import opus.gwt.management.console.client.overlays.UserInformation;
+import opus.gwt.management.console.client.overlays.VersionData;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.Window;
 
 public class ServerCommunicator {
@@ -100,31 +112,31 @@ public class ServerCommunicator {
 		    	auth.handleUserInformation(asUserInformation(jso));
 		    } else if (queryType.equals("updateFieldList")) {
 		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
-		    	p.updateFieldList(p.asModelProperties(jso));
+		    	p.updateFieldList(asModelProperties(jso));
 		    } else if (queryType.equals("handleVersions")) {
 		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
-		    	p.handleVersions(p.asArrayOfVersionData(jso));
+		    	p.handleVersions(asArrayOfVersionData(jso));
 		    /*} else if (queryType.equals("handleProjectNames")) {
 		    	PanelManager mc = (PanelManager)parent;
 		    	mc.handleProjectNames(mc.asArrayOfProjectNames(jso));*/
 		    } else if (queryType.equals("handleProjectInformation")) {
 		    	Dashboard db = (Dashboard)parent;
-		    	db.handleProjectInformation(db.asJSOProjectInformation(jso));
+		    	db.handleProjectInformation(asJSOProjectInformation(jso));
 		    } else if (queryType.equals("updateTable")) {
 		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
-		    	p.updateTable(p.asArrayOfAppData(jso)); 
+		    	p.updateTable(asArrayOfAppData(jso)); 
 		    } else if (queryType.equals("importAppList")) {	    	
 		    	AppBrowser p = (AppBrowser)parent;
-		    	p.importAppList(p.asArrayOfProjectData(jso));
+		    	p.importAppList(asArrayOfProjectData(jso));
 		    } else if (queryType.equals("handleDBOptions")){
 		    	DatabaseOptions db = (DatabaseOptions)parent;
-		    	db.handleDBOptions(db.asArrayOfDBOptionsData(jso));
+		    	db.handleDBOptions(asArrayOfDBOptionsData(jso));
 		    } else if (queryType == "getAppInfo") {
 		    	AppBrowser p = (AppBrowser)parent;
-		    	p.populateAppGrid(p.asArrayOfAppData(jso));
+		    	p.populateAppGrid(asArrayOfAppData(jso));
 		    } else if(queryType == "getVersionInfo"){
 		    	AppIcon p = (AppIcon)parent;
-		    	p.handleVersionInfo(p.asArrayOfVersionData(jso));
+		    	p.handleVersionInfo(asArrayOfVersionData(jso));
 		    } else if(queryType == "getFeaturedList"){
 		    	AppBrowser p = (AppBrowser)parent;
 		    	p.populateFeaturedList(jso);
@@ -133,6 +145,46 @@ public class ServerCommunicator {
 	  }
 	
 	public final native UserInformation asUserInformation(JavaScriptObject jso) /*-{
+		return jso;
+	}-*/;
+	
+	public final native DatabaseOptionsData asArrayOfDBOptionsData(JavaScriptObject jso) /*-{
+		return jso;
+	}-*/;
+	
+	public final native JsArray<ProjectNames> asArrayOfProjectNames(JavaScriptObject jso) /*-{
+		return jso;
+	}-*/;
+	  
+	  public final native ModelProperties asModelProperties(JavaScriptObject jso) /*-{
+	    return jso;
+	  }-*/;
+	  
+	  public final native JsArray<VersionData> asArrayOfVersionData(JavaScriptObject jso) /*-{
+	  	return jso;
+	  }-*/;
+	  
+	  public final native JsArray<ProjectData> asArrayOfProjectData(JavaScriptObject jso) /*-{
+		return jso;
+	  }-*/;
+	  
+	  public final native JsArray<ProjectFieldData> asArrayOfProjectFieldData(JavaScriptObject jso) /*-{
+	  	return jso;
+	  }-*/;
+	  
+	  public final native JsArray<ProjectManualApplication> asArrayOfProjectManualApplications(JavaScriptObject jso) /*-{
+	  	return jso;
+	  }-*/;	
+	  
+	  public final native JsArray<ProjectCommunityApplication> asArrayOfProjectCommunityApplications(JavaScriptObject jso) /*-{
+	  	return jso;
+	  }-*/;
+	  
+	public final native JsArray<AppData> asArrayOfAppData(JavaScriptObject jso) /*-{
+		return jso;
+	}-*/;
+
+	public final native ProjectInformation asJSOProjectInformation(JavaScriptObject jso) /*-{
 		return jso;
 	}-*/;
 }

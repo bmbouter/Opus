@@ -153,16 +153,4 @@ public class AppIcon extends Composite {
 	public void whatIsSelected(){
 		//Window.alert(String.valueOf(selectedVersion));
 	}
-	
-	public final native JsArray<VersionData> asArrayOfVersionData(JavaScriptObject jso) /*-{
-    	return jso;
-	}-*/;
-/*
-	@UiHandler("button")
-	void onClick(ClickEvent e) {
-		//Window.alert("Hello!");
-	}
-*/
-	
-	
 }

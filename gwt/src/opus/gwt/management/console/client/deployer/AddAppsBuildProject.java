@@ -334,36 +334,4 @@ public class AddAppsBuildProject extends Composite {
 	  public FlexTable getDeployListFlexTable(){
 		  return deployListFlexTable;
 	  }
-	  /**
-	   * Cast JavaScriptObject as JsArray of StockData.
-	   */
-	  public final native JsArray<AppData> asArrayOfAppData(JavaScriptObject jso) /*-{
-	    return jso;
-	  }-*/;
-	  
-	  /**
-	   * Cast JavaScriptObject as ModelProperties.
-	   */
-	  public final native ModelProperties asModelProperties(JavaScriptObject jso) /*-{
-	    return jso;
-	  }-*/;
-	  
-	  public final native JsArray<VersionData> asArrayOfVersionData(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;
-	  
-	  public final native JsArray<ProjectData> asArrayOfProjectData(JavaScriptObject jso) /*-{
- 		return jso;
-	  }-*/;
-	  public final native JsArray<ProjectFieldData> asArrayOfProjectFieldData(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;
-	  
-	  public final native JsArray<ProjectManualApplication> asArrayOfProjectManualApplications(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;	
-	  
-	  public final native JsArray<ProjectCommunityApplication> asArrayOfProjectCommunityApplications(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;
 }

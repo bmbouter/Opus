@@ -58,20 +58,10 @@
 					<g:ListBox name="idprovider" ui:field="idProvider" styleName="{style.fieldLabel}" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>	
-			<g:DockLayoutPanel unit='PCT'>
-				<g:west size='45'>
-					<g:HTML></g:HTML>
-				</g:west>
-				<g:west size='15'>
-					<g:Button ui:field="previousButton" text="Previous"/>
-				</g:west>
-				<g:west size='2'>
-					<g:HTML></g:HTML>
-				</g:west>
-				<g:west size='15'>
-					<g:Button ui:field="nextButton" text="Next"/>
-				</g:west>
-			</g:DockLayoutPanel>
+			<g:HTMLPanel>
+				<g:Button ui:field="previousButton" text="Previous"/>
+				<g:Button ui:field="nextButton" text="Next"/>
+			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:SimplePanel>
 
