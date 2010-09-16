@@ -29,7 +29,7 @@ urlpatterns = patterns('opus.project.dcmux.views',
     url(r'^images/(.+)$', 'image_list', name='opus.project.dcmux.image'),
 
     # List (GET) or create (POST) instance
-    url(r'^instances/?$', 'instance', name='opus.project.dcmux.instances'),
+    url(r'^instances/?$', 'instances_list', name='opus.project.dcmux.instances'),
     # Instance actions (start, stop, reboot...)
     url(r'^instances/(.+)/(.+)$', 'instance_action', name='opus.project.dcmux.instance_actions'),
     # List specific instance

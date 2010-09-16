@@ -147,19 +147,19 @@ class Instance(models.Model):
 
     @property
     def state(self):
-        return self._driver_instance_object.state
+        return self.driver_instance_object.state
 
     @property
     def actions(self):
-        return self._driver_instance_object.actions
+        return self.driver_instance_object.actions
 
     @property
     def public_addresses(self):
-        return self._driver_instance_object.public_addresses
+        return self.driver_instance_object.public_addresses
 
     @property
     def private_addresses(self):
-        return self._driver_instance_object.private_addresses
+        return self.driver_instance_object.private_addresses
 
     @property
     def actions(self):

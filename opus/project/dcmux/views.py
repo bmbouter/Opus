@@ -125,7 +125,7 @@ def image_list(request, id=None):
     )
 
 @csrf_exempt
-def instance(request):
+def instances_list(request):
     """Lists all instances (GET) or creates an instance (POST).
 
     See the instance_list and instance_create function for more information on
@@ -220,7 +220,7 @@ def instance_create(request):
         },
         mimetype="application/xml",
     )
-
+@csrf_exempt
 def instance_action(request, id, action):
     """Perform an action on an instance.
 
@@ -252,14 +252,15 @@ def instance_reboot(request, instance):
 def instance_start(request, instance):
     if instance.state.lower != "stopped":
         pass #TODO: Error
-    instance.start()
+    instance.driver_instance_object.start()
     #TODO: catch errors
 
 def instance_stop(request, instance):
     if instance.state.lower != "running":
         pass #TODO: Error
-    instance.stop()
+    instance.driver_instance_object.stop()
 
 def instance_destroy(request, instance):
-    instance.destroy()
+    instance.driver_instance_object.destroy()
     #TODO: catch errors
+    #TODO: destroy local instance
