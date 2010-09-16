@@ -143,7 +143,7 @@ class DeltacloudDriver(DriverBase):
 
         if response.status < 200 or response.status >= 400:
             # Response was not successful (status 2xx or 3xx).
-            raise ServerError("Status returned from Deltacloud was %s." % response.status)
+            raise ServerError("Status returned from Deltacloud was %s.  The response body was: '''%s'''" % (response.status, text))
 
         try:
             return parseString(text)
