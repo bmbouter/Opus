@@ -15,7 +15,7 @@
 ##############################################################################
 
 from django.core.urlresolvers import reverse
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -241,26 +241,39 @@ def instance_action(request, id, action):
     elif action.lower() == "destroy":
         instance_destroy(request, instance)
     else:
-        pass #TODO
+        return HttpResponseNotFound()
+
+    return render_to_response(
+        'dcmux/instances.xml',
+        {
+            "instances_uri": uri_lookup(request, "instances"),
+            "instances": [instance],
+        },
+        mimetype="application/xml",
+    )
 
 def instance_reboot(request, instance):
     if instance.state.lower != "running":
         pass #TODO: Error
-    instance.reboot()
+    instance.driver_instance_object.reboot()
+    instance.state = "PENDING"
     #TODO: catch errors
 
 def instance_start(request, instance):
     if instance.state.lower != "stopped":
         pass #TODO: Error
+    instance.state = "RUNNING"
     instance.driver_instance_object.start()
     #TODO: catch errors
 
 def instance_stop(request, instance):
     if instance.state.lower != "running":
         pass #TODO: Error
+    instance.state = STOPPED
     instance.driver_instance_object.stop()
 
 def instance_destroy(request, instance):
     instance.driver_instance_object.destroy()
+    instance.state = "PENDING"
     #TODO: catch errors
     #TODO: destroy local instance
