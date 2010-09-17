@@ -12,7 +12,8 @@ body {
 	background: #323232 url('arrow.png') no-repeat;
 	width: 100px;
 	font-size: .8em;
-	display: none;
+	padding: 5px;
+	color: #FFFFFF;
 }
 
 .gwt-DecoratedPopupPanel .popupMiddleLeft {

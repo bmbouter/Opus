@@ -27,28 +27,39 @@
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.formWrapper}">
 				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<label class='{style.fieldLabel}'>Username</label>
-					<g:TextBox name='superusername' ui:field='usernameTextBox'/>
-					<g:HTMLPanel>
-						<g:DecoratedPopupPanel ui:field="tooltip">
-							<g:HTMLPanel styleName="{style.tooltip}">
-								This is a tooltip and it contains tons of information!
-								Blah blah blah blah.
-							</g:HTMLPanel>
-						</g:DecoratedPopupPanel>
+					<g:HTMLPanel styleName="{style.field}">
+						<label class='{style.fieldLabel}'>Username</label>
+						<g:TextBox name='superusername' ui:field='usernameTextBox'/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.tooltip}">
+						<g:HTMLPanel styleName="{style.tooltip-left}" />
+						<g:HTMLPanel styleName="{style.tooltip-right}">
+							<g:PopupPanel ui:field="tooltip">
+								<g:HTMLPanel>
+									This is a tooltip and it contains tons of information!
+									Blah blah blah blah.
+								</g:HTMLPanel>
+							</g:PopupPanel>
+						</g:HTMLPanel>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<label class='{style.fieldLabel}'>Password</label>
-					<g:PasswordTextBox name='superpassword' ui:field='passwordTextBox'/>
+					<g:HTMLPanel styleName="{style.field}">
+						<label class='{style.fieldLabel}'>Password</label>
+						<g:PasswordTextBox name='superpassword' ui:field='passwordTextBox'/>
+					</g:HTMLPanel>
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<label class='{style.fieldLabel}'>Password Confirm</label>
-					<g:PasswordTextBox name='superpasswordconfirm' ui:field='passwordConfirmTextBox' />
+					<g:HTMLPanel styleName="{style.field}">
+						<label class='{style.fieldLabel}' >Password Confirm</label>
+						<g:PasswordTextBox name='superpasswordconfirm' ui:field='passwordConfirmTextBox' />
+					</g:HTMLPanel>
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<label class='{style.fieldLabel}'>Email</label>
-					<g:TextBox name ='superemail' ui:field='emailTextBox' />
+					<g:HTMLPanel styleName="{style.field}">
+						<label class='{style.fieldLabel}'>Email</label>
+						<g:TextBox name ='superemail' ui:field='emailTextBox' />
+					</g:HTMLPanel>
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.fieldWrapper}">
 					<u>How your users will authenticate</u>
@@ -57,7 +68,7 @@
 					<label class="{style.fieldLabel}">Identity Provider:</label>
 					<g:ListBox name="idprovider" ui:field="idProvider" styleName="{style.fieldLabel}" />
 				</g:HTMLPanel>
-			</g:HTMLPanel>	
+			</g:HTMLPanel>
 			<g:HTMLPanel>
 				<g:Button ui:field="previousButton" text="Previous"/>
 				<g:Button ui:field="nextButton" text="Next"/>
