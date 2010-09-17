@@ -31,7 +31,6 @@ import opus.gwt.management.console.client.overlays.VersionData;
 import opus.gwt.management.console.client.resources.ProjectBuilderCss.ProjectBuilderStyle;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -334,36 +333,4 @@ public class AddAppsBuildProject extends Composite {
 	  public FlexTable getDeployListFlexTable(){
 		  return deployListFlexTable;
 	  }
-	  /**
-	   * Cast JavaScriptObject as JsArray of StockData.
-	   */
-	  public final native JsArray<AppData> asArrayOfAppData(JavaScriptObject jso) /*-{
-	    return jso;
-	  }-*/;
-	  
-	  /**
-	   * Cast JavaScriptObject as ModelProperties.
-	   */
-	  public final native ModelProperties asModelProperties(JavaScriptObject jso) /*-{
-	    return jso;
-	  }-*/;
-	  
-	  public final native JsArray<VersionData> asArrayOfVersionData(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;
-	  
-	  public final native JsArray<ProjectData> asArrayOfProjectData(JavaScriptObject jso) /*-{
- 		return jso;
-	  }-*/;
-	  public final native JsArray<ProjectFieldData> asArrayOfProjectFieldData(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;
-	  
-	  public final native JsArray<ProjectManualApplication> asArrayOfProjectManualApplications(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;	
-	  
-	  public final native JsArray<ProjectCommunityApplication> asArrayOfProjectCommunityApplications(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;
 }

@@ -22,11 +22,9 @@ import opus.gwt.management.console.client.dashboard.ProjectDashboard;
 import opus.gwt.management.console.client.deployer.ProjectDeployer;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.overlays.ProjectNames;
-import opus.gwt.management.console.client.overlays.UserInformation;
 import opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -40,19 +38,13 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
@@ -302,8 +294,4 @@ public class PanelManager extends Composite {
 		mainDeckPanel.add(authenticationPanel);
 		mainDeckPanel.showWidget(0);
 	}
-	
-	public final native JsArray<ProjectNames> asArrayOfProjectNames(JavaScriptObject jso) /*-{
-    	return jso;
-  	}-*/;
 }

@@ -16,6 +16,8 @@
 
 package opus.gwt.management.console.client.deployer;
 
+import opus.gwt.management.console.client.JSVariableHandler;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -23,7 +25,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
@@ -31,25 +32,22 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class DeploymentOptions extends Composite {
 
-	private static DeploymentOptionsBuildProjectUiBinder uiBinder = GWT
-			.create(DeploymentOptionsBuildProjectUiBinder.class);
+	private static DeploymentOptionsBuildProjectUiBinder uiBinder = GWT.create(DeploymentOptionsBuildProjectUiBinder.class);
+	interface DeploymentOptionsBuildProjectUiBinder extends UiBinder<Widget, DeploymentOptions> {}
 
-	interface DeploymentOptionsBuildProjectUiBinder extends
-			UiBinder<Widget, DeploymentOptions> {
-	}
-
-	private ProjectDeployer appDeployer;
+	private ProjectDeployer projectDeployer;
+	private JSVariableHandler JSVarHandler;
 	
 	@UiField Button nextButton;
 	@UiField Button previousButton;
 	@UiField Label baseUrlLabel;
 	@UiField TextBox projectNameTextBox;
 
-	public DeploymentOptions(ProjectDeployer appDeployer) {
+	public DeploymentOptions(ProjectDeployer projectDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.appDeployer = appDeployer;
-		baseUrlLabel.setText(appDeployer.getBaseURL());
-		projectNameTextBox.setFocus(true);
+		this.projectDeployer = projectDeployer;
+		JSVarHandler = new JSVariableHandler();
+		baseUrlLabel.setText(JSVarHandler.getDeployerBaseURL());
 	}
 	
 	private boolean validateFields(){
@@ -64,16 +62,19 @@ public class DeploymentOptions extends Composite {
 		}
 	}
 	
+	public void setFocus(){
+		projectNameTextBox.setFocus(true);
+	}
+	
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			//appDeployer.handleConfirmBPLabel();
-			appDeployer.handleConfirmBuildProjectLoad();
+			projectDeployer.showNextPanel(this);
 		}
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		//appDeployer.handleDatabaseOptionsLabel();
+		projectDeployer.showPreviousPanel(this);
 	}
 }

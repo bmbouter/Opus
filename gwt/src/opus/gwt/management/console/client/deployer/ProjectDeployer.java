@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.PanelManager;
-import opus.gwt.management.console.client.dashboard.ProjectSettings;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -29,11 +28,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -42,11 +39,9 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 
 public class ProjectDeployer extends Composite {
-	private static applicationDeployerUiBinder uiBinder = GWT
-		.create(applicationDeployerUiBinder.class);
-
-	interface applicationDeployerUiBinder extends
-		UiBinder<Widget, ProjectDeployer> {}
+	
+	private static applicationDeployerUiBinder uiBinder = GWT.create(applicationDeployerUiBinder.class);
+	interface applicationDeployerUiBinder extends UiBinder<Widget, ProjectDeployer> {}
 		
 	private final String deploymentURL =  "/deployments/projectName/";
 		
@@ -55,19 +50,11 @@ public class ProjectDeployer extends Composite {
 	private DatabaseOptions databaseOptions;
 	private DeploymentOptions deploymentOptions;
 	private ConfirmProject confirmBP;
-
-	private ProjectSettings projectSettings;
-	
 	private AppBrowser appBrowser;
-	
-	private int navigationMenuFocusFlag;
 	private String createdProjectName;
 	private PanelManager panelManager;
 	
-	
 	private FormPanel deployerForm;
-	private FlowPanel navigationMenuPanel;
-	private Label titleBarLabel;
 	private JSVariableHandler JSVarHandler;
 		
 	@UiField ProjectDeployerStyle style;
@@ -83,21 +70,19 @@ public class ProjectDeployer extends Composite {
 		this.databaseOptions = new DatabaseOptions(this, panelManager.getServerCommunicator());
 		this.deploymentOptions = new DeploymentOptions(this);
 		this.confirmBP = new ConfirmProject(deployerForm, this);
-		this.navigationMenuFocusFlag = 0;
 		JSVarHandler = new JSVariableHandler();
 		setupdeployerDeckPanel();
 		setupDeployerForm();
 	}
 	
 	private void setupdeployerDeckPanel(){
-		//deployerDeckPanel.add(projectSettings);
 		deployerDeckPanel.add(appBrowser);
 		deployerDeckPanel.add(projectOptions);
 		deployerDeckPanel.add(databaseOptions);
 		deployerDeckPanel.add(deploymentOptions);
 		deployerDeckPanel.add(confirmBP);
 		deployerDeckPanel.add(deployerForm);
-		deployerDeckPanel.showWidget(1);
+		deployerDeckPanel.showWidget(0);
 		appBrowser.setHeight("");
 		appBrowser.setWidth("");
 	}
@@ -110,7 +95,22 @@ public class ProjectDeployer extends Composite {
 		      }
 		    });
 	}
-	  
+	
+	public void showNextPanel(Widget panel){
+		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) + 1);
+		if( panel.getClass().equals(databaseOptions.getClass()) ){
+			deploymentOptions.setFocus();
+		} else if( panel.getClass().equals(appBrowser.getClass()) ){
+			projectOptions.setFocus();
+		} else if( panel.getClass().equals(projectOptions.getClass()) ){
+			databaseOptions.setFocus();
+		}
+	}
+
+	public void showPreviousPanel(Widget panel){
+		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) - 1);
+	}
+	
 	  void handleConfirmBuildProjectLoad() {
 			
 			
@@ -205,11 +205,7 @@ public class ProjectDeployer extends Composite {
 	  public ProjectOptions getProjectOptions() {
 		  return projectOptions;
 	  }
-	  /*
-	  AddAppsBuildProject getAddApps() {
-		  return addApps;
-	  }
-	  */
+	  
 	  DatabaseOptions getDatabaseOptions(){
 		  return databaseOptions;
 	  }
@@ -217,8 +213,4 @@ public class ProjectDeployer extends Composite {
 	  DeploymentOptions getDeploymentOptions(){
 		  return deploymentOptions;
 	  }
-	  
-	  public native String getBaseURL()/*-{
-	  	return $wnd.baseURL;
-	  }-*/;
 }

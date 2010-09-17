@@ -19,13 +19,12 @@ h1 {
 	margin: 0px;
 	padding: 0px;
 }
-
 input:focus {
 	outline: none;
 }
 
 .optionsPanel{
-	margin: 0 0 0 20em;
+	margin: 0;
 	border: 2px solid orange;
 	font-size: .8em;
 	min-height: 300px;

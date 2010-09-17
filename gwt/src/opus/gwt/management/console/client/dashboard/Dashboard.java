@@ -105,9 +105,4 @@ public class Dashboard extends Composite {
 	public boolean isActive(){
 		return active;
 	}
-	
-	public final native ProjectInformation asJSOProjectInformation(JavaScriptObject jso) /*-{
-		return jso;
-	}-*/;
-	
 }

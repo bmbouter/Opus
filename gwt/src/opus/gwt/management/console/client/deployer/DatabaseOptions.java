@@ -23,7 +23,6 @@ import opus.gwt.management.console.client.ServerCommunicator;
 import opus.gwt.management.console.client.overlays.DatabaseOptionsData;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.http.client.URL;
@@ -33,30 +32,26 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DatabaseOptions extends Composite {
 
-	private static DatabaseOptionsUiBinder uiBinder = GWT
-			.create(DatabaseOptionsUiBinder.class);
-	
-	interface DatabaseOptionsUiBinder extends
-			UiBinder<Widget, DatabaseOptions> {
-	}
+	private static DatabaseOptionsUiBinder uiBinder = GWT.create(DatabaseOptionsUiBinder.class);
+	interface DatabaseOptionsUiBinder extends UiBinder<Widget, DatabaseOptions> {}
 
 	final String dbOptionsURL = "/json/database/?callback=";
 	
-	private ProjectDeployer appDeployer;
+	private ProjectDeployer projectDeployer;
 	private HashMap<String, String> dbOptions;
 	private boolean optionsFlag;
 	private JSVariableHandler JSVarHandler;
 	private ServerCommunicator serverComm;
 	private boolean postgresAutoConfig;
 	
-	@UiField DockLayoutPanel dboptionsPanel;
+	@UiField HTMLPanel dbFieldsPanel;
 	@UiField TextBox nameTextBox;
 	@UiField TextBox passwordTextBox;
 	@UiField TextBox hostTextBox;
@@ -64,14 +59,14 @@ public class DatabaseOptions extends Composite {
 	@UiField ListBox dbengineListBox;
 	@UiField Button nextButton;
 	@UiField Button previousButton;	
-	@UiField DockLayoutPanel databaseOptionsPanel;
+	@UiField HTMLPanel databaseOptionsPanel;
 	
-	public DatabaseOptions(ProjectDeployer appDeployer, ServerCommunicator serverComm) {
+	public DatabaseOptions(ProjectDeployer projectDeployer, ServerCommunicator serverComm) {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
 		postgresAutoConfig = false;
 		this.serverComm = serverComm;
-		this.appDeployer = appDeployer;
+		this.projectDeployer = projectDeployer;
 		dbOptions = new HashMap<String, String>();
 		checkForDBOptions();
 	}
@@ -107,12 +102,16 @@ public class DatabaseOptions extends Composite {
 	private void setDBOptionParams(){
 		String item = dbengineListBox.getItemText(dbengineListBox.getSelectedIndex());
 		if( item.equals("sqlite3") ){
-			dboptionsPanel.setVisible(false);
+			dbFieldsPanel.setVisible(false);
 		} else if( postgresAutoConfig && item.equals("postgresql_psycopg2") ) {
-			dboptionsPanel.setVisible(false);
+			dbFieldsPanel.setVisible(false);
 		} else {
-			dboptionsPanel.setVisible(true);
+			dbFieldsPanel.setVisible(true);
 		}	
+	}
+	
+	public void setFocus(){
+		dbengineListBox.setFocus(true);
 	}
 	
 	@UiHandler("dbengineListBox")
@@ -123,13 +122,13 @@ public class DatabaseOptions extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			//appDeployer.handleDeploymentOptionsLabel();
+			projectDeployer.showNextPanel(this);
 		}
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		//appDeployer.handleProjectOptionsLabel();
+		projectDeployer.showPreviousPanel(this);
 	}
 	
 	private boolean validateFields(){
@@ -157,13 +156,9 @@ public class DatabaseOptions extends Composite {
 			dbOptions.put(option, option);
 		}
 		postgresAutoConfig = dbOptionsData.getAutoPostgresConfig();
-		appDeployer.getProjectOptions().setAllowedAuthApps(dbOptionsData.getAllowedAuthApps());
+		projectDeployer.getProjectOptions().setAllowedAuthApps(dbOptionsData.getAllowedAuthApps());
 		setupDBOptions();
 	}
-
-	public final native DatabaseOptionsData asArrayOfDBOptionsData(JavaScriptObject jso) /*-{
-		return jso;
-	}-*/;
 }
 
 	

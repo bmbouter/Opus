@@ -22,6 +22,7 @@
 	
 	<g:FlowPanel>
 		<c:NavigationPanel></c:NavigationPanel>
+		<c:BreadCrumbs></c:BreadCrumbs>
 		<g:DeckPanel ui:field="deployerDeckPanel" styleName="{style.deployerDeckPanel}">
 		</g:DeckPanel>
 	</g:FlowPanel>
