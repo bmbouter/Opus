@@ -16,7 +16,10 @@
 
 package opus.gwt.management.console.client.deployer;
 
+import opus.gwt.management.console.client.tools.TooltipPanel;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -52,13 +55,14 @@ public class ProjectOptions extends Composite {
 	@UiField Button previousButton;
 	@UiField HTMLPanel projectOptionsPanel;
 	@UiField ListBox idProvider;
-	@UiField PopupPanel tooltip;
+	@UiField TooltipPanel active;
 	
 	public ProjectOptions(ProjectDeployer projectDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.projectDeployer = projectDeployer;
-	}	
-
+		setInitialState();
+	}
+	
 	public void setAllowedAuthApps(String allowedAuthApps){
 		int size = idProvider.getItemCount();
 		for(int i=0; i < size; i++){
@@ -71,9 +75,53 @@ public class ProjectOptions extends Composite {
 	}
 	
 	@UiHandler("usernameTextBox")
-	void handleOnFocus(FocusEvent event) {
-		tooltip.show();
-		tooltip.hide();
+	void usernameTextBoxOnFocus(FocusEvent event) {
+		active.setVisible(true);
+		
+		int x = usernameTextBox.getAbsoluteLeft() + usernameTextBox.getOffsetWidth() + 5;
+		int y = usernameTextBox.getAbsoluteTop() + 2;
+		
+		setPopupPositions(x, y);
+		active.hide();
+		
+		active.setText("This is where the username stuff goes!");
+		
+		active.show();
+	}
+	
+	@UiHandler("passwordTextBox")
+	void passwordTextBoxOnFocus(FocusEvent event) {
+		active.setVisible(true);
+		
+		int x = passwordTextBox.getAbsoluteLeft() + passwordTextBox.getOffsetWidth() + 5;
+		int y = passwordTextBox.getAbsoluteTop() + 2;
+		setPopupPositions(x, y);
+		
+		active.hide();
+		active.setText("This is where the password stuff goes!");
+		active.show();
+	}
+	
+	@UiHandler("passwordConfirmTextBox")
+	void passwordConfirmTextBoxOnFocus(FocusEvent event) {
+		active.setVisible(true);
+		//setPopupPositions();
+		active.hide();
+		
+		active.setText("This is where the password confirmation stuff goes!");
+		
+		active.show();
+	}
+	
+	@UiHandler("emailTextBox")
+	void emailTextBoxOnFocus(FocusEvent event) {
+		active.setVisible(true);
+		//setPopupPositions();
+		active.hide();
+		
+		active.setText("This is where the email stuff goes!");
+		
+		active.show();
 	}
 	
 	@UiHandler("nextButton")
@@ -104,5 +152,13 @@ public class ProjectOptions extends Composite {
 			return false;
 		}
 		return true;
+	}
+	
+	private void setInitialState() {
+		active.setVisible(false);
+	}
+	
+	private void setPopupPositions(int x, int y) {
+		active.setPopupPosition(x, y);
 	}
 }

@@ -69,38 +69,3 @@ input:focus {
 .formWrapper input:focus {
 	
 }
-
-.tooltip {
-	float: right;
-}
-
-.tooltip {
-    width: 125px;
-    font-size: .8em;
-	color: #FFFFFF;
-	float: right;
-}
-
-div.tooltip {
-	padding: 0;
-	margin: 0;
-}
-
-.tooltip .tooltip-left {
-    width: 6%;
-    height: 100%;
-    padding: 3px 0 0 0;
-    float: left;
-    background: url('arrow.png') no-repeat 0px 5px;
-    padding: 25px 0 0 0;
-}
-
-.tooltip .tooltip-right {
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    background: #323232;
-    padding: 3px;
-    width: 90%;
-    height: 100%;
-    float: right;
-}

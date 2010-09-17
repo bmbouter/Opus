@@ -101,7 +101,7 @@ public class ProjectDeployer extends Composite {
 		if( panel.getClass().equals(databaseOptions.getClass()) ){
 			deploymentOptions.setFocus();
 		} else if( panel.getClass().equals(appBrowser.getClass()) ){
-			projectOptions.setFocus();
+			//projectOptions.setFocus();
 		} else if( panel.getClass().equals(projectOptions.getClass()) ){
 			databaseOptions.setFocus();
 		}
