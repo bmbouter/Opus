@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.PanelManager;
+import opus.gwt.management.console.client.navigation.BreadCrumbs;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -59,6 +60,7 @@ public class ProjectDeployer extends Composite {
 		
 	@UiField ProjectDeployerStyle style;
 	@UiField DeckPanel deployerDeckPanel;
+	@UiField BreadCrumbs breadCrumbs;
 	
 	public ProjectDeployer(PanelManager panelManager) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -72,6 +74,7 @@ public class ProjectDeployer extends Composite {
 		this.confirmBP = new ConfirmProject(deployerForm, this);
 		JSVarHandler = new JSVariableHandler();
 		setupdeployerDeckPanel();
+		setupBreadCrumbs();
 		setupDeployerForm();
 	}
 	
@@ -85,6 +88,12 @@ public class ProjectDeployer extends Composite {
 		deployerDeckPanel.showWidget(0);
 		appBrowser.setHeight("");
 		appBrowser.setWidth("");
+	}
+	
+	private void setupBreadCrumbs(){
+		String[] crumbs = {"Application Browser", "Project Options", "Database Options", "Deployment Options"};
+		breadCrumbs.setBreadCrumbs(crumbs);
+		breadCrumbs.setInitialActiveCrumb("Application Browser");
 	}
 	
 	private void setupDeployerForm(){
@@ -202,6 +211,10 @@ public class ProjectDeployer extends Composite {
 			  deployerForm.submit();
 	  }
 	
+	  public BreadCrumbs getBreadCrumbs(){
+		  return breadCrumbs;
+	  }
+	  
 	  public ProjectOptions getProjectOptions() {
 		  return projectOptions;
 	  }

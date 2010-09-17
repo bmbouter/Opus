@@ -21,8 +21,8 @@
 	<ui:style src="../resources/ProjectDeployer.css" type="opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle"/>
 	
 	<g:FlowPanel>
-		<c:NavigationPanel></c:NavigationPanel>
-		<c:BreadCrumbs></c:BreadCrumbs>
+		<c:NavigationPanel />
+		<c:BreadCrumbs ui:field="breadCrumbs" />
 		<g:DeckPanel ui:field="deployerDeckPanel" styleName="{style.deployerDeckPanel}">
 		</g:DeckPanel>
 	</g:FlowPanel>

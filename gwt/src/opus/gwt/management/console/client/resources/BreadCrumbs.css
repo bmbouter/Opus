@@ -5,6 +5,18 @@
 	width: 100%;
 	border-bottom: 2px solid red;
 }
-.mainLabel {
+ul {
+	list-style: none;
+	padding: 0 0 0 0;	
+}
+li {
+	list-style: none;	
 	float: left;
+}
+.inactive {
+	color: black;
+	float: left;
+}
+.active {
+	color: red;
 }
