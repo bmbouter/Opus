@@ -28,12 +28,12 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -52,7 +52,7 @@ public class ProjectOptions extends Composite {
 	@UiField Button previousButton;
 	@UiField HTMLPanel projectOptionsPanel;
 	@UiField ListBox idProvider;
-	@UiField DecoratedPopupPanel tooltip;
+	@UiField PopupPanel tooltip;
 	
 	public ProjectOptions(ProjectDeployer projectDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -74,7 +74,6 @@ public class ProjectOptions extends Composite {
 	void handleOnFocus(FocusEvent event) {
 		tooltip.show();
 		tooltip.hide();
-		
 	}
 	
 	@UiHandler("nextButton")

@@ -27,25 +27,38 @@ input:focus {
 .optionsPanel{
 	margin: 0 0 0 20em;
 	border: 2px solid orange;
-	min-height: 200px;
-}
-
-.fieldWrapper {
 	font-size: .8em;
-	margin: 0 0 0.4em 0;
+	min-height: 300px;
 }
 
 .formWrapper {
+	padding: 10px 0 0 0;
 	width: 500px;
+	float: left;
 }
 
 .formWrapper .fieldWrapper {
-	
+	width: 425px;
+	height: 1.5em;
+	margin-bottom: 10px;
+	float: left;
+}
+
+.fieldLabel {
+	width: 10em;
+	margin: 0 auto;
+	text-align: right;
+	float: left;
+}
+
+.field {
+    float: left;
 }
 
 .formWrapper input {
 	height: 1.6em;
 	width: 150px;
+	margin: 0 0 5px 10px;
 	/* Activate these later for styling
 	background-color: #C2C2C2;
 	display: inline-block;
@@ -58,17 +71,37 @@ input:focus {
 	
 }
 
-.fieldLabel {
-	width: 10em;
-	margin: 0 auto;
-	padding: 0.35em 0 0 0;
-}
-
-.textBox {
-	color: inherit;
+.tooltip {
+	float: right;
 }
 
 .tooltip {
-	padding: 5px;
+    width: 125px;
+    font-size: .8em;
 	color: #FFFFFF;
+	float: right;
+}
+
+div.tooltip {
+	padding: 0;
+	margin: 0;
+}
+
+.tooltip .tooltip-left {
+    width: 6%;
+    height: 100%;
+    padding: 3px 0 0 0;
+    float: left;
+    background: url('arrow.png') no-repeat 0px 5px;
+    padding: 25px 0 0 0;
+}
+
+.tooltip .tooltip-right {
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    background: #323232;
+    padding: 3px;
+    width: 90%;
+    height: 100%;
+    float: right;
 }
