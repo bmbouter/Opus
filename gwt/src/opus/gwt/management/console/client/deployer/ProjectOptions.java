@@ -79,13 +79,17 @@ public class ProjectOptions extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			//projectDeployer.handleDatabaseOptionsLabel();
+			projectDeployer.showNextPanel(this);
 		}
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		//projectDeployer.handleAddAppsLabel();
+		projectDeployer.showPreviousPanel(this);
+	}
+	
+	public void setFocus(){
+		usernameTextBox.setFocus(true);
 	}
 	
 	public boolean validateFields(){
