@@ -264,7 +264,6 @@ class DeltacloudDriver(DriverBase):
         on failure.
 
         """
-        raise NotImplementedError()
         return self._instance_action("destroy", instance_id)
 
     ##### Realms #####
