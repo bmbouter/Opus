@@ -16,19 +16,27 @@
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:t="urn:import:opus.gwt.management.console.client.tools">
 	<ui:style src="../resources/ProjectBuilder.css"/>
+	<ui:style src="../resources/ProjectDeployer.css" field="form"/>
 	
 	<g:SimplePanel>
 		<g:HTMLPanel styleName="{style.innerSubMainPanel}">
+			<t:TooltipPanel ui:field="active" />
 			<g:HTML>
 				<u>Deployment Location Options</u>
 			</g:HTML>
-			<g:FlowPanel>
-				<g:Label >Deploy as:</g:Label>
-				<g:TextBox ui:field='projectNameTextBox' />
-				<g:Label ui:field='baseUrlLabel' />
-			</g:FlowPanel>
+			<g:HTMLPanel styleName="{form.formWrapper}">
+				<g:HTMLPanel styleName="{form.fieldWrapper}">
+					<g:HTMLPanel styleName="{form.field}">
+						<label class="{form.fieldLabel}">Deploy as:</label>
+						<g:TextBox name='superusername' ui:field='projectNameTextBox'/>
+						<br />
+						<g:Label ui:field="baseUrlLabel"/>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
 			<g:HTMLPanel>	
 				<g:Button ui:field="previousButton" text="Previous" />
 				<g:Button ui:field="nextButton" text="Next" />

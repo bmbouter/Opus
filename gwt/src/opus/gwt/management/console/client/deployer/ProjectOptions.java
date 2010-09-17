@@ -60,7 +60,7 @@ public class ProjectOptions extends Composite {
 	public ProjectOptions(ProjectDeployer projectDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.projectDeployer = projectDeployer;
-		setInitialState();
+		setTooltipInitialState();
 	}
 	
 	public void setAllowedAuthApps(String allowedAuthApps){
@@ -81,11 +81,10 @@ public class ProjectOptions extends Composite {
 		int x = usernameTextBox.getAbsoluteLeft() + usernameTextBox.getOffsetWidth() + 5;
 		int y = usernameTextBox.getAbsoluteTop() + 2;
 		
-		setPopupPositions(x, y);
+		setTooltipPosition(x, y);
+		
 		active.hide();
-		
 		active.setText("This is where the username stuff goes!");
-		
 		active.show();
 	}
 	
@@ -95,7 +94,7 @@ public class ProjectOptions extends Composite {
 		
 		int x = passwordTextBox.getAbsoluteLeft() + passwordTextBox.getOffsetWidth() + 5;
 		int y = passwordTextBox.getAbsoluteTop() + 2;
-		setPopupPositions(x, y);
+		setTooltipPosition(x, y);
 		
 		active.hide();
 		active.setText("This is where the password stuff goes!");
@@ -105,22 +104,26 @@ public class ProjectOptions extends Composite {
 	@UiHandler("passwordConfirmTextBox")
 	void passwordConfirmTextBoxOnFocus(FocusEvent event) {
 		active.setVisible(true);
-		//setPopupPositions();
+		
+		int x = passwordConfirmTextBox.getAbsoluteLeft() + passwordTextBox.getOffsetWidth() + 5;
+		int y = passwordConfirmTextBox.getAbsoluteTop() + 2;
+		setTooltipPosition(x, y);
+		
 		active.hide();
-		
 		active.setText("This is where the password confirmation stuff goes!");
-		
 		active.show();
 	}
 	
 	@UiHandler("emailTextBox")
 	void emailTextBoxOnFocus(FocusEvent event) {
 		active.setVisible(true);
-		//setPopupPositions();
+		
+		int x = emailTextBox.getAbsoluteLeft() + passwordTextBox.getOffsetWidth() + 5;
+		int y = emailTextBox.getAbsoluteTop() + 2;
+		setTooltipPosition(x, y);
+		
 		active.hide();
-		
 		active.setText("This is where the email stuff goes!");
-		
 		active.show();
 	}
 	
@@ -158,11 +161,11 @@ public class ProjectOptions extends Composite {
 		return true;
 	}
 	
-	private void setInitialState() {
+	private void setTooltipInitialState() {
 		active.setVisible(false);
 	}
 	
-	private void setPopupPositions(int x, int y) {
+	private void setTooltipPosition(int x, int y) {
 		active.setPopupPosition(x, y);
 	}
 }

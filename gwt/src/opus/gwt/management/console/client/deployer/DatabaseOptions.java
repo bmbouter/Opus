@@ -21,10 +21,12 @@ import java.util.HashMap;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ServerCommunicator;
 import opus.gwt.management.console.client.overlays.DatabaseOptionsData;
+import opus.gwt.management.console.client.tools.TooltipPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -60,6 +62,7 @@ public class DatabaseOptions extends Composite {
 	@UiField Button nextButton;
 	@UiField Button previousButton;	
 	@UiField HTMLPanel databaseOptionsPanel;
+	@UiField TooltipPanel active;
 	
 	public DatabaseOptions(ProjectDeployer projectDeployer, ServerCommunicator serverComm) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -69,6 +72,7 @@ public class DatabaseOptions extends Composite {
 		this.projectDeployer = projectDeployer;
 		dbOptions = new HashMap<String, String>();
 		checkForDBOptions();
+		setTooltipInitialState();
 	}
 	
 	private void checkForDBOptions(){
@@ -131,7 +135,60 @@ public class DatabaseOptions extends Composite {
 		projectDeployer.showPreviousPanel(this);
 	}
 	
+	@UiHandler("nameTextBox")
+	void handleNameTextBoxOnFocus(FocusEvent event) {
+		active.setVisible(true);
+	
+		int x = nameTextBox.getAbsoluteLeft() + nameTextBox.getOffsetWidth() + 5;
+		int y = nameTextBox.getAbsoluteTop() + 2;
+		
+		setTooltipPosition(x, y);
+		
+		active.hide();
+		active.setText("This is where the name stuff goes!");
+		active.show();
+	}
+	
+	@UiHandler("passwordTextBox")
+	void handlePasswordTextBoxOnFocus(FocusEvent event) {
+		int x = passwordTextBox.getAbsoluteLeft() + passwordTextBox.getOffsetWidth() + 5;
+		int y = passwordTextBox.getAbsoluteTop() + 2;
+		
+		setTooltipPosition(x, y);
+		
+		active.hide();
+		active.setText("This is where the password stuff goes!");
+		active.show();
+	}
+	
+	@UiHandler("hostTextBox")
+	void handleHostTextBoxOnFocus(FocusEvent event) {
+		int x = hostTextBox.getAbsoluteLeft() + hostTextBox.getOffsetWidth() + 5;
+		int y = hostTextBox.getAbsoluteTop() + 2;
+		
+		setTooltipPosition(x, y);
+		
+		active.hide();
+		active.setText("This is where the host stuff goes!");
+		active.show();
+	}
+	
+	@UiHandler("portTextBox")
+	void handlePortTextBoxOnFocus(FocusEvent event) {
+		int x = portTextBox.getAbsoluteLeft() + portTextBox.getOffsetWidth() + 5;
+		int y = portTextBox.getAbsoluteTop() + 2;
+		
+		setTooltipPosition(x, y);
+		
+		active.hide();
+		active.setText("This is where the port stuff goes!");
+		active.show();
+	}
+	
 	private boolean validateFields(){
+		//TODO: REMOVE THIS LATER
+		dbengineListBox.insertItem("Test", 0);
+		
 		if(!dbengineListBox.isItemSelected(0)){
 			if(nameTextBox.getText().isEmpty() 
 					|| passwordTextBox.getText().isEmpty() 
@@ -158,6 +215,14 @@ public class DatabaseOptions extends Composite {
 		postgresAutoConfig = dbOptionsData.getAutoPostgresConfig();
 		projectDeployer.getProjectOptions().setAllowedAuthApps(dbOptionsData.getAllowedAuthApps());
 		setupDBOptions();
+	}
+	
+	private void setTooltipInitialState() {
+		active.setVisible(false);
+	}
+	
+	private void setTooltipPosition(int x, int y) {
+		active.setPopupPosition(x, y);
 	}
 }
 

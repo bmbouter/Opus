@@ -19,48 +19,49 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:opus.gwt.management.console.client.navigation"
 	xmlns:t="urn:import:opus.gwt.management.console.client.tools">
 	<ui:style src="../resources/ProjectOptions.css"/>
+	<ui:style src="../resources/ProjectDeployer.css" field="form"/>
 	
 	<g:SimplePanel>			
 		<g:HTMLPanel ui:field='projectOptionsPanel' styleName='{style.optionsPanel}'>
-			<g:HTMLPanel styleName="{style.fieldWrapper}">
+			<t:TooltipPanel ui:field="active" />
+			<g:HTMLPanel styleName="{form.fieldWrapper}">
 				<h1>Superuser Setup</h1>
 				Superuser setup is required if you wish to be able to assign local groups and permissions.
 			</g:HTMLPanel>
-			<g:HTMLPanel styleName="{style.formWrapper}">
-				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<g:HTMLPanel styleName="{style.field}">
-						<label class='{style.fieldLabel}'>Username</label>
+			<g:HTMLPanel styleName="{form.formWrapper}">
+				<g:HTMLPanel styleName="{form.fieldWrapper}">
+					<g:HTMLPanel styleName="{form.field}">
+						<label class='{form.fieldLabel}'>Username</label>
 						<g:TextBox name='superusername' ui:field='usernameTextBox'/>
 					</g:HTMLPanel>
-					<t:TooltipPanel ui:field="active" />
 				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<g:HTMLPanel styleName="{style.field}">
-						<label class='{style.fieldLabel}'>Password</label>
+				<g:HTMLPanel styleName="{form.fieldWrapper}">
+					<g:HTMLPanel styleName="{form.field}">
+						<label class='{form.fieldLabel}'>Password</label>
 						<g:PasswordTextBox name='superpassword' ui:field='passwordTextBox'/>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<g:HTMLPanel styleName="{style.field}">
-						<label class='{style.fieldLabel}' >Password Confirm</label>
+				<g:HTMLPanel styleName="{form.fieldWrapper}">
+					<g:HTMLPanel styleName="{form.field}">
+						<label class='{form.fieldLabel}' >Password Confirm</label>
 						<g:PasswordTextBox name='superpasswordconfirm' ui:field='passwordConfirmTextBox' />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<g:HTMLPanel styleName="{style.field}">
-						<label class='{style.fieldLabel}'>Email</label>
+				<g:HTMLPanel styleName="{form.fieldWrapper}">
+					<g:HTMLPanel styleName="{form.field}">
+						<label class='{form.fieldLabel}'>Email</label>
 						<g:TextBox name ='superemail' ui:field='emailTextBox' />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.fieldWrapper}">
+				<g:HTMLPanel styleName="{form.fieldWrapper}">
 					<u>How your users will authenticate</u>
 				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<label class="{style.fieldLabel}">Identity Provider:</label>
-					<g:ListBox name="idprovider" ui:field="idProvider" styleName="{style.fieldLabel}" />
+				<g:HTMLPanel styleName="{form.fieldWrapper}">
+					<label class="{form.fieldLabel}">Identity Provider:</label>
+					<g:ListBox name="idprovider" ui:field="idProvider" styleName="{form.fieldLabel}" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			<g:HTMLPanel>
+			<g:HTMLPanel styleName="{form.buttons}">
 				<g:Button ui:field="previousButton" text="Previous"/>
 				<g:Button ui:field="nextButton" text="Next"/>
 			</g:HTMLPanel>

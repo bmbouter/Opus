@@ -16,35 +16,49 @@
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:t="urn:import:opus.gwt.management.console.client.tools">
 	<ui:style src="../resources/ProjectBuilder.css"/>
+	<ui:style src="../resources/ProjectDeployer.css" field="form"/>
 	
 	<g:SimplePanel>
 		<g:HTMLPanel ui:field="databaseOptionsPanel" styleName="{style.innerSubMainPanel}">
-			<g:FlowPanel>
-				<g:Label >DB Engine</g:Label>
-				<g:ListBox name="dbengine" ui:field='dbengineListBox' >
-				</g:ListBox>
-			</g:FlowPanel>
+			<t:TooltipPanel ui:field="active" />
 			<g:HTMLPanel ui:field="dbFieldsPanel">
-				<g:FlowPanel>
-					<g:Label >Name</g:Label>
-					<g:TextBox name="dbname" ui:field='nameTextBox' />
-				</g:FlowPanel>
-				<g:FlowPanel>
-					<g:Label >Password</g:Label>
-					<g:PasswordTextBox name="dbpassword" ui:field='passwordTextBox' />
-				</g:FlowPanel>
-				<g:FlowPanel>
-					<g:Label >Host</g:Label>
-					<g:TextBox name="dbhost" ui:field='hostTextBox' />
-				</g:FlowPanel>
-				<g:FlowPanel>
-					<g:Label >Port</g:Label>
-					<g:TextBox name="dbport" ui:field='portTextBox' />
-				</g:FlowPanel>
+				<g:HTMLPanel styleName="{form.formWrapper}">
+					<g:HTMLPanel styleName="{form.fieldWrapper}">
+						<g:HTMLPanel styleName="{form.field}">
+							<label class='{form.fieldLabel}'>DB Engine</label>
+							<g:ListBox name="dbengine" ui:field='dbengineListBox' />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{form.fieldWrapper}">
+						<g:HTMLPanel styleName="{form.field}">
+							<label class='{form.fieldLabel}'>Name</label>
+							<g:TextBox name="dbname" ui:field='nameTextBox' />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{form.fieldWrapper}">
+						<g:HTMLPanel styleName="{form.field}">
+							<label class='{form.fieldLabel}'>Password</label>
+							<g:PasswordTextBox name='dbpassword' ui:field='passwordTextBox'/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{form.fieldWrapper}">
+						<g:HTMLPanel styleName="{form.field}">
+							<label class='{form.fieldLabel}' >Host</label>
+							<g:PasswordTextBox name='dbhost' ui:field='hostTextBox' />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{form.fieldWrapper}">
+						<g:HTMLPanel styleName="{form.field}">
+							<label class='{form.fieldLabel}'>Port</label>
+							<g:TextBox name='dbport' ui:field='portTextBox' />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
 			</g:HTMLPanel>
-			<g:HTMLPanel>	
+			<g:HTMLPanel styleName="{form.buttons}">	
 				<g:Button ui:field="previousButton" text="Previous" />
 				<g:Button ui:field="nextButton" text="Next" />
 			</g:HTMLPanel>
