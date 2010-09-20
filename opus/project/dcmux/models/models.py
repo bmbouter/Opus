@@ -130,7 +130,7 @@ class Instance(models.Model):
         unique_together = ("provider", "instance_id")
 
     def __str__(self):
-        return self.name
+        return 'Instance id "%s" on Provider "%s"' % (self.instance_id, self.provider)
 
     ###### Virtual Attributes ######
     # These attributes are recieved from the instance's provider
@@ -147,7 +147,12 @@ class Instance(models.Model):
 
     @property
     def state(self):
+        if hasattr(self, "_state_override"):
+            return self._state_override
         return self.driver_instance_object.state
+    @state.setter
+    def state(self, value):
+        self._state_override = value
 
     @property
     def actions(self):
@@ -163,9 +168,9 @@ class Instance(models.Model):
 
     @property
     def actions(self):
-        actions = ["destroy"]
+        actions = []
         if self.state.lower() == "stopped":
-            actions.append("start")
+            actions.extend(["start", "destroy"])
         elif self.state.lower() == "running":
             actions.extend(["stop", "reboot"])
         elif self.state.lower() == "pending":

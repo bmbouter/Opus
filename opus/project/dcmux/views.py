@@ -269,7 +269,7 @@ def instance_start(request, instance):
 def instance_stop(request, instance):
     if instance.state.lower != "running":
         pass #TODO: Error
-    instance.state = STOPPED
+    instance.state = "STOPPED"
     instance.driver_instance_object.stop()
 
 def instance_destroy(request, instance):

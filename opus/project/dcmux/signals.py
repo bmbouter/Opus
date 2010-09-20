@@ -7,5 +7,4 @@ def set_policy_type(sender, instance, **kwargs):
     This is called as a pre_save signal before Policies subclasses are saved.
 
     """
-    log.debug("Setting policy type to: '%s'" % sender.__name__)
     instance.type = sender.__name__
