@@ -21,9 +21,12 @@
 	<ui:style src="../resources/ProjectOptions.css"/>
 	<ui:style src="../resources/ProjectDeployer.css" field="form"/>
 	
-	<g:SimplePanel>			
+	<g:SimplePanel>
 		<g:HTMLPanel ui:field='projectOptionsPanel' styleName='{style.optionsPanel}'>
 			<t:TooltipPanel ui:field="active" />
+			<g:HTMLPanel styleName="{style.header}">
+				Project Options
+			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{form.fieldWrapper}">
 				<h1>Superuser Setup</h1>
 				Superuser setup is required if you wish to be able to assign local groups and permissions.
