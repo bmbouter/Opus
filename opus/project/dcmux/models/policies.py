@@ -95,7 +95,6 @@ class BurstingPolicy(Policy):
         for burstingpolicyprovider in self.burstingpolicyproviders_set.all():
 
             # Check for capacity
-            log.debug(num_provider_instances[burstingpolicyprovider.provider])
             if burstingpolicyprovider.capacity < 0 or \
               num_provider_instances[burstingpolicyprovider.provider] < burstingpolicyprovider.capacity:
                 provider = burstingpolicyprovider.provider
