@@ -19,4 +19,5 @@ li {
 }
 .active {
 	color: red;
+	float: left;
 }

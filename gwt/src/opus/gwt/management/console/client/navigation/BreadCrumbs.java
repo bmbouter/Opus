@@ -1,5 +1,7 @@
 package opus.gwt.management.console.client.navigation;
 
+import java.util.HashMap;
+
 import opus.gwt.management.console.client.resources.BreadCrumbCss.BreadCrumbStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -24,6 +26,7 @@ public class BreadCrumbs extends Composite {
 	interface BreadCrumbsUiBinder extends UiBinder<Widget, BreadCrumbs> {}
 	
 	private Label activeCrumb;
+	private HashMap<String, Label> breadCrumbLabels;
 	
 	@UiField FlowPanel breadCrumbsContainer;
 	@UiField BreadCrumbStyle style;
@@ -31,6 +34,7 @@ public class BreadCrumbs extends Composite {
 	public BreadCrumbs() {
 		initWidget(uiBinder.createAndBindUi(this));
 		activeCrumb = new Label();
+		breadCrumbLabels = new HashMap<String, Label>();
 	}
 
 	public void setBreadCrumbs(String[] names){
@@ -40,18 +44,22 @@ public class BreadCrumbs extends Composite {
 	}
 	
 	public void setInitialActiveCrumb(String name){
-		
+		activeCrumb = breadCrumbLabels.get(name);
 	}
 	
 	private void addBreadCrumb(String name){
 		Label crumb = new Label();
 		crumb.setText(name + "  >  ");
 		crumb.setStyleName(style.inactive());
+		breadCrumbLabels.put(name, crumb);
 		breadCrumbsContainer.add(crumb);
 	}
 	
 	public void setActiveCrumb(String name){
-		Window.alert(name);
+		Label crumb = breadCrumbLabels.get(name);
+		activeCrumb.setStyleName(style.inactive());
+		crumb.setStyleName(style.active());
+		activeCrumb = crumb; 
 	}
 	
 }

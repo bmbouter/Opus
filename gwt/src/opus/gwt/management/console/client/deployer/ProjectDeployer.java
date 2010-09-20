@@ -80,8 +80,11 @@ public class ProjectDeployer extends Composite {
 	
 	private void setupdeployerDeckPanel(){
 		deployerDeckPanel.add(appBrowser);
+		appBrowser.setTitle("Application Browser");
 		deployerDeckPanel.add(projectOptions);
+		projectOptions.setTitle("Project Options");
 		deployerDeckPanel.add(databaseOptions);
+		databaseOptions.setTitle("Database Options");
 		deployerDeckPanel.add(deploymentOptions);
 		deployerDeckPanel.add(confirmBP);
 		deployerDeckPanel.add(deployerForm);
@@ -93,7 +96,7 @@ public class ProjectDeployer extends Composite {
 	private void setupBreadCrumbs(){
 		String[] crumbs = {"Application Browser", "Project Options", "Database Options", "Deployment Options"};
 		breadCrumbs.setBreadCrumbs(crumbs);
-		breadCrumbs.setInitialActiveCrumb("Application Browser");
+		breadCrumbs.setActiveCrumb("Application Browser");
 	}
 	
 	private void setupDeployerForm(){
@@ -107,6 +110,7 @@ public class ProjectDeployer extends Composite {
 	
 	public void showNextPanel(Widget panel){
 		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) + 1);
+		breadCrumbs.setActiveCrumb(deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()) .getTitle());
 		if( panel.getClass().equals(databaseOptions.getClass()) ){
 			deploymentOptions.setFocus();
 		} else if( panel.getClass().equals(appBrowser.getClass()) ){
