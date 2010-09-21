@@ -22,7 +22,7 @@
 	<ui:style src="../resources/ProjectDeployer.css" field="form"/>
 	
 	<g:SimplePanel>
-		<g:HTMLPanel ui:field="databaseOptionsPanel" styleName="{style.innerSubMainPanel}">
+		<g:HTMLPanel ui:field="databaseOptionsPanel" >
 			<t:TooltipPanel ui:field="active" />
 			<g:HTMLPanel ui:field="dbFieldsPanel">
 				<g:HTMLPanel styleName="{form.formWrapper}">

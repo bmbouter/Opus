@@ -110,7 +110,7 @@ public class ProjectDeployer extends Composite {
 	
 	public void showNextPanel(Widget panel){
 		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) + 1);
-		breadCrumbs.setActiveCrumb(deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()) .getTitle());
+		breadCrumbs.setActiveCrumb(deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle());
 		if( panel.getClass().equals(databaseOptions.getClass()) ){
 			deploymentOptions.setFocus();
 		} else if( panel.getClass().equals(appBrowser.getClass()) ){
@@ -122,6 +122,7 @@ public class ProjectDeployer extends Composite {
 
 	public void showPreviousPanel(Widget panel){
 		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) - 1);
+		breadCrumbs.setActiveCrumb(deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle());
 	}
 	
 	  void handleConfirmBuildProjectLoad() {

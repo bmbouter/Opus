@@ -22,7 +22,7 @@
 	<ui:style src="../resources/ProjectDeployer.css" field="form"/>
 	
 	<g:SimplePanel>
-		<g:HTMLPanel styleName="{style.innerSubMainPanel}">
+		<g:HTMLPanel>
 			<t:TooltipPanel ui:field="active" />
 			<g:HTML>
 				<u>Deployment Location Options</u>
