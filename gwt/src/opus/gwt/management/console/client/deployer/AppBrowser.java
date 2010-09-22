@@ -147,11 +147,12 @@ public class AppBrowser extends Composite {
 					String iconPath = applications.get(i).getIconURL();
 					String path = applications.get(i).getPath();
 					String type = applications.get(i).getType();
+					String appName = applications.get(i).getAppName();
 					
 					if( iconPath.equals("") ){
 						iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";
 					}
-					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path, type);
+					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path, type, appName);
 					appFlowPanel.add(appIcon);
 					IconMap.put(appIcon.getAppPk(), appIcon);
 					//Window.alert(appIcon.getAppPk());
@@ -166,7 +167,7 @@ public class AppBrowser extends Composite {
 				//Window.alert(String.valueOf(featured[j]));
 
 				AppIcon icon = IconMap.get(String.valueOf(featured[j]));
-				AppIcon featuredIcon = createAppIcon(icon.getName(),icon.getEmail(), icon.getAuthor(), icon.getDescription(), Integer.valueOf(icon.getAppPk()), icon.getIcon(), icon.getPath(), icon.getType());
+				AppIcon featuredIcon = createAppIcon(icon.getName(),icon.getEmail(), icon.getAuthor(), icon.getDescription(), Integer.valueOf(icon.getAppPk()), icon.getIcon(), icon.getPath(), icon.getType(), icon.getAppName());
 				FeaturedIconMap.put(featuredIcon.getAppPk(), featuredIcon);
 
 				featuredAppFlowPanel.add(featuredIcon);
@@ -196,8 +197,8 @@ public class AppBrowser extends Composite {
 		
 	}
 	
-	public AppIcon createAppIcon(String name, String email, String author, String info, int pk, String iconPath, String appPath, String type) { 
-		final AppIcon icon = new AppIcon(name, email, author, iconPath, info, pk, appPath, type);
+	public AppIcon createAppIcon(String name, String email, String author, String info, int pk, String iconPath, String appPath, String type, String appName) { 
+		final AppIcon icon = new AppIcon(name, email, author, iconPath, info, pk, appPath, type, appName);
 		icon.setIconHTML("<img align='left' src='"+iconPath+"'/><b>"+name+"</b><br/>"+icon.getShortDescription());
 		icon.setStyleName(style.appIcon());
 		
@@ -313,7 +314,7 @@ public class AppBrowser extends Composite {
 		} else {
 			
 			//create new icon and add it to the deploy list
-			AppIcon iconForDeployList = createAppIcon(currentSelection.getName(), currentSelection.getEmail(), currentSelection.getAuthor(), currentSelection.getDescription(), Integer.valueOf(currentSelection.getAppPk()), currentSelection.getIcon(), currentSelection.getPath(), currentSelection.getType());
+			AppIcon iconForDeployList = createAppIcon(currentSelection.getName(), currentSelection.getEmail(), currentSelection.getAuthor(), currentSelection.getDescription(), Integer.valueOf(currentSelection.getAppPk()), currentSelection.getIcon(), currentSelection.getPath(), currentSelection.getType(), currentSelection.getAppName());
 			iconForDeployList.setStyleName(style.appIconSmallActive());
 			iconForDeployList.setIconHTML("<img src='"+currentSelection.getIcon()+"'><br/>"+currentSelection.getName());
 			DeployListMap.put(iconForDeployList.getAppPk(),iconForDeployList);
@@ -405,9 +406,7 @@ public class AppBrowser extends Composite {
 	  public ArrayList<String> getAppNames() {
 		  ArrayList<String> names = new ArrayList<String>();
 		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
-			  String name = e.getValue().getPath();
-			  String[] name_split = name.split("/");
-			  name = name_split[name_split.length - 1].split(".git")[0];
+			  String name = e.getValue().getAppName();
 			  names.add(name);
 		  }
 		  return names;
