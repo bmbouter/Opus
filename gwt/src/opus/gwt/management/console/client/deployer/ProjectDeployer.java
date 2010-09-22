@@ -62,7 +62,7 @@ public class ProjectDeployer extends Composite {
 	@UiField ProjectDeployerStyle style;
 	@UiField DeckPanel deployerDeckPanel;
 	@UiField BreadCrumbs breadCrumbs;
-	@UiField MainMenu mainMenu;
+	//@UiField MainMenu mainMenu;
 	
 	public ProjectDeployer(PanelManager panelManager) {
 		initWidget(uiBinder.createAndBindUi(this));
