@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.PanelManager;
 import opus.gwt.management.console.client.navigation.BreadCrumbs;
-import opus.gwt.management.console.client.navigation.MainMenu;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -90,7 +89,7 @@ public class ProjectDeployer extends Composite {
 		appBrowser.setTitle("Application Browser");
 		projectOptions.setTitle("Project Options");
 		databaseOptions.setTitle("Database Options");
-		databaseOptions.setTitle("Deployment Options");
+		deploymentOptions.setTitle("Deployment Options");
 		deployerDeckPanel.showWidget(0);
 		appBrowser.setHeight("");
 		appBrowser.setWidth("");

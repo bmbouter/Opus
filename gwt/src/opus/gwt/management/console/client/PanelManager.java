@@ -34,6 +34,7 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -60,6 +61,7 @@ public class PanelManager extends Composite {
 	private final String projectsURL = "/json/?a&callback=";
 	
 	private Authentication authenticationPanel;
+	private HandlerManager eventBus;
 	
 	private ProjectDeployer projectDeployer;
 	private ProjectManager projectManager;
@@ -82,17 +84,18 @@ public class PanelManager extends Composite {
 	@UiField Button authenticationButton;
 	@UiField DeckPanel mainDeckPanel;
 	
-	public PanelManager() {
+	public PanelManager(HandlerManager eventBus, ServerCommunicator serverComm) {
 		initWidget(uiBinder.createAndBindUi(this));
-		JSVarHandler = new JSVariableHandler();
-		serverComm = new ServerCommunicator();
+		this.serverComm = serverComm;
+		this.eventBus = eventBus;
 		panelManager = this;
+		JSVarHandler = new JSVariableHandler();
 		authenticationPanel = new Authentication(panelManager);
 		projectDeployer = new ProjectDeployer(panelManager);
 		projectManager = new ProjectManager(panelManager);
 		//handleAuthentication();
-		//deployProject();
-		manageProjects();
+		deployProject();
+		//manageProjects();
 		//iconPanel = new IconPanel(this);
 		//deletedProject = "";
 		//projectListPopup = new PopupPanel();

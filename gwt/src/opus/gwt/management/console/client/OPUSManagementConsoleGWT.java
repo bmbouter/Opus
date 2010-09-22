@@ -17,6 +17,7 @@
 package opus.gwt.management.console.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -26,14 +27,15 @@ public class OPUSManagementConsoleGWT implements EntryPoint {
 	/**
 	 * The message displayed to the user when the server cannot be reached or
 	 * returns an error.
-	 */
-
-	private PanelManager panelManager = new PanelManager(); 
+	 */ 
 	
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		HandlerManager eventBus = new HandlerManager(null);
+		ServerCommunicator serverComm = new ServerCommunicator();
+		PanelManager panelManager = new PanelManager(eventBus, serverComm);
 		RootPanel.get().add(panelManager);
 	}
 }

@@ -1,26 +1,20 @@
 .breadCrumbsContainer {
 	margin: 0 0 10px 0;
 	padding: 0;
-	height: 2em;
+	height: 100%;
 	width: 100%;
 	background: #777777;
 	color: #FFFFFF;
 	font-size: .8em;
 }
-.breadCrumbsContainer ul {
-	list-style: none;
-	padding: 0 0 0 0;	
-}
-
-.breadCrumbsContainer li {
-	padding: 10px;
-	list-style: none;	
-	float: left;
-}
 .inactive {
+	font-size: 1.1em;
 	float: left;
-	padding: 5px 0 0 5px;
+	padding: 0.4em 0 0 0.5em;
 }
 .active {
+	font-size: 1.1em;
 	color: orange;
+	float: left;
+	padding: 0.4em 0 0 0.5em;
 }

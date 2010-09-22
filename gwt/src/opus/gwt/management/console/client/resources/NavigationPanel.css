@@ -1,14 +1,13 @@
 .navigationContainer{
 	margin: 0;
 	padding: 0;
-	height: 4em;
 	width: 100%;
-	border-bottom: 1px solid #1C1C1C;
+	height: 100%;
 	background: #282828;
 	color: #FFFFFF;
 }
 .logo {
-	font-size: 2em;
+	font-size: 1.25em;
 	padding: 0 0 0.2em 0;
 	width: 14em;
 	float: left;

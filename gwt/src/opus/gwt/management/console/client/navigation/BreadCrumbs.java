@@ -56,7 +56,7 @@ public class BreadCrumbs extends Composite {
 		if( isLastCrumb ){
 			crumb.setText(name);
 		} else {
-			crumb.setText(name + ">");
+			crumb.setText(name + "     >");
 		}
 		crumb.setStyleName(style.inactive());
 		breadCrumbLabels.put(name, crumb);
