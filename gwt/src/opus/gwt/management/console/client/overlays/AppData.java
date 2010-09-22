@@ -15,6 +15,7 @@ public class AppData extends JavaScriptObject {                              // 
   public final native String getModel() /*-{ return this.model; }-*/;
   public final native String getPath()  /*-{ return this.fields.path; }-*/;
   public final native String getType()  /*-{ return this.fields.type; }-*/;
+  public final native String getRepoName()  /*-{ return this.fields.repo_name; }-*/;
   public final native String getIconURL() /*-{
 	  	var url = this.fields.icon_url;
 	  	if( url == "" ){

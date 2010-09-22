@@ -1,5 +1,5 @@
 /*############################################################################
-# Copyright 2010 North Carolina State University                             #
+d# Copyright 2010 North Carolina State University                             #
 #                                                                            #
 #   Licensed under the Apache License, Version 2.0 (the "License");          #
 #   you may not use this file except in compliance with the License.         #
@@ -28,6 +28,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -238,6 +239,7 @@ public class ProjectDeployer extends Composite {
 		  deployerForm.setAction(JSVarHandler.getDeployerBaseURL() + deploymentURL.replaceAll("projectName", deploymentOptions.projectNameTextBox.getText())); 
 		  createdProjectName = deploymentOptions.projectNameTextBox.getText();
 		  
+		  
 		  VerticalPanel formContainerPanel = new VerticalPanel();
 		  this.deployerForm.add(formContainerPanel);
 		  
@@ -270,6 +272,9 @@ public class ProjectDeployer extends Composite {
 			  formContainerPanel.add(path);
 			  formContainerPanel.add(appName);
 		  }
+		  
+		  CheckBox debug = deploymentOptions.debugCheckBox;
+		  formContainerPanel.add(debug);
 		  
 		  //Add all project options fields to the form for submission
 		  formContainerPanel.add(projectOptions.projectOptionsPanel);

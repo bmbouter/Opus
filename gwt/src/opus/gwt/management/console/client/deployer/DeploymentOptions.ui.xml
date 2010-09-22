@@ -48,9 +48,13 @@
 												<g:Label ui:field='baseUrlLabel' styleName="{style.configParameter}"></g:Label>
 											</g:FlowPanel>
 										</g:north>
-										
-									</g:DockLayoutPanel>	
-
+										<g:north size='2'>
+											<g:FlowPanel>
+												<g:Label styleName="{style.configParameter}">Debug Mode:</g:Label>
+												<g:CheckBox name="debug" ui:field='debugCheckBox' styleName="{style.configParameter}"></g:CheckBox>
+											</g:FlowPanel>
+										</g:north>
+									</g:DockLayoutPanel>
 							</g:west>
 							<g:west size='20'>
 								<g:DockLayoutPanel styleName="{style.infoPanel}" unit='PCT'>

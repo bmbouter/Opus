@@ -44,6 +44,7 @@ public class DeploymentOptions extends Composite {
 	@UiField Button previousButton;
 	@UiField Label baseUrlLabel;
 	@UiField TextBox projectNameTextBox;
+	@UiField CheckBox debugCheckBox;
 
 	public DeploymentOptions(ProjectDeployer appDeployer) {
 		initWidget(uiBinder.createAndBindUi(this));
