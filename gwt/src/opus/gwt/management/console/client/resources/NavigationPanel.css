@@ -1,10 +1,14 @@
 .navigationContainer{
 	margin: 0;
 	padding: 0;
+	height: 4em;
 	width: 100%;
+	border-bottom: 1px solid #1C1C1C;
+	background: #282828;
+	color: #FFFFFF;
 }
 .logo {
-	font-size: 1.25em;
+	font-size: 2em;
 	padding: 0 0 0.2em 0;
 	width: 14em;
 	float: left;
@@ -12,12 +16,13 @@
 }
 .button {
 	cursor: pointer;
-	cursot: hand;
+	cursor: hand;
 	border: none;
 	float: right;
 	background: transparent;
 	border-right: 1px solid gray;
-	margin: 0.5em 0.4em 0em 0.2em;
+	margin: 0.8em 0.4em 0em 0.2em;
+	color: #FFFFFF;
 }
 .logoutPanel {
 	margin: 0;

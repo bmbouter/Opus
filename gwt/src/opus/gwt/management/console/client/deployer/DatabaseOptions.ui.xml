@@ -24,6 +24,11 @@
 	<g:SimplePanel>
 		<g:HTMLPanel ui:field="databaseOptionsPanel" >
 			<t:TooltipPanel ui:field="active" />
+			<g:HTMLPanel styleName="{style.header}">
+				<g:HTMLPanel styleName="{style.insetType}">
+					<h1>Database Options</h1>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="dbFieldsPanel">
 				<g:HTMLPanel styleName="{form.formWrapper}">
 					<g:HTMLPanel styleName="{form.fieldWrapper}">

@@ -25,7 +25,9 @@
 		<g:HTMLPanel ui:field='projectOptionsPanel' >
 			<t:TooltipPanel ui:field="active" />
 			<g:HTMLPanel styleName="{style.header}">
-				Project Options
+				<g:HTMLPanel styleName="{style.insetType}">
+					<h1>Project Options</h1>
+				</g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{form.fieldWrapper}">
 				<h1>Superuser Setup</h1>
