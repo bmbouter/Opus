@@ -15,22 +15,20 @@
 ############################################################################*/
 
 .deployerDeckPanel {
-	margin: 0 10px 0 10px;
-	padding: 0;
-	width: 75%;
-	min-width: 600px;
-	float: left;
+	margin: 0;
+	padding: 0;	
 	border: 2px solid red;
+	border-radius: 5px;
 }
-
-.mainMenuPanel {
-	float: left;
-	margin-left: 10px;
-	width: 200px;
-	border: 2px solid red;
-	padding-bottom: 300px;
+.navigationPanel{
+	border-bottom: 2px solid green;	
 }
-
+.breadcrumbsPanel {
+	border-bottom: 2px solid green;
+}
+.emptyFooter {
+	
+}
 .titleBar {
 	padding: 0.5% 0% 0% 1%;
     color: white;

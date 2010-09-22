@@ -20,11 +20,24 @@
 	xmlns:c="urn:import:opus.gwt.management.console.client.navigation">
 	<ui:style src="../resources/ProjectDeployer.css" type="opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle"/>
 	
-	<g:FlowPanel>
-		<c:NavigationPanel />
-		<c:BreadCrumbs ui:field="breadCrumbs" />
-		<!-- <c:MainMenu ui:field="mainMenu" styleName="{style.mainMenuPanel}" /> -->
-		<g:DeckPanel ui:field="deployerDeckPanel" styleName="{style.deployerDeckPanel}">
-		</g:DeckPanel>
-	</g:FlowPanel>
+	<g:DockLayoutPanel unit="PCT">
+		<g:north size="3.5">
+			<c:NavigationPanel styleName="{style.navigationPanel}"/>
+		</g:north>
+		<g:north size="3">
+			<c:BreadCrumbs ui:field="breadCrumbs" styleName="{style.breadcrumbsPanel}"/>
+		</g:north>
+		<g:north size='1'>
+			<g:HTMLPanel />
+		</g:north>
+		<g:south size='1'>
+			<g:HTMLPanel />
+		</g:south>
+		<g:west size="15">
+			<g:HTMLPanel />
+		</g:west>
+		<g:west size="85">
+			<g:DeckPanel ui:field="deployerDeckPanel" styleName="{style.deployerDeckPanel}" />
+		</g:west>
+	</g:DockLayoutPanel>
 </ui:UiBinder> 

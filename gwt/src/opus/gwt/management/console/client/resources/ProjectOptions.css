@@ -22,15 +22,6 @@ h1 {
 input:focus {
 	outline: none;
 }
-
-.optionsPanel{
-	margin: 0;
-	border: none;
-/*	border: 2px solid orange;*/
-	font-size: .8em;
-	min-height: 300px;
-}
-
 .header {
     width: 100%;
     background: #ED9E16;
