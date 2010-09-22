@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.PanelManager;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
-import opus.gwt.management.console.client.resources.ProjectDashboardCss.ProjectDashboardStyle;
+import opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -41,7 +41,7 @@ public class ProjectSettings extends Composite {
 	private JSVariableHandler JSVarHandler;
 	private boolean active;
 	private PanelManager managementCon;
-	private ProjectDashboard projectDashboard;
+	private ProjectManager projectManager;
 	private boolean hasSettings;
 	private ArrayList<String> textboxes;
 	
@@ -50,15 +50,14 @@ public class ProjectSettings extends Composite {
 	@UiField Button SaveButton;
 	@UiField Button ActivateButton;
 	@UiField Label WarningLabel;
-	@UiField ProjectDashboardStyle style;
+	@UiField ProjectManagerStyle style;
 
 
-	public ProjectSettings(String projectName, PanelManager manCon, ProjectDashboard projectDashboard) {
+	public ProjectSettings(ProjectManager projectManager) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.projectName = projectName;
+		this.projectName = "";
 		this.JSVarHandler = new JSVariableHandler();
-		this.managementCon = manCon;
-		this.projectDashboard = projectDashboard;
+		this.projectManager = projectManager;
 		this.optionsForm = new FormPanel();
 		this.textboxes = new ArrayList<String>();
 		setupOptionsForm();
@@ -157,14 +156,14 @@ public class ProjectSettings extends Composite {
 
 		}
 		this.hasSettings = true;
-		//setActive(projectDashboard.getDashboard().isActive());
+		//setActive(projectManager.getDashboard().isActive());
 	}
 	
 	public void setHasSettings(boolean state) {
 		this.hasSettings = state;
 	}
 	
-	//ProjectDashboard.displayOptions() calls this function  
+	//ProjectManager.displayOptions() calls this function  
 	public void setActive(boolean active){
 		this.active = active;
 		if(!active){

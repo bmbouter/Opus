@@ -43,30 +43,31 @@ public class DeleteProject extends Composite {
 	interface DeleteProjectUiBinder extends UiBinder<Widget, DeleteProject> {
 	}
 
-	private final String deleteProjectURL = "/deployments/projectTitle/destroy";
+	private final String deleteProjectURL = "/deployments/projectName/destroy";
 	
 	private JSVariableHandler JSVarHandler;
 	private FormPanel deleteForm;
-	private PanelManager managementCon;
+	private ProjectManager projectManager;
+	private String projectName;
 	
 	@UiField Button deleteProjectButton;
 	@UiField HTMLPanel mainDeleteProjectPanel;
 	@UiField FlowPanel titlePanel;
 	
-	public DeleteProject(String projectTitle, PanelManager managementCon) {
+	public DeleteProject(ProjectManager projectManager) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.managementCon = managementCon;
+		this.projectManager = projectManager;
 		JSVarHandler = new JSVariableHandler();
 		deleteForm = new FormPanel();
-		setupDeleteForm(projectTitle);
+		projectName = "";
 	}
 	
-	private void setupDeleteForm(String projectTitle){
+	private void setupDeleteForm(){
 		deleteForm.setMethod(FormPanel.METHOD_POST);
 		deleteForm.setVisible(false);
-		deleteForm.setAction(JSVarHandler.getDeployerBaseURL() + deleteProjectURL.replaceAll("/projectTitle/", "/" + projectTitle +"/"));
+		deleteForm.setAction(JSVarHandler.getDeployerBaseURL() + deleteProjectURL.replaceAll("/projectTitle/", "/" + projectName +"/"));
 		titlePanel.add(deleteForm);
-		final String deletedProject = projectTitle;
+		final String deletedProject = projectName;
 		deleteForm.addSubmitHandler(new FormPanel.SubmitHandler() {
 		      public void onSubmit(SubmitEvent event) {
 		        deleteForm.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
@@ -74,7 +75,7 @@ public class DeleteProject extends Composite {
 		 });
 		deleteForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        managementCon.onProjectDelete(deletedProject);
+		        //managementCon.onProjectDelete(deletedProject);
 		      }
 		 });
 	}

@@ -80,23 +80,24 @@ public class ProjectDeployer extends Composite {
 	
 	private void setupdeployerDeckPanel(){
 		deployerDeckPanel.add(appBrowser);
-		appBrowser.setTitle("Application Browser");
 		deployerDeckPanel.add(projectOptions);
-		projectOptions.setTitle("Project Options");
 		deployerDeckPanel.add(databaseOptions);
-		databaseOptions.setTitle("Database Options");
 		deployerDeckPanel.add(deploymentOptions);
 		deployerDeckPanel.add(confirmBP);
 		deployerDeckPanel.add(deployerForm);
+		appBrowser.setTitle("Application Browser");
+		projectOptions.setTitle("Project Options");
+		databaseOptions.setTitle("Database Options");
+		databaseOptions.setTitle("Deployment Options");
 		deployerDeckPanel.showWidget(0);
 		appBrowser.setHeight("");
 		appBrowser.setWidth("");
 	}
 	
 	private void setupBreadCrumbs(){
-		String[] crumbs = {"Application Browser", "Project Options", "Database Options", "Deployment Options"};
+		String[] crumbs = {appBrowser.getTitle(), projectOptions.getTitle(), databaseOptions.getTitle(), deploymentOptions.getTitle()};
 		breadCrumbs.setBreadCrumbs(crumbs);
-		breadCrumbs.setActiveCrumb("Application Browser");
+		breadCrumbs.setActiveCrumb(crumbs[0]);
 	}
 	
 	private void setupDeployerForm(){

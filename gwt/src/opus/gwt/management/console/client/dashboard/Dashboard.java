@@ -45,7 +45,7 @@ public class Dashboard extends Composite {
 	private ServerCommunicator serverComm;
 	private JSVariableHandler JSVarHandler;
 	private JavaScriptObject appSettings;
-	private ProjectDashboard projectDashboard;
+	private ProjectManager projectManager;
 	private boolean active;
 
 	@UiField FlowPanel applicationsFlowPanel;
@@ -54,12 +54,11 @@ public class Dashboard extends Composite {
 	@UiField Label activeLabel;
 	@UiField FlowPanel urlsFlowPanel;
 	
-	public Dashboard(String projectName, ServerCommunicator serverComm, ProjectDashboard projectDashboard) {
+	public Dashboard(ServerCommunicator serverComm, ProjectManager projectManager) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.serverComm = serverComm;
 		JSVarHandler = new JSVariableHandler();
-		getProjectInfo(projectName);
-		this.projectDashboard = projectDashboard;
+		this.projectManager = projectManager;
 	}
 	
 	private void getProjectInfo(String projectName){
@@ -76,7 +75,6 @@ public class Dashboard extends Composite {
 		} else {
 			activeLabel.setText("No");
 			active = false;
-			projectDashboard.displayOptions();
 		}
 		for(int i =0; i < projInfo.getApps().length(); i++){
 			int index = projInfo.getApps().get(i).indexOf(".");
@@ -91,14 +89,14 @@ public class Dashboard extends Composite {
 			//Get list of apps
 			String[] apps = a.split(";;;\\s*");
 			//Create panel to display options for all apps
-			ProjectSettings options = projectDashboard.getOptionsPanel();
+			ProjectSettings options = projectManager.getOptionsPanel();
 			options.importProjectSettings(settings, apps);
-			projectDashboard.getOptionsPanel().setHasSettings(true);
+			projectManager.getOptionsPanel().setHasSettings(true);
 			//Window.alert(String.valueOf(this.active));
-			projectDashboard.getOptionsPanel().setActive(this.active);
+			projectManager.getOptionsPanel().setActive(this.active);
 		} catch (Exception e) {
-			projectDashboard.getOptionsPanel().setHasSettings(false);
-			projectDashboard.getOptionsPanel().setActive(this.active);
+			projectManager.getOptionsPanel().setHasSettings(false);
+			projectManager.getOptionsPanel().setActive(this.active);
 		}
 	}
 	

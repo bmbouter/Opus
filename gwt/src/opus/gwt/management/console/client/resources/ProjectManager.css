@@ -14,6 +14,31 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
+.managerDeckPanel {
+	margin: 0;
+	padding: 0;	
+	border: 2px solid red;
+	border-radius: 5px;
+}
+.navigationPanel{
+	border-bottom: 2px solid green;	
+}
+.breadcrumbsPanel {
+	border-bottom: 2px solid green;
+}
+.emptyFooter {
+	
+}
+
+
+
+
+
+
+
+
+
+
 .innerSubMainPanel {
 	border: 4px solid orange;
 	height: 100%; 

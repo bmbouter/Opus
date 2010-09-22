@@ -18,7 +18,7 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
-import opus.gwt.management.console.client.dashboard.ProjectDashboard;
+import opus.gwt.management.console.client.dashboard.ProjectManager;
 import opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -46,7 +46,7 @@ public class IconPanel extends Composite {
 	}
 	
 	private PanelManager console;
-	private ProjectDashboard projectDashboard;
+	private ProjectManager projectManager;
 	private HashMap<String, Integer> iconMap;
 	
 	@UiField ScrollPanel iconScrollPanel;
@@ -83,7 +83,7 @@ public class IconPanel extends Composite {
 	        public void onClick(ClickEvent event) {
 	        	console.mainDeckPanel.clear();
 	        	console.navigationMenuPanel.clear();
-	        	projectDashboard = new ProjectDashboard(console.titleBarLabel, console.navigationMenuPanel, console.mainDeckPanel, projectName, console); 
+	        	projectManager = new ProjectManager(console); 
 	        	testLabel.setStyleName(style.projectIcon());
 	        }
 	     });

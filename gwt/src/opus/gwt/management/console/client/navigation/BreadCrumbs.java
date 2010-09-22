@@ -38,8 +38,12 @@ public class BreadCrumbs extends Composite {
 	}
 
 	public void setBreadCrumbs(String[] names){
-		for(String name : names){
-			addBreadCrumb(name);
+		for(int i = 0; i < names.length; i++ ){
+			if( i == names.length - 1){
+				addBreadCrumb(names[i], true);
+			} else {
+				addBreadCrumb(names[i], false);
+			}
 		}
 	}
 	
@@ -47,9 +51,13 @@ public class BreadCrumbs extends Composite {
 		activeCrumb = breadCrumbLabels.get(name);
 	}
 	
-	private void addBreadCrumb(String name){
+	private void addBreadCrumb(String name, boolean isLastCrumb){
 		Label crumb = new Label();
-		crumb.setText(name + "  >  ");
+		if( isLastCrumb ){
+			crumb.setText(name);
+		} else {
+			crumb.setText(name + ">");
+		}
 		crumb.setStyleName(style.inactive());
 		breadCrumbLabels.put(name, crumb);
 		breadCrumbsContainer.add(crumb);

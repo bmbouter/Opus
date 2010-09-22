@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="../resources/ProjectDashboard.css" type="opus.gwt.management.console.client.resources.ProjectDashboardCss.ProjectDashboardStyle"/>
+	<ui:style src="../resources/ProjectManager.css" type="opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle"/>
 	<g:HTMLPanel styleName="{style.innerSubMainPanel}">
 		<g:DockLayoutPanel unit='PCT' styleName="{style.topSubMainPanel}" >
 			<g:north size='6.5'>

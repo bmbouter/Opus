@@ -16,13 +16,28 @@
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="../resources/ProjectDashboard.css" type="opus.gwt.management.console.client.resources.ProjectDashboardCss.ProjectDashboardStyle"/>
-	<g:HTMLPanel>
-		<g:Label ui:field="dashboardLabel" styleName="{style.navigationLabel}">Dashboard</g:Label>
-		<g:Label ui:field="optionsLabel" styleName="{style.navigationLabel}">Settings</g:Label>
-		<g:Label ui:field="manageAppsLabel" styleName="{style.navigationLabel}">Manage Applications</g:Label>
-		<g:Label ui:field="editProjectLabel" styleName="{style.navigationLabel}">Edit Project Configuration</g:Label>
-		<g:Label ui:field="deleteProjectLabel" styleName="{style.navigationLabel}">Delete Project</g:Label>
-	</g:HTMLPanel>
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:c="urn:import:opus.gwt.management.console.client.navigation">
+	<ui:style src="../resources/ProjectManager.css" type="opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle"/>
+	
+	<g:DockLayoutPanel unit="PCT">
+		<g:north size="3.5">
+			<c:NavigationPanel styleName="{style.navigationPanel}"/>
+		</g:north>
+		<g:north size="3">
+			<c:BreadCrumbs ui:field="breadCrumbs" styleName="{style.breadcrumbsPanel}"/>
+		</g:north>
+		<g:north size='1'>
+			<g:HTMLPanel />
+		</g:north>
+		<g:south size='1'>
+			<g:HTMLPanel />
+		</g:south>
+		<g:west size="15">
+			<g:HTMLPanel />
+		</g:west>
+		<g:west size="85">
+			<g:DeckPanel ui:field="managerDeckPanel" styleName="{style.managerDeckPanel}" />
+		</g:west>
+	</g:DockLayoutPanel>
 </ui:UiBinder> 

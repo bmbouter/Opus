@@ -18,7 +18,7 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
-import opus.gwt.management.console.client.dashboard.ProjectDashboard;
+import opus.gwt.management.console.client.dashboard.ProjectManager;
 import opus.gwt.management.console.client.deployer.ProjectDeployer;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.overlays.ProjectNames;
@@ -60,10 +60,9 @@ public class PanelManager extends Composite {
 	private final String projectsURL = "/json/?a&callback=";
 	
 	private Authentication authenticationPanel;
-	private NavigationPanel navigationPanel;
 	
 	private ProjectDeployer projectDeployer;
-	private ProjectDashboard projectDashboard;
+	private ProjectManager projectManager;
 	private IconPanel iconPanel;
 	private ServerCommunicator serverComm;
 	private PanelManager panelManager;
@@ -89,11 +88,11 @@ public class PanelManager extends Composite {
 		serverComm = new ServerCommunicator();
 		panelManager = this;
 		authenticationPanel = new Authentication(panelManager);
-		navigationPanel = new NavigationPanel();
 		projectDeployer = new ProjectDeployer(panelManager);
+		projectManager = new ProjectManager(panelManager);
 		//handleAuthentication();
-		//showNavigation();
-		deployProject();
+		//deployProject();
+		manageProjects();
 		//iconPanel = new IconPanel(this);
 		//deletedProject = "";
 		//projectListPopup = new PopupPanel();
@@ -105,18 +104,18 @@ public class PanelManager extends Composite {
 		authenticationPanel.startAuthentication();
 	}
 	
-	private void showNavigation(){
-		mainDeckPanel.insert(navigationPanel, 0);
-		mainDeckPanel.showWidget(0);
-	}
-	
 	private void deployProject(){
 		mainDeckPanel.insert(projectDeployer, 0);
 		mainDeckPanel.showWidget(0);
 	}
 	
+	private void manageProjects(){
+		mainDeckPanel.insert(projectManager, 0);
+		mainDeckPanel.showWidget(0);
+	}	
+	
 	public void passControl(){
-		showNavigation();
+		deployProject();
 	}
 	
 	public void showPanel(Object panel){
@@ -142,7 +141,7 @@ public class PanelManager extends Composite {
 		mainDeckPanel.clear();
 		navigationMenuPanel.clear();
 		titleBarLabel.setText("");
-    	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, projectName, panelManager);
+    	projectManager = new ProjectManager(panelManager);
 	}
 	
 	public void onProjectDelete(String deletedProject){
@@ -261,7 +260,7 @@ public class PanelManager extends Composite {
 				        public void onClick(ClickEvent event) {
 				        	mainDeckPanel.clear();
 				    		navigationMenuPanel.clear();
-				        	projectDashboard = new ProjectDashboard(titleBarLabel, navigationMenuPanel, mainDeckPanel, testLabel.getText(), panelManager); 
+				        	projectManager = new ProjectManager(panelManager); 
 				        	if(projectListPopup.isShowing()){
 				    			dashboardsButton.setStyleName(style.topDashboardButton());
 				    			projectListPopup.hide();
