@@ -24,6 +24,11 @@
 	<g:SimplePanel>
 		<g:HTMLPanel styleName="{style.innerSubMainPanel}">
 			<t:TooltipPanel ui:field="active" />
+			<g:HTMLPanel styleName="{style.header}">
+				<g:HTMLPanel styleName="{style.insetType}">
+					<h1>Deployment Options</h1>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
 			<g:HTML>
 				<u>Deployment Location Options</u>
 			</g:HTML>

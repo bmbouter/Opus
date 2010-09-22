@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.PanelManager;
 import opus.gwt.management.console.client.navigation.BreadCrumbs;
+import opus.gwt.management.console.client.navigation.MainMenu;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -61,6 +62,7 @@ public class ProjectDeployer extends Composite {
 	@UiField ProjectDeployerStyle style;
 	@UiField DeckPanel deployerDeckPanel;
 	@UiField BreadCrumbs breadCrumbs;
+	@UiField MainMenu mainMenu;
 	
 	public ProjectDeployer(PanelManager panelManager) {
 		initWidget(uiBinder.createAndBindUi(this));
