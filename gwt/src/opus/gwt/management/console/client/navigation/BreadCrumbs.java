@@ -48,8 +48,10 @@ public class BreadCrumbs extends Composite {
 	}
 	
 	private void addBreadCrumb(String name){
-		Label crumb = new Label();
-		crumb.setText(name + "  >  ");
+		HTML crumb = new HTML();
+		crumb.setHTML("<span>" + name + "</span> &raquo;");
+//		Label crumb = new Label();
+//		crumb.setText(name + " > ");
 		crumb.setStyleName(style.inactive());
 		breadCrumbLabels.put(name, crumb);
 		breadCrumbsContainer.add(crumb);

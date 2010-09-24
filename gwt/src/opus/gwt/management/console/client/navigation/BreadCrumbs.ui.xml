@@ -4,8 +4,7 @@
 	<ui:style src="../resources/BreadCrumbs.css" type="opus.gwt.management.console.client.resources.BreadCrumbCss.BreadCrumbStyle"/>
 	
 	<g:SimplePanel>
-		<g:FlowPanel ui:field="breadCrumbsContainer" styleName="{style.breadCrumbsContainer}">
-		</g:FlowPanel>
+		<g:FlowPanel ui:field="breadCrumbsContainer" styleName="{style.breadCrumbsContainer}" />
 	</g:SimplePanel>
 	
 </ui:UiBinder> 
