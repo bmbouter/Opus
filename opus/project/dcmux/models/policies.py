@@ -45,7 +45,7 @@ from django.db.models.signals import pre_save
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
-from opus.project.dcmux.models import Policy, Provider, Instance, UpstreamImage
+from opus.project.dcmux.models import Policy, Provider, Instance, RealImage
 from opus.project.dcmux.signals import set_policy_type
 import opus.lib.log
 log = opus.lib.log.get_logger()
@@ -53,7 +53,7 @@ log = opus.lib.log.get_logger()
 
 ###################### Single Provider Policy ######################
 
-class SingleProviderPolicy(Policy):
+class PolicySingleProvider(Policy):
     """A policy that maps one to one with a provider.
 
     When an instance is started using this policy, it will always go to the
@@ -66,23 +66,24 @@ class SingleProviderPolicy(Policy):
 
     class Meta:
         app_label = "dcmux"
-        verbose_name = "Single provider policy"
-        verbose_name_plural = "Single provider policies"
+        verbose_name = "Policy: Single Provider"
+        verbose_name_plural = "Policies: Single Provider"
 
     def get_next_provider(self, image_id):
         return self.provider
 
 ###################### Bursting Policy ######################
 
-class BurstingPolicy(Policy):
+class PolicyBursting(Policy):
     """Policy that bursts to a different cloud, when one fills up.
 
-    A list of providers and their capacities are given.
+    A list of providers and their capacities are given.  And they are looked at
+    in the given order.
 
     """
 
     providers = models.ManyToManyField(Provider,
-            through="BurstingPolicyProviders")
+            through="PolicyBurstingProviders")
 
     def get_next_provider(self, image_id):
         try:
@@ -92,33 +93,37 @@ class BurstingPolicy(Policy):
         num_provider_instances = defaultdict(lambda:0)
         for instance in instances:
             num_provider_instances[instance.provider] += 1
-        for burstingpolicyprovider in self.burstingpolicyproviders_set.all():
+        for policyburstingprovider in self.policyburstingproviders_set.all():
 
             # Check for capacity
-            if burstingpolicyprovider.capacity < 0 or \
-              num_provider_instances[burstingpolicyprovider.provider] < burstingpolicyprovider.capacity:
-                provider = burstingpolicyprovider.provider
+            if policyburstingprovider.capacity < 0 or \
+                    num_provider_instances[policyburstingprovider.provider] < \
+                    policyburstingprovider.capacity:
+                provider = policyburstingprovider.provider
 
                 # Make sure there is a matching upstream image
-                count = UpstreamImage.objects.filter(provider=provider, downstream_image__id=image_id).count()
+                count = RealImage.objects.filter(provider=provider,
+                        downstream_image__id=image_id).count()
                 if count >= 1:
-                    return burstingpolicyprovider.provider
+                    return policyburstingprovider.provider
                 else:
                     #TODO: Return error code
-                    log.error('No upstream image found for provider "%s" and image_id "%s"' % (provider, image_id))
+                    log.error('No upstream image found for provider "%s" and' \
+                            'image_id "%s"' % (provider, image_id))
 
-        log.error("No suitable provider found in cloudbursting policy %s." % self.id)
+        log.error("No suitable provider found in cloudbursting policy %s." %
+                self.id)
         return None #TODO: Return error code
 
     class Meta:
         app_label = "dcmux"
-        verbose_name = "Bursting Policy"
-        verbose_name_plural = "Bursting Policies"
+        verbose_name = "Policy: Bursting"
+        verbose_name_plural = "Policies: Bursting"
 
-class BurstingPolicyProviders(models.Model):
+class PolicyBurstingProviders(models.Model):
 
     provider = models.ForeignKey(Provider)
-    bursting_policy = models.ForeignKey(BurstingPolicy)
+    bursting_policy = models.ForeignKey(PolicyBursting)
 
     order = models.IntegerField()
     capacity = models.IntegerField()
@@ -130,9 +135,9 @@ class BurstingPolicyProviders(models.Model):
         verbose_name_plural = "Providers"
 
 class ProvidersInline(admin.TabularInline):
-    model = BurstingPolicyProviders
+    model = PolicyBurstingProviders
 
-class BurstingPolicyAdmin(admin.ModelAdmin):
+class PolicyBurstingAdmin(admin.ModelAdmin):
     inlines=[
         ProvidersInline,
     ]
@@ -144,11 +149,11 @@ class BurstingPolicyAdmin(admin.ModelAdmin):
 # Every policy type needs to register with the admin panel here in the
 # following form:
 # >>> admin.site.register(<policy class>)
-admin.site.register(SingleProviderPolicy)
-admin.site.register(BurstingPolicy, BurstingPolicyAdmin)
+admin.site.register(PolicySingleProvider)
+admin.site.register(PolicyBursting, PolicyBurstingAdmin)
 
 # Register signals
 # Every policy type needs to register a signal here in the following form:
 # >>> pre_save.connect(Policy.set_policy_type, sender=<policy class>)
-pre_save.connect(set_policy_type, sender=SingleProviderPolicy)
-pre_save.connect(set_policy_type, sender=BurstingPolicy)
+pre_save.connect(set_policy_type, sender=PolicySingleProvider)
+pre_save.connect(set_policy_type, sender=PolicyBursting)

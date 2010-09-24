@@ -58,7 +58,7 @@ class Provider(models.Model):
     def __str__(self):
         return self.name
 
-class UpstreamImage(models.Model):
+class RealImage(models.Model):
     """A real image provided by a Provider."""
 
     # The provider that this image is located on
@@ -67,8 +67,8 @@ class UpstreamImage(models.Model):
     # The real image id on the provider
     image_id = models.CharField(max_length=60)
 
-    # The DownstreamImage which will represent this UpstreamImage
-    downstream_image = models.ForeignKey("DownstreamImage")
+    # The AggregateImage which will represent this RealImage
+    downstream_image = models.ForeignKey("AggregateImage")
 
     class Meta:
         unique_together = ("provider", "image_id")
@@ -77,11 +77,11 @@ class UpstreamImage(models.Model):
     def __str__(self):
         return 'image_id %s on provider "%s"' % (self.image_id, self.provider)
 
-class DownstreamImage(models.Model):
-    """An image that is an aggregate of UpstreamImages.
+class AggregateImage(models.Model):
+    """An image that is an aggregate of RealImages.
 
     This model is represented as an image to the end user.  A user can start an
-    instance of this image and it will go to a different UpstreamImage
+    instance of this image and it will go to a different RealImage
     depending the Policy.
 
     """
@@ -107,7 +107,7 @@ class Instance(models.Model):
     """An instance of a DownsteamImage."""
 
     # The DownsteamImage that this is an instance of
-    image = models.ForeignKey("DownstreamImage")
+    image = models.ForeignKey("AggregateImage")
 
     # The user who started up this instance
     owner_id = models.CharField(max_length=60)

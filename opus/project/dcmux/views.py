@@ -24,7 +24,7 @@ from collections import namedtuple
 
 import opus.lib.log
 log = opus.lib.log.get_logger()
-from opus.project.dcmux.models import Provider, Policy, DownstreamImage, UpstreamImage, Instance
+from opus.project.dcmux.models import Provider, Policy, AggregateImage, RealImage, Instance
 
 HardwareProfile = namedtuple("HardwareProfile", "id")
 
@@ -58,7 +58,7 @@ def hardware_profile_list(request, name=None):
     """Lists all hardware profiles, or the given one if id!=None.
 
     In dcmux, there is one hardware profile.  The real hardware profile
-    that will be used is specified in the UpstreamImage.
+    that will be used is specified in the RealImage.
 
     """
 
@@ -104,10 +104,10 @@ def image_list(request, id=None):
     """List all downstream images, or the given image if id!=None."""
 
     if id == None:
-        images = DownstreamImage.objects.all()
+        images = AggregateImage.objects.all()
     else:
         try:
-            images = [DownstreamImage.objects.get(id=id)]
+            images = [AggregateImage.objects.get(id=id)]
         except ValueError:
             # id wasn't an int, which it should be
             images = []
@@ -185,11 +185,11 @@ def instance_create(request):
     provider = policy.get_next_provider(image_id)
     driver = provider.get_client()
     try:
-        downstream_image = DownstreamImage.objects.get(id=image_id)
+        downstream_image = AggregateImage.objects.get(id=image_id)
     except ObjectDoesNotExist:
         return HttpResponseBadRequest("The requested image_id was not found.")
     try:
-        upstream_image = UpstreamImage.objects.get(
+        upstream_image = RealImage.objects.get(
             downstream_image=downstream_image,
             provider=provider,
         )
