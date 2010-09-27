@@ -108,7 +108,7 @@ class PolicyBursting(Policy):
                     return policyburstingprovider.provider
                 else:
                     #TODO: Return error code
-                    log.error('No upstream image found for provider "%s" and' \
+                    log.error('No upstream image found for provider "%s" and ' \
                             'image_id "%s"' % (provider, image_id))
 
         log.error("No suitable provider found in cloudbursting policy %s." %

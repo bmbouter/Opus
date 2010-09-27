@@ -16,23 +16,54 @@
 
 from django.db import models
 
-from opus.lib.prov import DRIVERS
+from libcloud.providers import DRIVERS, get_driver
 import opus.lib.log
 log = opus.lib.log.get_logger()
 
 class Provider(models.Model):
     """A cloud services provider."""
-    DRIVER_CHOICES = ((driver, driver) for driver in DRIVERS)
+    '''
+    DRIVER_CHOICES = (
+        (
+            id,
+            DRIVERS[id][0].split(".")[-1].capitalize()
+        ) for id in DRIVERS
+    )
+    '''
+    DRIVER_CHOICES = ( # Same order as on the libcloud website
+        (0, "Dummy"),
+        (17, "Dreamhost"),
+        (1, "EC2-US EAST"),
+        (10, "EC2-US WEST"),
+        (2, "EC2-EU WEST"),
+        (14, "Enomaly ECP"),
+        # (13, "Eucalyptus"), # Can not list images
+        # (#, "flexiscale"), # Not finished in libcloud yet
+        (5, "GoGrid"),
+        # (#, "Hosting.com"),
+        (15, "IBM Cloud"),
+        (7, "Linode"),
+        (16, "OpenNebula"),
+        (3, "Rackspace"),
+        (9, "RimuHosting"),
+        (4, "Slicehost"),
+        (12, "SoftLayer"),
+        # (#, "Terremark"), # Need dev or updated version of libcloud?
+        (8, "vCloud"),
+        (11, "Voxel"),
+        (6, "VPS.net"),
+    )
 
     # A human readable descriptive name
     name = models.CharField(max_length=60, unique=True)
 
-    # The opus.lib.prov driver that this provider uses
-    # Must be one of the items in opus.lib.prov.DRIVERS
-    driver = models.CharField(max_length=60, choices=DRIVER_CHOICES)
+    # The libcloud driver that this provider uses
+    # The driver ids that this refers to are defined in libcloud.types.Provider
+    driver = models.IntegerField(choices=DRIVER_CHOICES)
 
     # A valid URI entry point for this provider
-    uri = models.URLField()
+    uri = models.URLField(blank=True, help_text="Most drivers have an "\
+            "inherent url, and don't need this field.")
 
     # Username to use with this provider
     username = models.CharField(max_length=60)
@@ -40,15 +71,11 @@ class Provider(models.Model):
     # Password to use with this provider
     password = models.CharField(max_length=60)
 
-    # Realm to use with this provider.
-    # Blank if default
-    realm = models.CharField(max_length=60, blank=True)
-
     def get_client(self):
         """Returns a driver client object configured for this provider."""
 
-        Driver = DRIVERS[self.driver]
-        d = Driver(self.username, self.password, self.uri)
+        Driver = get_driver(self.driver)
+        d = Driver(self.username, self.password)
         return d
 
     class Meta:
@@ -104,9 +131,9 @@ class AggregateImage(models.Model):
         return self.name
 
 class Instance(models.Model):
-    """An instance of a DownsteamImage."""
+    """An instance of an image."""
 
-    # The DownsteamImage that this is an instance of
+    # The AggregateImage that this is an instance of
     image = models.ForeignKey("AggregateImage")
 
     # The user who started up this instance
@@ -147,36 +174,34 @@ class Instance(models.Model):
 
     @property
     def state(self):
+        STATE_MAPPING = {
+            0: "RUNNING",
+            1: "PENDING", # REBOOTING
+            2: "TERMINATED",
+            3: "PENDING",
+            4: "UNKNOWN",
+        }
         if hasattr(self, "_state_override"):
             return self._state_override
-        return self.driver_instance_object.state
+        return STATE_MAPPING[ self.driver_instance_object.state ]
     @state.setter
     def state(self, value):
         self._state_override = value
 
     @property
-    def actions(self):
-        return self.driver_instance_object.actions
-
-    @property
     def public_addresses(self):
-        return self.driver_instance_object.public_addresses
+        return self.driver_instance_object.public_ip
 
     @property
     def private_addresses(self):
-        return self.driver_instance_object.private_addresses
+        return self.driver_instance_object.private_ip
 
     @property
     def actions(self):
-        actions = []
-        if self.state.lower() == "stopped":
-            actions.extend(["start", "destroy"])
-        elif self.state.lower() == "running":
-            actions.extend(["stop", "reboot"])
-        elif self.state.lower() == "pending":
-            pass
+        if self.state == "RUNNING":
+            actions = ["reboot", "reboot"]
         else:
-            pass #TODO: Error
+            actions = []
         return actions
 
 
@@ -184,7 +209,7 @@ class Policy(models.Model):
     """Base class for policies.
 
     This will be represented on the front end as a realm.  Policies allow
-    intelligent decisions to be made about which Provider a DownsteamImage is
+    intelligent decisions to be made about which Provider an AggregateImage is
     deployed on. Subclassing allows for the get_next_provider function to be
     implemented to do any sort of intelligent decision making needed as far as
     which provider is used.

@@ -15,7 +15,8 @@
 ##############################################################################
 
 from django.core.urlresolvers import reverse
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, \
+    HttpResponseNotFound
 from django.shortcuts import render_to_response
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -24,7 +25,8 @@ from collections import namedtuple
 
 import opus.lib.log
 log = opus.lib.log.get_logger()
-from opus.project.dcmux.models import Provider, Policy, AggregateImage, RealImage, Instance
+from opus.project.dcmux.models import Provider, Policy, AggregateImage, \
+    RealImage, Instance
 
 HardwareProfile = namedtuple("HardwareProfile", "id")
 
@@ -176,7 +178,8 @@ def instance_create(request):
         image_id = request.POST["image_id"]
         realm_id = request.POST["realm_id"]
     except KeyError:
-        return HttpResponseBadRequest("Both an image_id and a realm_id must be specified.")
+        return HttpResponseBadRequest("Both an image_id and a realm_id must " \
+                "be specified.")
 
     try:
         policy = Policy.objects.get(id=realm_id)
@@ -194,7 +197,8 @@ def instance_create(request):
             provider=provider,
         )
     except ObjectDoesNotExist:
-        return HttpResponseBadRequest("There is no downstream image matching this provider.")
+        return HttpResponseBadRequest("There is no downstream image " \
+                "matching this provider.")
     if provider.realm:
         realm = provider.realm
     else:
@@ -234,10 +238,6 @@ def instance_action(request, id, action):
 
     if action.lower() == "reboot":
         instance_reboot(request, instance)
-    elif action.lower() == "start":
-        instance_start(request, instance)
-    elif action.lower() == "stop":
-        instance_stop(request, instance)
     elif action.lower() == "destroy":
         instance_destroy(request, instance)
     else:
@@ -253,24 +253,11 @@ def instance_action(request, id, action):
     )
 
 def instance_reboot(request, instance):
-    if instance.state.lower != "running":
+    if instance.state != "RUNNING":
         pass #TODO: Error
     instance.driver_instance_object.reboot()
     instance.state = "PENDING"
     #TODO: catch errors
-
-def instance_start(request, instance):
-    if instance.state.lower != "stopped":
-        pass #TODO: Error
-    instance.state = "RUNNING"
-    instance.driver_instance_object.start()
-    #TODO: catch errors
-
-def instance_stop(request, instance):
-    if instance.state.lower != "running":
-        pass #TODO: Error
-    instance.state = "STOPPED"
-    instance.driver_instance_object.stop()
 
 def instance_destroy(request, instance):
     instance.driver_instance_object.destroy()
