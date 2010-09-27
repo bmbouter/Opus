@@ -22,14 +22,7 @@ log = opus.lib.log.get_logger()
 
 class Provider(models.Model):
     """A cloud services provider."""
-    '''
-    DRIVER_CHOICES = (
-        (
-            id,
-            DRIVERS[id][0].split(".")[-1].capitalize()
-        ) for id in DRIVERS
-    )
-    '''
+
     DRIVER_CHOICES = ( # Same order as on the libcloud website
         (0, "Dummy"),
         (17, "Dreamhost"),
@@ -75,7 +68,11 @@ class Provider(models.Model):
         """Returns a driver client object configured for this provider."""
 
         Driver = get_driver(self.driver)
-        d = Driver(self.username, self.password)
+        d = Driver(
+            # When these strings are unicode, they break.  Convert exilicitly
+            str(self.username),
+            str(self.password)
+        )
         return d
 
     class Meta:
@@ -83,7 +80,12 @@ class Provider(models.Model):
         app_label = "dcmux"
 
     def __str__(self):
-        return self.name
+        driver = "Unknown"
+        for item in Provider.DRIVER_CHOICES:
+            if item[0] is self.driver:
+                driver = item[1]
+                break
+        return '"%s" with driver "%s"' % (self.name, driver)
 
 class RealImage(models.Model):
     """A real image provided by a Provider."""
@@ -95,7 +97,8 @@ class RealImage(models.Model):
     image_id = models.CharField(max_length=60)
 
     # The AggregateImage which will represent this RealImage
-    downstream_image = models.ForeignKey("AggregateImage")
+    aggregate_image = models.ForeignKey("AggregateImage", help_text=\
+        "The Aggregate Image that this Real Image is a part of.")
 
     class Meta:
         unique_together = ("provider", "image_id")
@@ -167,10 +170,17 @@ class Instance(models.Model):
         """Get the instance object for this instance."""
 
         if not hasattr(self, "_cached_driver_instance_object"):
-            client = self.provider.get_client()
-            self._cached_driver_instance_object = client.instance(self.instance_id)
-
-        return self._cached_driver_instance_object
+            driver = self.provider.get_client()
+            for node in driver.list_nodes():
+                if node.id == self.instance_id:
+                    self._cached_driver_instance_object = node
+                    return node
+            raise ValueError("Instance was not found in the provider. "\
+                'instance="%s" on provider %s' %\
+                (self.instance_id, self.provider)
+            )
+        else:
+            return self._cached_driver_instance_object
 
     @property
     def state(self):
@@ -199,9 +209,9 @@ class Instance(models.Model):
     @property
     def actions(self):
         if self.state == "RUNNING":
-            actions = ["reboot", "reboot"]
+            actions = ["destroy", "reboot"]
         else:
-            actions = []
+            actions = ["destroy"]
         return actions
 
 

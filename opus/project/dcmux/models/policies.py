@@ -101,14 +101,14 @@ class PolicyBursting(Policy):
                     policyburstingprovider.capacity:
                 provider = policyburstingprovider.provider
 
-                # Make sure there is a matching upstream image
+                # Make sure there is a matching RealImage
                 count = RealImage.objects.filter(provider=provider,
-                        downstream_image__id=image_id).count()
+                        aggregate_image__id=image_id).count()
                 if count >= 1:
                     return policyburstingprovider.provider
                 else:
                     #TODO: Return error code
-                    log.error('No upstream image found for provider "%s" and ' \
+                    log.error('No real image image found for provider "%s" and ' \
                             'image_id "%s"' % (provider, image_id))
 
         log.error("No suitable provider found in cloudbursting policy %s." %

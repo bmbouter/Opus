@@ -103,7 +103,7 @@ def realm_list(request, id=None):
     )
 
 def image_list(request, id=None):
-    """List all downstream images, or the given image if id!=None."""
+    """List all aggregate images, or the given image if id!=None."""
 
     if id == None:
         images = AggregateImage.objects.all()
@@ -181,56 +181,85 @@ def instance_create(request):
         return HttpResponseBadRequest("Both an image_id and a realm_id must " \
                 "be specified.")
 
+    # Get the libcloud driver
     try:
         policy = Policy.objects.get(id=realm_id)
     except ObjectDoesNotExist:
         return HttpResponseBadRequest("The requested realm_id was not found.")
     provider = policy.get_next_provider(image_id)
     driver = provider.get_client()
+
+    # Get the RealImage object
     try:
-        downstream_image = AggregateImage.objects.get(id=image_id)
+        aggregate_image = AggregateImage.objects.get(id=image_id)
     except ObjectDoesNotExist:
         return HttpResponseBadRequest("The requested image_id was not found.")
     try:
-        upstream_image = RealImage.objects.get(
-            downstream_image=downstream_image,
+        real_image = RealImage.objects.get(
+            aggregate_image=aggregate_image,
             provider=provider,
         )
     except ObjectDoesNotExist:
-        return HttpResponseBadRequest("There is no downstream image " \
+        return HttpResponseBadRequest("There is no aggregate image image " \
                 "matching this provider.")
-    if provider.realm:
-        realm = provider.realm
-    else:
-        realm = None
 
-    instance = driver.instance_create(upstream_image.image_id, realm)
+    # Get the libcloud node object
+    image = None
+    for node in driver.list_images():
+        if node.id == real_image.image_id:
+            image = node
+            break
+    if not image:
+        #TODO: This should probably return an HTTP error code instead of
+        #      raising an exception
+        raise ValueError("Image was not found in the provider: %s" % \
+            real_image
+        )
 
+    # Get an instance size
+    size = driver.list_sizes()[0]
+
+    # Add instance to database
+    # We do this before the actual creating of the image so we can get the
+    # instance_id
     database_instance = Instance(
-        image = downstream_image,
+        image = aggregate_image,
         owner_id = "",
         name = "",
         provider = provider,
-        instance_id = instance.id,
+        instance_id = -1,
         policy = policy,
     )
+    database_instance.save()
+
+    # Start the instance!
+    instance = driver.create_node(
+        image=image,
+        name="dcmux-%s" % database_instance.id,
+        size=size,
+    )
+
+    # Update instance_id in database
+    database_instance.instance_id = instance.id
     database_instance.save()
 
     return render_to_response(
         'dcmux/instances.xml',
         {
+            "images_uri": uri_lookup(request, "images"),
             "instances_uri": uri_lookup(request, "instances"),
             "instances": [instance],
         },
         mimetype="application/xml",
     )
+
 @csrf_exempt
 def instance_action(request, id, action):
     """Perform an action on an instance.
 
-    Valid actions are: "reboot", "start" or "stop".  The Deltacloud api says
-    that these actions should be performed by using a POST request on this uri.
-    We let any request type through here, assuming that it's POST.
+    The Deltacloud api says that these actions should be performed by using a
+    POST request on this uri.  We let any request type through here, assuming
+    that it's POST.
 
     """
 
@@ -246,6 +275,7 @@ def instance_action(request, id, action):
     return render_to_response(
         'dcmux/instances.xml',
         {
+            "images_uri": uri_lookup(request, "images"),
             "instances_uri": uri_lookup(request, "instances"),
             "instances": [instance],
         },
