@@ -119,6 +119,7 @@ Opus in its current form requires:
 * A C compiler to compile the secureops program (see below)
 * Celery and Django-celery (djcelery)
 * A Celery compatible message broker such as RabbitMQ
+* libcloud
 
 To build the Google Web Toolkit component, you need
 
