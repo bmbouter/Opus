@@ -140,9 +140,9 @@ class Instance(models.Model):
     image = models.ForeignKey("AggregateImage")
 
     # The user who started up this instance
-    owner_id = models.CharField(max_length=60)
+    owner_id = models.CharField(max_length=60, blank=True)
 
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=80, blank=True)
 
     hardware_profile = "generic"
 
