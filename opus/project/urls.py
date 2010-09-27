@@ -29,7 +29,7 @@ urlpatterns = patterns('',
 
     (r'^deployments/', include('opus.project.deployment.urls')),
     (r'^json/', include('opus.project.deployment.jsonurls')),
-    #(r'^dcmux/', include("opus.project.dcmux.urls")),
+    (r'^dcmux/', include("opus.project.dcmux.urls")),
     (r'^community/', "opus.project.deployment.views.gwt"),
     (r'^$', 'opus.project.deployment.views.gwt'),
 )
