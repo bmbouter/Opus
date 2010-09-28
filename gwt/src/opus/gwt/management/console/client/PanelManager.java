@@ -20,6 +20,9 @@ import java.util.HashMap;
 
 import opus.gwt.management.console.client.dashboard.ProjectManager;
 import opus.gwt.management.console.client.deployer.ProjectDeployer;
+import opus.gwt.management.console.client.event.AuthenticationSuccessEvent;
+import opus.gwt.management.console.client.event.AuthenticationSuccessEventHandler;
+import opus.gwt.management.console.client.event.CheckAuthenticationEvent;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.overlays.ProjectNames;
 import opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
@@ -48,7 +51,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-
 
 
 public class PanelManager extends Composite {
@@ -90,11 +92,11 @@ public class PanelManager extends Composite {
 		this.eventBus = eventBus;
 		panelManager = this;
 		JSVarHandler = new JSVariableHandler();
-		authenticationPanel = new Authentication(panelManager);
-		projectDeployer = new ProjectDeployer(panelManager);
+		authenticationPanel = new Authentication(panelManager, eventBus);
+		projectDeployer = new ProjectDeployer(panelManager, eventBus);
 		projectManager = new ProjectManager(panelManager);
-		//handleAuthentication();
-		deployProject();
+		handleAuthentication();
+		//deployProject();
 		//manageProjects();
 		//iconPanel = new IconPanel(this);
 		//deletedProject = "";
@@ -103,8 +105,15 @@ public class PanelManager extends Composite {
 	}
 	
 	private void handleAuthentication(){
+		eventBus.addHandler(AuthenticationSuccessEvent.TYPE, 
+				new AuthenticationSuccessEventHandler(){
+					public void onAuthenticationSuccess(AuthenticationSuccessEvent event){
+						deployProject();
+					}
+		});
+		eventBus.fireEvent(new CheckAuthenticationEvent());
 		mainDeckPanel.insert(authenticationPanel, 0);
-		authenticationPanel.startAuthentication();
+		mainDeckPanel.showWidget(0);
 	}
 	
 	private void deployProject(){
@@ -116,10 +125,6 @@ public class PanelManager extends Composite {
 		mainDeckPanel.insert(projectManager, 0);
 		mainDeckPanel.showWidget(0);
 	}	
-	
-	public void passControl(){
-		deployProject();
-	}
 	
 	public void showPanel(Object panel){
 		mainDeckPanel.showWidget(mainDeckPanel.getWidgetIndex((Widget) panel));
@@ -136,7 +141,7 @@ public class PanelManager extends Composite {
 	
 	private void createDashboardsPopup(){
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + projectsURL);
-		serverComm.getJson(url, serverComm, "handleProjectNames", this);	
+		serverComm.getJson(url, "handleProjectNames", this);	
 	}
 	
 	public void onDeployNewProject(String projectName){
@@ -168,7 +173,7 @@ public class PanelManager extends Composite {
 	void handleDeployNewProjectClick(ClickEvent event){
 		mainDeckPanel.clear();
 		navigationMenuPanel.clear();
-		projectDeployer = new ProjectDeployer(panelManager);
+		projectDeployer = new ProjectDeployer(panelManager, eventBus);
 	}
 	
 	@UiHandler("dashboardsButton")
@@ -292,7 +297,7 @@ public class PanelManager extends Composite {
 		authenticationButton.setVisible(false);
 		dashboardsButton.setVisible(false);
 		deployNewButton.setVisible(false);
-		authenticationPanel = new Authentication(panelManager);
+		authenticationPanel = new Authentication(panelManager, eventBus);
 		mainDeckPanel.add(authenticationPanel);
 		mainDeckPanel.showWidget(0);
 	}

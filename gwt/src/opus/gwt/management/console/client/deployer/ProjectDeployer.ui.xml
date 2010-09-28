@@ -21,7 +21,7 @@
 	<ui:style src="../resources/ProjectDeployer.css" type="opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle"/>
 	
 	<g:DockLayoutPanel unit="PCT">
-		<g:north size="4">
+		<g:north size="3.5">
 			<c:NavigationPanel styleName="{style.navigationPanel}"/>
 		</g:north>
 		<g:north size="3.25">

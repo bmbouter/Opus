@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ServerCommunicator;
-import opus.gwt.management.console.client.overlays.AppData;
+import opus.gwt.management.console.client.overlays.AppInfo;
 import opus.gwt.management.console.client.overlays.DependencyData;
 import opus.gwt.management.console.client.overlays.ModelProperties;
 import opus.gwt.management.console.client.overlays.ProjectCommunityApplication;
@@ -131,7 +131,7 @@ public class AddAppsBuildProject extends Composite {
 	    url = URL.encode(url) + "&callback=";
 
 	    // Send request to server by replacing RequestBuilder code with a call to a JSNI method.
-	    jsonCom.getJson(url, jsonCom, "updateTable", this);
+	    jsonCom.getJson(url, "updateTable", this);
 	  }
 	  
 	  /**
@@ -140,7 +140,7 @@ public class AddAppsBuildProject extends Composite {
 	   */
 	  private void populateFieldList(String url) {
 		  url = URL.encode(url) + "&callback=";
-		  jsonCom.getJson(url, jsonCom, "updateFieldList", this);
+		  jsonCom.getJson(url, "updateFieldList", this);
 	  }
 	  
 	  
@@ -177,7 +177,7 @@ public class AddAppsBuildProject extends Composite {
 	   *
 	   * @param prices Stock data for all rows.
 	   */
-	  public void updateTable(JsArray<AppData> prices) {
+	  public void updateTable(JsArray<AppInfo> prices) {
 	    for (int i = 0; i < prices.length(); i++) {
 	      updateTable(prices.get(i), jsonCom);
 	    }
@@ -186,7 +186,7 @@ public class AddAppsBuildProject extends Composite {
 	    errorMsgLabel.setVisible(false);
 	  }
 	  
-	  public void updateTable(AppData app, final ServerCommunicator handler) {
+	  public void updateTable(AppInfo app, final ServerCommunicator handler) {
 		  final AddAppsBuildProject p = this;
 		  //Add the app to the table.
 		  int row = appListFlexTable.getRowCount();
@@ -215,7 +215,7 @@ public class AddAppsBuildProject extends Composite {
 		    	  //Window.alert(String.valueOf(row));
 		    	  appInfoDialog.versionsFlexTable.setHTML(row, 0, "<div><b>" + name + "</b> -" + description + "</div>");
 		    	  //appInfoDialog.versionsFlexTable.setText(row, 0, "hello");
-		    	  jsonCom.getJson(url, handler, "handleVersions", p);
+		    	  jsonCom.getJson(url, "handleVersions", p);
 		    	  //Window.alert(url);
 		    	  
 	//	    	  appInfoDialog.versionsFlexTable.setWidget(row, 0, new HTMLPanel("<div><b>" + name + "</b> -" + description + "</div>"));
@@ -306,7 +306,7 @@ public class AddAppsBuildProject extends Composite {
 	  }
 	  
 	  public void addProject(String url){
-		  jsonCom.getJson(url, jsonCom, "importAppList", this);
+		  jsonCom.getJson(url, "importAppList", this);
 	  }
 	  
 	  public void importAppList(JsArray<ProjectData> projectDataArray) {

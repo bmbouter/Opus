@@ -20,7 +20,11 @@ import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ServerCommunicator;
-import opus.gwt.management.console.client.overlays.AppData;
+import opus.gwt.management.console.client.event.GetAppInfoEvent;
+import opus.gwt.management.console.client.event.GetAppInfoEventHandler;
+import opus.gwt.management.console.client.event.UpdateAppInfoEvent;
+import opus.gwt.management.console.client.event.UpdateAppInfoEventHandler;
+import opus.gwt.management.console.client.overlays.AppInfo;
 import opus.gwt.management.console.client.overlays.ProjectData;
 import opus.gwt.management.console.client.overlays.VersionData;
 import opus.gwt.management.console.client.resources.AppBrowserCss.AppBrowserStyle;
@@ -30,10 +34,12 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -54,7 +60,6 @@ public class AppBrowser extends Composite {
 	}
 	
 	private final String featuredURL =  "/json/featured/?a&callback=";
-	private final String appListURL = "/json/search/application/?a&callback=";
 	private final String tokenURL = "/project/configuration/token/?callback=";
 
 	private ServerCommunicator serverComm;
@@ -69,10 +74,11 @@ public class AppBrowser extends Composite {
 	private int navigationselection;
 	private boolean featuredListLoaded;
 	private boolean gridPopulationDelayed;
-	private JsArray<AppData> applicationData;
+	private JsArray<AppInfo> applicationData;
 	private AppIcon currentSelection;
 	private Boolean isInDeployList;
 	private ArrayList<AppIcon> deployList;
+	private HandlerManager eventBus;
 	
 	@UiField VerticalPanel VersionInfo;
 	@UiField HTML AppInfo;
@@ -86,17 +92,19 @@ public class AppBrowser extends Composite {
 	@UiField AppBrowserStyle style;
 	
 	
-	public AppBrowser(ProjectDeployer projectDeployer, ServerCommunicator serverComm) {
+	public AppBrowser(ProjectDeployer projectDeployer, ServerCommunicator serverComm, HandlerManager eventBus) {
+		initWidget(uiBinder.createAndBindUi(this));
 		this.featuredListLoaded = false;
 		this.gridPopulationDelayed = false;
-		initWidget(uiBinder.createAndBindUi(this));
+		this.eventBus = eventBus;
 		this.projectDeployer = projectDeployer;
 		JSVarHandler = new JSVariableHandler();
 		this.serverComm = serverComm;
+		registerEvents();
 		String url = URL.encode(JSVarHandler.getRepoBaseURL()+ featuredURL);
-		serverComm.getJson(url, serverComm, "getFeaturedList", this);
-		url = URL.encode(JSVarHandler.getRepoBaseURL() + appListURL);
-		serverComm.getJson(url, serverComm, "getAppInfo", this);
+		serverComm.getJson(url, "getFeaturedList", this);
+		Window.alert("Firing GetAppinfoEvent");
+		eventBus.fireEvent(new GetAppInfoEvent());
 		deployList = new ArrayList<AppIcon>();
 		buildForm = new FormPanel();
 		setupBuildForm();
@@ -123,7 +131,16 @@ public class AppBrowser extends Composite {
 		buildForm.setAction(JSVarHandler.getBuildProjectURL());
 	}
 	
-	public void populateAppGrid(JsArray <AppData> applications) {
+	private void registerEvents(){
+		eventBus.addHandler(UpdateAppInfoEvent.TYPE, 
+			new UpdateAppInfoEventHandler(){
+				public void onUpdateAppInfo(UpdateAppInfoEvent event){
+					populateAppGrid(event.getAppInfo());
+				}
+		});
+	}
+	
+	public void populateAppGrid(JsArray <AppInfo> applications) {
 		this.applicationData = applications;
 		if(this.featuredListLoaded){
 			String innerHTML = "";
@@ -165,7 +182,7 @@ public class AppBrowser extends Composite {
 			if (token != null) {
 				String url =URL.encode(JSVarHandler.getRepoBaseURL() + tokenURL.replaceAll("token", token));
 				//Window.alert(url);
-				serverComm.getJson(url, serverComm, "importAppList", this);
+				serverComm.getJson(url,  "importAppList", this);
 			}
 		} else {
 			this.gridPopulationDelayed = true;
@@ -191,7 +208,7 @@ public class AppBrowser extends Composite {
 		
 		final String versionsURL = URL.encode(JSVarHandler.getRepoBaseURL() + "/json/application/" + String.valueOf(pk) + "/versions/?a") + "&callback=";
 		
-		serverComm.getJson(versionsURL, serverComm, "getVersionInfo", icon);
+		serverComm.getJson(versionsURL,  "getVersionInfo", icon);
 		
 		icon.iconPanel.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
@@ -368,7 +385,7 @@ public class AppBrowser extends Composite {
 	}
 	
 	  public void addProject(String url){
-		  serverComm.getJson(url, serverComm, "importAppList", this);
+		  serverComm.getJson(url,  "importAppList", this);
 	  }
 	  
 	  public void importAppList(JsArray<ProjectData> projectData) {

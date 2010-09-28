@@ -1,19 +1,35 @@
 .breadCrumbsContainer {
-	margin: 0 0 10px 0;
+	padding: 0px 0px 10px 5px;
 	padding: 0;
-	height: 100%;
+	min-height: 100%;
 	width: 100%;
 	background: #777777;
 	color: #FFFFFF;
 	font-size: .8em;
 }
+
 .inactive {
 	font-size: 1.1em;
 	float: left;
 	padding: 0.4em 0 0 0.5em;
 }
+
+span {
+	display: inline;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+/*
+.inactive {
+	padding: 3px 0px 0px 0px;
+	display: inline;
+	float: left;
+}
+*/
 .active {
 	font-size: 1.1em;
+	padding: 3px 0px 0px 0px;
 	color: orange;
 	float: left;
 	padding: 0.4em 0 0 0.5em;

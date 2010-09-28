@@ -24,6 +24,7 @@ import opus.gwt.management.console.client.navigation.BreadCrumbs;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
@@ -54,6 +55,7 @@ public class ProjectDeployer extends Composite {
 	private AppBrowser appBrowser;
 	private String createdProjectName;
 	private PanelManager panelManager;
+	private HandlerManager eventBus;
 	
 	private FormPanel deployerForm;
 	private JSVariableHandler JSVarHandler;
@@ -63,12 +65,13 @@ public class ProjectDeployer extends Composite {
 	@UiField BreadCrumbs breadCrumbs;
 	//@UiField MainMenu mainMenu;
 	
-	public ProjectDeployer(PanelManager panelManager) {
+	public ProjectDeployer(PanelManager panelManager, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.panelManager = panelManager;
+		this.eventBus = eventBus;
 		createdProjectName = "";
 		this.deployerForm = new FormPanel();
-		this.appBrowser = new AppBrowser(this, panelManager.getServerCommunicator());
+		this.appBrowser = new AppBrowser(this, panelManager.getServerCommunicator(), eventBus);
 		this.projectOptions = new ProjectOptions(this);
 		this.databaseOptions = new DatabaseOptions(this, panelManager.getServerCommunicator());
 		this.deploymentOptions = new DeploymentOptions(this);

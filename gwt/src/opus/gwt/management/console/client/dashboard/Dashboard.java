@@ -63,7 +63,7 @@ public class Dashboard extends Composite {
 	
 	private void getProjectInfo(String projectName){
 		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + projectInfoURL.replaceAll("/projectName/", "/" + projectName +"/"));
-		serverComm.getJson(url, serverComm, "handleProjectInformation", this);
+		serverComm.getJson(url, "handleProjectInformation", this);
 	}
 	
 	public void handleProjectInformation(ProjectInformation projInfo){

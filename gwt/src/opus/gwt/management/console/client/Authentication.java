@@ -16,17 +16,24 @@
 
 package opus.gwt.management.console.client;
 
+import opus.gwt.management.console.client.event.CheckAuthenticationEventHandler;
+import opus.gwt.management.console.client.event.AuthenticationSuccessEvent;
+import opus.gwt.management.console.client.event.CheckAuthenticationEvent;
+import opus.gwt.management.console.client.event.UserInfoEvent;
+import opus.gwt.management.console.client.event.UserInfoEventHandler;
 import opus.gwt.management.console.client.overlays.UserInformation;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -43,14 +50,11 @@ public class Authentication extends Composite {
 	interface AuthenticationUiBinder extends UiBinder<Widget, Authentication> {}
 	
 	private final String loginURL = "/accounts/login/";
-	private final String checkLoginURL = "/json/username/?a&callback=";
 
-	private JSVariableHandler JSVarHandler;
-	private ServerCommunicator serverComm;
-	private PanelManager panelManager;
 	private boolean loggedIn;
 	private String username;
 	private boolean firstLoginAttempt;
+	private HandlerManager eventBus;
 	
 	@UiField Hidden csrftoken;
 	@UiField Button loginButton;
@@ -60,19 +64,14 @@ public class Authentication extends Composite {
 	@UiField Label errorLabel;
 
 
-	public Authentication(PanelManager panelManager) {
+	public Authentication(PanelManager panelManager, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.serverComm = panelManager.getServerCommunicator();
-		this.panelManager = panelManager;
-		JSVarHandler = panelManager.getJSVariableHandler();
+		this.eventBus = eventBus;
 		loggedIn = false;
 		username = "";
 		firstLoginAttempt = true;
-	}
-
-	public void startAuthentication(){
+		registerEvents();
 		setupAuthenticationForm();
-		getUserInfo();
 	}
 	
 	private void setupAuthenticationForm(){
@@ -82,26 +81,20 @@ public class Authentication extends Composite {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
 		    	  	if( firstLoginAttempt )
 		    	  		firstLoginAttempt = false;
-		        	getUserInfo();
+		    	  	eventBus.fireEvent(new CheckAuthenticationEvent());
 		      }
 		 });
 		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
         csrftoken.setName("csrfmiddlewaretoken");
 	}
 	
-	private void getUserInfo(){
-		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + checkLoginURL);
-		serverComm.getJson(url, serverComm, "handleUserInformation", this);
-	}
-	
 	public void handleUserInformation(UserInformation userInfo){
 		if( userInfo.isAuthenticated() ){
 			username = userInfo.getUsername();
 			loggedIn = true;
-			panelManager.passControl();
+			eventBus.fireEvent(new AuthenticationSuccessEvent());
 		} else {
 			loggedIn = false;
-			panelManager.showPanel(this);
 			usernameTextBox.setFocus(true);
 			if( !firstLoginAttempt ){
 				errorLabel.setVisible(true);
@@ -109,6 +102,15 @@ public class Authentication extends Composite {
 				passwordTextBox.setText("");
 			} 
 		}
+	}
+	
+	private void registerEvents(){
+		eventBus.addHandler(UserInfoEvent.TYPE, 
+			new UserInfoEventHandler(){
+				public void onUserInfo(UserInfoEvent event){
+					handleUserInformation(event.getUserInfo());
+				}
+		});
 	}
 		
 	@UiHandler("loginButton")
