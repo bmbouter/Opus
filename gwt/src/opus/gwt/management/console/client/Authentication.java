@@ -16,24 +16,21 @@
 
 package opus.gwt.management.console.client;
 
-import opus.gwt.management.console.client.event.CheckAuthenticationEventHandler;
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AuthenticationSuccessEvent;
-import opus.gwt.management.console.client.event.CheckAuthenticationEvent;
 import opus.gwt.management.console.client.event.UserInfoEvent;
 import opus.gwt.management.console.client.event.UserInfoEventHandler;
-import opus.gwt.management.console.client.overlays.UserInformation;
+import opus.gwt.management.console.client.overlays.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -64,7 +61,7 @@ public class Authentication extends Composite {
 	@UiField Label errorLabel;
 
 
-	public Authentication(PanelManager panelManager, HandlerManager eventBus) {
+	public Authentication(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		loggedIn = false;
@@ -74,6 +71,15 @@ public class Authentication extends Composite {
 		setupAuthenticationForm();
 	}
 	
+	private void registerEvents(){
+		eventBus.addHandler(UserInfoEvent.TYPE, 
+			new UserInfoEventHandler(){
+				public void onUserInfo(UserInfoEvent event){
+					handleUserInformation(event.getUserInfo());
+				}
+		});
+	}
+	
 	private void setupAuthenticationForm(){
 		authenticationForm.setMethod(FormPanel.METHOD_POST);
 		authenticationForm.setAction(loginURL);
@@ -81,14 +87,14 @@ public class Authentication extends Composite {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
 		    	  	if( firstLoginAttempt )
 		    	  		firstLoginAttempt = false;
-		    	  	eventBus.fireEvent(new CheckAuthenticationEvent());
+		    	  	eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
 		      }
 		 });
 		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
         csrftoken.setName("csrfmiddlewaretoken");
 	}
 	
-	public void handleUserInformation(UserInformation userInfo){
+	public void handleUserInformation(User userInfo){
 		if( userInfo.isAuthenticated() ){
 			username = userInfo.getUsername();
 			loggedIn = true;
@@ -102,15 +108,6 @@ public class Authentication extends Composite {
 				passwordTextBox.setText("");
 			} 
 		}
-	}
-	
-	private void registerEvents(){
-		eventBus.addHandler(UserInfoEvent.TYPE, 
-			new UserInfoEventHandler(){
-				public void onUserInfo(UserInfoEvent event){
-					handleUserInformation(event.getUserInfo());
-				}
-		});
 	}
 		
 	@UiHandler("loginButton")

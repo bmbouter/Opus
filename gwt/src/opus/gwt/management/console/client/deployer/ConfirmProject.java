@@ -16,8 +16,11 @@
 
 package opus.gwt.management.console.client.deployer;
 
+import opus.gwt.management.console.client.event.PanelTransitionEvent;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -38,11 +41,12 @@ public class ConfirmProject extends Composite {
 
 	private FormPanel deployerForm;
 	private ProjectDeployer projectDeployer;
+	private HandlerManager eventBus;
 	
 	@UiField ScrollPanel confirmationScrollPanel;
 	@UiField Button previousButton;
 	
-	public ConfirmProject(FormPanel deployerForm, ProjectDeployer projectDeployer) {
+	public ConfirmProject(FormPanel deployerForm, ProjectDeployer projectDeployer, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.deployerForm = deployerForm;
 		this.projectDeployer = projectDeployer;
@@ -50,7 +54,7 @@ public class ConfirmProject extends Composite {
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		projectDeployer.showPreviousPanel(this);
+		eventBus.fireEvent(new PanelTransitionEvent("previous", this));
 	}
 	
 	@UiHandler("confirmButton")

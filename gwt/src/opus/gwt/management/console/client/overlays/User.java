@@ -18,9 +18,9 @@ package opus.gwt.management.console.client.overlays;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class UserInformation extends JavaScriptObject {                              // [1]
+public class User extends JavaScriptObject {                              // [1]
 	  // Overlay types always have protected, zero argument constructors.
-	  protected UserInformation() {}
+	  protected User() {}
 
 	  public final native String getUsername() /*-{ return this.username; }-*/;
 	  public final native boolean isAuthenticated() /*-{ return this.authenticated; }-*/;  

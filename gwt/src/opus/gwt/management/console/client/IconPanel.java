@@ -28,6 +28,7 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -48,15 +49,17 @@ public class IconPanel extends Composite {
 	private PanelManager console;
 	private ProjectManager projectManager;
 	private HashMap<String, Integer> iconMap;
+	private HandlerManager eventBus;
 	
 	@UiField ScrollPanel iconScrollPanel;
 	@UiField FlowPanel projectIconsFlowPanel;
 	@UiField ManagementConsoleStyle style;
 
 	
-	public IconPanel(PanelManager console) {
+	public IconPanel(PanelManager console, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.console = console;
+		this.eventBus = eventBus;
 		iconMap = new HashMap<String, Integer>();
 	}
 	
@@ -82,8 +85,8 @@ public class IconPanel extends Composite {
 		testLabel.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
 	        	console.mainDeckPanel.clear();
-	        	console.navigationMenuPanel.clear();
-	        	projectManager = new ProjectManager(console); 
+	        	//console.navigationMenuPanel.clear();
+	        	projectManager = new ProjectManager(eventBus); 
 	        	testLabel.setStyleName(style.projectIcon());
 	        }
 	     });

@@ -16,62 +16,77 @@
 
 package opus.gwt.management.console.client;
 
-import opus.gwt.management.console.client.dashboard.Dashboard;
-import opus.gwt.management.console.client.deployer.AddAppsBuildProject;
-import opus.gwt.management.console.client.deployer.AppBrowser;
-import opus.gwt.management.console.client.deployer.AppIcon;
-import opus.gwt.management.console.client.deployer.DatabaseOptions;
-import opus.gwt.management.console.client.event.CheckAuthenticationEvent;
-import opus.gwt.management.console.client.event.CheckAuthenticationEventHandler;
-import opus.gwt.management.console.client.event.GetAppInfoEvent;
-import opus.gwt.management.console.client.event.GetAppInfoEventHandler;
+import java.util.HashMap;
+
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
+import opus.gwt.management.console.client.event.AsyncRequestEventHandler;
+import opus.gwt.management.console.client.event.ImportAppListEvent;
 import opus.gwt.management.console.client.event.UpdateAppInfoEvent;
-import opus.gwt.management.console.client.event.UpdateAppInfoEventHandler;
+import opus.gwt.management.console.client.event.UpdateDBOptionsEvent;
+import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
+import opus.gwt.management.console.client.event.UpdateProjectInformationEvent;
+import opus.gwt.management.console.client.event.UpdateVersionInfoEvent;
 import opus.gwt.management.console.client.event.UserInfoEvent;
-import opus.gwt.management.console.client.overlays.AppInfo;
-import opus.gwt.management.console.client.overlays.DatabaseOptionsData;
-import opus.gwt.management.console.client.overlays.ModelProperties;
-import opus.gwt.management.console.client.overlays.ProjectCommunityApplication;
-import opus.gwt.management.console.client.overlays.ProjectData;
-import opus.gwt.management.console.client.overlays.ProjectFieldData;
-import opus.gwt.management.console.client.overlays.ProjectInformation;
-import opus.gwt.management.console.client.overlays.ProjectManualApplication;
-import opus.gwt.management.console.client.overlays.ProjectNames;
-import opus.gwt.management.console.client.overlays.UserInformation;
-import opus.gwt.management.console.client.overlays.VersionData;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 
 public class ServerCommunicator {
 	
-	private final String checkLoginURL = "/json/username/?a&callback=";
-	private final String appListURL = "/json/search/application/?a&callback=";
+	private final String userURL = "/json/username/?a&callback=";
+	private final String dbOptionsURL = "/json/database/?callback=";
+	private final String applicationURL = "/json/search/application/?a&callback=";
+	private final String featuredListURL =  "/json/featured/?a&callback=";
+	private final String importAppListURL = "/project/configuration/<placeHolder>/?callback=";
+	private final String versionURL = "/json/application/<placeHolder>/versions/?a&callback=";
+	private final String projectURL = "/json/projects/<placeHolder>/?a&callback=";
 	
 	private int requestId;
-	private Object[] queue;
 	private String[] queryTypes;
 	private HandlerManager eventBus;
 	private ServerCommunicator handler;
 	private JSVariableHandler JSvarHandler;
+	private HashMap<String, String> URLS;
 	
 	public ServerCommunicator(HandlerManager eventBus) {
-		this.queue = new Object[50];
+		this.URLS = new HashMap<String, String>();
 		this.queryTypes = new String[50];
 		this.requestId = 0;
 		this.eventBus = eventBus;
 		this.handler = this;
 		JSvarHandler = new JSVariableHandler();
+		setupURLS();
 		registerEvents();
 	}
+	
+	private void setupURLS(){
+		URLS.put("handleUser", JSvarHandler.getDeployerBaseURL() + userURL);
+		URLS.put("handleDBOptions", JSvarHandler.getDeployerBaseURL() + dbOptionsURL);
+		URLS.put("handleApplication", JSvarHandler.getRepoBaseURL() + applicationURL);
+		URLS.put("handleFeaturedList", JSvarHandler.getRepoBaseURL() + featuredListURL);
+		URLS.put("handleImportAppList", JSvarHandler.getRepoBaseURL() + importAppListURL);
+		URLS.put("handleVersion", JSvarHandler.getRepoBaseURL() + versionURL);
+		URLS.put("handleProjectInformation", JSvarHandler.getDeployerBaseURL() + projectURL);
+	}
+	
+	private void registerEvents(){
+		eventBus.addHandler(AsyncRequestEvent.TYPE, 
+			new AsyncRequestEventHandler(){
+				public void onAsyncRequest(AsyncRequestEvent event){
+					if( event.hasUrlVariable() ){
+						getJson(URL.encode(URLS.get(event.getRequestHandle()).replaceAll("<placeHolder>", event.getUrlVariable())), event.getRequestHandle());
+					} else {
+						getJson(URL.encode(URLS.get(event.getRequestHandle())), event.getRequestHandle());
+					}
+				}
+		});
+	}
 
-	public void getJson(String url, String queryType, Object parent){
-		queue[requestId] = parent;
+	public void getJson(String url, String queryType){
 		queryTypes[requestId] = queryType;
-		requestJson(requestId, url, handler);
+		requestJson(requestId, url, this);
 		requestId++;
 	}
 	
@@ -105,10 +120,7 @@ public class ServerCommunicator {
 	   // [6] Attach the script element to the document body.
 	   document.body.appendChild(script);
 	}-*/;
-	  
-	  /**
-	   * Handle the response to the request for stock data from a remote server.
-	   */
+	
 	public void handleJsonResponse(JavaScriptObject jso, String error, int rId) {
 		String queryType = queryTypes[rId];
 		
@@ -121,86 +133,22 @@ public class ServerCommunicator {
 				return;	
 			}
 	    } else {
-		    
-		    Object parent = queue[rId];
-		    
-		    if (queryType.equals("handleUserInformation")) {
+	    	
+		    if (queryType.equals("handleUser")) {
 		    	eventBus.fireEvent(new UserInfoEvent(jso));
-		    } else if (queryType == "handleAppInfo") {
+		    } else if (queryType == "handleApplication") {
 		    	eventBus.fireEvent(new UpdateAppInfoEvent(jso));
-		    } else if (queryType.equals("updateFieldList")) {
-		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
-		    	p.updateFieldList(asModelProperties(jso));
-		    } else if (queryType.equals("handleVersions")) {
-		    	AddAppsBuildProject p = (AddAppsBuildProject)parent;
-		    	p.handleVersions(asArrayOfVersionData(jso));
-		    } else if (queryType.equals("handleProjectInformation")) {
-		    	Dashboard db = (Dashboard)parent;
-		    	db.handleProjectInformation(asJSOProjectInformation(jso));
-		    } else if (queryType.equals("importAppList")) {	    	
-		    	AppBrowser p = (AppBrowser)parent;
-		    	p.importAppList(asArrayOfProjectData(jso));
+		    } else if(queryType == "handleFeaturedList"){
+		    	eventBus.fireEvent(new UpdateFeaturedListEvent(jso));
 		    } else if (queryType.equals("handleDBOptions")){
-		    	DatabaseOptions db = (DatabaseOptions)parent;
-		    	db.handleDBOptions(asArrayOfDBOptionsData(jso));
-		    } else if(queryType == "getVersionInfo"){
-		    	AppIcon p = (AppIcon)parent;
-		    	p.handleVersionInfo(asArrayOfVersionData(jso));
-		    } else if(queryType == "getFeaturedList"){
-		    	AppBrowser p = (AppBrowser)parent;
-		    	p.populateFeaturedList(jso);
+		    	eventBus.fireEvent(new UpdateDBOptionsEvent(jso));
+		    } else if (queryType.equals("handleProjectInformation")) {
+		     	eventBus.fireEvent(new UpdateProjectInformationEvent(jso));
+		    } else if (queryType.equals("handleImportAppList")) {	    	
+		    	eventBus.fireEvent(new ImportAppListEvent(jso));
+		    } else if(queryType == "handleVersion"){
+		    	eventBus.fireEvent(new UpdateVersionInfoEvent(jso));
 		    }
 	    }
-	  }
-	
-	private void registerEvents(){
-		eventBus.addHandler(CheckAuthenticationEvent.TYPE, 
-			new CheckAuthenticationEventHandler(){
-				public void onCheckAuthentication(CheckAuthenticationEvent event){
-					getJson(URL.encode(JSvarHandler.getDeployerBaseURL() + checkLoginURL), "handleUserInformation", (Object)this);
-				}
-		});
-		eventBus.addHandler(GetAppInfoEvent.TYPE, 
-			new GetAppInfoEventHandler(){
-				public void onGetAppInfo(GetAppInfoEvent event){
-					getJson(URL.encode(JSvarHandler.getRepoBaseURL() + appListURL), "handleAppInfo", (Object)this);
-				}
-		});
 	}
-	
-	public final native DatabaseOptionsData asArrayOfDBOptionsData(JavaScriptObject jso) /*-{
-		return jso;
-	}-*/;
-	
-	public final native JsArray<ProjectNames> asArrayOfProjectNames(JavaScriptObject jso) /*-{
-		return jso;
-	}-*/;
-	  
-	  public final native ModelProperties asModelProperties(JavaScriptObject jso) /*-{
-	    return jso;
-	  }-*/;
-	  
-	  public final native JsArray<VersionData> asArrayOfVersionData(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;
-	  
-	  public final native JsArray<ProjectData> asArrayOfProjectData(JavaScriptObject jso) /*-{
-		return jso;
-	  }-*/;
-	  
-	  public final native JsArray<ProjectFieldData> asArrayOfProjectFieldData(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;
-	  
-	  public final native JsArray<ProjectManualApplication> asArrayOfProjectManualApplications(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;	
-	  
-	  public final native JsArray<ProjectCommunityApplication> asArrayOfProjectCommunityApplications(JavaScriptObject jso) /*-{
-	  	return jso;
-	  }-*/;
-
-	public final native ProjectInformation asJSOProjectInformation(JavaScriptObject jso) /*-{
-		return jso;
-	}-*/;
 }

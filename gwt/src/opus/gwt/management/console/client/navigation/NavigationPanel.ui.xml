@@ -11,7 +11,7 @@
 	 		<g:FormPanel ui:field='logoutForm' styleName='{style.logoutPanel}'>
 	 			<g:Button ui:field="logoutButton" styleName="{style.button} {style.logoutButton}">Logout</g:Button>
 	 		</g:FormPanel>	 			
-	 		<g:Button ui:field="dashboardsButton" styleName="{style.button}">My Projects</g:Button>
+	 		<g:Button ui:field="projectsButton" styleName="{style.button}">My Projects</g:Button>
 			<g:Button ui:field="deployNewButton" styleName="{style.button}">Deploy New Project</g:Button>
 			<g:Button ui:field="loggedInUserButton" styleName="{style.button} {style.username}">edhelms</g:Button>
 	 	</g:HTMLPanel>

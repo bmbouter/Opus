@@ -18,8 +18,8 @@ package opus.gwt.management.console.client.overlays;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class DatabaseOptionsData extends JavaScriptObject {
-	protected DatabaseOptionsData() {}                                 
+public class DBOptions extends JavaScriptObject {
+	protected DBOptions() {}                                 
 
 	public final native boolean getAutoPostgresConfig() /*-{ 
 		return this.OPUS_AUTO_POSTGRES_CONFIG; 

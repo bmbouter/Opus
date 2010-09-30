@@ -16,19 +16,15 @@
 
 package opus.gwt.management.console.client.dashboard;
 
-import opus.gwt.management.console.client.PanelManager;
 import opus.gwt.management.console.client.navigation.BreadCrumbs;
 import opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ProjectManager extends Composite {
@@ -40,7 +36,7 @@ public class ProjectManager extends Composite {
 	private DeleteProject deleteProject;
 	private ManageApps manageApps;
 	private ProjectSettings projectSettings;
-	private PanelManager panelManager;
+	private HandlerManager eventBus;
 	
 	private int navigationMenuFocusFlag;
 	private enum DeckPanels{DASHBOARDPANEL, DELETEPROJECTPANEL, OPTIONSPANEL};
@@ -49,10 +45,10 @@ public class ProjectManager extends Composite {
 	@UiField DeckPanel managerDeckPanel;
 	@UiField BreadCrumbs breadCrumbs;
 	
-	public ProjectManager(PanelManager panelManager){
+	public ProjectManager(HandlerManager eventBus){
 		initWidget(uiBinder.createAndBindUi(this));
-		this.panelManager = panelManager;
-		dashboard = new Dashboard(panelManager.getServerCommunicator(), this);
+		this.eventBus = eventBus;
+		dashboard = new Dashboard(this, eventBus);
 		deleteProject = new DeleteProject(this);
 		//manageApps = new ManageApps();
 		projectSettings = new ProjectSettings(this);

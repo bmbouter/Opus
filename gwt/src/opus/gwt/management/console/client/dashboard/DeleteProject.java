@@ -17,7 +17,6 @@
 package opus.gwt.management.console.client.dashboard;
 
 import opus.gwt.management.console.client.JSVariableHandler;
-import opus.gwt.management.console.client.PanelManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

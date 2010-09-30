@@ -18,16 +18,18 @@ package opus.gwt.management.console.client.deployer;
 
 import java.util.HashMap;
 
-import opus.gwt.management.console.client.JSVariableHandler;
-import opus.gwt.management.console.client.ServerCommunicator;
-import opus.gwt.management.console.client.overlays.DatabaseOptionsData;
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
+import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.event.UpdateDBOptionsEvent;
+import opus.gwt.management.console.client.event.UpdateDBOptionsEventHandler;
+import opus.gwt.management.console.client.overlays.DBOptions;
 import opus.gwt.management.console.client.tools.TooltipPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.http.client.URL;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -43,15 +45,12 @@ public class DatabaseOptions extends Composite {
 
 	private static DatabaseOptionsUiBinder uiBinder = GWT.create(DatabaseOptionsUiBinder.class);
 	interface DatabaseOptionsUiBinder extends UiBinder<Widget, DatabaseOptions> {}
-
-	final String dbOptionsURL = "/json/database/?callback=";
 	
 	private ProjectDeployer projectDeployer;
 	private HashMap<String, String> dbOptions;
 	private boolean optionsFlag;
-	private JSVariableHandler JSVarHandler;
-	private ServerCommunicator serverComm;
 	private boolean postgresAutoConfig;
+	private HandlerManager eventBus;
 	
 	@UiField HTMLPanel dbFieldsPanel;
 	@UiField TextBox nameTextBox;
@@ -64,25 +63,28 @@ public class DatabaseOptions extends Composite {
 	@UiField HTMLPanel databaseOptionsPanel;
 	@UiField TooltipPanel active;
 	
-	public DatabaseOptions(ProjectDeployer projectDeployer, ServerCommunicator serverComm) {
+	public DatabaseOptions(ProjectDeployer projectDeployer, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
-		JSVarHandler = new JSVariableHandler();
+		this.eventBus = eventBus;
 		postgresAutoConfig = false;
-		this.serverComm = serverComm;
 		this.projectDeployer = projectDeployer;
 		dbOptions = new HashMap<String, String>();
+		registerEvents();
 		checkForDBOptions();
 		setTooltipInitialState();
 	}
 	
+	private void registerEvents(){
+		eventBus.addHandler(UpdateDBOptionsEvent.TYPE, 
+			new UpdateDBOptionsEventHandler(){
+				public void onUpdateDBOptions(UpdateDBOptionsEvent event){
+					handleDBOptions(event.getDBOptionsData());
+				}
+		});
+	}
+	
 	private void checkForDBOptions(){
-		if( dbOptionsURL.equals("")){
-			optionsFlag = true;
-			setupDBOptions();
-		} else {
-			final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + dbOptionsURL);
-			serverComm.getJson(url, "handleDBOptions", this);
-		}
+		eventBus.fireEvent(new AsyncRequestEvent("handleDBOptions"));
 	}
 	
 	private void setupDBOptions(){
@@ -126,13 +128,13 @@ public class DatabaseOptions extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			projectDeployer.showNextPanel(this);
+			eventBus.fireEvent(new PanelTransitionEvent("next", this));
 		}
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		projectDeployer.showPreviousPanel(this);
+		eventBus.fireEvent(new PanelTransitionEvent("previous", this));
 	}
 	
 	@UiHandler("nameTextBox")
@@ -204,7 +206,7 @@ public class DatabaseOptions extends Composite {
 		}
 	}
 	
-	public void handleDBOptions(DatabaseOptionsData dbOptionsData){
+	public void handleDBOptions(DBOptions dbOptionsData){
 		optionsFlag = false;
 		
 		String[] options = dbOptionsData.getAllowedDatabases().split(",");

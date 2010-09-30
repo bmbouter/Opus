@@ -1,6 +1,6 @@
 package opus.gwt.management.console.client.event;
 
-import opus.gwt.management.console.client.overlays.AppInfo;
+import opus.gwt.management.console.client.overlays.Application;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -10,14 +10,14 @@ import com.google.gwt.event.shared.GwtEvent;
 public class UpdateAppInfoEvent extends GwtEvent<UpdateAppInfoEventHandler> {
 	
 	public static Type<UpdateAppInfoEventHandler> TYPE = new Type<UpdateAppInfoEventHandler>();
-	private JsArray<AppInfo> appInfo;
+	private JsArray<Application> application;
 	
 	public UpdateAppInfoEvent(JavaScriptObject appInfo){
-		this.appInfo = ConvertAppInfo(appInfo);
+		this.application = ConvertAppInfo(appInfo);
 	}
 	
-	public JsArray<AppInfo> getAppInfo(){
-		return appInfo;
+	public JsArray<Application> getAppInfo(){
+		return application;
 	}
 	
   	@Override
@@ -30,7 +30,7 @@ public class UpdateAppInfoEvent extends GwtEvent<UpdateAppInfoEventHandler> {
 	  handler.onUpdateAppInfo(this);
   	}
   	
-	public final native JsArray<AppInfo> ConvertAppInfo(JavaScriptObject jso) /*-{
+	public final native JsArray<Application> ConvertAppInfo(JavaScriptObject jso) /*-{
 		return jso;
 	}-*/;
 }

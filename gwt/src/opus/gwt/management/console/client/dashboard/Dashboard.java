@@ -17,13 +17,15 @@
 package opus.gwt.management.console.client.dashboard;
 
 import opus.gwt.management.console.client.JSVariableHandler;
-import opus.gwt.management.console.client.ServerCommunicator;
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
+import opus.gwt.management.console.client.event.UpdateProjectInformationEvent;
+import opus.gwt.management.console.client.event.UpdateProjectInformationEventHandler;
 import opus.gwt.management.console.client.overlays.ProjectInformation;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.http.client.URL;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -34,19 +36,14 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Dashboard extends Composite {
 
-	private static DashboardUiBinder uiBinder = GWT
-			.create(DashboardUiBinder.class);
-
-	interface DashboardUiBinder extends UiBinder<Widget, Dashboard> {
-	}
-
-	private final String projectInfoURL = "/json/projects/projectName/?a&callback=";
+	private static DashboardUiBinder uiBinder = GWT.create(DashboardUiBinder.class);
+	interface DashboardUiBinder extends UiBinder<Widget, Dashboard> {}
 	
-	private ServerCommunicator serverComm;
 	private JSVariableHandler JSVarHandler;
 	private JavaScriptObject appSettings;
 	private ProjectManager projectManager;
 	private boolean active;
+	private HandlerManager eventBus;
 
 	@UiField FlowPanel applicationsFlowPanel;
 	@UiField Label dbnameLabel;
@@ -54,16 +51,25 @@ public class Dashboard extends Composite {
 	@UiField Label activeLabel;
 	@UiField FlowPanel urlsFlowPanel;
 	
-	public Dashboard(ServerCommunicator serverComm, ProjectManager projectManager) {
+	public Dashboard(ProjectManager projectManager, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.serverComm = serverComm;
 		JSVarHandler = new JSVariableHandler();
 		this.projectManager = projectManager;
+		this.eventBus = eventBus;
+		registerEvents();
+	}
+	
+	private void registerEvents(){
+		eventBus.addHandler(UpdateProjectInformationEvent.TYPE, 
+			new UpdateProjectInformationEventHandler(){
+				public void onUpdateProjectInformation(UpdateProjectInformationEvent event){
+					handleProjectInformation(event.getProjectInformation());
+				}
+		});
 	}
 	
 	private void getProjectInfo(String projectName){
-		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + projectInfoURL.replaceAll("/projectName/", "/" + projectName +"/"));
-		serverComm.getJson(url, "handleProjectInformation", this);
+		eventBus.fireEvent(new AsyncRequestEvent("handleProjectInformation", projectName));
 	}
 	
 	public void handleProjectInformation(ProjectInformation projInfo){

@@ -17,11 +17,13 @@
 package opus.gwt.management.console.client.deployer;
 
 import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.tools.TooltipPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -39,6 +41,7 @@ public class DeploymentOptions extends Composite {
 
 	private ProjectDeployer projectDeployer;
 	private JSVariableHandler JSVarHandler;
+	private HandlerManager eventBus;
 	
 	@UiField Button nextButton;
 	@UiField Button previousButton;
@@ -46,8 +49,9 @@ public class DeploymentOptions extends Composite {
 	@UiField TextBox projectNameTextBox;
 	@UiField TooltipPanel active;
 
-	public DeploymentOptions(ProjectDeployer projectDeployer) {
+	public DeploymentOptions(ProjectDeployer projectDeployer, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
+		this.eventBus = eventBus;
 		this.projectDeployer = projectDeployer;
 		JSVarHandler = new JSVariableHandler();
 		baseUrlLabel.setText(JSVarHandler.getDeployerBaseURL());
@@ -73,13 +77,13 @@ public class DeploymentOptions extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			projectDeployer.showNextPanel(this);
+			eventBus.fireEvent(new PanelTransitionEvent("next", this));
 		}
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		projectDeployer.showPreviousPanel(this);
+		eventBus.fireEvent(new PanelTransitionEvent("previous", this));
 	}
 	
 	@UiHandler("projectNameTextBox")

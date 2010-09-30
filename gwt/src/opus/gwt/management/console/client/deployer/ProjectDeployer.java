@@ -20,7 +20,10 @@ import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.PanelManager;
+import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbs;
+import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -65,21 +68,44 @@ public class ProjectDeployer extends Composite {
 	@UiField BreadCrumbs breadCrumbs;
 	//@UiField MainMenu mainMenu;
 	
-	public ProjectDeployer(PanelManager panelManager, HandlerManager eventBus) {
+	public ProjectDeployer(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.panelManager = panelManager;
 		this.eventBus = eventBus;
 		createdProjectName = "";
 		this.deployerForm = new FormPanel();
-		this.appBrowser = new AppBrowser(this, panelManager.getServerCommunicator(), eventBus);
-		this.projectOptions = new ProjectOptions(this);
-		this.databaseOptions = new DatabaseOptions(this, panelManager.getServerCommunicator());
-		this.deploymentOptions = new DeploymentOptions(this);
-		this.confirmBP = new ConfirmProject(deployerForm, this);
+		this.appBrowser = new AppBrowser(this, eventBus);
+		this.projectOptions = new ProjectOptions(this, eventBus);
+		this.databaseOptions = new DatabaseOptions(this, eventBus);
+		this.deploymentOptions = new DeploymentOptions(this, eventBus);
+		this.confirmBP = new ConfirmProject(deployerForm, this, eventBus);
 		JSVarHandler = new JSVariableHandler();
+		registerEvents();
 		setupdeployerDeckPanel();
 		setupBreadCrumbs();
 		setupDeployerForm();
+	}
+	
+	private void registerEvents(){
+		eventBus.addHandler(PanelTransitionEvent.TYPE, 
+			new PanelTransitionEventHandler(){
+				public void onPanelTransition(PanelTransitionEvent event){
+					Widget panel =  event.getPanel();
+					if( event.getTransitionType().equals("next")){
+						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) + 1);
+						breadCrumbs.setActiveCrumb(deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle());
+						if( panel.getClass().equals(databaseOptions.getClass()) ){
+							deploymentOptions.setFocus();
+						} else if( panel.getClass().equals(appBrowser.getClass()) ){
+							projectOptions.setFocus();
+						} else if( panel.getClass().equals(projectOptions.getClass()) ){
+							databaseOptions.setFocus();
+						}
+					} else {
+						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) - 1);
+						breadCrumbs.setActiveCrumb(deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle());
+					}
+				}
+		});
 	}
 	
 	private void setupdeployerDeckPanel(){
@@ -108,26 +134,9 @@ public class ProjectDeployer extends Composite {
 		 deployerForm.setMethod(FormPanel.METHOD_POST);
 		  deployerForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        panelManager.onDeployNewProject(createdProjectName);
+		        //panelManager.onDeployNewProject(createdProjectName);
 		      }
 		    });
-	}
-	
-	public void showNextPanel(Widget panel){
-		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) + 1);
-		breadCrumbs.setActiveCrumb(deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle());
-		if( panel.getClass().equals(databaseOptions.getClass()) ){
-			deploymentOptions.setFocus();
-		} else if( panel.getClass().equals(appBrowser.getClass()) ){
-			projectOptions.setFocus();
-		} else if( panel.getClass().equals(projectOptions.getClass()) ){
-			databaseOptions.setFocus();
-		}
-	}
-
-	public void showPreviousPanel(Widget panel){
-		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) - 1);
-		breadCrumbs.setActiveCrumb(deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle());
 	}
 	
 	  void handleConfirmBuildProjectLoad() {

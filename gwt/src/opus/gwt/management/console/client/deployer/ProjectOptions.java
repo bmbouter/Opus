@@ -16,27 +16,22 @@
 
 package opus.gwt.management.console.client.deployer;
 
+import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.tools.TooltipPanel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -46,6 +41,7 @@ public class ProjectOptions extends Composite {
 	interface BuildProjectPage2UiBinder extends UiBinder<Widget, ProjectOptions> {}
 	
 	private ProjectDeployer projectDeployer;
+	private HandlerManager eventBus;
 	
 	@UiField TextBox usernameTextBox;
 	@UiField TextBox emailTextBox;
@@ -57,9 +53,10 @@ public class ProjectOptions extends Composite {
 	@UiField ListBox idProvider;
 	@UiField TooltipPanel active;
 	
-	public ProjectOptions(ProjectDeployer projectDeployer) {
+	public ProjectOptions(ProjectDeployer projectDeployer, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.projectDeployer = projectDeployer;
+		this.eventBus = eventBus;
 		setTooltipInitialState();
 	}
 	
@@ -130,13 +127,13 @@ public class ProjectOptions extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			projectDeployer.showNextPanel(this);
+			eventBus.fireEvent(new PanelTransitionEvent("next", this));
 		}
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		projectDeployer.showPreviousPanel(this);
+		eventBus.fireEvent(new PanelTransitionEvent("previous", this));
 	}
 	
 	public void setFocus(){

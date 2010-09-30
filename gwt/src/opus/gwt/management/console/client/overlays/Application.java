@@ -2,9 +2,9 @@ package opus.gwt.management.console.client.overlays;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class AppInfo extends JavaScriptObject {                              // [1]
+public class Application extends JavaScriptObject {                              // [1]
   // Overlay types always have protected, zero argument constructors.
-  protected AppInfo() {}                                              // [2]
+  protected Application() {}                                              // [2]
 
   // JSNI methods to get stock data.
   public final native int getPk() /*-{ return this.pk }-*/;

@@ -26,6 +26,9 @@
 	margin: 0;
 	padding: 0;
 }
+.navigationPanel{
+	min-height: 3em;
+}
 
 
 .mainPanel {

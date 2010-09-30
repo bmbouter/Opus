@@ -2,12 +2,15 @@ package opus.gwt.management.console.client.deployer;
 
 
 import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.event.UpdateVersionInfoEvent;
+import opus.gwt.management.console.client.event.UpdateVersionInfoEventHandler;
 import opus.gwt.management.console.client.overlays.VersionData;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -42,9 +45,10 @@ public class AppIcon extends Composite {
 	private FormPanel versionForm;
 	private VerticalPanel formContainer;
 	private int selectedVersion;
+	private HandlerManager eventBus;
 
 	
-	public AppIcon(String name, String email, String author, String iconURL, String description, int pk, String path) {
+	public AppIcon(String name, String email, String author, String iconURL, String description, int pk, String path, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
 		versionForm = new FormPanel();
@@ -57,6 +61,8 @@ public class AppIcon extends Composite {
 		this.desc = description;
 		this.pk = String.valueOf(pk);
 		this.path = path;
+		this.eventBus = eventBus;
+		registerEvents();
 	}
 	
 	public void setIconHTML(String html) {
@@ -118,6 +124,15 @@ public class AppIcon extends Composite {
 	
 	public String getType(){
 		return "git";
+	}
+	
+	private void registerEvents(){
+		eventBus.addHandler(UpdateVersionInfoEvent.TYPE, 
+			new UpdateVersionInfoEventHandler(){
+				public void onUpdateVersionInfo(UpdateVersionInfoEvent event){
+					handleVersionInfo(event.getVersionInfo());
+				}
+		});
 	}
 	
 	public void handleVersionInfo(JsArray <VersionData> data){

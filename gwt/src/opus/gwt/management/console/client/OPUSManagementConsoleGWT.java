@@ -35,7 +35,7 @@ public class OPUSManagementConsoleGWT implements EntryPoint {
 	public void onModuleLoad() {
 		HandlerManager eventBus = new HandlerManager(null);
 		ServerCommunicator serverComm = new ServerCommunicator(eventBus);
-		PanelManager panelManager = new PanelManager(eventBus, serverComm);
+		PanelManager panelManager = new PanelManager(eventBus);
 		RootPanel.get().add(panelManager);
 	}
 }

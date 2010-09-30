@@ -16,35 +16,21 @@
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:c="urn:import:opus.gwt.management.console.client.navigation">
 	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle"/>
 	
 	<g:RootLayoutPanel styleName='{style.rootLayoutPanel}'>
 		<g:layer>
-			<g:DeckPanel ui:field='mainDeckPanel' styleName="{style.mainDeckPanel}">
-					<g:DockLayoutPanel ui:field='subMainPanel' styleName="{style.subMainPanel}" unit='PCT'>
-						<g:north size='3'>
-							<g:FlowPanel ui:field="topMenuFlowPanel" styleName="{style.topMenuPanel}">
-								<g:Button ui:field="dashboardsButton" visible='false' styleName="{style.topDashboardButton}">My Projects</g:Button>
-								<g:Button ui:field="deployNewButton" visible='false' styleName="{style.topDeployNewButton}">Deploy New Project</g:Button>
-								<g:Button ui:field="authenticationButton" visible='false' styleName="{style.authenticationButton}">Logout</g:Button>
-								<g:Button ui:field="loggedInUserButton" visible='false' styleName="{style.loggedInAsLabel}"></g:Button>
-							</g:FlowPanel>
-						</g:north>
-						<g:north size='8'>
-							<g:Label ui:field='titleBarLabel' styleName="{style.titleBar}"> 
-							</g:Label>
-						</g:north>
-						<g:west size ='12'>
-							<g:FlowPanel ui:field='navigationMenuPanel' styleName="{style.navigationMenu}">
-							</g:FlowPanel>
-						</g:west>
-						<g:east size='88'>	
-							<g:DeckPanel ui:field="mainDePanel" styleName="{style.mainDeckPanel}">
-							</g:DeckPanel>
-						</g:east>		
-					</g:DockLayoutPanel>
-			</g:DeckPanel>
+			<g:DockLayoutPanel unit='PCT'>
+				<g:north size="4">
+					<c:NavigationPanel ui:field="navigationPanel" styleName="{style.navigationPanel}"/>
+				</g:north>
+				<g:north size="96">
+					<g:DeckPanel ui:field='mainDeckPanel' styleName="{style.mainDeckPanel}">
+					</g:DeckPanel>
+				</g:north>
+			</g:DockLayoutPanel>
 		</g:layer>
 	</g:RootLayoutPanel>
 	
