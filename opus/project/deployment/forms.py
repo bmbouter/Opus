@@ -59,7 +59,7 @@ class ProjectForm(forms.Form):
 
 class AppForm(forms.Form):
     """Form to ask for parameters about one app within a project"""
-    appname = IdentifierField(required=True)
+    appname = CharField(required=True)
     apppath = CharField(required=True)
     apptype = ChoiceField(
             required=True,
