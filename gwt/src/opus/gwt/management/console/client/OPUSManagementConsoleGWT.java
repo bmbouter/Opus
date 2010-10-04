@@ -18,6 +18,7 @@ package opus.gwt.management.console.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -36,6 +37,6 @@ public class OPUSManagementConsoleGWT implements EntryPoint {
 		HandlerManager eventBus = new HandlerManager(null);
 		ServerCommunicator serverComm = new ServerCommunicator(eventBus);
 		PanelManager panelManager = new PanelManager(eventBus);
-		RootPanel.get().add(panelManager);
+		RootLayoutPanel.get().add(panelManager);
 	}
 }
