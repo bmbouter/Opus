@@ -19,7 +19,43 @@
 	padding: 0;	
 	border: 2px solid red;
 	border-radius: 5px;
+	font-family: Helvetica, Arial, Verdana, sans-serif;
+	font-size: .8em;
 }
+
+input {
+	border: 1px solid black;
+}
+
+select {
+	margin: 0px 0px 0px 10px;
+}
+
+.header {
+    width: 100%;
+    background: #ED9E16;
+    height: 60px;
+    border-bottom: solid #CC8202 2px;
+    margin-bottom: 5px;
+}
+
+.header h1 {
+    margin: 0px;
+    padding: 8px 0 0 10px;
+    font-size: 40px;
+    color: #CC8202;
+    font-weight: bold;
+}
+
+.insetType {
+	text-shadow: rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;
+}
+
+.buttons {
+	margin: 10px 0px 0px 10px;
+	float: left;
+}
+
 .navigationPanel{
 
 }
