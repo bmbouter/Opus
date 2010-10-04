@@ -23,14 +23,18 @@ import opus.gwt.management.console.client.event.AuthenticationSuccessEvent;
 import opus.gwt.management.console.client.event.AuthenticationSuccessEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
+import opus.gwt.management.console.client.navigation.BreadCrumbs;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
@@ -45,20 +49,17 @@ public class PanelManager extends Composite {
 	private ProjectManager projectManager;
 	private IconPanel iconPanel;
 	
-	@UiField DeckPanel mainDeckPanel;
+	@UiField LayoutPanel mainDeckPanel;
 	@UiField NavigationPanel navigationPanel;
+	@UiField BreadCrumbs breadCrumbs;
 	
 	public PanelManager(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		navigationPanel.setEventBus(eventBus);
+		breadCrumbs.setEventBus(eventBus);
 		registerEvents();
-		authenticationPanel = new Authentication(eventBus);
-		projectDeployer = new ProjectDeployer(eventBus);
-		projectManager = new ProjectManager(eventBus);
 		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
-		//deployProject();
-		//manageProjects(); 
 	}
 	
 	private void registerEvents(){
@@ -73,29 +74,39 @@ public class PanelManager extends Composite {
 				public void onPanelTransition(PanelTransitionEvent event){
 					if( event.getTransitionType().equals("deploy") ){
 						showDeployer();
+					} else if( event.getTransitionType().equals("projects") ){
+						showIconPanel();
 					}
 				}
 		});
 	}
 	
 	private void showAuthentication(){
-		mainDeckPanel.insert(authenticationPanel, 0);
-		mainDeckPanel.showWidget(0);
+		authenticationPanel = new Authentication(eventBus);
+		mainDeckPanel.clear();
+		mainDeckPanel.add(authenticationPanel);
+		//mainDeckPanel.insert(authenticationPanel, 0);
+		//mainDeckPanel.showWidget(0);
 	}
 	
 	private void showDeployer(){
 		projectDeployer = new ProjectDeployer(eventBus);
 		mainDeckPanel.clear();
-		mainDeckPanel.insert(projectDeployer, 0);
-		mainDeckPanel.showWidget(0);
+		mainDeckPanel.add(projectDeployer);
+		mainDeckPanel.setVisible(true);
+		//mainDeckPanel.insert(projectDeployer, 0);
+		//mainDeckPanel.showWidget(0);
 	}
 	
 	private void manageProjects(){
-		mainDeckPanel.insert(projectManager, 0);
-		mainDeckPanel.showWidget(0);
-	}	
+		projectManager = new ProjectManager(eventBus);
+		//mainDeckPanel.insert(projectManager, 0);
+		//mainDeckPanel.showWidget(0);
+	}
 	
-	public void showPanel(Object panel){
-		mainDeckPanel.showWidget(mainDeckPanel.getWidgetIndex((Widget) panel));
+	private void showIconPanel(){
+		iconPanel = new IconPanel(eventBus);
+		//mainDeckPanel.insert(iconPanel, 0);
+		//mainDeckPanel.showWidget(0);
 	}
 }

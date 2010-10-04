@@ -40,14 +40,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class IconPanel extends Composite {
 	
-	private static IconPanelUiBinder uiBinder = GWT
-			.create(IconPanelUiBinder.class);
-
-	interface IconPanelUiBinder extends UiBinder<Widget, IconPanel> {
-	}
+	private static IconPanelUiBinder uiBinder = GWT.create(IconPanelUiBinder.class);
+	interface IconPanelUiBinder extends UiBinder<Widget, IconPanel> {}
 	
-	private PanelManager console;
-	private ProjectManager projectManager;
 	private HashMap<String, Integer> iconMap;
 	private HandlerManager eventBus;
 	
@@ -56,9 +51,8 @@ public class IconPanel extends Composite {
 	@UiField ManagementConsoleStyle style;
 
 	
-	public IconPanel(PanelManager console, HandlerManager eventBus) {
+	public IconPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.console = console;
 		this.eventBus = eventBus;
 		iconMap = new HashMap<String, Integer>();
 	}
@@ -84,9 +78,9 @@ public class IconPanel extends Composite {
 		});
 		testLabel.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
-	        	console.mainDeckPanel.clear();
+	        	//console.mainDeckPanel.clear();
 	        	//console.navigationMenuPanel.clear();
-	        	projectManager = new ProjectManager(eventBus); 
+	        	//projectManager = new ProjectManager(eventBus); 
 	        	testLabel.setStyleName(style.projectIcon());
 	        }
 	     });

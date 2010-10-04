@@ -2,11 +2,17 @@ package opus.gwt.management.console.client.navigation;
 
 import java.util.HashMap;
 
+import opus.gwt.management.console.client.event.AuthenticationSuccessEvent;
+import opus.gwt.management.console.client.event.AuthenticationSuccessEventHandler;
+import opus.gwt.management.console.client.event.BreadCrumbEvent;
+import opus.gwt.management.console.client.event.BreadCrumbEventHandler;
 import opus.gwt.management.console.client.resources.BreadCrumbCss.BreadCrumbStyle;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -18,6 +24,7 @@ public class BreadCrumbs extends Composite {
 	private static BreadCrumbsUiBinder uiBinder = GWT.create(BreadCrumbsUiBinder.class);
 	interface BreadCrumbsUiBinder extends UiBinder<Widget, BreadCrumbs> {}
 	
+	private HandlerManager eventBus;
 	private Label activeCrumb;
 	private HashMap<String, Label> breadCrumbLabels;
 	
@@ -27,15 +34,38 @@ public class BreadCrumbs extends Composite {
 	public BreadCrumbs() {
 		initWidget(uiBinder.createAndBindUi(this));
 		activeCrumb = new Label();
-		breadCrumbLabels = new HashMap<String, Label>();
+		breadCrumbLabels = new HashMap<String, Label>();	
 	}
 
+	public void setEventBus(HandlerManager eventBus){
+		this.eventBus = eventBus;
+		registerEvents();
+	}
+	
+	private void registerEvents(){
+		eventBus.addHandler(BreadCrumbEvent.TYPE, 
+			new BreadCrumbEventHandler(){
+				public void onBreadCrumb(BreadCrumbEvent event){
+					if( event.getEventType().equals("setCrumbs") ){
+						setBreadCrumbs(event.getCrumbNames());
+					} else if( event.getEventType().equals("setActive") ){
+						setActiveCrumb(event.getActive());
+					}
+				}
+		});
+	}
+	
 	public void setBreadCrumbs(String[] names){
+		breadCrumbsContainer.clear();
+		breadCrumbLabels.clear();
 		for(int i = 0; i < names.length; i++ ){
 			if( i == names.length - 1){
 				addBreadCrumb(names[i], true);
 			} else {
 				addBreadCrumb(names[i], false);
+			} 
+			if( i == 0 ){
+				setActiveCrumb(names[0]);
 			}
 		}
 	}

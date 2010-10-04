@@ -20,18 +20,18 @@
 	xmlns:c="urn:import:opus.gwt.management.console.client.navigation">
 	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle"/>
 	
-	<g:RootLayoutPanel styleName='{style.rootLayoutPanel}'>
-		<g:layer>
-			<g:DockLayoutPanel unit='PCT'>
-				<g:north size="4">
-					<c:NavigationPanel ui:field="navigationPanel" styleName="{style.navigationPanel}"/>
-				</g:north>
-				<g:north size="96">
-					<g:DeckPanel ui:field='mainDeckPanel' styleName="{style.mainDeckPanel}">
-					</g:DeckPanel>
-				</g:north>
-			</g:DockLayoutPanel>
-		</g:layer>
-	</g:RootLayoutPanel>
-	
+	<g:DockLayoutPanel unit='EM'>	
+		<g:north size="2.5">
+			<c:NavigationPanel ui:field="navigationPanel" styleName="{style.navigationPanel}"/>
+		</g:north>
+		<g:north size="2">
+			<c:BreadCrumbs ui:field="breadCrumbs" styleName="{style.navigationPanel}"/>
+		</g:north>
+		<g:center>
+			<g:LayoutPanel ui:field='mainDeckPanel' styleName="{style.mainDeckPanel}">
+			
+			</g:LayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+		
 </ui:UiBinder> 

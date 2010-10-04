@@ -15,9 +15,8 @@
 ############################################################################*/
 
 .deployerDeckPanel {
-	margin: 0;
+	margin: 0 10em 0 10em;
 	padding: 0;	
-	border: 2px solid red;
 	border-radius: 5px;
 }
 .navigationPanel{

@@ -67,7 +67,7 @@ public class NavigationPanel extends Composite {
 	
 	@UiHandler("projectsButton")
 	void handleProjectsButton(ClickEvent event){
-		
+		eventBus.fireEvent(new PanelTransitionEvent("projects"));
 	}
 	
 	/*

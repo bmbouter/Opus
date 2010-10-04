@@ -20,10 +20,10 @@ import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.PanelManager;
+import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbs;
-import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -31,6 +31,7 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -65,7 +66,6 @@ public class ProjectDeployer extends Composite {
 		
 	@UiField ProjectDeployerStyle style;
 	@UiField DeckPanel deployerDeckPanel;
-	@UiField BreadCrumbs breadCrumbs;
 	//@UiField MainMenu mainMenu;
 	
 	public ProjectDeployer(HandlerManager eventBus) {
@@ -79,8 +79,8 @@ public class ProjectDeployer extends Composite {
 		this.deploymentOptions = new DeploymentOptions(this, eventBus);
 		this.confirmBP = new ConfirmProject(deployerForm, this, eventBus);
 		JSVarHandler = new JSVariableHandler();
-		registerEvents();
 		setupdeployerDeckPanel();
+		registerEvents();
 		setupBreadCrumbs();
 		setupDeployerForm();
 	}
@@ -89,10 +89,11 @@ public class ProjectDeployer extends Composite {
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
 			new PanelTransitionEventHandler(){
 				public void onPanelTransition(PanelTransitionEvent event){
-					Widget panel =  event.getPanel();
-					if( event.getTransitionType().equals("next")){
+					//Window.alert(String.valueOf(event.getTransitionType()));
+					if( event.getTransitionType().equals("next") ){
+						Widget panel =  event.getPanel();
 						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) + 1);
-						breadCrumbs.setActiveCrumb(deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle());
+						eventBus.fireEvent(new BreadCrumbEvent("setActive", deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
 						if( panel.getClass().equals(databaseOptions.getClass()) ){
 							deploymentOptions.setFocus();
 						} else if( panel.getClass().equals(appBrowser.getClass()) ){
@@ -100,9 +101,10 @@ public class ProjectDeployer extends Composite {
 						} else if( panel.getClass().equals(projectOptions.getClass()) ){
 							databaseOptions.setFocus();
 						}
-					} else {
+					} else if( event.getTransitionType().equals("previous") ){
+						Widget panel =  event.getPanel();
 						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) - 1);
-						breadCrumbs.setActiveCrumb(deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle());
+						eventBus.fireEvent(new BreadCrumbEvent("setActive", deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
 					}
 				}
 		});
@@ -126,8 +128,7 @@ public class ProjectDeployer extends Composite {
 	
 	private void setupBreadCrumbs(){
 		String[] crumbs = {appBrowser.getTitle(), projectOptions.getTitle(), databaseOptions.getTitle(), deploymentOptions.getTitle()};
-		breadCrumbs.setBreadCrumbs(crumbs);
-		breadCrumbs.setActiveCrumb(crumbs[0]);
+		eventBus.fireEvent(new BreadCrumbEvent("setCrumbs", crumbs));
 	}
 	
 	private void setupDeployerForm(){
@@ -228,10 +229,6 @@ public class ProjectDeployer extends Composite {
 		  //Add all Database fields to the form for submissionsd
 		  formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 			  deployerForm.submit();
-	  }
-	
-	  public BreadCrumbs getBreadCrumbs(){
-		  return breadCrumbs;
 	  }
 	  
 	  public ProjectOptions getProjectOptions() {

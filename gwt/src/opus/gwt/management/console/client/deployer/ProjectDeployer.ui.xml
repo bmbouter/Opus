@@ -21,20 +21,14 @@
 	<ui:style src="../resources/ProjectDeployer.css" type="opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle"/>
 	
 	<g:DockLayoutPanel unit="PCT">
-		<g:north size="3.25">
-			<c:BreadCrumbs ui:field="breadCrumbs" styleName="{style.breadcrumbsPanel}"/>
-		</g:north>
 		<g:north size='1'>
 			<g:HTMLPanel />
 		</g:north>
 		<g:south size='1'>
 			<g:HTMLPanel />
 		</g:south>
-		<g:west size="15">
-			<g:HTMLPanel />
-		</g:west>
-		<g:west size="85">
+		<g:center>
 			<g:DeckPanel ui:field="deployerDeckPanel" styleName="{style.deployerDeckPanel}" />
-		</g:west>
+		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 
