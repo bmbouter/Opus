@@ -14,12 +14,18 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
+.main {
+	
+}
+
 .deployerDeckPanel {
 	margin: 0 10em 0 10em;
 	padding: 0;	
 	border-radius: 5px;
 	font-family: Helvetica, Arial, Verdana, sans-serif;
 	font-size: .8em;
+	min-height: 400px;
+	min-width: 600px;
 }
 
 input {
@@ -34,7 +40,7 @@ select {
 .error {
 	color: red;
 	float: right;
-	margin: 0px 0px 0px 5px;
+	margin: 3px 0px 0px 5px;
 	display: inline;
 }
 
@@ -103,7 +109,7 @@ select {
 }
 
 .formWrapper {
-	padding: 10px 0 0 0;
+	padding: 10px 0px 0px 0px;
 	width: 500px;
 	float: left;
 }
@@ -111,8 +117,12 @@ select {
 .formWrapper .fieldWrapper {
 	width: 500px;
 	height: 1.5em;
-	margin-bottom: 10px;
+	margin: 0px 0px 10px 10px;
 	float: left;
+}
+
+.fieldWrapper {
+	margin: 0px 0px 0px 10px;
 }
 
 .fieldLabel {

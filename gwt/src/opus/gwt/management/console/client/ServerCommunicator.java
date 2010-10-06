@@ -126,10 +126,10 @@ public class ServerCommunicator {
 		
 		if (jso == null) {
 			if( error.equals("timeout") ) {
-				Window.alert("JSON request timed out for request #" + String.valueOf(rId) + " = " + queryType);
+				//Window.alert("JSON request timed out for request #" + String.valueOf(rId) + " = " + queryType);
 				return;
 			} else {
-				Window.alert("no json returned for request # " + String.valueOf(rId) + " = " + queryType);
+				//Window.alert("no json returned for request # " + String.valueOf(rId) + " = " + queryType);
 				return;	
 			}
 	    } else {
