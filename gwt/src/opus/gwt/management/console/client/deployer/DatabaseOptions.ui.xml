@@ -19,7 +19,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:t="urn:import:opus.gwt.management.console.client.tools">
 	<ui:style src="../resources/ProjectBuilder.css"/>
-	<ui:style src="../resources/ProjectDeployer.css" field="form"/>
+	<ui:style src="../resources/ProjectDeployer.css" field="form" type="opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle"/>
 	
 	<g:SimplePanel>
 		<g:HTMLPanel ui:field="databaseOptionsPanel" >

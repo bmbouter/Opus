@@ -23,5 +23,6 @@ public class ProjectDeployerCss extends Widget {
 	  public interface ProjectDeployerStyle extends CssResource {
 	    String navigationLabel();
 	    String navigationLabelActive();
+	    String redBorder();
 	  }
 }

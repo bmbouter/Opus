@@ -18,8 +18,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:opus.gwt.management.console.client.navigation"
 	xmlns:t="urn:import:opus.gwt.management.console.client.tools">
-	<ui:style src="../resources/ProjectOptions.css" type="opus.gwt.management.console.client.resources.ProjectOptionsCss.ProjectOptionsStyle"/>
-	<ui:style src="../resources/ProjectDeployer.css" field="form"/>
+	<ui:style src="../resources/ProjectOptions.css" />
+	<ui:style src="../resources/ProjectDeployer.css" field="form" type="opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle"/>
 	
 	<g:SimplePanel >
 		<g:HTMLPanel ui:field='projectOptionsPanel'>

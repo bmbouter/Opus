@@ -145,3 +145,7 @@ select {
 .buttons {
 	float: left;
 }
+
+.redBorder {
+	border: 1px solid red;
+}

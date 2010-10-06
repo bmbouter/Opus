@@ -23,12 +23,14 @@ import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.UpdateDBOptionsEvent;
 import opus.gwt.management.console.client.event.UpdateDBOptionsEventHandler;
 import opus.gwt.management.console.client.overlays.DBOptions;
+import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 import opus.gwt.management.console.client.tools.TooltipPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -63,6 +65,7 @@ public class DatabaseOptions extends Composite {
 	@UiField Button previousButton;	
 	@UiField HTMLPanel databaseOptionsPanel;
 	@UiField TooltipPanel active;
+	@UiField ProjectDeployerStyle form;
 	
 	public DatabaseOptions(ProjectDeployer projectDeployer, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -167,9 +170,7 @@ public class DatabaseOptions extends Composite {
 		
 		setTooltipPosition(x, y);
 		
-		active.hide();
-		active.setText("Enter the host for the database.");
-		active.show();
+		setTooltipText("Enter the host for the database.");
 	}
 	
 	@UiHandler("portTextBox")
@@ -182,13 +183,34 @@ public class DatabaseOptions extends Composite {
 		setTooltipText("Enter the port for the database.");
 	}
 	
+	@UiHandler("nameTextBox")
+	void handleNameTextBoxOnChange(KeyUpEvent event) {
+		nameTextBox.removeStyleName(form.redBorder());
+	}
+	
+	@UiHandler("passwordTextBox")
+	void handlePasswordTextBoxOnChange(KeyUpEvent event) {
+		passwordTextBox.removeStyleName(form.redBorder());
+	}
+	
+	@UiHandler("hostTextBox")
+	void handleHostTextBoxOnChange(KeyUpEvent event) {
+		hostTextBox.removeStyleName(form.redBorder());
+	}
+	
+	@UiHandler("portTextBox")
+	void handlePortTextBoxOnChange(KeyUpEvent event) {
+		portTextBox.removeStyleName(form.redBorder());
+	}
+	
 	private boolean validateFields(){
 		//if(!dbengineListBox.isItemSelected(0)){
 		if(true) {
 			if(nameTextBox.getText().isEmpty() 
 					|| passwordTextBox.getText().isEmpty() 
 					|| hostTextBox.getText().isEmpty()
-					|| portTextBox.getText().isEmpty()){
+					|| portTextBox.getText().isEmpty()) {
+				highlightFields();
 				Window.alert("All fields must be filled out.");
 				return false;
 			} else {
@@ -210,6 +232,27 @@ public class DatabaseOptions extends Composite {
 		postgresAutoConfig = dbOptionsData.getAutoPostgresConfig();
 		projectDeployer.getProjectOptions().setAllowedAuthApps(dbOptionsData.getAllowedAuthApps());
 		setupDBOptions();
+	}
+	
+	/**
+	 * Highlight fields that are incorrect
+	 */
+	private void highlightFields() {
+		if(nameTextBox.getText().isEmpty()) {
+			nameTextBox.setStyleName(form.redBorder());
+		}
+		
+		if(passwordTextBox.getText().isEmpty()) {
+			passwordTextBox.setStyleName(form.redBorder());
+		}
+		
+		if(hostTextBox.getText().isEmpty()) {
+			hostTextBox.setStyleName(form.redBorder());
+		}
+		
+		if(portTextBox.getText().isEmpty()) {
+			portTextBox.setStyleName(form.redBorder());
+		}
 	}
 	
 	/**

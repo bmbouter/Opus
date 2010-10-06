@@ -18,6 +18,7 @@ package opus.gwt.management.console.client.deployer;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 import opus.gwt.management.console.client.tools.TooltipPanel;
 
 import com.google.gwt.core.client.GWT;
@@ -31,6 +32,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -48,6 +50,7 @@ public class DeploymentOptions extends Composite {
 	@UiField Label baseUrlLabel;
 	@UiField TextBox projectNameTextBox;
 	@UiField TooltipPanel active;
+	@UiField ProjectDeployerStyle form;
 
 	public DeploymentOptions(ProjectDeployer projectDeployer, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -60,11 +63,13 @@ public class DeploymentOptions extends Composite {
 	
 	private boolean validateFields(){
 		if(projectNameTextBox.getText().isEmpty()){
+			projectNameTextBox.setStyleName(form.redBorder());
 			Window.alert("Subdomain required to deploy");
 			return false;
 		} else if(projectNameTextBox.getText().matches("[a-zA-Z_][a-zA-Z0-9_]*")){
 			return true;
 		} else {
+			projectNameTextBox.setStyleName(form.redBorder());
 			Window.alert("Subdomain must start with a letter.");
 			return false;
 		}
@@ -90,21 +95,64 @@ public class DeploymentOptions extends Composite {
 	void usernameTextBoxOnFocus(FocusEvent event) {
 		active.setVisible(true);
 		
-		int x = projectNameTextBox.getAbsoluteLeft() + projectNameTextBox.getOffsetWidth() + 5;
-		int y = projectNameTextBox.getAbsoluteTop() + 2;
+		int x = getTooltipPosition(projectNameTextBox)[0];
+		int y = getTooltipPosition(projectNameTextBox)[1];
 		
 		setTooltipPosition(x, y);
-		
-		active.hide();
-		active.setText("This is where the project name stuff goes!");
-		active.show();
+		setTooltipText("Enter a subdomain name for your project");
 	}
 	
+	/**
+	 * Set the tooltips initial state on page load
+	 */
 	private void setTooltipInitialState() {
 		active.setVisible(false);
 	}
 	
+	/**
+	 * Set the position of a tooltip relative to the browser window
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 */
 	private void setTooltipPosition(int x, int y) {
 		active.setPopupPosition(x, y);
+	}
+	
+	/**
+	 * Set the text of a tooltip
+	 * @param text the text to set
+	 */
+	private void setTooltipText(String text) {
+		active.hide();
+		active.setText(text);
+		active.show();
+	}
+	
+	/**
+	 * Return the tooltip position as an array in for them [x, y]
+	 * @param textbox the textbox to get the position of
+	 * @return tooltip position
+	 */
+	private int[] getTooltipPosition(TextBox textbox) {
+		int[] pos = new int[2];
+		
+		pos[0] = textbox.getAbsoluteLeft() + textbox.getOffsetWidth() + 5;
+		pos[1] = textbox.getAbsoluteTop() + 2;
+		
+		return pos;
+	}
+	
+	/**
+	 * Return the tooltip position as an array in for them [x, y]
+	 * @param textbox the textbox to get the position of
+	 * @return tooltip position
+	 */
+	private int[] getTooltipPosition(PasswordTextBox textbox) {
+		int[] pos = new int[2];
+		
+		pos[0] = textbox.getAbsoluteLeft() + textbox.getOffsetWidth() + 5;
+		pos[1] = textbox.getAbsoluteTop() + 2;
+		
+		return pos;
 	}
 }
