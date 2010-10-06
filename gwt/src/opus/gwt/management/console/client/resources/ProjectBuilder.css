@@ -278,22 +278,11 @@
     height: 1000px;
 }
 
-.header {
-    width: 100%;
-    background: #ED9E16;
-    height: 60px;
-    border-bottom: solid #CC8202 2px;
-    margin-bottom: 5px;
+.top {
+	margin: 10px 0px;
 }
 
-.header h1 {
-    margin: 0px;
-    padding: 8px 0 0 10px;
-    font-size: 40px;
-    color: #CC8202;
-    font-weight: bold;
-}
-
-.header .insetType {
-	text-shadow: rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;
+.right {
+	float: right;
+	padding: 0px 0px 0px 10px;
 }

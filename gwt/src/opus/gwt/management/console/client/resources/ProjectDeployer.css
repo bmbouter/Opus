@@ -24,10 +24,18 @@
 
 input {
 	border: 1px solid black;
+	float: left;
 }
 
 select {
 	margin: 0px 0px 0px 10px;
+}
+
+.error {
+	color: red;
+	float: right;
+	margin: 0px 0px 0px 5px;
+	display: inline;
 }
 
 .header {
@@ -101,7 +109,7 @@ select {
 }
 
 .formWrapper .fieldWrapper {
-	width: 425px;
+	width: 500px;
 	height: 1.5em;
 	margin-bottom: 10px;
 	float: left;

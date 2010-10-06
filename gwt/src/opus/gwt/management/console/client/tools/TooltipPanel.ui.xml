@@ -1,42 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
-		.tooltip {
-		    width: 125px;
-		    font-size: .8em;
-			color: #FFFFFF;
-			float: right;
-		}
-		
-		div.tooltip {
-			padding: 0;
-			margin: 0;
-		}
-		
-		.tooltip .tooltip-left {
-		    width: 6%;
-		    height: 100%;
-		    padding: 3px 0 0 0;
-		    float: left;
-		    background: url('arrow.png') no-repeat 0px 5px;
-		    padding: 25px 0 0 0;
-		}
-		
-		.tooltip .tooltip-right {
-		    -moz-border-radius: 3px;
-		    -webkit-border-radius: 3px;
-		    background: #323232;
-		    padding: 3px;
-		    width: 90%;
-		    height: 100%;
-		    float: right;
-		    font-size: .8em;
-		}
-	</ui:style>
+	<ui:style src="../resources/TooltipPanel.css" type="opus.gwt.management.console.client.resources.TooltipPanelCss.TooltipPanelStyle"/>
 	<g:HTMLPanel styleName="{style.tooltip}">
-		<g:HTMLPanel styleName="{style.tooltip-left}" />
-		<g:HTMLPanel styleName="{style.tooltip-right}">
+		<g:HTMLPanel styleName="{style.tooltip_left}" ui:field="arrow" />
+		<g:HTMLPanel styleName="{style.tooltip_right}" ui:field="content">
 			<g:HTML ui:field="text" />
 		</g:HTMLPanel>
 	</g:HTMLPanel>

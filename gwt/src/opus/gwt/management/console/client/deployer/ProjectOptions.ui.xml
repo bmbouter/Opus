@@ -18,14 +18,14 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:opus.gwt.management.console.client.navigation"
 	xmlns:t="urn:import:opus.gwt.management.console.client.tools">
-	<ui:style src="../resources/ProjectOptions.css"/>
+	<ui:style src="../resources/ProjectOptions.css" type="opus.gwt.management.console.client.resources.ProjectOptionsCss.ProjectOptionsStyle"/>
 	<ui:style src="../resources/ProjectDeployer.css" field="form"/>
 	
 	<g:SimplePanel >
-		<g:HTMLPanel ui:field='projectOptionsPanel' >
+		<g:HTMLPanel ui:field='projectOptionsPanel'>
 			<t:TooltipPanel ui:field="active" />
-			<g:HTMLPanel styleName="{style.header}">
-				<g:HTMLPanel styleName="{style.insetType}">
+			<g:HTMLPanel styleName="{form.header}">
+				<g:HTMLPanel styleName="{form.insetType}">
 					<h1>Project Options</h1>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
@@ -50,25 +50,29 @@
 					<g:HTMLPanel styleName="{form.field}">
 						<label class='{form.fieldLabel}' >Password Confirm</label>
 						<g:PasswordTextBox name='superpasswordconfirm' ui:field='passwordConfirmTextBox' />
+						<g:Label ui:field="passwordError" styleName="{form.error}" />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{form.fieldWrapper}">
 					<g:HTMLPanel styleName="{form.field}">
 						<label class='{form.fieldLabel}'>Email</label>
 						<g:TextBox name ='superemail' ui:field='emailTextBox' />
+						<g:Label ui:field="emailError" styleName="{form.error}" />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{form.fieldWrapper}">
-					<u>How your users will authenticate</u>
+					<h1>How your users will authenticate</h1>
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{form.fieldWrapper}">
-					<label class="{form.fieldLabel}">Identity Provider:</label>
-					<g:ListBox name="idprovider" ui:field="idProvider" styleName="{form.fieldLabel}" />
+					<g:HTMLPanel styleName="{form.field}">
+						<label class="{form.fieldLabel}">Identity Provider:</label>
+						<g:ListBox name="idprovider" ui:field="idProvider" styleName="{form.fieldLabel}" />
+					</g:HTMLPanel>
 				</g:HTMLPanel>
-			</g:HTMLPanel>
-			<g:HTMLPanel styleName="{form.buttons}">
-				<g:Button ui:field="previousButton" text="Previous"/>
-				<g:Button ui:field="nextButton" text="Next"/>
+				<g:HTMLPanel styleName="{form.buttons}">
+					<g:Button ui:field="previousButton" text="Previous"/>
+					<g:Button ui:field="nextButton" text="Next"/>
+				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:SimplePanel>

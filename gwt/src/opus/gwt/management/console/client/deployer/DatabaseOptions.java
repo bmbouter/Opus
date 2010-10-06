@@ -38,6 +38,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -141,57 +142,49 @@ public class DatabaseOptions extends Composite {
 	void handleNameTextBoxOnFocus(FocusEvent event) {
 		active.setVisible(true);
 	
-		int x = nameTextBox.getAbsoluteLeft() + nameTextBox.getOffsetWidth() + 5;
-		int y = nameTextBox.getAbsoluteTop() + 2;
+		int x = getTooltipPosition(nameTextBox)[0];
+		int y = getTooltipPosition(nameTextBox)[1];
 		
 		setTooltipPosition(x, y);
 		
-		active.hide();
-		active.setText("This is where the name stuff goes!");
-		active.show();
+		setTooltipText("Enter the database username.");
 	}
 	
 	@UiHandler("passwordTextBox")
 	void handlePasswordTextBoxOnFocus(FocusEvent event) {
-		int x = passwordTextBox.getAbsoluteLeft() + passwordTextBox.getOffsetWidth() + 5;
-		int y = passwordTextBox.getAbsoluteTop() + 2;
+		int x = getTooltipPosition(passwordTextBox)[0];
+		int y = getTooltipPosition(passwordTextBox)[1];
 		
 		setTooltipPosition(x, y);
 		
-		active.hide();
-		active.setText("This is where the password stuff goes!");
-		active.show();
+		setTooltipText("Enter the password for the user.");
 	}
 	
 	@UiHandler("hostTextBox")
 	void handleHostTextBoxOnFocus(FocusEvent event) {
-		int x = hostTextBox.getAbsoluteLeft() + hostTextBox.getOffsetWidth() + 5;
-		int y = hostTextBox.getAbsoluteTop() + 2;
+		int x = getTooltipPosition(hostTextBox)[0];
+		int y = getTooltipPosition(hostTextBox)[1];
 		
 		setTooltipPosition(x, y);
 		
 		active.hide();
-		active.setText("This is where the host stuff goes!");
+		active.setText("Enter the host for the database.");
 		active.show();
 	}
 	
 	@UiHandler("portTextBox")
 	void handlePortTextBoxOnFocus(FocusEvent event) {
-		int x = portTextBox.getAbsoluteLeft() + portTextBox.getOffsetWidth() + 5;
-		int y = portTextBox.getAbsoluteTop() + 2;
+		int x = getTooltipPosition(portTextBox)[0];
+		int y = getTooltipPosition(portTextBox)[1];
 		
 		setTooltipPosition(x, y);
 		
-		active.hide();
-		active.setText("This is where the port stuff goes!");
-		active.show();
+		setTooltipText("Enter the port for the database.");
 	}
 	
 	private boolean validateFields(){
-		//TODO: REMOVE THIS LATER
-		dbengineListBox.insertItem("Test", 0);
-		
-		if(!dbengineListBox.isItemSelected(0)){
+		//if(!dbengineListBox.isItemSelected(0)){
+		if(true) {
 			if(nameTextBox.getText().isEmpty() 
 					|| passwordTextBox.getText().isEmpty() 
 					|| hostTextBox.getText().isEmpty()
@@ -219,12 +212,58 @@ public class DatabaseOptions extends Composite {
 		setupDBOptions();
 	}
 	
+	/**
+	 * Set the tooltips initial state on page load
+	 */
 	private void setTooltipInitialState() {
 		active.setVisible(false);
 	}
 	
+	/**
+	 * Set the position of a tooltip relative to the browser window
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 */
 	private void setTooltipPosition(int x, int y) {
 		active.setPopupPosition(x, y);
+	}
+	
+	/**
+	 * Set the text of a tooltip
+	 * @param text the text to set
+	 */
+	private void setTooltipText(String text) {
+		active.hide();
+		active.setText(text);
+		active.show();
+	}
+	
+	/**
+	 * Return the tooltip position as an array in for them [x, y]
+	 * @param textbox the textbox to get the position of
+	 * @return tooltip position
+	 */
+	private int[] getTooltipPosition(TextBox textbox) {
+		int[] pos = new int[2];
+		
+		pos[0] = textbox.getAbsoluteLeft() + textbox.getOffsetWidth() + 5;
+		pos[1] = textbox.getAbsoluteTop() + 2;
+		
+		return pos;
+	}
+	
+	/**
+	 * Return the tooltip position as an array in for them [x, y]
+	 * @param textbox the textbox to get the position of
+	 * @return tooltip position
+	 */
+	private int[] getTooltipPosition(PasswordTextBox textbox) {
+		int[] pos = new int[2];
+		
+		pos[0] = textbox.getAbsoluteLeft() + textbox.getOffsetWidth() + 5;
+		pos[1] = textbox.getAbsoluteTop() + 2;
+		
+		return pos;
 	}
 }
 

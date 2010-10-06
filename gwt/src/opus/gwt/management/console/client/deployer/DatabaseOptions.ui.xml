@@ -24,10 +24,14 @@
 	<g:SimplePanel>
 		<g:HTMLPanel ui:field="databaseOptionsPanel" >
 			<t:TooltipPanel ui:field="active" />
-			<g:HTMLPanel styleName="{style.header}">
-				<g:HTMLPanel styleName="{style.insetType}">
+			<g:HTMLPanel styleName="{form.header}">
+				<g:HTMLPanel styleName="{form.insetType}">
 					<h1>Database Options</h1>
 				</g:HTMLPanel>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{form.fieldWrapper}">
+				<h1>Database Selection</h1>
+				Select an appropriate database engine for your project.
 			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="dbFieldsPanel">
 				<g:HTMLPanel styleName="{form.formWrapper}">
@@ -61,11 +65,11 @@
 							<g:TextBox name='dbport' ui:field='portTextBox' />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{form.buttons}">	
+						<g:Button ui:field="previousButton" text="Previous" />
+						<g:Button ui:field="nextButton" text="Next" />
+					</g:HTMLPanel>
 				</g:HTMLPanel>
-			</g:HTMLPanel>
-			<g:HTMLPanel styleName="{form.buttons}">	
-				<g:Button ui:field="previousButton" text="Previous" />
-				<g:Button ui:field="nextButton" text="Next" />
 			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:SimplePanel>

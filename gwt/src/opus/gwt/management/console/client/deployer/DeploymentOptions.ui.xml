@@ -24,27 +24,31 @@
 	<g:SimplePanel>
 		<g:HTMLPanel>
 			<t:TooltipPanel ui:field="active" />
-			<g:HTMLPanel styleName="{style.header}">
-				<g:HTMLPanel styleName="{style.insetType}">
+			<g:HTMLPanel styleName="{form.header}">
+				<g:HTMLPanel styleName="{form.insetType}">
 					<h1>Deployment Options</h1>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:HTML>
-				<u>Deployment Location Options</u>
+				<h1>Deployment Location Options</h1>
 			</g:HTML>
 			<g:HTMLPanel styleName="{form.formWrapper}">
 				<g:HTMLPanel styleName="{form.fieldWrapper}">
 					<g:HTMLPanel styleName="{form.field}">
 						<label class="{form.fieldLabel}">Deploy as:</label>
 						<g:TextBox name='superusername' ui:field='projectNameTextBox'/>
-						<br />
-						<g:Label ui:field="baseUrlLabel"/>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
-			</g:HTMLPanel>
-			<g:HTMLPanel>	
-				<g:Button ui:field="previousButton" text="Previous" />
-				<g:Button ui:field="nextButton" text="Next" />
+				<g:HTMLPanel styleName="{form.fieldWrapper}">
+					<g:HTMLPanel styleName="{form.field}">
+						<label class="{form.fieldLabel}">Base URL:</label>
+						<g:Label ui:field="baseUrlLabel" styleName="{style.right}" />
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{form.buttons}">	
+					<g:Button ui:field="previousButton" text="Previous" />
+					<g:Button ui:field="nextButton" text="Next" />
+				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:SimplePanel>
