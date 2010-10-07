@@ -17,15 +17,12 @@
 package opus.gwt.management.console.client.deployer;
 
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.event.UpdateDBOptionsEvent;
+import opus.gwt.management.console.client.event.UpdateDBOptionsEventHandler;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
-import opus.gwt.management.console.client.resources.ProjectOptionsCss.ProjectOptionsStyle;
-import opus.gwt.management.console.client.resources.TooltipPanelCss.TooltipPanelStyle;
 import opus.gwt.management.console.client.tools.TooltipPanel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -48,7 +45,6 @@ public class ProjectOptions extends Composite {
 	private static BuildProjectPage2UiBinder uiBinder = GWT.create(BuildProjectPage2UiBinder.class);
 	interface BuildProjectPage2UiBinder extends UiBinder<Widget, ProjectOptions> {}
 	
-	private ProjectDeployer projectDeployer;
 	private HandlerManager eventBus;
 	
 	@UiField TextBox usernameTextBox;
@@ -64,13 +60,22 @@ public class ProjectOptions extends Composite {
 	@UiField Label passwordError;
 	@UiField Label emailError;
 	
-	public ProjectOptions(ProjectDeployer projectDeployer, HandlerManager eventBus) {
+	public ProjectOptions(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.projectDeployer = projectDeployer;
 		this.eventBus = eventBus;
 		setTooltipInitialState();
+		registerEvents();
 		passwordError.setText("");
 		emailError.setText("");
+	}
+	
+	private void registerEvents(){
+		eventBus.addHandler(UpdateDBOptionsEvent.TYPE, 
+				new UpdateDBOptionsEventHandler(){
+					public void onUpdateDBOptions(UpdateDBOptionsEvent event){
+						setAllowedAuthApps(event.getDBOptionsData().getAllowedAuthApps());
+					}
+		});
 	}
 	
 	public void setAllowedAuthApps(String allowedAuthApps){

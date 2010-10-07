@@ -18,7 +18,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:c="urn:import:opus.gwt.management.console.client.navigation">
-	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle"/>
+	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle"/>
 	
 	<g:DockLayoutPanel unit='EM'>	
 		<g:north size="2.5">
@@ -28,7 +28,7 @@
 			<c:BreadCrumbs ui:field="breadCrumbs" styleName="{style.navigationPanel}"/>
 		</g:north>
 		<g:center>
-			<g:LayoutPanel ui:field='mainDeckPanel' styleName="{style.mainDeckPanel}">
+			<g:LayoutPanel ui:field='contentLayoutPanel' styleName="{style.mainContentPanel}">
 			
 			</g:LayoutPanel>
 		</g:center>

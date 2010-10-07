@@ -19,22 +19,21 @@ package opus.gwt.management.console.client;
 import opus.gwt.management.console.client.dashboard.ProjectManager;
 import opus.gwt.management.console.client.deployer.ProjectDeployer;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
-import opus.gwt.management.console.client.event.AuthenticationSuccessEvent;
-import opus.gwt.management.console.client.event.AuthenticationSuccessEventHandler;
+import opus.gwt.management.console.client.event.AuthenticationEvent;
+import opus.gwt.management.console.client.event.AuthenticationEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbs;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
+import opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
@@ -49,24 +48,31 @@ public class PanelManager extends Composite {
 	private ProjectManager projectManager;
 	private IconPanel iconPanel;
 	
-	@UiField LayoutPanel mainDeckPanel;
+	@UiField LayoutPanel contentLayoutPanel;
 	@UiField NavigationPanel navigationPanel;
 	@UiField BreadCrumbs breadCrumbs;
+	@UiField PanelManagerStyle style;
 	
 	public PanelManager(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
+		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
 		this.eventBus = eventBus;
 		navigationPanel.setEventBus(eventBus);
 		breadCrumbs.setEventBus(eventBus);
 		registerEvents();
+		authenticationPanel = new Authentication(eventBus);
 		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
 	}
 	
 	private void registerEvents(){
-		eventBus.addHandler(AuthenticationSuccessEvent.TYPE, 
-			new AuthenticationSuccessEventHandler(){
-				public void onAuthenticationSuccess(AuthenticationSuccessEvent event){
-					showDeployer();
+		eventBus.addHandler(AuthenticationEvent.TYPE, 
+			new AuthenticationEventHandler(){
+				public void onAuthentication(AuthenticationEvent event){
+					if( event.isAuthenticated() ){
+						showDeployer();
+					} else if ( !event.isAuthenticated() ){
+						showAuthentication();
+					}
 				}
 		});
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
@@ -75,29 +81,28 @@ public class PanelManager extends Composite {
 					if( event.getTransitionType().equals("deploy") ){
 						showDeployer();
 					} else if( event.getTransitionType().equals("projects") ){
-						showIconPanel();
+						//showIconPanel();
 					}
 				}
 		});
 	}
 	
 	private void showAuthentication(){
-		authenticationPanel = new Authentication(eventBus);
-		mainDeckPanel.clear();
-		mainDeckPanel.add(authenticationPanel);
-		//mainDeckPanel.insert(authenticationPanel, 0);
-		//mainDeckPanel.showWidget(0);
+		contentLayoutPanel.clear();
+		contentLayoutPanel.add(authenticationPanel);
+		RootLayoutPanel.get().add(authenticationPanel);
 	}
 	
 	private void showDeployer(){
+		RootLayoutPanel.get().clear();
+		RootLayoutPanel.get().add(this);
 		projectDeployer = new ProjectDeployer(eventBus);
-		mainDeckPanel.clear();
-		mainDeckPanel.add(projectDeployer);
-		mainDeckPanel.setVisible(true);
-		//mainDeckPanel.insert(projectDeployer, 0);
-		//mainDeckPanel.showWidget(0);
+		contentLayoutPanel.clear();
+		contentLayoutPanel.add(projectDeployer);
+		contentLayoutPanel.setVisible(true);
 	}
 	
+	/*
 	private void manageProjects(){
 		projectManager = new ProjectManager(eventBus);
 		//mainDeckPanel.insert(projectManager, 0);
@@ -108,5 +113,5 @@ public class PanelManager extends Composite {
 		iconPanel = new IconPanel(eventBus);
 		//mainDeckPanel.insert(iconPanel, 0);
 		//mainDeckPanel.showWidget(0);
-	}
+	}*/
 }

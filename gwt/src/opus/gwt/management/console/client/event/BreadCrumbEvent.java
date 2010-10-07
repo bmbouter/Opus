@@ -1,10 +1,6 @@
 package opus.gwt.management.console.client.event;
 
-import opus.gwt.management.console.client.overlays.DBOptions;
-
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.GwtEvent.Type;
 
 public class BreadCrumbEvent extends GwtEvent<BreadCrumbEventHandler> {
 	

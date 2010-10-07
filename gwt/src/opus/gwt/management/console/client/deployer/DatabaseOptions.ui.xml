@@ -33,14 +33,15 @@
 				<h1>Database Selection</h1>
 				Select an appropriate database engine for your project.
 			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{form.fieldWrapper}">
+				<g:HTMLPanel styleName="{form.field}">
+					<label class='{form.fieldLabel}'>DB Engine</label>
+					<g:ListBox name="dbengine" ui:field='dbengineListBox' />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="dbFieldsPanel">
 				<g:HTMLPanel styleName="{form.formWrapper}">
-					<g:HTMLPanel styleName="{form.fieldWrapper}">
-						<g:HTMLPanel styleName="{form.field}">
-							<label class='{form.fieldLabel}'>DB Engine</label>
-							<g:ListBox name="dbengine" ui:field='dbengineListBox' />
-						</g:HTMLPanel>
-					</g:HTMLPanel>
+					
 					<g:HTMLPanel styleName="{form.fieldWrapper}">
 						<g:HTMLPanel styleName="{form.field}">
 							<label class='{form.fieldLabel}'>Name</label>
@@ -65,11 +66,11 @@
 							<g:TextBox name='dbport' ui:field='portTextBox' />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{form.buttons}">	
-						<g:Button ui:field="previousButton" text="Previous" />
-						<g:Button ui:field="nextButton" text="Next" />
-					</g:HTMLPanel>
 				</g:HTMLPanel>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{form.buttons}">	
+				<g:Button ui:field="previousButton" text="Previous" />
+				<g:Button ui:field="nextButton" text="Next" />
 			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:SimplePanel>

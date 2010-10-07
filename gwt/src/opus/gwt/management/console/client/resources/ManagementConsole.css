@@ -92,32 +92,7 @@
 	-moz-border-radius: 10px 10px 0 0;
 	border-bottom: 1px solid gray;
 }
-.topDashboardButton{
-	cursor: pointer;
-	cursot: hand;
-	background: black;
-	border: none;
-	color: white;
-	float: left;
-	border-right: 1px solid gray;
-	margin-left: 0.75%;
-	height: 100%;
-}
-.topDashboardButtonActive{
-	cursor: pointer;
-	cursot: hand;
-	background: white;
-	border: none;
-	color: black;
-	float: left;
-	border-top: 1px solid gray;
-	border-left: 1px solid gray;
-	border-right: 1px solid gray;
-	border-radius: 5px 5px 0 0;
-	-moz-border-radius: 5px 5px 0 0;
-	margin-left: 0.65%;
-	height: 100%;
-}
+
 .topDeployNewButton{
 	cursor: pointer;
 	cursot: hand;
@@ -148,39 +123,7 @@
 	float: right;
 	border: none;
 }	
-.dashboardsPopup {
-	border-left: 1px solid gray;
-	border-right: 1px solid gray;
-	border-bottom: 1px solid gray;
-	background: white;
-	-moz-border-radius: 0 5px 5px 5px;
-	border-radius: 0 5px 5px 5px;
-	padding: 0.5% 0.5% 0.5% 0.5%;
-}
-.popupLabel {
-	color: black;	
-	text-align: center;
-	border-bottom: 1px solid gray;
-	width: 90%;
-	margin-right: 5%;
-	margin-left: 5%;
-	cursor: pointer;
-	cursor: hand;
-}
-.popupLabelActive{
-	color: white;	
-	text-align: center;
-	border-bottom: 1px solid gray;
-	width: 90%;
-	margin-right: 5%;
-	margin-left: 5%;
-	cursor: pointer;
-	cursor: hand;
-	background: orange;	
-}
-.lastLabel {
-	border-bottom: none;
-}
+
 .loginPanel{
 	color: black;
 	margin: 15% 0% 0% 30%;

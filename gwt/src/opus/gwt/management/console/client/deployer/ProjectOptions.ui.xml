@@ -21,7 +21,7 @@
 	<ui:style src="../resources/ProjectOptions.css" />
 	<ui:style src="../resources/ProjectDeployer.css" field="form" type="opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle"/>
 	
-	<g:SimplePanel >
+	<g:SimplePanel>
 		<g:HTMLPanel ui:field='projectOptionsPanel'>
 			<t:TooltipPanel ui:field="active" />
 			<g:HTMLPanel styleName="{form.header}">

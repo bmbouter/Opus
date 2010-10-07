@@ -23,7 +23,6 @@ import opus.gwt.management.console.client.PanelManager;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
-import opus.gwt.management.console.client.navigation.BreadCrumbs;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 
 import com.google.gwt.core.client.GWT;
@@ -31,7 +30,6 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -51,63 +49,30 @@ public class ProjectDeployer extends Composite {
 		
 	private final String deploymentURL =  "/deployments/projectName/";
 		
-	private ApplicationPopup appInfoDialog = new ApplicationPopup(); 
 	private ProjectOptions projectOptions;
 	private DatabaseOptions databaseOptions;
 	private DeploymentOptions deploymentOptions;
 	private ConfirmProject confirmBP;
 	private AppBrowser appBrowser;
-	private String createdProjectName;
-	private PanelManager panelManager;
 	private HandlerManager eventBus;
-	
 	private FormPanel deployerForm;
-	private JSVariableHandler JSVarHandler;
 		
 	@UiField ProjectDeployerStyle style;
 	@UiField DeckPanel deployerDeckPanel;
-	//@UiField MainMenu mainMenu;
 	
 	public ProjectDeployer(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
-		createdProjectName = "";
 		this.deployerForm = new FormPanel();
-		this.appBrowser = new AppBrowser(this, eventBus);
-		this.projectOptions = new ProjectOptions(this, eventBus);
-		this.databaseOptions = new DatabaseOptions(this, eventBus);
-		this.deploymentOptions = new DeploymentOptions(this, eventBus);
-		this.confirmBP = new ConfirmProject(deployerForm, this, eventBus);
-		JSVarHandler = new JSVariableHandler();
+		this.appBrowser = new AppBrowser(eventBus);
+		this.projectOptions = new ProjectOptions(eventBus);
+		this.databaseOptions = new DatabaseOptions(eventBus);
+		this.deploymentOptions = new DeploymentOptions(eventBus);
+		this.confirmBP = new ConfirmProject(deployerForm, eventBus);
 		setupdeployerDeckPanel();
 		registerEvents();
 		setupBreadCrumbs();
 		setupDeployerForm();
-	}
-	
-	private void registerEvents(){
-		eventBus.addHandler(PanelTransitionEvent.TYPE, 
-			new PanelTransitionEventHandler(){
-				public void onPanelTransition(PanelTransitionEvent event){
-					//Window.alert(String.valueOf(event.getTransitionType()));
-					if( event.getTransitionType().equals("next") ){
-						Widget panel =  event.getPanel();
-						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) + 1);
-						eventBus.fireEvent(new BreadCrumbEvent("setActive", deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
-						if( panel.getClass().equals(databaseOptions.getClass()) ){
-							deploymentOptions.setFocus();
-						} else if( panel.getClass().equals(appBrowser.getClass()) ){
-							projectOptions.setFocus();
-						} else if( panel.getClass().equals(projectOptions.getClass()) ){
-							databaseOptions.setFocus();
-						}
-					} else if( event.getTransitionType().equals("previous") ){
-						Widget panel =  event.getPanel();
-						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) - 1);
-						eventBus.fireEvent(new BreadCrumbEvent("setActive", deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
-					}
-				}
-		});
 	}
 	
 	private void setupdeployerDeckPanel(){
@@ -115,7 +80,7 @@ public class ProjectDeployer extends Composite {
 		deployerDeckPanel.add(projectOptions);
 		deployerDeckPanel.add(databaseOptions);
 		deployerDeckPanel.add(deploymentOptions);
-		deployerDeckPanel.add(confirmBP);
+		//deployerDeckPanel.add(confirmBP);
 		deployerDeckPanel.add(deployerForm);
 		appBrowser.setTitle("Application Browser");
 		projectOptions.setTitle("Project Options");
@@ -140,23 +105,49 @@ public class ProjectDeployer extends Composite {
 		    });
 	}
 	
-	  void handleConfirmBuildProjectLoad() {
-			
-			
-			String username = projectOptions.usernameTextBox.getValue();
-			String email = projectOptions.emailTextBox.getValue();
-			
-			String databaseEngine = databaseOptions.dbengineListBox.getItemText(databaseOptions.dbengineListBox.getSelectedIndex());
-			String databaseName = databaseOptions.nameTextBox.getValue();
-			String databasePassword = databaseOptions.passwordTextBox.getValue();
-			String databaseHost = databaseOptions.hostTextBox.getValue();
-			String databasePort = databaseOptions.portTextBox.getValue();
-			
-			String projectName = deploymentOptions.projectNameTextBox.getText() + deploymentOptions.baseUrlLabel.getText();
-			
-			
-			ArrayList<String> apps = appBrowser.getApps();
-			String html = "<p><b>List of Applications:</b> <ul>";
+	private void registerEvents(){
+		eventBus.addHandler(PanelTransitionEvent.TYPE, 
+			new PanelTransitionEventHandler(){
+				public void onPanelTransition(PanelTransitionEvent event){
+					if( event.getTransitionType().equals("next") ){
+						Widget panel =  event.getPanel();
+						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) + 1);
+						eventBus.fireEvent(new BreadCrumbEvent("setActive", deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
+						setFocus(panel);
+					} else if( event.getTransitionType().equals("previous") ){
+						Widget panel =  event.getPanel();
+						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) - 1);
+						eventBus.fireEvent(new BreadCrumbEvent("setActive", deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
+					}
+				}
+		});
+	}
+	
+	public void setFocus(Widget panel){
+		if( panel.getClass().equals(databaseOptions.getClass()) ){
+			deploymentOptions.setFocus();
+		} else if( panel.getClass().equals(appBrowser.getClass()) ){
+			projectOptions.setFocus();
+		} else if( panel.getClass().equals(projectOptions.getClass()) ){
+			databaseOptions.setFocus();
+		}
+	}
+	
+	void handleConfirmBuildProjectLoad() {
+		String username = projectOptions.usernameTextBox.getValue();
+		String email = projectOptions.emailTextBox.getValue();
+		
+		String databaseEngine = databaseOptions.dbengineListBox.getItemText(databaseOptions.dbengineListBox.getSelectedIndex());
+		String databaseName = databaseOptions.nameTextBox.getValue();
+		String databasePassword = databaseOptions.passwordTextBox.getValue();
+		String databaseHost = databaseOptions.hostTextBox.getValue();
+		String databasePort = databaseOptions.portTextBox.getValue();
+		
+		String projectName = deploymentOptions.projectNameTextBox.getText() + deploymentOptions.baseProtocolLabel.getText();
+		
+		
+		ArrayList<String> apps = appBrowser.getApps();
+		String html = "<p><b>List of Applications:</b> <ul>";
 		
 		for (int i = 0; i < apps.size(); i++){
 			html += "<li>" + apps.get(i) + "</li>";
@@ -189,8 +180,8 @@ public class ProjectDeployer extends Composite {
 	  }
 	  
 	  void handleConfirmDeployProject(){
-		  deployerForm.setAction(JSVarHandler.getDeployerBaseURL() + deploymentURL.replaceAll("projectName", deploymentOptions.projectNameTextBox.getText())); 
-		  createdProjectName = deploymentOptions.projectNameTextBox.getText();
+		  deployerForm.setAction(deploymentURL.replaceAll("projectName", deploymentOptions.projectNameTextBox.getText())); 
+		  //createdProjectName = deploymentOptions.projectNameTextBox.getText();
 		  
 		  VerticalPanel formContainerPanel = new VerticalPanel();
 		  this.deployerForm.add(formContainerPanel);
@@ -229,17 +220,5 @@ public class ProjectDeployer extends Composite {
 		  //Add all Database fields to the form for submissionsd
 		  formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 			  deployerForm.submit();
-	  }
-	  
-	  public ProjectOptions getProjectOptions() {
-		  return projectOptions;
-	  }
-	  
-	  DatabaseOptions getDatabaseOptions(){
-		  return databaseOptions;
-	  }
-	  
-	  DeploymentOptions getDeploymentOptions(){
-		  return deploymentOptions;
 	  }
 }

@@ -87,7 +87,7 @@ public class AppBrowser extends Composite {
 	@UiField AppBrowserStyle style;
 	
 	
-	public AppBrowser(ProjectDeployer projectDeployer, HandlerManager eventBus) {
+	public AppBrowser(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.featuredListLoaded = false;
 		this.gridPopulationDelayed = false;

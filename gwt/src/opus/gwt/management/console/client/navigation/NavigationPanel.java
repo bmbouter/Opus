@@ -2,10 +2,25 @@ package opus.gwt.management.console.client.navigation;
 
 import java.util.HashMap;
 
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
+import opus.gwt.management.console.client.event.AuthenticationEvent;
+import opus.gwt.management.console.client.event.AuthenticationEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.event.UpdateProjectsEvent;
+import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
+import opus.gwt.management.console.client.overlays.Project;
+import opus.gwt.management.console.client.resources.NavigationPanelCss.NavigationPanelStyle;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -13,7 +28,9 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -35,14 +52,36 @@ public class NavigationPanel extends Composite {
 	@UiField FormPanel logoutForm;	
 	@UiField Button projectsButton;
 	@UiField Button loggedInUserButton;
+	@UiField Button deployNewButton;
+	@UiField NavigationPanelStyle style;
 	
 	public NavigationPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
 		setupLogoutForm();
+		projectListPopup = new PopupPanel();
+		projectCount = 3;
+		setupProjectPopup();
 	}
 	
 	public void setEventBus(HandlerManager eventBus){
 		this.eventBus = eventBus;
+		registerEvents();
+		eventBus.fireEvent(new AsyncRequestEvent("handleProjects"));
+	}
+	
+	private void registerEvents(){
+		eventBus.addHandler(AuthenticationEvent.TYPE, 
+			new AuthenticationEventHandler(){
+				public void onAuthentication(AuthenticationEvent event){
+					if( event.isAuthenticated() ){
+						setUsername(event.getUsername());
+					}
+		}});
+		eventBus.addHandler(UpdateProjectsEvent.TYPE, 
+			new UpdateProjectsEventHandler(){
+				public void onUpdateProjects(UpdateProjectsEvent event){
+					handleProjectNames(event.getProjects());
+				}});
 	}
 	
 	private void setupLogoutForm(){
@@ -55,6 +94,10 @@ public class NavigationPanel extends Composite {
 		 });
 	}
 	
+	private void setUsername(String userName){
+		this.loggedInUserButton.setText(userName);
+	}
+	
 	@UiHandler("logoutButton")
 	void handleLogoutButton(ClickEvent event){
 		logoutForm.submit();
@@ -63,6 +106,7 @@ public class NavigationPanel extends Composite {
 	@UiHandler("deployNewButton")
 	void handleDeployNewButton(ClickEvent event){
 		eventBus.fireEvent(new PanelTransitionEvent("deploy"));
+		deployNewButton.setStyleName(style.active());
 	}
 	
 	@UiHandler("projectsButton")
@@ -70,34 +114,29 @@ public class NavigationPanel extends Composite {
 		eventBus.fireEvent(new PanelTransitionEvent("projects"));
 	}
 	
-	/*
-	private void createDashboardsPopup(){
-		final String url = URL.encode(JSVarHandler.getDeployerBaseURL() + projectsURL);
-		//serverComm.getJson(url, "handleProjectNames");	
-	}
-	
 	private void setupProjectPopup(){
 		projectListPopup.setAutoHideEnabled(true);
 		projectListPopup.addCloseHandler(new CloseHandler<PopupPanel>(){
 			public void onClose(CloseEvent<PopupPanel> event){
-				dashboardsButton.setStyleName(style.topDashboardButton());
+				projectsButton.setStyleName(style.button());
 			}
 		});
 	}
 	
-	@UiHandler("dashboardsButton")
-	void handleDashboardsButtonMouseOver(MouseOverEvent event){
+	@UiHandler("projectsButton")
+	void handleProjectsButtonMouseOver(MouseOverEvent event){
 		if(projectCount > 0) {
-			dashboardsButton.setStyleName(style.topDashboardButtonActive());
-			int left = dashboardsButton.getAbsoluteLeft();
-			int top = dashboardsButton.getAbsoluteTop() + dashboardsButton.getOffsetHeight();
+			projectsButton.setStyleName(style.topProjectsButtonActive());
+			int left = projectsButton.getAbsoluteLeft();
+			int top = projectsButton.getAbsoluteTop() + projectsButton.getOffsetHeight();
 			projectListPopup.setPopupPosition(left, top);
-			int width = dashboardsButton.getOffsetWidth();
+			int width = projectsButton.getOffsetWidth();
 			projectListPopup.setWidth(Integer.toString(width) + "px");
 			projectListPopup.show();
 		}
 	}
 	
+	/*
 	@UiHandler("dashboardsButton")
 	void handleDashboardsButtonClick(ClickEvent event){
 		mainDeckPanel.clear();
@@ -118,18 +157,19 @@ public class NavigationPanel extends Composite {
 		}
 		projectListPopup.hide();
 	}
+	*/
 	
-	public void handleProjectNames(JsArray<ProjectNames> ProjectNames){
+	public void handleProjectNames(JsArray<Project> Projects){
 		projectListPopup.clear();
-		projectCount = ProjectNames.length();
-		iconPanel.projectIconsFlowPanel.clear();
+		projectCount = Projects.length();
+		//iconPanel.projectIconsFlowPanel.clear();
 		if(projectCount != 0){
 			FlowPanel FP = new FlowPanel();
-			for(int i = 0; i < ProjectNames.length(); i++){
-				if( !ProjectNames.get(i).getName().equals(deletedProject)){
-					final Label testLabel = new Label(ProjectNames.get(i).getName());
+			for(int i = 0; i < Projects.length(); i++){
+				if( !Projects.get(i).getName().equals(deletedProject)){
+					final Label testLabel = new Label(Projects.get(i).getName());
 					testLabel.setStyleName(style.popupLabel());
-					if( i == ProjectNames.length() - 1 ){
+					if( i == Projects.length() - 1 ){
 						testLabel.addStyleName(style.lastLabel());	
 						testLabel.addMouseOverHandler(new MouseOverHandler(){
 							public void onMouseOver(MouseOverEvent event){
@@ -157,50 +197,30 @@ public class NavigationPanel extends Composite {
 					}
 					testLabel.addClickHandler(new ClickHandler() {
 				        public void onClick(ClickEvent event) {
-				        	mainDeckPanel.clear();
+				        	/*mainDeckPanel.clear();
 				    		navigationMenuPanel.clear();
 				        	projectManager = new ProjectManager(eventBus); 
 				        	if(projectListPopup.isShowing()){
 				    			dashboardsButton.setStyleName(style.topDashboardButton());
 				    			projectListPopup.hide();
-				    		}   	
+				    		}   */	
 				        }
 				     });
 					FP.add(testLabel);
-					iconPanel.addProjectIcon(ProjectNames.get(i).getName());
+					//iconPanel.addProjectIcon(ProjectNames.get(i).getName());
 				}
 			}
 			projectListPopup.add(FP);
-			mainDeckPanel.add(iconPanel);
-			mainDeckPanel.showWidget(0);
+			//mainDeckPanel.add(iconPanel);
+			//mainDeckPanel.showWidget(0);
 		} else {
 			
 			deployNewButton.click();
 		}
-		projectListPopup.setStyleName(style.dashboardsPopup());
-	}
-
-	public void onDeployNewProject(String projectName){
-		createDashboardsPopup();
-		mainDeckPanel.clear();
-		navigationMenuPanel.clear();
-		titleBarLabel.setText("");
-    	projectManager = new ProjectManager(eventBus);
+		projectListPopup.setStyleName(style.projectsPopup());
 	}
 	
-	public void onProjectDelete(String deletedProject){
-		this.deletedProject = deletedProject;
-		createDashboardsPopup();
-		iconPanel.removeProjectIcon(deletedProject);
-		mainDeckPanel.clear();
-		navigationMenuPanel.clear();
-		titleBarLabel.setText("");
-	}
-	
-	public JSVariableHandler getJSVariableHandler(){
-		return JSVarHandler;
-	}
-	
+	/*
 	@UiHandler("deployNewButton")
 	void handleDeployNewProjectClick(ClickEvent event){
 		mainDeckPanel.clear();

@@ -46,7 +46,7 @@ public class ConfirmProject extends Composite {
 	@UiField ScrollPanel confirmationScrollPanel;
 	@UiField Button previousButton;
 	
-	public ConfirmProject(FormPanel deployerForm, ProjectDeployer projectDeployer, HandlerManager eventBus) {
+	public ConfirmProject(FormPanel deployerForm, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.deployerForm = deployerForm;
 		this.projectDeployer = projectDeployer;

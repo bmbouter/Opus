@@ -18,9 +18,9 @@ package opus.gwt.management.console.client.dashboard;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
-import opus.gwt.management.console.client.event.UpdateProjectInformationEvent;
-import opus.gwt.management.console.client.event.UpdateProjectInformationEventHandler;
-import opus.gwt.management.console.client.overlays.ProjectInformation;
+import opus.gwt.management.console.client.event.UpdateProjectsEvent;
+import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
+import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 
 import com.google.gwt.core.client.GWT;
@@ -60,10 +60,10 @@ public class Dashboard extends Composite {
 	}
 	
 	private void registerEvents(){
-		eventBus.addHandler(UpdateProjectInformationEvent.TYPE, 
-			new UpdateProjectInformationEventHandler(){
-				public void onUpdateProjectInformation(UpdateProjectInformationEvent event){
-					handleProjectInformation(event.getProjectInformation());
+		eventBus.addHandler(UpdateProjectsEvent.TYPE, 
+			new UpdateProjectsEventHandler(){
+				public void onUpdateProjects(UpdateProjectsEvent event){
+					//handleProjectInformation(event.getProjects());
 				}
 		});
 	}
@@ -72,7 +72,7 @@ public class Dashboard extends Composite {
 		eventBus.fireEvent(new AsyncRequestEvent("handleProjectInformation", projectName));
 	}
 	
-	public void handleProjectInformation(ProjectInformation projInfo){
+	public void handleProjectInformation(Project projInfo){
 		dbnameLabel.setText(projInfo.getDBName());
 		dbengineLabel.setText(projInfo.getDBEngine());
 		if(projInfo.isActive()){

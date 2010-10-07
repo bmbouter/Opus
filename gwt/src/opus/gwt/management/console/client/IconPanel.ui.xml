@@ -17,7 +17,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="resources/ManagementConsole.css" type="opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle"/>
+	<ui:style src="resources/ManagementConsole.css" type="opus.gwt.management.console.client.resources.PanelManagerCss.ManagementConsoleStyle"/>
 	<g:ScrollPanel ui:field='iconScrollPanel'>
 		<g:FlowPanel ui:field="projectIconsFlowPanel">
 			

@@ -14,20 +14,21 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
-package opus.gwt.management.console.client.resources;
+package opus.gwt.management.console.client.overlays;
 
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.user.client.ui.Widget;
 
-public class ManagementConsoleCss extends Widget {
-	  public interface ManagementConsoleStyle extends CssResource {
-	    String dashboardsPopup();
-	    String popupLabel();
-	    String popupLabelActive();
-	    String topDashboardButtonActive();
-	    String topDashboardButton();
-	    String projectIcon();
-	    String projectIconActive();
-	    String lastLabel();
-	  }
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArrayString;
+
+public class Project extends JavaScriptObject {
+
+	protected Project(){}
+	
+	public final native String getName() /*-{ return this.name; }-*/;
+	public final native JsArrayString getApps() /*-{ return this.apps; }-*/;
+	public final native JsArrayString getURLS() /*-{ return this.urls; }-*/;
+	public final native boolean isActive() /*-{ return this.active; }-*/;
+	public final native String getDBName()  /*-{ return this.dbname; }-*/;
+	public final native String getDBEngine()  /*-{ return this.dbengine; }-*/;
+	public final native ProjectSettingsData getAppSettings() /*-{ return this.appsettings }-*/;
 }

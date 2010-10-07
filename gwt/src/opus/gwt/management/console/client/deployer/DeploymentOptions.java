@@ -24,6 +24,7 @@ import opus.gwt.management.console.client.tools.TooltipPanel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -47,29 +48,31 @@ public class DeploymentOptions extends Composite {
 	
 	@UiField Button nextButton;
 	@UiField Button previousButton;
-	@UiField Label baseUrlLabel;
+	@UiField Label baseProtocolLabel;
+	@UiField Label baseDomainLabel;
+	@UiField Label subDomainLabel;
 	@UiField TextBox projectNameTextBox;
 	@UiField TooltipPanel active;
-	@UiField ProjectDeployerStyle form;
+	@UiField ProjectDeployerStyle style;
 
-	public DeploymentOptions(ProjectDeployer projectDeployer, HandlerManager eventBus) {
+	public DeploymentOptions(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
-		this.projectDeployer = projectDeployer;
 		JSVarHandler = new JSVariableHandler();
-		baseUrlLabel.setText(JSVarHandler.getDeployerBaseURL());
+		baseProtocolLabel.setText(JSVarHandler.getDeployerBaseURL().split("//")[0] + "//");
+		baseDomainLabel.setText(JSVarHandler.getDeployerBaseURL().split("//")[1]);
 		setTooltipInitialState();
 	}
 	
 	private boolean validateFields(){
 		if(projectNameTextBox.getText().isEmpty()){
-			projectNameTextBox.setStyleName(form.redBorder());
+			projectNameTextBox.setStyleName(style.redBorder());
 			Window.alert("Subdomain required to deploy");
 			return false;
 		} else if(projectNameTextBox.getText().matches("[a-zA-Z_][a-zA-Z0-9_]*")){
 			return true;
 		} else {
-			projectNameTextBox.setStyleName(form.redBorder());
+			projectNameTextBox.setStyleName(style.redBorder());
 			Window.alert("Subdomain must start with a letter.");
 			return false;
 		}
@@ -100,6 +103,13 @@ public class DeploymentOptions extends Composite {
 		
 		setTooltipPosition(x, y);
 		setTooltipText("Enter a subdomain name for your project");
+	}
+	
+	@UiHandler("projectNameTextBox")
+	void projectNameTextboxOnKeyUp(KeyUpEvent event){
+		subDomainLabel.setText(projectNameTextBox.getText() + ".");
+		if( projectNameTextBox.getText().isEmpty() )
+			subDomainLabel.setText("");
 	}
 	
 	/**

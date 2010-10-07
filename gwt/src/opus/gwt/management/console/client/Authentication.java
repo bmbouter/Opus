@@ -17,7 +17,7 @@
 package opus.gwt.management.console.client;
 
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
-import opus.gwt.management.console.client.event.AuthenticationSuccessEvent;
+import opus.gwt.management.console.client.event.AuthenticationEvent;
 import opus.gwt.management.console.client.event.UserInfoEvent;
 import opus.gwt.management.console.client.event.UserInfoEventHandler;
 import opus.gwt.management.console.client.overlays.User;
@@ -98,7 +98,7 @@ public class Authentication extends Composite {
 		if( userInfo.isAuthenticated() ){
 			username = userInfo.getUsername();
 			loggedIn = true;
-			eventBus.fireEvent(new AuthenticationSuccessEvent());
+			eventBus.fireEvent(new AuthenticationEvent(true, username));
 		} else {
 			loggedIn = false;
 			usernameTextBox.setFocus(true);
@@ -107,6 +107,7 @@ public class Authentication extends Composite {
 				usernameTextBox.setText("");
 				passwordTextBox.setText("");
 			} 
+			eventBus.fireEvent(new AuthenticationEvent(false, ""));
 		}
 	}
 		

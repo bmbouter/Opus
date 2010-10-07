@@ -2,8 +2,6 @@ package opus.gwt.management.console.client.navigation;
 
 import java.util.HashMap;
 
-import opus.gwt.management.console.client.event.AuthenticationSuccessEvent;
-import opus.gwt.management.console.client.event.AuthenticationSuccessEventHandler;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.BreadCrumbEventHandler;
 import opus.gwt.management.console.client.resources.BreadCrumbCss.BreadCrumbStyle;
@@ -12,7 +10,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;

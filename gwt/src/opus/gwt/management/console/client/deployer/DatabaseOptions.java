@@ -49,7 +49,6 @@ public class DatabaseOptions extends Composite {
 	private static DatabaseOptionsUiBinder uiBinder = GWT.create(DatabaseOptionsUiBinder.class);
 	interface DatabaseOptionsUiBinder extends UiBinder<Widget, DatabaseOptions> {}
 	
-	private ProjectDeployer projectDeployer;
 	private HashMap<String, String> dbOptions;
 	private boolean optionsFlag;
 	private boolean postgresAutoConfig;
@@ -67,11 +66,10 @@ public class DatabaseOptions extends Composite {
 	@UiField TooltipPanel active;
 	@UiField ProjectDeployerStyle form;
 	
-	public DatabaseOptions(ProjectDeployer projectDeployer, HandlerManager eventBus) {
+	public DatabaseOptions(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		postgresAutoConfig = false;
-		this.projectDeployer = projectDeployer;
 		dbOptions = new HashMap<String, String>();
 		registerEvents();
 		checkForDBOptions();
@@ -85,6 +83,18 @@ public class DatabaseOptions extends Composite {
 					handleDBOptions(event.getDBOptionsData());
 				}
 		});
+	}
+	
+	public void handleDBOptions(DBOptions dbOptionsData){
+		optionsFlag = false;
+		
+		String[] options = dbOptionsData.getAllowedDatabases().split(",");
+		
+		for(String option : options){
+			dbOptions.put(option, option);
+		}
+		postgresAutoConfig = dbOptionsData.getAutoPostgresConfig();
+		setupDBOptions();
 	}
 	
 	private void checkForDBOptions(){
@@ -204,8 +214,7 @@ public class DatabaseOptions extends Composite {
 	}
 	
 	private boolean validateFields(){
-		//if(!dbengineListBox.isItemSelected(0)){
-		if(true) {
+		if(!dbengineListBox.isItemSelected(0)){
 			if(nameTextBox.getText().isEmpty() 
 					|| passwordTextBox.getText().isEmpty() 
 					|| hostTextBox.getText().isEmpty()
@@ -219,19 +228,6 @@ public class DatabaseOptions extends Composite {
 		} else {
 			return true;
 		}
-	}
-	
-	public void handleDBOptions(DBOptions dbOptionsData){
-		optionsFlag = false;
-		
-		String[] options = dbOptionsData.getAllowedDatabases().split(",");
-		
-		for(String option : options){
-			dbOptions.put(option, option);
-		}
-		postgresAutoConfig = dbOptionsData.getAutoPostgresConfig();
-		projectDeployer.getProjectOptions().setAllowedAuthApps(dbOptionsData.getAllowedAuthApps());
-		setupDBOptions();
 	}
 	
 	/**

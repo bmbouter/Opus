@@ -18,8 +18,7 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
-import opus.gwt.management.console.client.dashboard.ProjectManager;
-import opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
+import opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -48,7 +47,7 @@ public class IconPanel extends Composite {
 	
 	@UiField ScrollPanel iconScrollPanel;
 	@UiField FlowPanel projectIconsFlowPanel;
-	@UiField ManagementConsoleStyle style;
+	@UiField PanelManagerStyle style;
 
 	
 	public IconPanel(HandlerManager eventBus) {
