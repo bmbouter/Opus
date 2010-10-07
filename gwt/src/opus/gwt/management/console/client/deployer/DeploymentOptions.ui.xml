@@ -46,6 +46,12 @@
 						<g:Label ui:field="baseProtocolLabel" styleName="{style.right} {style.protocolLabel}" />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.fieldWrapper}">
+					<g:HTMLPanel styleName="{style.field}">
+						<label class="{style.fieldLabel}">Debug Mode:</label>
+						<g:CheckBox name='debug' ui:field='debugCheckBox'/>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{style.buttons}">	
 					<g:Button ui:field="previousButton" text="Previous" />
 					<g:Button ui:field="nextButton" text="Next" />

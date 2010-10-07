@@ -18,9 +18,13 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
+import opus.gwt.management.console.client.event.UpdateProjectsEvent;
+import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
+import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -54,6 +58,18 @@ public class IconPanel extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		iconMap = new HashMap<String, Integer>();
+		registerEvents();
+	}
+	
+	private void registerEvents(){
+		eventBus.addHandler(UpdateProjectsEvent.TYPE, 
+				new UpdateProjectsEventHandler(){
+					public void onUpdateProjects(UpdateProjectsEvent event){
+						for( int i=0; i < event.getProjects().length(); i++ ){
+							addProjectIcon(event.getProjects().get(i).getName());
+						}
+					}
+		});
 	}
 	
 	public void addProjectIcon(String name) {

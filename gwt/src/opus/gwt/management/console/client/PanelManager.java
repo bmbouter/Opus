@@ -59,6 +59,7 @@ public class PanelManager extends Composite {
 		this.eventBus = eventBus;
 		navigationPanel.setEventBus(eventBus);
 		breadCrumbs.setEventBus(eventBus);
+		iconPanel = new IconPanel(eventBus);
 		registerEvents();
 		authenticationPanel = new Authentication(eventBus);
 		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
@@ -81,7 +82,7 @@ public class PanelManager extends Composite {
 					if( event.getTransitionType().equals("deploy") ){
 						showDeployer();
 					} else if( event.getTransitionType().equals("projects") ){
-						//showIconPanel();
+						showIconPanel();
 					}
 				}
 		});
@@ -108,10 +109,11 @@ public class PanelManager extends Composite {
 		//mainDeckPanel.insert(projectManager, 0);
 		//mainDeckPanel.showWidget(0);
 	}
-	
+	*/
 	private void showIconPanel(){
-		iconPanel = new IconPanel(eventBus);
-		//mainDeckPanel.insert(iconPanel, 0);
+		contentLayoutPanel.clear();
+		contentLayoutPanel.add(iconPanel);
+		contentLayoutPanel.setVisible(true);
 		//mainDeckPanel.showWidget(0);
-	}*/
+	}
 }

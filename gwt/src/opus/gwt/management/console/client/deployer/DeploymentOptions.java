@@ -31,6 +31,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -42,7 +43,6 @@ public class DeploymentOptions extends Composite {
 	private static DeploymentOptionsBuildProjectUiBinder uiBinder = GWT.create(DeploymentOptionsBuildProjectUiBinder.class);
 	interface DeploymentOptionsBuildProjectUiBinder extends UiBinder<Widget, DeploymentOptions> {}
 
-	private ProjectDeployer projectDeployer;
 	private JSVariableHandler JSVarHandler;
 	private HandlerManager eventBus;
 	
@@ -54,6 +54,7 @@ public class DeploymentOptions extends Composite {
 	@UiField TextBox projectNameTextBox;
 	@UiField TooltipPanel active;
 	@UiField ProjectDeployerStyle style;
+	@UiField CheckBox debugCheckBox;
 
 	public DeploymentOptions(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));

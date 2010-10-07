@@ -20,7 +20,8 @@
 }
 .mainContentPanel {
 	background: white;
-	margin: 0;
+	margin: 1em auto;
+	width: 90%;
 	padding: 0;
 }
 .navigationPanel{
@@ -209,7 +210,7 @@
     background:	literal('-moz-linear-gradient(0% 0% 90deg, #F08000, #F08000, #B86200 50%)'); 
 }
 .projectIcon {
-	color: white;	
+	color: black;	
 	text-align: center;
 	margin: 2%;
 	cursor: pointer;
@@ -217,12 +218,12 @@
 	float: left;
 }
 .projectIconActive{
-	color: black;	
+	color: white;	
 	text-align: center;
 	margin: 2%;
 	cursor: pointer;
 	cursor: hand;
-	background: white;	
+	background: gray;	
 	float: left;
 	border-radius: 10px;
 	-webkit-border-radius: 10px;

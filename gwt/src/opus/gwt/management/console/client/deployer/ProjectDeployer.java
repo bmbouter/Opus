@@ -18,8 +18,6 @@ package opus.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
 
-import opus.gwt.management.console.client.JSVariableHandler;
-import opus.gwt.management.console.client.PanelManager;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
@@ -30,6 +28,8 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -211,6 +211,9 @@ public class ProjectDeployer extends Composite {
 			  formContainerPanel.add(path);
 		  }
 	  
+		  CheckBox debug = deploymentOptions.debugCheckBox;
+		  formContainerPanel.add(debug);
+		  
 		  //Add all project options fields to the form for submission
 		  formContainerPanel.add(projectOptions.projectOptionsPanel);
 		  

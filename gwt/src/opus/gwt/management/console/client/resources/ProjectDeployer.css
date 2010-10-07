@@ -14,13 +14,7 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
-.main {
-	
-}
-
 .deployerDeckPanel {
-	margin: 1em auto 0 auto;
-	width: 90%;
 	padding: 0;	
 	border-radius: 5px;
 	font-family: Helvetica, Arial, Verdana, sans-serif;

@@ -31,7 +31,6 @@ import opus.gwt.management.console.client.event.UserInfoEvent;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Window;
 
 public class ServerCommunicator {
 	
@@ -44,18 +43,16 @@ public class ServerCommunicator {
 	private final String projectURL = "/json/projects/<placeHolder>/?a&callback=";
 	
 	private int requestId;
-	private String[] queryTypes;
+	private HashMap<Integer, String> queryTypes;
 	private HandlerManager eventBus;
-	private ServerCommunicator handler;
 	private JSVariableHandler JSvarHandler;
 	private HashMap<String, String> URLS;
 	
 	public ServerCommunicator(HandlerManager eventBus) {
 		this.URLS = new HashMap<String, String>();
-		this.queryTypes = new String[50];
+		this.queryTypes = new HashMap<Integer, String>();
 		this.requestId = 0;
 		this.eventBus = eventBus;
-		this.handler = this;
 		JSvarHandler = new JSVariableHandler();
 		setupURLS();
 		registerEvents();
@@ -85,7 +82,7 @@ public class ServerCommunicator {
 	}
 
 	public void getJson(String url, String queryType){
-		queryTypes[requestId] = queryType;
+		queryTypes.put(requestId, queryType);
 		requestJson(requestId, url, this);
 		requestId++;
 	}
@@ -122,7 +119,7 @@ public class ServerCommunicator {
 	}-*/;
 	
 	public void handleJsonResponse(JavaScriptObject jso, String error, int rId) {
-		String queryType = queryTypes[rId];
+		String queryType = queryTypes.remove(rId);
 		
 		if (jso == null) {
 			if( error.equals("timeout") ) {
