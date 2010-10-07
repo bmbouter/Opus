@@ -103,7 +103,7 @@ public class ProjectOptions extends Composite {
 	
 	@UiHandler("passwordTextBox")
 	void passwordTextBoxOnFocus(FocusEvent event) {
-		if(isPasswordValid()) {
+		if(!passwordTextBox.getStyleName().equals(form.redBorder())) {
 			active.setVisible(true);
 			
 			int x = getTooltipPosition(passwordTextBox)[0];
@@ -117,7 +117,7 @@ public class ProjectOptions extends Composite {
 	
 	@UiHandler("passwordConfirmTextBox")
 	void passwordConfirmTextBoxOnFocus(FocusEvent event) {
-		if(isPasswordValid()) {
+		if(!passwordTextBox.getStyleName().equals(form.redBorder())) {
 			active.setVisible(true);
 	
 			int x = getTooltipPosition(passwordConfirmTextBox)[0];
@@ -131,7 +131,7 @@ public class ProjectOptions extends Composite {
 	
 	@UiHandler("emailTextBox")
 	void emailTextBoxOnFocus(FocusEvent event) {
-		if(isEmailValid()) {
+		if(!emailTextBox.getStyleName().equals(form.redBorder())) {
 			active.setVisible(true);
 			
 			int x = getTooltipPosition(emailTextBox)[0];
@@ -162,7 +162,7 @@ public class ProjectOptions extends Composite {
 		if(!usernameTextBox.getText().isEmpty()) {
 			if(!isPasswordValid()) {
 				active.hide();
-				passwordError.setText("Passwords do not match");
+				passwordError.setText("Passwords do not match or left empty");
 				passwordTextBox.setStyleName(form.redBorder());
 				passwordConfirmTextBox.setStyleName(form.redBorder());
 			} else {
@@ -180,7 +180,7 @@ public class ProjectOptions extends Composite {
 		if(!usernameTextBox.getText().isEmpty()) {
 			if(!isPasswordValid()) {
 				active.hide();
-				passwordError.setText("Passwords do not match");
+				passwordError.setText("Passwords do not match or left empty");
 				passwordTextBox.setStyleName(form.redBorder());
 				passwordConfirmTextBox.setStyleName(form.redBorder());
 			} else {
@@ -198,7 +198,7 @@ public class ProjectOptions extends Composite {
 		if(!usernameTextBox.getText().isEmpty()) {
 			if(!isEmailValid()) {
 				active.hide();
-				
+				emailError.setText("Enter a valid email address");
 				emailTextBox.setStyleName(form.redBorder());
 			} else {
 				emailError.setText("");
