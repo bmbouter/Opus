@@ -23,8 +23,8 @@ import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.ImportAppListEvent;
 import opus.gwt.management.console.client.event.ImportAppListEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
-import opus.gwt.management.console.client.event.UpdateAppInfoEvent;
-import opus.gwt.management.console.client.event.UpdateAppInfoEventHandler;
+import opus.gwt.management.console.client.event.UpdateApplicationEvent;
+import opus.gwt.management.console.client.event.UpdateApplicationEventHandler;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEventHandler;
 import opus.gwt.management.console.client.overlays.Application;
@@ -41,6 +41,7 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -59,7 +60,6 @@ public class AppBrowser extends Composite {
 	private final String tokenURL = "/project/configuration/token/?callback=";
 
 	private JSVariableHandler JSVarHandler;
-	private ProjectDeployer projectDeployer;
 	private FormPanel buildForm;
 	private FlowPanel appFlowPanel;
 	private FlowPanel featuredAppFlowPanel;
@@ -71,7 +71,6 @@ public class AppBrowser extends Composite {
 	private boolean gridPopulationDelayed;
 	private JsArray<Application> applicationData;
 	private AppIcon currentSelection;
-	private Boolean isInDeployList;
 	private ArrayList<AppIcon> deployList;
 	private HandlerManager eventBus;
 	
@@ -92,7 +91,6 @@ public class AppBrowser extends Composite {
 		this.featuredListLoaded = false;
 		this.gridPopulationDelayed = false;
 		this.eventBus = eventBus;
-		this.projectDeployer = projectDeployer;
 		this.JSVarHandler = new JSVariableHandler();
 		registerEvents();
 		eventBus.fireEvent(new AsyncRequestEvent("handleFeaturedList"));
@@ -124,9 +122,9 @@ public class AppBrowser extends Composite {
 	}
 	
 	private void registerEvents(){
-		eventBus.addHandler(UpdateAppInfoEvent.TYPE, 
-			new UpdateAppInfoEventHandler(){
-				public void onUpdateAppInfo(UpdateAppInfoEvent event){
+		eventBus.addHandler(UpdateApplicationEvent.TYPE, 
+			new UpdateApplicationEventHandler(){
+				public void onUpdateAppInfo(UpdateApplicationEvent event){
 					populateAppGrid(event.getAppInfo());
 				}
 		});
@@ -199,9 +197,6 @@ public class AppBrowser extends Composite {
 				+ "<h2>Email: " + icon.getEmail() + "</h2><br />" + icon.getDescription() + "</div>");
 		VersionInfo.clear();
 		VersionInfo.add(icon.getVersions());
-		//Application.setHTML(description + versions.toString());
-		//Window.alert(versions.toString());
-		
 	}
 	
 	public AppIcon createAppIcon(String name, String email, String author, String info, int pk, String iconPath, String appPath) { 

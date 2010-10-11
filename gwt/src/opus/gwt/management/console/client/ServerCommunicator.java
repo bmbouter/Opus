@@ -21,11 +21,11 @@ import java.util.HashMap;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AsyncRequestEventHandler;
 import opus.gwt.management.console.client.event.ImportAppListEvent;
-import opus.gwt.management.console.client.event.UpdateAppInfoEvent;
+import opus.gwt.management.console.client.event.UpdateApplicationEvent;
 import opus.gwt.management.console.client.event.UpdateDBOptionsEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEvent;
-import opus.gwt.management.console.client.event.UpdateVersionInfoEvent;
+import opus.gwt.management.console.client.event.UpdateVersionEvent;
 import opus.gwt.management.console.client.event.UserInfoEvent;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -134,7 +134,7 @@ public class ServerCommunicator {
 		    if (queryType.equals("handleUser")) {
 		    	eventBus.fireEvent(new UserInfoEvent(jso));
 		    } else if (queryType == "handleApplication") {
-		    	eventBus.fireEvent(new UpdateAppInfoEvent(jso));
+		    	eventBus.fireEvent(new UpdateApplicationEvent(jso));
 		    } else if(queryType == "handleFeaturedList"){
 		    	eventBus.fireEvent(new UpdateFeaturedListEvent(jso));
 		    } else if (queryType.equals("handleDBOptions")){
@@ -144,7 +144,7 @@ public class ServerCommunicator {
 		    } else if (queryType.equals("handleImportAppList")) {	    	
 		    	eventBus.fireEvent(new ImportAppListEvent(jso));
 		    } else if(queryType == "handleVersion"){
-		    	eventBus.fireEvent(new UpdateVersionInfoEvent(jso));
+		    	eventBus.fireEvent(new UpdateVersionEvent(jso));
 		    }
 	    }
 	}

@@ -2,8 +2,8 @@ package opus.gwt.management.console.client.deployer;
 
 
 import opus.gwt.management.console.client.JSVariableHandler;
-import opus.gwt.management.console.client.event.UpdateVersionInfoEvent;
-import opus.gwt.management.console.client.event.UpdateVersionInfoEventHandler;
+import opus.gwt.management.console.client.event.UpdateVersionEvent;
+import opus.gwt.management.console.client.event.UpdateVersionEventHandler;
 import opus.gwt.management.console.client.overlays.VersionData;
 
 import com.google.gwt.core.client.GWT;
@@ -127,9 +127,9 @@ public class AppIcon extends Composite {
 	}
 	
 	private void registerEvents(){
-		eventBus.addHandler(UpdateVersionInfoEvent.TYPE, 
-			new UpdateVersionInfoEventHandler(){
-				public void onUpdateVersionInfo(UpdateVersionInfoEvent event){
+		eventBus.addHandler(UpdateVersionEvent.TYPE, 
+			new UpdateVersionEventHandler(){
+				public void onUpdateVersionInfo(UpdateVersionEvent event){
 					handleVersionInfo(event.getVersionInfo());
 				}
 		});

@@ -7,12 +7,12 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.shared.GwtEvent;
 
 
-public class UpdateVersionInfoEvent extends GwtEvent<UpdateVersionInfoEventHandler> {
+public class UpdateVersionEvent extends GwtEvent<UpdateVersionEventHandler> {
 	
-	public static Type<UpdateVersionInfoEventHandler> TYPE = new Type<UpdateVersionInfoEventHandler>();
+	public static Type<UpdateVersionEventHandler> TYPE = new Type<UpdateVersionEventHandler>();
 	private JsArray<VersionData> versionInfo;
 	
-	public UpdateVersionInfoEvent(JavaScriptObject jso){
+	public UpdateVersionEvent(JavaScriptObject jso){
 		this.versionInfo = ConvertVersionInfo(jso);
 	}
 	
@@ -21,12 +21,12 @@ public class UpdateVersionInfoEvent extends GwtEvent<UpdateVersionInfoEventHandl
 	}
 	
   	@Override
-  	public Type<UpdateVersionInfoEventHandler> getAssociatedType() {
+  	public Type<UpdateVersionEventHandler> getAssociatedType() {
 	  return TYPE;
   	}
 
   	@Override
-  	protected void dispatch(UpdateVersionInfoEventHandler handler) {
+  	protected void dispatch(UpdateVersionEventHandler handler) {
 	  handler.onUpdateVersionInfo(this);
   	}
   	

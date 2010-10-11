@@ -7,12 +7,12 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.shared.GwtEvent;
 
 
-public class UpdateAppInfoEvent extends GwtEvent<UpdateAppInfoEventHandler> {
+public class UpdateApplicationEvent extends GwtEvent<UpdateApplicationEventHandler> {
 	
-	public static Type<UpdateAppInfoEventHandler> TYPE = new Type<UpdateAppInfoEventHandler>();
+	public static Type<UpdateApplicationEventHandler> TYPE = new Type<UpdateApplicationEventHandler>();
 	private JsArray<Application> application;
 	
-	public UpdateAppInfoEvent(JavaScriptObject appInfo){
+	public UpdateApplicationEvent(JavaScriptObject appInfo){
 		this.application = ConvertAppInfo(appInfo);
 	}
 	
@@ -21,12 +21,12 @@ public class UpdateAppInfoEvent extends GwtEvent<UpdateAppInfoEventHandler> {
 	}
 	
   	@Override
-  	public Type<UpdateAppInfoEventHandler> getAssociatedType() {
+  	public Type<UpdateApplicationEventHandler> getAssociatedType() {
 	  return TYPE;
   	}
 
   	@Override
-  	protected void dispatch(UpdateAppInfoEventHandler handler) {
+  	protected void dispatch(UpdateApplicationEventHandler handler) {
 	  handler.onUpdateAppInfo(this);
   	}
   	
