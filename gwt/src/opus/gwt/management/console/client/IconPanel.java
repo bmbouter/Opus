@@ -20,11 +20,9 @@ import java.util.HashMap;
 
 import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
-import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
