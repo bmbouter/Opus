@@ -41,10 +41,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
-public class Authentication extends Composite {
+public class AuthenticationPanel extends Composite {
 	
 	private static AuthenticationUiBinder uiBinder = GWT.create(AuthenticationUiBinder.class);
-	interface AuthenticationUiBinder extends UiBinder<Widget, Authentication> {}
+	interface AuthenticationUiBinder extends UiBinder<Widget, AuthenticationPanel> {}
 	
 	private final String loginURL = "/accounts/login/";
 
@@ -61,7 +61,7 @@ public class Authentication extends Composite {
 	@UiField Label errorLabel;
 
 
-	public Authentication(HandlerManager eventBus) {
+	public AuthenticationPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		loggedIn = false;

@@ -41,32 +41,32 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 
-public class ProjectDeployer extends Composite {
+public class ProjectDeployerController extends Composite {
 	
 	private static applicationDeployerUiBinder uiBinder = GWT.create(applicationDeployerUiBinder.class);
-	interface applicationDeployerUiBinder extends UiBinder<Widget, ProjectDeployer> {}
+	interface applicationDeployerUiBinder extends UiBinder<Widget, ProjectDeployerController> {}
 		
 	private final String deploymentURL =  "/deployments/projectName/";
 		
-	private ProjectOptions projectOptions;
-	private DatabaseOptions databaseOptions;
-	private DeploymentOptions deploymentOptions;
+	private ProjectOptionsPanel projectOptionsPanel;
+	private DatabaseOptionsPanel databaseOptionsPanel;
+	private DeploymentOptionsPanel deploymentOptionsPanel;
 	private ConfirmProject confirmBP;
-	private AppBrowser appBrowser;
+	private AppBrowserPanel appBrowserPanel;
 	private HandlerManager eventBus;
 	private FormPanel deployerForm;
 		
 	@UiField ProjectDeployerStyle style;
 	@UiField DeckPanel deployerDeckPanel;
 	
-	public ProjectDeployer(HandlerManager eventBus) {
+	public ProjectDeployerController(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		this.deployerForm = new FormPanel();
-		this.appBrowser = new AppBrowser(eventBus);
-		this.projectOptions = new ProjectOptions(eventBus);
-		this.databaseOptions = new DatabaseOptions(eventBus);
-		this.deploymentOptions = new DeploymentOptions(eventBus);
+		this.appBrowserPanel = new AppBrowserPanel(eventBus);
+		this.projectOptionsPanel = new ProjectOptionsPanel(eventBus);
+		this.databaseOptionsPanel = new DatabaseOptionsPanel(eventBus);
+		this.deploymentOptionsPanel = new DeploymentOptionsPanel(eventBus);
 		this.confirmBP = new ConfirmProject(deployerForm, eventBus);
 		setupdeployerDeckPanel();
 		registerEvents();
@@ -75,24 +75,24 @@ public class ProjectDeployer extends Composite {
 	}
 	
 	private void setupdeployerDeckPanel(){
-		deployerDeckPanel.add(appBrowser);
-		deployerDeckPanel.add(projectOptions);
-		deployerDeckPanel.add(databaseOptions);
-		deployerDeckPanel.add(deploymentOptions);
+		deployerDeckPanel.add(appBrowserPanel);
+		deployerDeckPanel.add(projectOptionsPanel);
+		deployerDeckPanel.add(databaseOptionsPanel);
+		deployerDeckPanel.add(deploymentOptionsPanel);
 		//deployerDeckPanel.add(confirmBP);
 		deployerDeckPanel.add(deployerForm);
-		appBrowser.setTitle("Application Browser");
-		projectOptions.setTitle("Project Options");
-		databaseOptions.setTitle("Database Options");
-		deploymentOptions.setTitle("Deployment Options");
+		appBrowserPanel.setTitle("Application Browser");
+		projectOptionsPanel.setTitle("Project Options");
+		databaseOptionsPanel.setTitle("Database Options");
+		deploymentOptionsPanel.setTitle("Deployment Options");
 		deployerDeckPanel.showWidget(0);
-		appBrowser.setHeight("");
-		appBrowser.setWidth("");
+		appBrowserPanel.setHeight("");
+		appBrowserPanel.setWidth("");
 	}
 	
 	private void setupBreadCrumbs(){
-		String[] crumbs = {appBrowser.getTitle(), projectOptions.getTitle(), databaseOptions.getTitle(), deploymentOptions.getTitle()};
-		eventBus.fireEvent(new BreadCrumbEvent("setCrumbs", crumbs));
+		String[] crumbs = {appBrowserPanel.getTitle(), projectOptionsPanel.getTitle(), databaseOptionsPanel.getTitle(), deploymentOptionsPanel.getTitle()};
+		eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_CRUMBS, crumbs));
 	}
 	
 	private void setupDeployerForm(){
@@ -108,44 +108,44 @@ public class ProjectDeployer extends Composite {
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
 			new PanelTransitionEventHandler(){
 				public void onPanelTransition(PanelTransitionEvent event){
-					if( event.getTransitionType().equals("next") ){
+					if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.NEXT ){
 						Widget panel =  event.getPanel();
 						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) + 1);
-						eventBus.fireEvent(new BreadCrumbEvent("setActive", deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
+						eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
 						setFocus(panel);
-					} else if( event.getTransitionType().equals("previous") ){
+					} else if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PREVIOUS ){
 						Widget panel =  event.getPanel();
 						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) - 1);
-						eventBus.fireEvent(new BreadCrumbEvent("setActive", deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
+						eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
 					}
 				}
 		});
 	}
 	
 	public void setFocus(Widget panel){
-		if( panel.getClass().equals(databaseOptions.getClass()) ){
-			deploymentOptions.setFocus();
-		} else if( panel.getClass().equals(appBrowser.getClass()) ){
-			projectOptions.setFocus();
-		} else if( panel.getClass().equals(projectOptions.getClass()) ){
-			databaseOptions.setFocus();
+		if( panel.getClass().equals(databaseOptionsPanel.getClass()) ){
+			deploymentOptionsPanel.setFocus();
+		} else if( panel.getClass().equals(appBrowserPanel.getClass()) ){
+			projectOptionsPanel.setFocus();
+		} else if( panel.getClass().equals(projectOptionsPanel.getClass()) ){
+			databaseOptionsPanel.setFocus();
 		}
 	}
 	
 	void handleConfirmBuildProjectLoad() {
-		String username = projectOptions.usernameTextBox.getValue();
-		String email = projectOptions.emailTextBox.getValue();
+		String username = projectOptionsPanel.usernameTextBox.getValue();
+		String email = projectOptionsPanel.emailTextBox.getValue();
 		
-		String databaseEngine = databaseOptions.dbengineListBox.getItemText(databaseOptions.dbengineListBox.getSelectedIndex());
-		String databaseName = databaseOptions.nameTextBox.getValue();
-		String databasePassword = databaseOptions.passwordTextBox.getValue();
-		String databaseHost = databaseOptions.hostTextBox.getValue();
-		String databasePort = databaseOptions.portTextBox.getValue();
+		String databaseEngine = databaseOptionsPanel.dbengineListBox.getItemText(databaseOptionsPanel.dbengineListBox.getSelectedIndex());
+		String databaseName = databaseOptionsPanel.nameTextBox.getValue();
+		String databasePassword = databaseOptionsPanel.passwordTextBox.getValue();
+		String databaseHost = databaseOptionsPanel.hostTextBox.getValue();
+		String databasePort = databaseOptionsPanel.portTextBox.getValue();
 		
-		String projectName = deploymentOptions.projectNameTextBox.getText() + deploymentOptions.baseProtocolLabel.getText();
+		String projectName = deploymentOptionsPanel.projectNameTextBox.getText() + deploymentOptionsPanel.baseProtocolLabel.getText();
 		
 		
-		ArrayList<String> apps = appBrowser.getApps();
+		ArrayList<String> apps = appBrowserPanel.getApps();
 		String html = "<p><b>List of Applications:</b> <ul>";
 		
 		for (int i = 0; i < apps.size(); i++){
@@ -179,14 +179,14 @@ public class ProjectDeployer extends Composite {
 	  }
 	  
 	  void handleConfirmDeployProject(){
-		  deployerForm.setAction(deploymentURL.replaceAll("projectName", deploymentOptions.projectNameTextBox.getText())); 
-		  //createdProjectName = deploymentOptions.projectNameTextBox.getText();
+		  deployerForm.setAction(deploymentURL.replaceAll("projectName", deploymentOptionsPanel.projectNameTextBox.getText())); 
+		  //createdProjectName = deploymentOptionsPanel.projectNameTextBox.getText();
 		  
 		  VerticalPanel formContainerPanel = new VerticalPanel();
 		  this.deployerForm.add(formContainerPanel);
 		  
-		  ArrayList<String> paths = appBrowser.getAppPaths();
-		  ArrayList<String> apptypes = appBrowser.getAppTypes();
+		  ArrayList<String> paths = appBrowserPanel.getAppPaths();
+		  ArrayList<String> apptypes = appBrowserPanel.getAppTypes();
 		  Hidden numApps = new Hidden();
 		  numApps.setName("form-TOTAL_FORMS");
 		  numApps.setValue(String.valueOf(paths.size()));
@@ -210,14 +210,14 @@ public class ProjectDeployer extends Composite {
 			  formContainerPanel.add(path);
 		  }
 	  
-		  CheckBox debug = deploymentOptions.debugCheckBox;
+		  CheckBox debug = deploymentOptionsPanel.debugCheckBox;
 		  formContainerPanel.add(debug);
 		  
 		  //Add all project options fields to the form for submission
-		  formContainerPanel.add(projectOptions.projectOptionsPanel);
+		  formContainerPanel.add(projectOptionsPanel.projectOptionsPanel);
 		  
 		  //Add all database options fields to the form for submission
-		  formContainerPanel.add(databaseOptions.databaseOptionsPanel);
+		  formContainerPanel.add(databaseOptionsPanel.databaseOptionsPanel);
 		 
 		  //Add all Database fields to the form for submissionsd
 		  formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));

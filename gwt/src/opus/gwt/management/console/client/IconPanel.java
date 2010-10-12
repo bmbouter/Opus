@@ -72,9 +72,9 @@ public class IconPanel extends Composite {
 	
 	public void addProjectIcon(String name) {
 		HTML project = new HTML();
-		project.setHTML("<img src='/gwt/projectdefaulticon.png' width='64' height='64'/><br/>"+name);
-		
 		final String projectName = name;
+		
+		project.setHTML("<img src='/gwt/projectdefaulticon.png' width='64' height='64'/><br/>" + projectName);
 		
 		final FocusPanel testLabel = new FocusPanel();
 		testLabel.add(project);
@@ -93,7 +93,7 @@ public class IconPanel extends Composite {
 	        public void onClick(ClickEvent event) {
 	        	//console.mainDeckPanel.clear();
 	        	//console.navigationMenuPanel.clear();
-	        	//projectManager = new ProjectManager(eventBus); 
+	        	//projectManager = new ProjectManagerController(eventBus); 
 	        	testLabel.setStyleName(style.projectIcon());
 	        }
 	     });

@@ -44,10 +44,10 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DatabaseOptions extends Composite {
+public class DatabaseOptionsPanel extends Composite {
 
 	private static DatabaseOptionsUiBinder uiBinder = GWT.create(DatabaseOptionsUiBinder.class);
-	interface DatabaseOptionsUiBinder extends UiBinder<Widget, DatabaseOptions> {}
+	interface DatabaseOptionsUiBinder extends UiBinder<Widget, DatabaseOptionsPanel> {}
 	
 	private HashMap<String, String> dbOptions;
 	private boolean optionsFlag;
@@ -66,7 +66,7 @@ public class DatabaseOptions extends Composite {
 	@UiField TooltipPanel active;
 	@UiField ProjectDeployerStyle form;
 	
-	public DatabaseOptions(HandlerManager eventBus) {
+	public DatabaseOptionsPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		postgresAutoConfig = false;
@@ -142,13 +142,13 @@ public class DatabaseOptions extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			eventBus.fireEvent(new PanelTransitionEvent("next", this));
+			eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.NEXT, this));
 		}
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		eventBus.fireEvent(new PanelTransitionEvent("previous", this));
+		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PREVIOUS, this));
 	}
 	
 	@UiHandler("nameTextBox")

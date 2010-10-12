@@ -5,26 +5,27 @@ import com.google.gwt.event.shared.GwtEvent;
 public class BreadCrumbEvent extends GwtEvent<BreadCrumbEventHandler> {
 	
 	public static Type<BreadCrumbEventHandler> TYPE = new Type<BreadCrumbEventHandler>();
-	private String eventType;
+	public enum Action{SET_CRUMBS, SET_ACTIVE, ADD_CRUMB};
+	private Action actionType;
 	private String[] names;
-	private String active;
+	private String crumb;
 	
-	public BreadCrumbEvent(String eventType, String[] names){
-		this.eventType = eventType;
+	public BreadCrumbEvent(Action actionType, String[] names){
+		this.actionType = actionType;
 		this.names = names;
 	}
 	
-	public BreadCrumbEvent(String eventType, String active){
-		this.eventType = eventType;
-		this.active = active;
+	public BreadCrumbEvent(Action actionType, String crumb){
+		this.actionType = actionType;
+		this.crumb = crumb;
 	}
 	
-	public String getEventType(){
-		return eventType;
+	public Action getAction(){
+		return actionType;
 	}
 
-	public String getActive(){
-		return active;
+	public String getCrumb(){
+		return crumb;
 	}
 	
 	public String[] getCrumbNames(){

@@ -40,10 +40,10 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ProjectOptions extends Composite {
+public class ProjectOptionsPanel extends Composite {
 
 	private static BuildProjectPage2UiBinder uiBinder = GWT.create(BuildProjectPage2UiBinder.class);
-	interface BuildProjectPage2UiBinder extends UiBinder<Widget, ProjectOptions> {}
+	interface BuildProjectPage2UiBinder extends UiBinder<Widget, ProjectOptionsPanel> {}
 	
 	private HandlerManager eventBus;
 	
@@ -60,7 +60,7 @@ public class ProjectOptions extends Composite {
 	@UiField Label passwordError;
 	@UiField Label emailError;
 	
-	public ProjectOptions(HandlerManager eventBus) {
+	public ProjectOptionsPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		setTooltipInitialState();
@@ -212,7 +212,7 @@ public class ProjectOptions extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			eventBus.fireEvent(new PanelTransitionEvent("next", this));
+			eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.NEXT, this));
 		} else {
 			Window.alert("Validation error");
 		}
@@ -220,7 +220,7 @@ public class ProjectOptions extends Composite {
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		eventBus.fireEvent(new PanelTransitionEvent("previous", this));
+		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PREVIOUS, this));
 	}
 	
 	public void setFocus(){

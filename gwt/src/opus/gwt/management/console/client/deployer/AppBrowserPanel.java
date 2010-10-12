@@ -51,10 +51,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AppBrowser extends Composite {
+public class AppBrowserPanel extends Composite {
 
 	private static AppBrowserUiBinderUiBinder uiBinder = GWT.create(AppBrowserUiBinderUiBinder.class);
-	interface AppBrowserUiBinderUiBinder extends UiBinder<Widget, AppBrowser> {}
+	interface AppBrowserUiBinderUiBinder extends UiBinder<Widget, AppBrowserPanel> {}
 	
 	private final String tokenURL = "/project/configuration/token/?callback=";
 
@@ -85,7 +85,7 @@ public class AppBrowser extends Composite {
 	@UiField AppBrowserStyle style;
 	
 	
-	public AppBrowser(HandlerManager eventBus) {
+	public AppBrowserPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.featuredListLoaded = false;
 		this.gridPopulationDelayed = false;
@@ -248,7 +248,7 @@ public class AppBrowser extends Composite {
 	
 	@UiHandler("DeployButton")
 	void handleNextButton(ClickEvent event){
-		eventBus.fireEvent(new PanelTransitionEvent("next", this));
+		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.NEXT, this));
 	}
 	
 	@UiHandler("RemoveButton")

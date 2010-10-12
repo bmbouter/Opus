@@ -12,7 +12,7 @@ public class AuthenticationTest extends GWTTestCase {
 	
 	public void testAuthentication(){
 		HandlerManager eventBus = new HandlerManager(null);
-		Authentication authenticationPanel = new Authentication(eventBus);
+		AuthenticationPanel authenticationPanel = new AuthenticationPanel(eventBus);
 		
 		
 	}

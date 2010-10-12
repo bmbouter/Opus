@@ -3,7 +3,7 @@ package opus.gwt.management.console.client.dashboard;
 import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
-import opus.gwt.management.console.client.PanelManager;
+import opus.gwt.management.console.client.ManagementConsoleController;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 import opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle;
 
@@ -28,9 +28,9 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
-public class ProjectSettings extends Composite {
+public class ProjectSettingsPanel extends Composite {
 
-	interface ProjectSettingsUiBinder extends UiBinder<Widget, ProjectSettings> {
+	interface ProjectSettingsUiBinder extends UiBinder<Widget, ProjectSettingsPanel> {
 	}
 	
 	private static ProjectSettingsUiBinder uiBinder = GWT
@@ -40,8 +40,8 @@ public class ProjectSettings extends Composite {
 	private String projectName;
 	private JSVariableHandler JSVarHandler;
 	private boolean active;
-	private PanelManager managementCon;
-	private ProjectManager projectManager;
+	private ManagementConsoleController managementCon;
+	private ProjectManagerController projectManagerController;
 	private boolean hasSettings;
 	private ArrayList<String> textboxes;
 	
@@ -53,11 +53,11 @@ public class ProjectSettings extends Composite {
 	@UiField ProjectManagerStyle style;
 
 
-	public ProjectSettings(ProjectManager projectManager) {
+	public ProjectSettingsPanel(ProjectManagerController projectManagerController) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.projectName = "";
 		this.JSVarHandler = new JSVariableHandler();
-		this.projectManager = projectManager;
+		this.projectManagerController = projectManagerController;
 		this.optionsForm = new FormPanel();
 		this.textboxes = new ArrayList<String>();
 		setupOptionsForm();
@@ -74,7 +74,7 @@ public class ProjectSettings extends Composite {
 			});
 	}
 	
-	//Dashboard.handleProjectInformation() calls this method to import settings
+	//DashboardPanel.handleProjectInformation() calls this method to import settings
 	public void importProjectSettings(ProjectSettingsData settings, String[] apps){
 		//Window.alert("importing settings");
 		for (int i=0; i<apps.length; i++){
@@ -156,14 +156,14 @@ public class ProjectSettings extends Composite {
 
 		}
 		this.hasSettings = true;
-		//setActive(projectManager.getDashboard().isActive());
+		//setActive(projectManagerController.getDashboard().isActive());
 	}
 	
 	public void setHasSettings(boolean state) {
 		this.hasSettings = state;
 	}
 	
-	//ProjectManager.displayOptions() calls this function  
+	//ProjectManagerController.displayOptions() calls this function  
 	public void setActive(boolean active){
 		this.active = active;
 		if(!active){

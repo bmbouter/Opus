@@ -1,6 +1,5 @@
 package opus.gwt.management.console.client.navigation;
 
-import java.util.HashMap;
 
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
@@ -45,7 +44,6 @@ public class NavigationPanel extends Composite {
 	private PopupPanel projectListPopup;
 	private int projectCount;
 	private String deletedProject;
-	private HashMap<String, Integer> mainPanels;
 	private HandlerManager eventBus;
 	
 	@UiField Button logoutButton;
@@ -59,7 +57,6 @@ public class NavigationPanel extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		setupLogoutForm();
 		projectListPopup = new PopupPanel();
-		projectCount = 3;
 		setupProjectPopup();
 	}
 	
@@ -81,7 +78,7 @@ public class NavigationPanel extends Composite {
 			new UpdateProjectsEventHandler(){
 				public void onUpdateProjects(UpdateProjectsEvent event){
 					handleProjectNames(event.getProjects());
-				}});
+		}});
 	}
 	
 	private void setupLogoutForm(){
@@ -105,13 +102,13 @@ public class NavigationPanel extends Composite {
 	
 	@UiHandler("deployNewButton")
 	void handleDeployNewButton(ClickEvent event){
-		eventBus.fireEvent(new PanelTransitionEvent("deploy"));
+		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DEPLOY));
 		deployNewButton.setStyleName(style.active());
 	}
 	
 	@UiHandler("projectsButton")
 	void handleProjectsButton(ClickEvent event){
-		eventBus.fireEvent(new PanelTransitionEvent("projects"));
+		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTS));
 	}
 	
 	private void setupProjectPopup(){
@@ -167,6 +164,7 @@ public class NavigationPanel extends Composite {
 			FlowPanel FP = new FlowPanel();
 			for(int i = 0; i < Projects.length(); i++){
 				if( !Projects.get(i).getName().equals(deletedProject)){
+					final String projectName = Projects.get(i).getName();
 					final Label testLabel = new Label(Projects.get(i).getName());
 					testLabel.setStyleName(style.popupLabel());
 					if( i == Projects.length() - 1 ){
@@ -197,13 +195,7 @@ public class NavigationPanel extends Composite {
 					}
 					testLabel.addClickHandler(new ClickHandler() {
 				        public void onClick(ClickEvent event) {
-				        	/*mainDeckPanel.clear();
-				    		navigationMenuPanel.clear();
-				        	projectManager = new ProjectManager(eventBus); 
-				        	if(projectListPopup.isShowing()){
-				    			dashboardsButton.setStyleName(style.topDashboardButton());
-				    			projectListPopup.hide();
-				    		}   */	
+				        	eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 				        }
 				     });
 					FP.add(testLabel);
@@ -219,13 +211,4 @@ public class NavigationPanel extends Composite {
 		}
 		projectListPopup.setStyleName(style.projectsPopup());
 	}
-	
-	/*
-	@UiHandler("deployNewButton")
-	void handleDeployNewProjectClick(ClickEvent event){
-		mainDeckPanel.clear();
-		navigationMenuPanel.clear();
-		projectDeployer = new ProjectDeployer(eventBus);
-	}
-	*/
 }

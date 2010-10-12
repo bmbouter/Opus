@@ -17,9 +17,13 @@
 package opus.gwt.management.console.client.dashboard;
 
 import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.event.BreadCrumbEvent;
+import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -34,31 +38,40 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 
-public class DeleteProject extends Composite {
+public class DeleteProjectPanel extends Composite {
 
-	private static DeleteProjectUiBinder uiBinder = GWT
-			.create(DeleteProjectUiBinder.class);
-
-	interface DeleteProjectUiBinder extends UiBinder<Widget, DeleteProject> {
-	}
+	private static DeleteProjectUiBinder uiBinder = GWT.create(DeleteProjectUiBinder.class);
+	interface DeleteProjectUiBinder extends UiBinder<Widget, DeleteProjectPanel> {}
 
 	private final String deleteProjectURL = "/deployments/projectName/destroy";
 	
 	private JSVariableHandler JSVarHandler;
 	private FormPanel deleteForm;
-	private ProjectManager projectManager;
 	private String projectName;
+	private HandlerManager eventBus;
 	
 	@UiField Button deleteProjectButton;
 	@UiField HTMLPanel mainDeleteProjectPanel;
 	@UiField FlowPanel titlePanel;
 	
-	public DeleteProject(ProjectManager projectManager) {
+	public DeleteProjectPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.projectManager = projectManager;
+		this.eventBus = eventBus;
 		JSVarHandler = new JSVariableHandler();
 		deleteForm = new FormPanel();
 		projectName = "";
+		registerHandlers();
+		setupDeleteForm();
+	}
+	
+	private void registerHandlers(){
+		eventBus.addHandler(PanelTransitionEvent.TYPE, 
+				new PanelTransitionEventHandler(){
+					public void onPanelTransition(PanelTransitionEvent event){
+						if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DELETE ){
+							eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.ADD_CRUMB, "Delete Project"));
+						}
+		}});
 	}
 	
 	private void setupDeleteForm(){

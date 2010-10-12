@@ -38,10 +38,10 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DeploymentOptions extends Composite {
+public class DeploymentOptionsPanel extends Composite {
 
 	private static DeploymentOptionsBuildProjectUiBinder uiBinder = GWT.create(DeploymentOptionsBuildProjectUiBinder.class);
-	interface DeploymentOptionsBuildProjectUiBinder extends UiBinder<Widget, DeploymentOptions> {}
+	interface DeploymentOptionsBuildProjectUiBinder extends UiBinder<Widget, DeploymentOptionsPanel> {}
 
 	private JSVariableHandler JSVarHandler;
 	private HandlerManager eventBus;
@@ -56,7 +56,7 @@ public class DeploymentOptions extends Composite {
 	@UiField ProjectDeployerStyle style;
 	@UiField CheckBox debugCheckBox;
 
-	public DeploymentOptions(HandlerManager eventBus) {
+	public DeploymentOptionsPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		JSVarHandler = new JSVariableHandler();
@@ -86,13 +86,13 @@ public class DeploymentOptions extends Composite {
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if(validateFields()){
-			eventBus.fireEvent(new PanelTransitionEvent("next", this));
+			eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.NEXT, this));
 		}
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		eventBus.fireEvent(new PanelTransitionEvent("previous", this));
+		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PREVIOUS, this));
 	}
 	
 	@UiHandler("projectNameTextBox")

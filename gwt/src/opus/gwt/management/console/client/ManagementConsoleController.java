@@ -16,14 +16,14 @@
 
 package opus.gwt.management.console.client;
 
-import opus.gwt.management.console.client.dashboard.ProjectManager;
-import opus.gwt.management.console.client.deployer.ProjectDeployer;
+import opus.gwt.management.console.client.dashboard.ProjectManagerController;
+import opus.gwt.management.console.client.deployer.ProjectDeployerController;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
 import opus.gwt.management.console.client.event.AuthenticationEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
-import opus.gwt.management.console.client.navigation.BreadCrumbs;
+import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle;
 
@@ -37,31 +37,31 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class PanelManager extends Composite {
+public class ManagementConsoleController extends Composite {
 
 	private static ManagementConsoleUiBinder uiBinder = GWT.create(ManagementConsoleUiBinder.class);
-	interface ManagementConsoleUiBinder extends UiBinder<Widget, PanelManager> {}
+	interface ManagementConsoleUiBinder extends UiBinder<Widget, ManagementConsoleController> {}
 	
 	private HandlerManager eventBus;
-	private Authentication authenticationPanel;
-	private ProjectDeployer projectDeployer;
-	private ProjectManager projectManager;
+	private AuthenticationPanel authenticationPanel;
+	private ProjectDeployerController projectDeployerController;
+	private ProjectManagerController projectManagerController;
 	private IconPanel iconPanel;
 	
 	@UiField LayoutPanel contentLayoutPanel;
 	@UiField NavigationPanel navigationPanel;
-	@UiField BreadCrumbs breadCrumbs;
+	@UiField BreadCrumbsPanel breadCrumbsPanel;
 	@UiField PanelManagerStyle style;
 	
-	public PanelManager(HandlerManager eventBus) {
+	public ManagementConsoleController(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
 		this.eventBus = eventBus;
 		navigationPanel.setEventBus(eventBus);
-		breadCrumbs.setEventBus(eventBus);
+		breadCrumbsPanel.setEventBus(eventBus);
 		iconPanel = new IconPanel(eventBus);
+		authenticationPanel = new AuthenticationPanel(eventBus);
 		registerEvents();
-		authenticationPanel = new Authentication(eventBus);
 		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
 	}
 	
@@ -79,10 +79,12 @@ public class PanelManager extends Composite {
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
 			new PanelTransitionEventHandler(){
 				public void onPanelTransition(PanelTransitionEvent event){
-					if( event.getTransitionType().equals("deploy") ){
+					if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DEPLOY ){
 						showDeployer();
-					} else if( event.getTransitionType().equals("projects") ){
+					} else if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTS ){
 						showIconPanel();
+					} else if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD ){
+						manageProjects(event.getName());
 					}
 				}
 		});
@@ -97,23 +99,26 @@ public class PanelManager extends Composite {
 	private void showDeployer(){
 		RootLayoutPanel.get().clear();
 		RootLayoutPanel.get().add(this);
-		projectDeployer = new ProjectDeployer(eventBus);
+		projectDeployerController = new ProjectDeployerController(eventBus);
 		contentLayoutPanel.clear();
-		contentLayoutPanel.add(projectDeployer);
+		contentLayoutPanel.add(projectDeployerController);
 		contentLayoutPanel.setVisible(true);
 	}
 	
-	/*
-	private void manageProjects(){
-		projectManager = new ProjectManager(eventBus);
-		//mainDeckPanel.insert(projectManager, 0);
-		//mainDeckPanel.showWidget(0);
+	private void manageProjects(String projectName){
+		RootLayoutPanel.get().clear();
+		RootLayoutPanel.get().add(this);
+		projectManagerController = new ProjectManagerController(eventBus, projectName);
+		contentLayoutPanel.clear();
+		contentLayoutPanel.add(projectManagerController);
+		contentLayoutPanel.setVisible(true);	
 	}
-	*/
+	
 	private void showIconPanel(){
+		RootLayoutPanel.get().clear();
+		RootLayoutPanel.get().add(this);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(iconPanel);
 		contentLayoutPanel.setVisible(true);
-		//mainDeckPanel.showWidget(0);
 	}
 }

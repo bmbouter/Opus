@@ -34,14 +34,14 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Dashboard extends Composite {
+public class DashboardPanel extends Composite {
 
 	private static DashboardUiBinder uiBinder = GWT.create(DashboardUiBinder.class);
-	interface DashboardUiBinder extends UiBinder<Widget, Dashboard> {}
+	interface DashboardUiBinder extends UiBinder<Widget, DashboardPanel> {}
 	
 	private JSVariableHandler JSVarHandler;
 	private JavaScriptObject appSettings;
-	private ProjectManager projectManager;
+	private ProjectManagerController projectManagerController;
 	private boolean active;
 	private HandlerManager eventBus;
 
@@ -51,10 +51,9 @@ public class Dashboard extends Composite {
 	@UiField Label activeLabel;
 	@UiField FlowPanel urlsFlowPanel;
 	
-	public Dashboard(ProjectManager projectManager, HandlerManager eventBus) {
+	public DashboardPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
-		this.projectManager = projectManager;
 		this.eventBus = eventBus;
 		registerEvents();
 	}
@@ -95,14 +94,14 @@ public class Dashboard extends Composite {
 			//Get list of apps
 			String[] apps = a.split(";;;\\s*");
 			//Create panel to display options for all apps
-			ProjectSettings options = projectManager.getOptionsPanel();
-			options.importProjectSettings(settings, apps);
-			projectManager.getOptionsPanel().setHasSettings(true);
-			//Window.alert(String.valueOf(this.active));
-			projectManager.getOptionsPanel().setActive(this.active);
+			//ProjectSettingsPanel options = projectManagerController.getOptionsPanel();
+			//options.importProjectSettings(settings, apps);
+			//projectManagerController.getOptionsPanel().setHasSettings(true);
+
+			//projectManagerController.getOptionsPanel().setActive(this.active);
 		} catch (Exception e) {
-			projectManager.getOptionsPanel().setHasSettings(false);
-			projectManager.getOptionsPanel().setActive(this.active);
+			//projectManagerController.getOptionsPanel().setHasSettings(false);
+			//projectManagerController.getOptionsPanel().setActive(this.active);
 		}
 	}
 	
