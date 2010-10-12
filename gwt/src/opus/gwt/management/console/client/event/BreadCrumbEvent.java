@@ -5,7 +5,7 @@ import com.google.gwt.event.shared.GwtEvent;
 public class BreadCrumbEvent extends GwtEvent<BreadCrumbEventHandler> {
 	
 	public static Type<BreadCrumbEventHandler> TYPE = new Type<BreadCrumbEventHandler>();
-	public enum Action{SET_CRUMBS, SET_ACTIVE, ADD_CRUMB};
+	public enum Action{SET_CRUMBS, SET_ACTIVE, ADD_CRUMB, REMOVE_CRUMB};
 	private Action actionType;
 	private String[] names;
 	private String crumb;

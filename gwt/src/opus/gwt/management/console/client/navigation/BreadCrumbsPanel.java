@@ -49,11 +49,13 @@ public class BreadCrumbsPanel extends Composite {
 						setActiveCrumb(event.getCrumb());
 					} else if( event.getAction() == BreadCrumbEvent.Action.ADD_CRUMB ){
 						setActiveCrumb(event.getCrumb());
+					} else if( event.getAction() == BreadCrumbEvent.Action.REMOVE_CRUMB ){
+						removeBreadCrumb();
 					}
 		}});
 	}
 	
-	public void setBreadCrumbs(String[] names){
+	private void setBreadCrumbs(String[] names){
 		breadCrumbsContainer.clear();
 		breadCrumbLabels.clear();
 		for(int i = 0; i < names.length; i++ ){
@@ -68,7 +70,7 @@ public class BreadCrumbsPanel extends Composite {
 		}
 	}
 	
-	public void addBreadCrumb(String name, boolean isFirstCrumb){
+	private void addBreadCrumb(String name, boolean isFirstCrumb){
 		Label crumb = new Label();
 		if( isFirstCrumb ){
 			crumb.setText(name);
@@ -80,14 +82,8 @@ public class BreadCrumbsPanel extends Composite {
 		breadCrumbsContainer.add(crumb);
 	}
 
-	private void addBreadCrumb(String name){
-		HTML crumb = new HTML();
-		crumb.setHTML("<span>" + name + "</span> &raquo;");
-		//Label crumb = new Label();
-		crumb.setText(name + " > ");
-		crumb.setStyleName(style.inactive());
-		breadCrumbLabels.put(name, crumb);
-		breadCrumbsContainer.add(crumb);
+	private void removeBreadCrumb(){
+		breadCrumbsContainer.remove(breadCrumbLabels.size());
 	}
 	
 	private void setActiveCrumb(String name){

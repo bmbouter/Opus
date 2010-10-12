@@ -39,9 +39,7 @@ public class DashboardPanel extends Composite {
 	private static DashboardUiBinder uiBinder = GWT.create(DashboardUiBinder.class);
 	interface DashboardUiBinder extends UiBinder<Widget, DashboardPanel> {}
 	
-	private JSVariableHandler JSVarHandler;
 	private JavaScriptObject appSettings;
-	private ProjectManagerController projectManagerController;
 	private boolean active;
 	private HandlerManager eventBus;
 
@@ -53,7 +51,6 @@ public class DashboardPanel extends Composite {
 	
 	public DashboardPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
-		JSVarHandler = new JSVariableHandler();
 		this.eventBus = eventBus;
 		registerEvents();
 	}
