@@ -16,11 +16,10 @@
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle"/>
-	<g:ScrollPanel ui:field='iconScrollPanel'>
-		<g:FlowPanel ui:field="projectIconsFlowPanel">
-			
-		</g:FlowPanel>
-	</g:ScrollPanel>
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:c="urn:import:opus.gwt.management.console.client.navigation">
+	<ui:style src="../resources/ProjectDeployer.css" type="opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle"/>
+	
+	<g:DeckPanel ui:field="deployerDeckPanel" styleName="{style.deployerDeckPanel}" />
+		
 </ui:UiBinder> 

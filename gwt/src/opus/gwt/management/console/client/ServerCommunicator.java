@@ -21,17 +21,16 @@ import java.util.HashMap;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AsyncRequestEventHandler;
 import opus.gwt.management.console.client.event.ImportAppListEvent;
-import opus.gwt.management.console.client.event.UpdateAppInfoEvent;
+import opus.gwt.management.console.client.event.UpdateApplicationEvent;
 import opus.gwt.management.console.client.event.UpdateDBOptionsEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
-import opus.gwt.management.console.client.event.UpdateProjectInformationEvent;
-import opus.gwt.management.console.client.event.UpdateVersionInfoEvent;
+import opus.gwt.management.console.client.event.UpdateProjectsEvent;
+import opus.gwt.management.console.client.event.UpdateVersionEvent;
 import opus.gwt.management.console.client.event.UserInfoEvent;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Window;
 
 public class ServerCommunicator {
 	
@@ -44,18 +43,16 @@ public class ServerCommunicator {
 	private final String projectURL = "/json/projects/<placeHolder>/?a&callback=";
 	
 	private int requestId;
-	private String[] queryTypes;
+	private HashMap<Integer, String> queryTypes;
 	private HandlerManager eventBus;
-	private ServerCommunicator handler;
 	private JSVariableHandler JSvarHandler;
 	private HashMap<String, String> URLS;
 	
 	public ServerCommunicator(HandlerManager eventBus) {
 		this.URLS = new HashMap<String, String>();
-		this.queryTypes = new String[50];
+		this.queryTypes = new HashMap<Integer, String>();
 		this.requestId = 0;
 		this.eventBus = eventBus;
-		this.handler = this;
 		JSvarHandler = new JSVariableHandler();
 		setupURLS();
 		registerEvents();
@@ -68,7 +65,7 @@ public class ServerCommunicator {
 		URLS.put("handleFeaturedList", JSvarHandler.getRepoBaseURL() + featuredListURL);
 		URLS.put("handleImportAppList", JSvarHandler.getRepoBaseURL() + importAppListURL);
 		URLS.put("handleVersion", JSvarHandler.getRepoBaseURL() + versionURL);
-		URLS.put("handleProjectInformation", JSvarHandler.getDeployerBaseURL() + projectURL);
+		URLS.put("handleProjects", JSvarHandler.getDeployerBaseURL() + projectURL);
 	}
 	
 	private void registerEvents(){
@@ -85,7 +82,7 @@ public class ServerCommunicator {
 	}
 
 	public void getJson(String url, String queryType){
-		queryTypes[requestId] = queryType;
+		queryTypes.put(requestId, queryType);
 		requestJson(requestId, url, this);
 		requestId++;
 	}
@@ -122,7 +119,7 @@ public class ServerCommunicator {
 	}-*/;
 	
 	public void handleJsonResponse(JavaScriptObject jso, String error, int rId) {
-		String queryType = queryTypes[rId];
+		String queryType = queryTypes.remove(rId);
 		
 		if (jso == null) {
 			if( error.equals("timeout") ) {
@@ -137,17 +134,17 @@ public class ServerCommunicator {
 		    if (queryType.equals("handleUser")) {
 		    	eventBus.fireEvent(new UserInfoEvent(jso));
 		    } else if (queryType == "handleApplication") {
-		    	eventBus.fireEvent(new UpdateAppInfoEvent(jso));
+		    	eventBus.fireEvent(new UpdateApplicationEvent(jso));
 		    } else if(queryType == "handleFeaturedList"){
 		    	eventBus.fireEvent(new UpdateFeaturedListEvent(jso));
 		    } else if (queryType.equals("handleDBOptions")){
 		    	eventBus.fireEvent(new UpdateDBOptionsEvent(jso));
-		    } else if (queryType.equals("handleProjectInformation")) {
-		     	eventBus.fireEvent(new UpdateProjectInformationEvent(jso));
+		    } else if (queryType.equals("handleProjects")) {
+		     	eventBus.fireEvent(new UpdateProjectsEvent(jso));
 		    } else if (queryType.equals("handleImportAppList")) {	    	
 		    	eventBus.fireEvent(new ImportAppListEvent(jso));
 		    } else if(queryType == "handleVersion"){
-		    	eventBus.fireEvent(new UpdateVersionInfoEvent(jso));
+		    	eventBus.fireEvent(new UpdateVersionEvent(jso));
 		    }
 	    }
 	}

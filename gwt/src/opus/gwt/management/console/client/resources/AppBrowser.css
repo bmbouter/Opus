@@ -171,7 +171,6 @@
 	overflow-y: scroll;
 }
 .innerSubMainPanel {
-	border: 4px solid orange;
 	height: 100%;
 	background: white;
 	border-radius: 10px;

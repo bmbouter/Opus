@@ -1,4 +1,4 @@
-<!--##########################################################################
+/*############################################################################
 # Copyright 2010 North Carolina State University                             #
 #                                                                            #
 #   Licensed under the Apache License, Version 2.0 (the "License");          #
@@ -12,15 +12,23 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. #
 #   See the License for the specific language governing permissions and      #
 #   limitations under the License.                                           #
-###########################################################################-->
+############################################################################*/
 
-<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle"/>
-	<g:ScrollPanel ui:field='iconScrollPanel'>
-		<g:FlowPanel ui:field="projectIconsFlowPanel">
-			
-		</g:FlowPanel>
-	</g:ScrollPanel>
-</ui:UiBinder> 
+package opus.gwt.management.console.client.overlays;
+
+
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArrayString;
+
+public class Project extends JavaScriptObject {
+
+	protected Project(){}
+	
+	public final native String getName() /*-{ return this.name; }-*/;
+	public final native JsArrayString getApps() /*-{ return this.apps; }-*/;
+	public final native JsArrayString getURLS() /*-{ return this.urls; }-*/;
+	public final native boolean isActive() /*-{ return this.active; }-*/;
+	public final native String getDBName()  /*-{ return this.dbname; }-*/;
+	public final native String getDBEngine()  /*-{ return this.dbengine; }-*/;
+	public final native ProjectSettingsData getAppSettings() /*-{ return this.appsettings }-*/;
+}

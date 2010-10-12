@@ -40,25 +40,25 @@ public class ConfirmProject extends Composite {
 	}
 
 	private FormPanel deployerForm;
-	private ProjectDeployer projectDeployer;
+	private ProjectDeployerController projectDeployerController;
 	private HandlerManager eventBus;
 	
 	@UiField ScrollPanel confirmationScrollPanel;
 	@UiField Button previousButton;
 	
-	public ConfirmProject(FormPanel deployerForm, ProjectDeployer projectDeployer, HandlerManager eventBus) {
+	public ConfirmProject(FormPanel deployerForm, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.deployerForm = deployerForm;
-		this.projectDeployer = projectDeployer;
+		this.projectDeployerController = projectDeployerController;
 	}
 	
 	@UiHandler("previousButton")
 	void handlePreviousButton(ClickEvent event){
-		eventBus.fireEvent(new PanelTransitionEvent("previous", this));
+		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PREVIOUS, this));
 	}
 	
 	@UiHandler("confirmButton")
 	void handleConfirmButton(ClickEvent event){
-		projectDeployer.handleConfirmDeployProject();
+		projectDeployerController.handleConfirmDeployProject();
 	}
 }

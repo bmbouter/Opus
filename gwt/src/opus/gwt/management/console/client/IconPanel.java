@@ -18,8 +18,9 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
-import opus.gwt.management.console.client.dashboard.ProjectManager;
-import opus.gwt.management.console.client.resources.ManagementConsoleCss.ManagementConsoleStyle;
+import opus.gwt.management.console.client.event.UpdateProjectsEvent;
+import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
+import opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -48,20 +49,32 @@ public class IconPanel extends Composite {
 	
 	@UiField ScrollPanel iconScrollPanel;
 	@UiField FlowPanel projectIconsFlowPanel;
-	@UiField ManagementConsoleStyle style;
+	@UiField PanelManagerStyle style;
 
 	
 	public IconPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		iconMap = new HashMap<String, Integer>();
+		registerEvents();
+	}
+	
+	private void registerEvents(){
+		eventBus.addHandler(UpdateProjectsEvent.TYPE, 
+				new UpdateProjectsEventHandler(){
+					public void onUpdateProjects(UpdateProjectsEvent event){
+						for( int i=0; i < event.getProjects().length(); i++ ){
+							addProjectIcon(event.getProjects().get(i).getName());
+						}
+					}
+		});
 	}
 	
 	public void addProjectIcon(String name) {
 		HTML project = new HTML();
-		project.setHTML("<img src='/gwt/projectdefaulticon.png' width='64' height='64'/><br/>"+name);
-		
 		final String projectName = name;
+		
+		project.setHTML("<img src='/gwt/projectdefaulticon.png' width='64' height='64'/><br/>" + projectName);
 		
 		final FocusPanel testLabel = new FocusPanel();
 		testLabel.add(project);
@@ -80,7 +93,7 @@ public class IconPanel extends Composite {
 	        public void onClick(ClickEvent event) {
 	        	//console.mainDeckPanel.clear();
 	        	//console.navigationMenuPanel.clear();
-	        	//projectManager = new ProjectManager(eventBus); 
+	        	//projectManager = new ProjectManagerController(eventBus); 
 	        	testLabel.setStyleName(style.projectIcon());
 	        }
 	     });

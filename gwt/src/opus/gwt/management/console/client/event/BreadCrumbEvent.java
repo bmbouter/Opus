@@ -1,34 +1,31 @@
 package opus.gwt.management.console.client.event;
 
-import opus.gwt.management.console.client.overlays.DBOptions;
-
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.GwtEvent.Type;
 
 public class BreadCrumbEvent extends GwtEvent<BreadCrumbEventHandler> {
 	
 	public static Type<BreadCrumbEventHandler> TYPE = new Type<BreadCrumbEventHandler>();
-	private String eventType;
+	public enum Action{SET_CRUMBS, SET_ACTIVE, ADD_CRUMB, REMOVE_CRUMB};
+	private Action actionType;
 	private String[] names;
-	private String active;
+	private String crumb;
 	
-	public BreadCrumbEvent(String eventType, String[] names){
-		this.eventType = eventType;
+	public BreadCrumbEvent(Action actionType, String[] names){
+		this.actionType = actionType;
 		this.names = names;
 	}
 	
-	public BreadCrumbEvent(String eventType, String active){
-		this.eventType = eventType;
-		this.active = active;
+	public BreadCrumbEvent(Action actionType, String crumb){
+		this.actionType = actionType;
+		this.crumb = crumb;
 	}
 	
-	public String getEventType(){
-		return eventType;
+	public Action getAction(){
+		return actionType;
 	}
 
-	public String getActive(){
-		return active;
+	public String getCrumb(){
+		return crumb;
 	}
 	
 	public String[] getCrumbNames(){

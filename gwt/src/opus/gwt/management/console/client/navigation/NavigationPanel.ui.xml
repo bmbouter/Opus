@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="../resources/NavigationPanel.css" />
+	<ui:style src="../resources/NavigationPanel.css" type="opus.gwt.management.console.client.resources.NavigationPanelCss.NavigationPanelStyle"/>
 		
 	<g:SimplePanel>
 	 	<g:HTMLPanel styleName="{style.navigationContainer}">
@@ -13,7 +13,7 @@
 	 		</g:FormPanel>	 			
 	 		<g:Button ui:field="projectsButton" styleName="{style.button}">My Projects</g:Button>
 			<g:Button ui:field="deployNewButton" styleName="{style.button}">Deploy New Project</g:Button>
-			<g:Button ui:field="loggedInUserButton" styleName="{style.button} {style.username}">edhelms</g:Button>
+			<g:Button ui:field="loggedInUserButton" styleName="{style.button} {style.username}"></g:Button>
 	 	</g:HTMLPanel>
 	</g:SimplePanel>
 	

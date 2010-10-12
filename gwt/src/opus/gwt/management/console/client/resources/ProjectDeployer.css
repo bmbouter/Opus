@@ -14,12 +14,7 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
-.main {
-	
-}
-
 .deployerDeckPanel {
-	margin: 0 10em 20px 10em;
 	padding: 0;	
 	border-radius: 5px;
 	font-family: Helvetica, Arial, Verdana, sans-serif;
@@ -27,7 +22,6 @@
 	-webkit-box-shadow: 0px 3px 5px #BFBFBF;
 	-moz-box-shadow:0px 3px 5px #BFBFBF;
 }
-
 input {
 	border: 1px solid black;
 	float: left;
@@ -44,7 +38,7 @@ select {
 	display: inline;
 }
 
-.header {
+.header { 
     background: #ED9E16;
     height: 60px;
     border: solid #CC8202 2px;
@@ -77,36 +71,6 @@ select {
 .emptyFooter {
 	
 }
-.titleBar {
-	padding: 0.5% 0% 0% 1%;
-    color: white;
-    font-size: 3.4em;
-    width: 100%;
-    height: 100%;
-    margin: 0%;
-    text-shadow:10px 10px 5px #0F0F0F;
-    font-family: "Droid Serif";
-}
-.navigationLabel {
-	width: 100%;
-	color: white;
-	padding: 0.45em 0.45em 0.45em 0.5em;
-	word-wrap: break-word;
-	min-width: 90%;
-	font-family: "Droid Serif";
-}
-.navigationLabelActive {
-	width: 100%;
-	color: white;
-	background: orange;
-	padding: 0.45em 0.45em 0.45em 0.5em;
-	border-radius: 5px 0 0 5px;
-	-moz-border-radius: 5px 0 0 5px;
-	word-wrap: break-word;
-	min-width: 80%;
-	font-family: "Droid Serif";
-}
-
 .formWrapper {
 	padding: 10px 0px 0px 0px;
 	width: 500px;
@@ -146,15 +110,24 @@ select {
 	border: 1px #999999 solid;
 	*/
 }
-
 .formWrapper input:focus {
 	
 }
-
 .buttons {
 	float: left;
 }
 
 .redBorder {
 	border: 1px solid red;
+}
+
+.right {
+	float: right;
+}
+.subDomainLabel{
+	color: red;
+	font-weight: bold;
+}
+.protocolLabel {
+	padding: 0 0 0 10px;
 }

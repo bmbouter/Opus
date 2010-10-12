@@ -1,4 +1,4 @@
-<!--##########################################################################
+/*############################################################################
 # Copyright 2010 North Carolina State University                             #
 #                                                                            #
 #   Licensed under the Apache License, Version 2.0 (the "License");          #
@@ -12,15 +12,23 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. #
 #   See the License for the specific language governing permissions and      #
 #   limitations under the License.                                           #
-###########################################################################-->
+############################################################################*/
 
-<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle"/>
-	<g:ScrollPanel ui:field='iconScrollPanel'>
-		<g:FlowPanel ui:field="projectIconsFlowPanel">
-			
-		</g:FlowPanel>
-	</g:ScrollPanel>
-</ui:UiBinder> 
+package opus.gwt.management.console.client.resources;
+
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.user.client.ui.Widget;
+
+public class PanelManagerCss extends Widget {
+	  public interface PanelManagerStyle extends CssResource {
+	    String dashboardsPopup();
+	    String popupLabel();
+	    String popupLabelActive();
+	    String topDashboardButtonActive();
+	    String topDashboardButton();
+	    String projectIcon();
+	    String projectIconActive();
+	    String lastLabel();
+	    String rootLayoutPanel();
+	  }
+}
