@@ -2,9 +2,11 @@
 	margin: 0;
 	padding: 0;
 	width: 100%;
-	min-height: 100%;
 	background: #282828;
 	color: #FFFFFF;
+	height: 100%;
+	box-shadow: 10px 10px 10px white;
+	-webkit-box-shadow: 10px 10px 10px white;
 }
 .logo {
 	font-size: 1.25em;
@@ -12,6 +14,7 @@
 	width: 14em;
 	float: left;
 	margin: 0.3em 0 0 0.5em;
+	background: transparent;
 }
 .button {
 	cursor: pointer;

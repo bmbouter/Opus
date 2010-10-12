@@ -45,7 +45,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -59,7 +58,6 @@ public class AppBrowserPanel extends Composite {
 	private final String tokenURL = "/project/configuration/token/?callback=";
 
 	private JSVariableHandler JSVarHandler;
-	private FormPanel buildForm;
 	private FlowPanel appFlowPanel;
 	private FlowPanel featuredAppFlowPanel;
 	private int[] featured;
@@ -95,8 +93,6 @@ public class AppBrowserPanel extends Composite {
 		eventBus.fireEvent(new AsyncRequestEvent("handleFeaturedList"));
 		eventBus.fireEvent(new AsyncRequestEvent("handleApplication"));
 		deployList = new ArrayList<AppIcon>();
-		buildForm = new FormPanel();
-		setupBuildForm();
 		appFlowPanel = new FlowPanel();
 		featuredAppFlowPanel = new FlowPanel();
 		mainDeckPanel.add(appFlowPanel);
@@ -113,13 +109,6 @@ public class AppBrowserPanel extends Composite {
 		}
 	}
 
-	private void setupBuildForm(){
-		buildForm.setMethod(FormPanel.METHOD_POST);
-		buildForm.getElement().setAttribute("target", "_self");
-		buildForm.setVisible(false);
-		buildForm.setAction(JSVarHandler.getBuildProjectURL());
-	}
-	
 	private void registerEvents(){
 		eventBus.addHandler(UpdateApplicationEvent.TYPE, 
 			new UpdateApplicationEventHandler(){
@@ -157,6 +146,8 @@ public class AppBrowserPanel extends Composite {
 					
 					if( iconPath.equals("") ){
 						iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";
+					} else {
+						iconPath = JSVarHandler.getCommunityBaseURL() + iconPath;
 					}
 					
 					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path);
@@ -260,43 +251,7 @@ public class AppBrowserPanel extends Composite {
 			RemoveButton.setEnabled(false);
 		}
 	}
-	/*
-	@UiHandler("DeployButton")
-	void handleDeployButton(ClickEvent event){	
-		  if (deployList.size() > 0) {
-			  VerticalPanel formContainerPanel = new VerticalPanel();
-			  this.buildForm.add(formContainerPanel);
-			  ListBox versions = new ListBox();
-			  versions.setName("versions");
-			  formContainerPanel.add(versions);
-			  //check how many were manually added
-			  int count = 0;
-			  for(int i = 0; i < deployList.size(); i++){
-				  versions.addItem(deployList.get(i).getPk());
-			  }
-			  TextBox name = new TextBox();
-			  name.setName("name");
-			  formContainerPanel.add(name);
-			  Hidden numApps = new Hidden();
-			  numApps.setName("form-TOTAL_FORMS");
-			  numApps.setValue(String.valueOf(count));
-			  formContainerPanel.add(numApps);
-			  Hidden numInitialForms = new Hidden();
-			  numInitialForms.setName("form-INITIAL_FORMS");
-			  numInitialForms.setValue("0");
-			  Hidden numMaxForms = new Hidden();
-			  numMaxForms.setName("form-MAX_NUM_FORMS");
-			  formContainerPanel.add(numInitialForms);
-			  formContainerPanel.add(numMaxForms);
-			 
-			  formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
-			  
-			  RootPanel.get().add(buildForm);
-			  buildForm.submit();
-			  //Window.alert(buildForm.getMethod());
-		  }
-	}
-	*/
+
 	@UiHandler("allAppsLabel")
 	void handleAllAppsLabel(ClickEvent event){
 		allAppsLabel.setStyleName(style.allAppsLabelActive());
@@ -368,7 +323,6 @@ public class AppBrowserPanel extends Composite {
 	
 	public void populateFeaturedList(JavaScriptObject jso){
 		featured = new int[20];
-		//comment
 		String[] s = jso.toString().split(",\\s*");
 		for (int i=0; i<s.length; i++){
 			featured[i] = Integer.valueOf(s[i]);

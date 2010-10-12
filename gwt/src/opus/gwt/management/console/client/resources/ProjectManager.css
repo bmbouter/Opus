@@ -20,11 +20,12 @@
 	font-family: Helvetica, Arial, Verdana, sans-serif;
 	font-size: .8em;
 	min-height: 400px;
-	min-width: 600px;	
+	min-width: 600px;
+	border: 3px solid grey;
+	-webkit-box-shadow: 2px 2px 7px #1F1F1F;	
 }
 .dashboardMainPanel{
-	border: 2px solid grey;
-	box-shadow: 2px 2px 7px #1F1F1F;
+
 }	
 .emptyFooter {
 	

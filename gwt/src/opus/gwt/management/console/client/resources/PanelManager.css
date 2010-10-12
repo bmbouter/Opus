@@ -25,7 +25,8 @@
 	padding: 0;
 }
 .navigationPanel{
-	min-height: 3em;
+	box-shadow: 10px 10px 10px white;
+	-webkit-box-shadow: 10px 10px 10px white;
 }
 
 /*

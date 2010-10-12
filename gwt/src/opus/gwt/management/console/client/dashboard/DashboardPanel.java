@@ -16,7 +16,6 @@
 
 package opus.gwt.management.console.client.dashboard;
 
-import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
