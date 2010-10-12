@@ -19,13 +19,13 @@
 }
 
 .deployerDeckPanel {
-	margin: 0 10em 0 10em;
+	margin: 0 10em 20px 10em;
 	padding: 0;	
 	border-radius: 5px;
 	font-family: Helvetica, Arial, Verdana, sans-serif;
 	font-size: .8em;
-	min-height: 400px;
-	min-width: 600px;
+	-webkit-box-shadow: 0px 3px 5px #BFBFBF;
+	-moz-box-shadow:0px 3px 5px #BFBFBF;
 }
 
 input {
@@ -45,10 +45,9 @@ select {
 }
 
 .header {
-    width: 100%;
     background: #ED9E16;
     height: 60px;
-    border-bottom: solid #CC8202 2px;
+    border: solid #CC8202 2px;
     margin-bottom: 5px;
 }
 
