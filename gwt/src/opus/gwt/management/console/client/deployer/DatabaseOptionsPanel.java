@@ -64,7 +64,7 @@ public class DatabaseOptionsPanel extends Composite {
 	@UiField Button previousButton;	
 	@UiField HTMLPanel databaseOptionsPanel;
 	@UiField TooltipPanel active;
-	@UiField ProjectDeployerStyle form;
+	@UiField ProjectDeployerStyle deployer;
 	
 	public DatabaseOptionsPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -141,9 +141,9 @@ public class DatabaseOptionsPanel extends Composite {
 	
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
-		if(validateFields()){
+		//if(validateFields()){
 			eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.NEXT, this));
-		}
+		//}
 	}
 	
 	@UiHandler("previousButton")
@@ -195,22 +195,22 @@ public class DatabaseOptionsPanel extends Composite {
 	
 	@UiHandler("nameTextBox")
 	void handleNameTextBoxOnChange(KeyUpEvent event) {
-		nameTextBox.removeStyleName(form.redBorder());
+		nameTextBox.removeStyleName(deployer.redBorder());
 	}
 	
 	@UiHandler("passwordTextBox")
 	void handlePasswordTextBoxOnChange(KeyUpEvent event) {
-		passwordTextBox.removeStyleName(form.redBorder());
+		passwordTextBox.removeStyleName(deployer.redBorder());
 	}
 	
 	@UiHandler("hostTextBox")
 	void handleHostTextBoxOnChange(KeyUpEvent event) {
-		hostTextBox.removeStyleName(form.redBorder());
+		hostTextBox.removeStyleName(deployer.redBorder());
 	}
 	
 	@UiHandler("portTextBox")
 	void handlePortTextBoxOnChange(KeyUpEvent event) {
-		portTextBox.removeStyleName(form.redBorder());
+		portTextBox.removeStyleName(deployer.redBorder());
 	}
 	
 	private boolean validateFields(){
@@ -235,19 +235,19 @@ public class DatabaseOptionsPanel extends Composite {
 	 */
 	private void highlightFields() {
 		if(nameTextBox.getText().isEmpty()) {
-			nameTextBox.setStyleName(form.redBorder());
+			nameTextBox.setStyleName(deployer.redBorder());
 		}
 		
 		if(passwordTextBox.getText().isEmpty()) {
-			passwordTextBox.setStyleName(form.redBorder());
+			passwordTextBox.setStyleName(deployer.redBorder());
 		}
 		
 		if(hostTextBox.getText().isEmpty()) {
-			hostTextBox.setStyleName(form.redBorder());
+			hostTextBox.setStyleName(deployer.redBorder());
 		}
 		
 		if(portTextBox.getText().isEmpty()) {
-			portTextBox.setStyleName(form.redBorder());
+			portTextBox.setStyleName(deployer.redBorder());
 		}
 	}
 	

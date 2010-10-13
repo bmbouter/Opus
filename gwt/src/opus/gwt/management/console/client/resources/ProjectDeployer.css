@@ -21,45 +21,16 @@
 	font-size: .8em;
 	-webkit-box-shadow: 0px 3px 5px #BFBFBF;
 	-moz-box-shadow:0px 3px 5px #BFBFBF;
-}
-input {
-	border: 1px solid black;
-	float: left;
+	border: solid #CC8202 1px;
 }
 
-select {
-	margin: 0px 0px 0px 10px;
-}
-
-.error {
-	color: red;
-	float: right;
-	margin: 3px 0px 0px 5px;
-	display: inline;
-}
-
-.header { 
-    background: #ED9E16;
-    height: 60px;
-    border: solid #CC8202 2px;
-    margin-bottom: 5px;
-}
-
-.header h1 {
-    margin: 0px;
-    padding: 8px 0 0 10px;
-    font-size: 40px;
-    color: #CC8202;
-    font-weight: bold;
-}
-
-.insetType {
-	text-shadow: rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;
-}
-
-.buttons {
-	margin: 10px 0px 0px 10px;
-	float: left;
+.shadows {
+	width: 100%;
+    height: 40px;
+    display: block;
+    float: left;
+    background: url('shadow-left.png') top left no-repeat, url('shadow-right.png') top right no-repeat;
+    margin-bottom: 20px;
 }
 
 .navigationPanel{
@@ -71,54 +42,9 @@ select {
 .emptyFooter {
 	
 }
-.formWrapper {
-	padding: 10px 0px 0px 0px;
-	width: 500px;
-	float: left;
-}
-
-.formWrapper .fieldWrapper {
-	width: 500px;
-	height: 1.5em;
-	margin: 0px 0px 10px 10px;
-	float: left;
-}
-
-.fieldWrapper {
-	margin: 0px 0px 0px 10px;
-}
-
-.fieldLabel {
-	width: 10em;
-	margin: 0 auto;
-	text-align: right;
-	float: left;
-}
-
-.field {
-    float: left;
-}
-
-.formWrapper input {
-	height: 1.6em;
-	width: 150px;
-	margin: 0 0 5px 10px;
-	/* Activate these later for styling
-	background-color: #C2C2C2;
-	display: inline-block;
-	font-size: .8em;
-	border: 1px #999999 solid;
-	*/
-}
-.formWrapper input:focus {
-	
-}
-.buttons {
-	float: left;
-}
 
 .redBorder {
-	border: 1px solid red;
+	border: 1px solid #FF0000;
 }
 
 .right {

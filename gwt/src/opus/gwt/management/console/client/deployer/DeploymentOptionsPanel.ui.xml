@@ -18,43 +18,46 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:t="urn:import:opus.gwt.management.console.client.tools">
-	<ui:style src="../resources/ProjectDeployer.css" type="opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle"/>
+	<ui:style src="../resources/Forms.css" field="form"/>
+	<ui:style src="../resources/ProjectDeployer.css" field="deployer" type="opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle"/>
 	
 	<g:SimplePanel>
 		<g:HTMLPanel>
 			<t:TooltipPanel ui:field="active" />
-			<g:HTMLPanel styleName="{style.header}">
-				<g:HTMLPanel styleName="{style.insetType}">
+			<g:HTMLPanel styleName="{form.header}">
+				<g:HTMLPanel styleName="{form.insetType}">
 					<h1>Deployment Options</h1>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			<g:HTML>
-				<h1>Deployment Location Options</h1>
-			</g:HTML>
-			<g:HTMLPanel styleName="{style.formWrapper}">
-				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<g:HTMLPanel styleName="{style.field}">
-						<label class="{style.fieldLabel}">Deploy as:</label>
-						<g:TextBox ui:field='projectNameTextBox'/>
-					</g:HTMLPanel>
+			<g:HTMLPanel styleName="{form.content}">
+				<g:HTMLPanel>
+					<h1>Deployment Location Options</h1>
 				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<g:HTMLPanel styleName="{style.field}">
-						<label class="{style.fieldLabel}">Base URL:</label>
-						<g:Label ui:field="baseDomainLabel" styleName="{style.right}" />
-						<g:Label ui:field="subDomainLabel" styleName="{style.right} {style.subDomainLabel}" />
-						<g:Label ui:field="baseProtocolLabel" styleName="{style.right} {style.protocolLabel}" />
+				<g:HTMLPanel styleName="{form.formWrapper}">
+					<g:HTMLPanel styleName="{form.fieldWrapper}">
+						<g:HTMLPanel styleName="{form.field}">
+							<label class="{form.fieldLabel}">Deploy as:</label>
+							<g:TextBox ui:field='projectNameTextBox'/>
+						</g:HTMLPanel>
 					</g:HTMLPanel>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.fieldWrapper}">
-					<g:HTMLPanel styleName="{style.field}">
-						<label class="{style.fieldLabel}">Debug Mode:</label>
-						<g:CheckBox name='debug' ui:field='debugCheckBox'/>
+					<g:HTMLPanel styleName="{form.fieldWrapper}">
+						<g:HTMLPanel styleName="{form.field}">
+							<label class="{form.fieldLabel}">Base URL:</label>
+							<g:Label ui:field="baseDomainLabel" styleName="{deployer.right}" />
+							<g:Label ui:field="subDomainLabel" styleName="{deployer.right} {deployer.subDomainLabel}" />
+							<g:Label ui:field="baseProtocolLabel" styleName="{deployer.right} {deployer.protocolLabel}" />
+						</g:HTMLPanel>
 					</g:HTMLPanel>
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.buttons}">	
-					<g:Button ui:field="previousButton" text="Previous" />
-					<g:Button ui:field="nextButton" text="Deploy New Project" />
+					<g:HTMLPanel styleName="{form.fieldWrapper}">
+						<g:HTMLPanel styleName="{form.field}">
+							<label class="{form.fieldLabel}">Debug Mode:</label>
+							<g:CheckBox name='debug' ui:field='debugCheckBox'/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{form.buttons}">	
+						<g:Button ui:field="previousButton" text="Previous" styleName="{form.button}"/>
+						<g:Button ui:field="nextButton" text="Deploy New Project" styleName="{form.button}"/>
+					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:HTMLPanel>

@@ -54,7 +54,7 @@ public class DeploymentOptionsPanel extends Composite {
 	@UiField Label subDomainLabel;
 	@UiField TextBox projectNameTextBox;
 	@UiField TooltipPanel active;
-	@UiField ProjectDeployerStyle style;
+	@UiField ProjectDeployerStyle deployer;
 	@UiField CheckBox debugCheckBox;
 
 	public DeploymentOptionsPanel(HandlerManager eventBus) {
@@ -69,13 +69,13 @@ public class DeploymentOptionsPanel extends Composite {
 	
 	private boolean validateFields(){
 		if(projectNameTextBox.getText().isEmpty()){
-			projectNameTextBox.setStyleName(style.redBorder());
+			projectNameTextBox.setStyleName(deployer.redBorder());
 			Window.alert("Subdomain required to deploy");
 			return false;
 		} else if(projectNameTextBox.getText().matches("[a-zA-Z_][a-zA-Z0-9_]*")){
 			return true;
 		} else {
-			projectNameTextBox.setStyleName(style.redBorder());
+			projectNameTextBox.setStyleName(deployer.redBorder());
 			Window.alert("Subdomain must start with a letter.");
 			return false;
 		}

@@ -56,7 +56,7 @@ public class ProjectOptionsPanel extends Composite {
 	@UiField HTMLPanel projectOptionsPanel;
 	@UiField ListBox idProvider;
 	@UiField TooltipPanel active;
-	@UiField ProjectDeployerStyle form;
+	@UiField ProjectDeployerStyle deployer;
 	@UiField Label passwordError;
 	@UiField Label emailError;
 	
@@ -103,7 +103,7 @@ public class ProjectOptionsPanel extends Composite {
 	
 	@UiHandler("passwordTextBox")
 	void passwordTextBoxOnFocus(FocusEvent event) {
-		if(!passwordTextBox.getStyleName().equals(form.redBorder())) {
+		if(!passwordTextBox.getStyleName().equals(deployer.redBorder())) {
 			active.setVisible(true);
 			
 			int x = getTooltipPosition(passwordTextBox)[0];
@@ -117,7 +117,7 @@ public class ProjectOptionsPanel extends Composite {
 	
 	@UiHandler("passwordConfirmTextBox")
 	void passwordConfirmTextBoxOnFocus(FocusEvent event) {
-		if(!passwordTextBox.getStyleName().equals(form.redBorder())) {
+		if(!passwordTextBox.getStyleName().equals(deployer.redBorder())) {
 			active.setVisible(true);
 	
 			int x = getTooltipPosition(passwordConfirmTextBox)[0];
@@ -131,7 +131,7 @@ public class ProjectOptionsPanel extends Composite {
 	
 	@UiHandler("emailTextBox")
 	void emailTextBoxOnFocus(FocusEvent event) {
-		if(!emailTextBox.getStyleName().equals(form.redBorder())) {
+		if(!emailTextBox.getStyleName().equals(deployer.redBorder())) {
 			active.setVisible(true);
 			
 			int x = getTooltipPosition(emailTextBox)[0];
@@ -162,13 +162,13 @@ public class ProjectOptionsPanel extends Composite {
 		if(!usernameTextBox.getText().isEmpty()) {
 			if(!isPasswordValid()) {
 				active.hide();
-				passwordError.setText("Passwords do not match or left empty");
-				passwordTextBox.setStyleName(form.redBorder());
-				passwordConfirmTextBox.setStyleName(form.redBorder());
+				passwordError.setText("Passwords do not match");
+				passwordTextBox.setStyleName(deployer.redBorder());
+				passwordConfirmTextBox.setStyleName(deployer.redBorder());
 			} else {
 				passwordError.setText("");
-				passwordTextBox.removeStyleName(form.redBorder());
-				passwordConfirmTextBox.removeStyleName(form.redBorder());
+				passwordTextBox.removeStyleName(deployer.redBorder());
+				passwordConfirmTextBox.removeStyleName(deployer.redBorder());
 			}
 		} else {
 			
@@ -180,13 +180,13 @@ public class ProjectOptionsPanel extends Composite {
 		if(!usernameTextBox.getText().isEmpty()) {
 			if(!isPasswordValid()) {
 				active.hide();
-				passwordError.setText("Passwords do not match or left empty");
-				passwordTextBox.setStyleName(form.redBorder());
-				passwordConfirmTextBox.setStyleName(form.redBorder());
+				passwordError.setText("Passwords do not match");
+				passwordTextBox.setStyleName(deployer.redBorder());
+				passwordConfirmTextBox.setStyleName(deployer.redBorder());
 			} else {
 				passwordError.setText("");
-				passwordTextBox.removeStyleName(form.redBorder());
-				passwordConfirmTextBox.removeStyleName(form.redBorder());
+				passwordTextBox.removeStyleName(deployer.redBorder());
+				passwordConfirmTextBox.removeStyleName(deployer.redBorder());
 			}
 		} else {
 			
@@ -199,10 +199,10 @@ public class ProjectOptionsPanel extends Composite {
 			if(!isEmailValid()) {
 				active.hide();
 				emailError.setText("Enter a valid email address");
-				emailTextBox.setStyleName(form.redBorder());
+				emailTextBox.setStyleName(deployer.redBorder());
 			} else {
 				emailError.setText("");
-				emailTextBox.removeStyleName(form.redBorder());
+				emailTextBox.removeStyleName(deployer.redBorder());
 			}
 		} else {
 			
@@ -242,15 +242,15 @@ public class ProjectOptionsPanel extends Composite {
 	}
 	
 	private void setAllStyles() {
-		passwordTextBox.setStyleName(form.redBorder());
-		passwordConfirmTextBox.setStyleName(form.redBorder());
-		emailTextBox.setStyleName(form.redBorder());
+		passwordTextBox.setStyleName(deployer.redBorder());
+		passwordConfirmTextBox.setStyleName(deployer.redBorder());
+		emailTextBox.setStyleName(deployer.redBorder());
 	}
 	
 	private void removeAllStyles() {
-		passwordTextBox.removeStyleName(form.redBorder());
-		passwordConfirmTextBox.removeStyleName(form.redBorder());
-		emailTextBox.removeStyleName(form.redBorder());
+		passwordTextBox.removeStyleName(deployer.redBorder());
+		passwordConfirmTextBox.removeStyleName(deployer.redBorder());
+		emailTextBox.removeStyleName(deployer.redBorder());
 	}
 	
 	private boolean isEmailValid() {

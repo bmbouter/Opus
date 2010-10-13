@@ -15,7 +15,8 @@
 ############################################################################*/
 
 .rootLayoutPanel {
-	min-height: 768px;
+	/*min-height: 768px;*/
+	min-height: 600px;
 	min-width: 1000px;	
 }
 .mainContentPanel {
@@ -27,6 +28,10 @@
 .navigationPanel{
 	box-shadow: 10px 10px 10px white;
 	-webkit-box-shadow: 10px 10px 10px white;
+}
+
+.breadcrumbsPanel {
+	
 }
 
 /*

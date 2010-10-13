@@ -14,16 +14,6 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
-h1 {
-	font-size: 1.5em;
-	margin: 0px;
-	padding: 0px;
-}
-
 input:focus {
 	outline: none;
-}
-
-.redBorder {
-	border: 1px solid red;
 }
