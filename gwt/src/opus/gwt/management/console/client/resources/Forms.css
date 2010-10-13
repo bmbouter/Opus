@@ -1,0 +1,106 @@
+h1 {
+	font-size: 1.5em;
+	margin: 0px;
+	padding: 0px;
+}
+
+h2 {
+	font-size: 1.2em;
+	margin: 0px;
+	padding: 0px;
+}
+
+select {
+	margin: 0px 0px 0px 10px;
+}
+
+.content {
+	padding: 0px 0px 0px 10px;
+	width: 100%;
+}
+
+.formWrapper {
+	padding: 10px 0px 0px 0px;
+	width: 500px;
+	height: auto;
+	float: left;
+}
+
+.formWrapper .fieldWrapper {
+	width: 500px;
+	height: 1.5em;
+	margin: 0px 0px 10px 10px;
+	float: left;
+}
+
+.formWrapper .fieldLabel {
+	width: 10em;
+	margin: 0px 0px 0px 10px;
+	text-align: right;
+	float: left;
+}
+
+.formWrapper .field {
+    float: left;
+}
+
+.formWrapper .field .textBox {
+	
+}
+
+.formWrapper input {
+	height: 1.6em;
+	width: 150px;
+	margin: 0 0 5px 10px;
+	border-radius: 3px;
+	-webkit-box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
+	box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
+	border: 1px solid #888888;
+	float: left;
+	/* Activate these later for styling
+	background-color: #C2C2C2;
+	display: inline-block;
+	font-size: .8em;
+	border: 1px #999999 solid;
+	*/
+}
+
+.buttons {
+	padding: 10px 0px 0px 0px;
+	float: left;
+}
+
+.button {
+	background: #BBBBBB;
+	border: #999999 solid 1px;
+	display: block;
+	float: left;
+}
+
+.header { 
+    background: #ED9E16;
+    height: 60px;
+    border: solid #CC8202 0px;
+    margin-bottom: 5px;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+}
+
+.header h1 {
+    margin: 0px;
+    padding: 8px 0 0 10px;
+    font-size: 40px;
+    color: #CC8202;
+    font-weight: bold;
+}
+
+.insetType {
+	text-shadow: rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;
+}
+
+.error {
+	color: red;
+	float: right;
+	margin: 3px 0px 0px 5px;
+	display: inline;
+}
