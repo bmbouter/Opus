@@ -74,7 +74,7 @@ public class IconPanel extends Composite {
 		HTML project = new HTML();
 		final String projectName = name;
 		
-		project.setHTML("<img src='/gwt/projectdefaulticon.png' width='64' height='64'/><br/>" + projectName);
+		project.setHTML("<img src='/projectdefaulticon.png' width='64' height='64'/><br/>" + projectName);
 		
 		final FocusPanel testLabel = new FocusPanel();
 		testLabel.add(project);

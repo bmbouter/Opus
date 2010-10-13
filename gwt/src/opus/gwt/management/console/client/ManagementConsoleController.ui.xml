@@ -21,16 +21,14 @@
 	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle"/>
 	
 	<g:DockLayoutPanel unit='EM'>	
-		<g:north size="2.5">
+		<g:north size="5">
 			<c:NavigationPanel ui:field="navigationPanel" styleName="{style.navigationPanel}"/>
 		</g:north>
 		<g:north size="2">
-			<c:BreadCrumbsPanel ui:field="breadCrumbsPanel" styleName="{style.navigationPanel}"/>
+			<c:BreadCrumbsPanel ui:field="breadCrumbsPanel" styleName="{style.breadcrumbsPanel}"/>
 		</g:north>
 		<g:center>
-			<g:LayoutPanel ui:field='contentLayoutPanel' styleName="{style.mainContentPanel}">
-			
-			</g:LayoutPanel>
+			<g:LayoutPanel ui:field='contentLayoutPanel' styleName="{style.mainContentPanel}" />
 		</g:center>
 	</g:DockLayoutPanel>
 		

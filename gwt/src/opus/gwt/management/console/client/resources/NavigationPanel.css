@@ -31,6 +31,19 @@
     background-color: #222222;
     -moz-box-shadow: rgba(0,0,0,0.3) -1px 0px, rgba(0,0,0,0.5) -1px -1px, rgba(255,255,255,0.3) 1px 1px, rgba(0,0,0,0.1) -1px -2px;
     -webkit-box-shadow: rgba(0,0,0,0.3) -1px 0px, rgba(0,0,0,0.5) -1px -1px, rgba(255,255,255,0.3) 1px 1px, rgba(0,0,0,0.1) -1px -2px;
+	/*background: #282828;
+	color: #FFFFFF;
+	height: 100%;
+	box-shadow: 10px 10px 10px white;
+	-webkit-box-shadow: 10px 10px 10px white;*/
+}
+.logo {
+	font-size: 1.25em;
+	padding: 0 0 0.2em 0;
+	width: 14em;
+	float: left;
+	margin: 0.3em 0 0 0.5em;
+	background: transparent;
 }
 
 .button {

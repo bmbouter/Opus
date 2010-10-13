@@ -17,6 +17,7 @@
 package opus.gwt.management.console.client.deployer;
 
 import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.event.DeployProjectEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 import opus.gwt.management.console.client.tools.TooltipPanel;
@@ -34,7 +35,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -45,6 +45,7 @@ public class DeploymentOptionsPanel extends Composite {
 
 	private JSVariableHandler JSVarHandler;
 	private HandlerManager eventBus;
+	private String projectName;
 	
 	@UiField Button nextButton;
 	@UiField Button previousButton;
@@ -59,6 +60,7 @@ public class DeploymentOptionsPanel extends Composite {
 	public DeploymentOptionsPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
+		projectName = "";
 		JSVarHandler = new JSVariableHandler();
 		baseProtocolLabel.setText(JSVarHandler.getDeployerBaseURL().split("//")[0] + "//");
 		baseDomainLabel.setText(JSVarHandler.getDeployerBaseURL().split("//")[1]);
@@ -83,10 +85,15 @@ public class DeploymentOptionsPanel extends Composite {
 		projectNameTextBox.setFocus(true);
 	}
 	
+	public String getProjectName(){
+		return projectName;
+	}
+	
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
-		if(validateFields()){
-			eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.NEXT, this));
+		if( validateFields() ){
+			projectName = projectNameTextBox.getText();
+			eventBus.fireEvent(new DeployProjectEvent());
 		}
 	}
 	
@@ -145,20 +152,6 @@ public class DeploymentOptionsPanel extends Composite {
 	 * @return tooltip position
 	 */
 	private int[] getTooltipPosition(TextBox textbox) {
-		int[] pos = new int[2];
-		
-		pos[0] = textbox.getAbsoluteLeft() + textbox.getOffsetWidth() + 5;
-		pos[1] = textbox.getAbsoluteTop() + 2;
-		
-		return pos;
-	}
-	
-	/**
-	 * Return the tooltip position as an array in for them [x, y]
-	 * @param textbox the textbox to get the position of
-	 * @return tooltip position
-	 */
-	private int[] getTooltipPosition(PasswordTextBox textbox) {
 		int[] pos = new int[2];
 		
 		pos[0] = textbox.getAbsoluteLeft() + textbox.getOffsetWidth() + 5;
