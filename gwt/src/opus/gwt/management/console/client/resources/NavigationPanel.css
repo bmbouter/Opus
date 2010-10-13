@@ -1,39 +1,63 @@
 .navigationContainer{
-	margin: 0;
-	padding: 0;
 	width: 100%;
-	min-height: 100%;
-	background: #282828;
-	color: #FFFFFF;
+	height: 100%;
+    background: literal("-moz-linear-gradient(50% 100% 90deg, #4F4F4F, #222222)");
+    background: literal("-webkit-gradient(linear, 0% 0%, 0% 100%, from(#4F4F4F), to(#222222))");
+    color: #FFFFFF;
+    box-shadow: 0px 100px 8px #000000;
+    -webkit-box-shadow: 0px 100px 8px #000000;
+    -moz-box-shadow: 0px 1px 8px #000000;
+    position: relative;
+    z-index: 10;
 }
-.logo {
-	font-size: 1.25em;
-	padding: 0 0 0.2em 0;
-	width: 14em;
-	float: left;
-	margin: 0.3em 0 0 0.5em;
+
+
+.navigationContainer h1 {
+	font-size: 2em;
+    font-weight: normal;
+    margin: 0.6em 0 0 0.5em;
+    padding: 0 0 0.2em 0;
+    float: left;
 }
+
+.menu {
+	width: 350px;
+    height: 24px;
+    margin: 25px;
+    font-size: .8em;
+    float: right;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background-color: #222222;
+    -moz-box-shadow: rgba(0,0,0,0.3) -1px 0px, rgba(0,0,0,0.5) -1px -1px, rgba(255,255,255,0.3) 1px 1px, rgba(0,0,0,0.1) -1px -2px;
+    -webkit-box-shadow: rgba(0,0,0,0.3) -1px 0px, rgba(0,0,0,0.5) -1px -1px, rgba(255,255,255,0.3) 1px 1px, rgba(0,0,0,0.1) -1px -2px;
+}
+
 .button {
 	cursor: pointer;
 	cursor: hand;
 	border: none;
-	float: right;
 	background: transparent;
-	border-right: 1px solid gray;
-	margin: 0.8em 0.4em 0em 0.2em;
+	border-right: 1px solid #333333;
+	margin: 0.3em 0.2em 0em 0.2em;
 	color: #FFFFFF;
+	float: right;
 }
+
 .logoutPanel {
 	margin: 0;
 	float: right;
 }
+
 .logoutButton{
 	border: none;
 }
+
 .username {
 	color: orange;
 	cursor: default;
 }
+
 .active {
 	cursor: pointer;
 	cursor: hand;
@@ -45,6 +69,7 @@
 	color: #FFFFFF;
 	font-weight: bold;
 }
+
 .topProjectsButtonActive{
 	cursor: pointer;
 	cursot: hand;
@@ -60,6 +85,7 @@
 	margin: 0.8em 0.4em 0em 0.2em;
 	height: 100%;
 }
+
 .projectsPopup {
 	border-left: 1px solid gray;
 	border-right: 1px solid gray;
@@ -69,6 +95,7 @@
 	border-radius: 0 5px 5px 5px;
 	padding: 0.5% 0.5% 0.5% 0.5%;
 }
+
 .popupLabel {
 	color: black;	
 	text-align: center;
@@ -79,6 +106,7 @@
 	cursor: pointer;
 	cursor: hand;
 }
+
 .popupLabelActive{
 	color: white;	
 	text-align: center;
@@ -90,6 +118,7 @@
 	cursor: hand;
 	background: orange;	
 }
+
 .lastLabel {
 	border-bottom: none;
 }
