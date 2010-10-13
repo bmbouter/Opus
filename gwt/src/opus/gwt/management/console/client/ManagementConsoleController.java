@@ -57,13 +57,13 @@ public class ManagementConsoleController extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
 		this.eventBus = eventBus;
+		authenticationPanel = new AuthenticationPanel(eventBus);
+		iconPanel = new IconPanel(eventBus);
 		navigationPanel.setEventBus(eventBus);
 		breadCrumbsPanel.setEventBus(eventBus);
-		iconPanel = new IconPanel(eventBus);
-		authenticationPanel = new AuthenticationPanel(eventBus);
 		registerEvents();
-		//eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
-		showDeployer();
+		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
+		//showDeployer();
 	}
 	
 	private void registerEvents(){
@@ -71,7 +71,7 @@ public class ManagementConsoleController extends Composite {
 			new AuthenticationEventHandler(){
 				public void onAuthentication(AuthenticationEvent event){
 					if( event.isAuthenticated() ){
-						showDeployer();
+						startConsole();
 					} else if ( !event.isAuthenticated() ){
 						showAuthentication();
 					}
@@ -95,6 +95,11 @@ public class ManagementConsoleController extends Composite {
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(authenticationPanel);
 		RootLayoutPanel.get().add(authenticationPanel);
+	}
+	
+	private void startConsole(){
+		eventBus.fireEvent(new AsyncRequestEvent("handleProjects"));
+		showDeployer();
 	}
 	
 	private void showDeployer(){

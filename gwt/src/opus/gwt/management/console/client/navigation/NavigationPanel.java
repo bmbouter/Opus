@@ -14,6 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -29,6 +30,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -41,11 +43,12 @@ public class NavigationPanel extends Composite {
 
 	private final String logoutURL = "/accounts/logout/";
 	
-	private PopupPanel projectListPopup;
 	private int projectCount;
 	private String deletedProject;
 	private HandlerManager eventBus;
+	private PopupPanel projectListPopup;
 	
+	@UiField HTMLPanel buttonHTMLPanel;
 	@UiField Button logoutButton;
 	@UiField FormPanel logoutForm;	
 	@UiField Button projectsButton;
@@ -55,18 +58,16 @@ public class NavigationPanel extends Composite {
 	
 	public NavigationPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
-		setupLogoutForm();
 		projectListPopup = new PopupPanel();
-		setupProjectPopup();
+		setupLogoutForm();
 	}
 	
 	public void setEventBus(HandlerManager eventBus){
 		this.eventBus = eventBus;
-		registerEvents();
-		eventBus.fireEvent(new AsyncRequestEvent("handleProjects"));
+		registerHandlers();
 	}
 	
-	private void registerEvents(){
+	private void registerHandlers(){
 		eventBus.addHandler(AuthenticationEvent.TYPE, 
 			new AuthenticationEventHandler(){
 				public void onAuthentication(AuthenticationEvent event){
@@ -103,7 +104,6 @@ public class NavigationPanel extends Composite {
 	@UiHandler("deployNewButton")
 	void handleDeployNewButton(ClickEvent event){
 		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DEPLOY));
-		deployNewButton.setStyleName(style.active());
 	}
 	
 	@UiHandler("projectsButton")
@@ -111,50 +111,19 @@ public class NavigationPanel extends Composite {
 		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTS));
 	}
 	
-	private void setupProjectPopup(){
-		projectListPopup.setAutoHideEnabled(true);
-		projectListPopup.addCloseHandler(new CloseHandler<PopupPanel>(){
-			public void onClose(CloseEvent<PopupPanel> event){
-				projectsButton.setStyleName(style.button());
-			}
-		});
-	}
-	
 	@UiHandler("projectsButton")
 	void handleProjectsButtonMouseOver(MouseOverEvent event){
 		if(projectCount > 0) {
-			projectsButton.setStyleName(style.topProjectsButtonActive());
-			int left = projectsButton.getAbsoluteLeft();
-			int top = projectsButton.getAbsoluteTop() + projectsButton.getOffsetHeight();
+			int left = projectsButton.getAbsoluteLeft() - ( projectListPopup.getOffsetWidth() / 2 );
+			int top = buttonHTMLPanel.getAbsoluteTop() + buttonHTMLPanel.getOffsetHeight();
 			projectListPopup.setPopupPosition(left, top);
-			int width = projectsButton.getOffsetWidth();
-			projectListPopup.setWidth(Integer.toString(width) + "px");
 			projectListPopup.show();
+			left = projectsButton.getAbsoluteLeft() + ( projectsButton.getOffsetWidth() / 2 ) - ( projectListPopup.getOffsetWidth() / 2 );
+			projectListPopup.setPopupPosition(left, top);
+			projectListPopup.show();			
 		}
 	}
-	
-	/*
-	@UiHandler("dashboardsButton")
-	void handleDashboardsButtonClick(ClickEvent event){
-		mainDeckPanel.clear();
-		navigationMenuPanel.clear();
-		titleBarLabel.setText("");
-		mainDeckPanel.add(iconPanel);
-		mainDeckPanel.showWidget(0);
-		if(projectListPopup.isShowing()){
-			projectListPopup.hide();
-		} else {
-			dashboardsButton.setStyleName(style.topDashboardButtonActive());
-			int left = dashboardsButton.getAbsoluteLeft();
-			int top = dashboardsButton.getAbsoluteTop() + dashboardsButton.getOffsetHeight();
-			projectListPopup.setPopupPosition(left, top);
-			int width = dashboardsButton.getOffsetWidth();
-			projectListPopup.setWidth(Integer.toString(width) + "px");
-			projectListPopup.show();
-		}
-		projectListPopup.hide();
-	}
-	*/
+
 	
 	public void handleProjectNames(JsArray<Project> Projects){
 		projectListPopup.clear();
@@ -203,12 +172,11 @@ public class NavigationPanel extends Composite {
 				}
 			}
 			projectListPopup.add(FP);
-			//mainDeckPanel.add(iconPanel);
-			//mainDeckPanel.showWidget(0);
 		} else {
-			
 			deployNewButton.click();
 		}
+		projectListPopup.hide();
+		projectListPopup.setAutoHideEnabled(true);
 		projectListPopup.setStyleName(style.projectsPopup());
 	}
 }

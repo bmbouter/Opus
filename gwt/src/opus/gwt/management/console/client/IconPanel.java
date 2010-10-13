@@ -18,6 +18,7 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
 import opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle;

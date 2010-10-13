@@ -99,36 +99,35 @@
 }
 
 .projectsPopup {
-	border-left: 1px solid gray;
-	border-right: 1px solid gray;
-	border-bottom: 1px solid gray;
-	background: white;
-	-moz-border-radius: 0 5px 5px 5px;
-	border-radius: 0 5px 5px 5px;
-	padding: 0.5% 0.5% 0.5% 0.5%;
+	border: 1px solid gray;
+	border-top: none;
+	background: #222222;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border-top-right-radius: 0;
+	border-top-left-radius: 0;
+	padding: 1em 1em;
+	z-index: 500;
+	-moz-box-shadow: rgba(0,0,0,0.3) -1px 0px, rgba(0,0,0,0.5) -1px -1px, rgba(255,255,255,0.3) 1px 1px;
+    -webkit-box-shadow: rgba(255,255,255,0.3) 1px 1px;
 }
-
 .popupLabel {
-	color: black;	
+	color: white;	
 	text-align: center;
-	border-bottom: 1px solid gray;
-	width: 90%;
-	margin-right: 5%;
-	margin-left: 5%;
+	/*border-bottom: 1px solid gray;*/
 	cursor: pointer;
 	cursor: hand;
+	padding: 0.25em 0.75em;	
 }
 
 .popupLabelActive{
 	color: white;	
 	text-align: center;
-	border-bottom: 1px solid gray;
-	width: 90%;
-	margin-right: 5%;
-	margin-left: 5%;
+	/*border-bottom: 1px solid gray;*/
 	cursor: pointer;
 	cursor: hand;
-	background: orange;	
+	background: orange;
+	padding: 0.25em 0.75em;
 }
 
 .lastLabel {

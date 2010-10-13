@@ -211,7 +211,7 @@ public class ProjectOptionsPanel extends Composite {
 	
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
-		if(validateFields()){
+		if( validateFields() ){
 			eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.NEXT, this));
 		} else {
 			Window.alert("Validation error");
@@ -231,13 +231,12 @@ public class ProjectOptionsPanel extends Composite {
 		if(!usernameTextBox.getText().isEmpty()) {
 			if(passwordTextBox.getText().isEmpty()) {
 				return false;
-			} else if(!passwordTextBox.getText().equals(passwordConfirmTextBox.getText())) {
+			} else if( !passwordTextBox.getText().equals(passwordConfirmTextBox.getText()) ) {
 				return false;
-			} else if (isEmailValid()) {
+			} else if( isEmailValid() ) {
 				return false;
 			}
 		}
-		
 		return true;
 	}
 	
