@@ -12,6 +12,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -21,16 +22,16 @@ public class BreadCrumbsPanel extends Composite {
 	interface BreadCrumbsUiBinder extends UiBinder<Widget, BreadCrumbsPanel> {}
 	
 	private HandlerManager eventBus;
-	private Label activeCrumb;
-	private HashMap<String, Label> breadCrumbLabels;
+	private HTML activeCrumb;
+	private HashMap<String, HTML> breadCrumbLabels;
 	
 	@UiField FlowPanel breadCrumbsContainer;
 	@UiField BreadCrumbsPanelStyle style;
 	
 	public BreadCrumbsPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
-		activeCrumb = new Label();
-		breadCrumbLabels = new HashMap<String, Label>();	
+		activeCrumb = new HTML();
+		breadCrumbLabels = new HashMap<String, HTML>();	
 	}
 
 	public void setEventBus(HandlerManager eventBus){
@@ -70,11 +71,11 @@ public class BreadCrumbsPanel extends Composite {
 	}
 	
 	private void addBreadCrumb(String name, boolean isFirstCrumb){
-		Label crumb = new Label();
+		HTML crumb = new HTML();
 		if( isFirstCrumb ){
 			crumb.setText(name);
 		} else {
-			crumb.setText(">    " + name);
+			crumb.setHTML("&raquo; " + name);
 		}
 		crumb.setStyleName(style.inactive());
 		breadCrumbLabels.put(name, crumb);
@@ -86,7 +87,7 @@ public class BreadCrumbsPanel extends Composite {
 	}
 	
 	private void setActiveCrumb(String name){
-		Label crumb = breadCrumbLabels.get(name);
+		HTML crumb = breadCrumbLabels.get(name);
 		activeCrumb.setStyleName(style.inactive());
 		crumb.setStyleName(style.active());
 		activeCrumb = crumb; 

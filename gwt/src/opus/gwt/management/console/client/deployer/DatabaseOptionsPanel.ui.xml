@@ -46,25 +46,25 @@
 						<g:HTMLPanel styleName="{form.fieldWrapper}">
 							<g:HTMLPanel styleName="{form.field}">
 								<label class='{form.fieldLabel}'>Name</label>
-								<g:TextBox name="dbname" ui:field='nameTextBox' />
+								<g:TextBox name="dbname" ui:field='nameTextBox' styleName="{deployer.greyBorder}"/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{form.fieldWrapper}">
 							<g:HTMLPanel styleName="{form.field}">
 								<label class='{form.fieldLabel}'>Password</label>
-								<g:PasswordTextBox name='dbpassword' ui:field='passwordTextBox'/>
+								<g:PasswordTextBox name='dbpassword' ui:field='passwordTextBox' styleName="{deployer.greyBorder}"/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{form.fieldWrapper}">
 							<g:HTMLPanel styleName="{form.field}">
 								<label class='{form.fieldLabel}' >Host</label>
-								<g:PasswordTextBox name='dbhost' ui:field='hostTextBox' />
+								<g:PasswordTextBox name='dbhost' ui:field='hostTextBox' styleName="{deployer.greyBorder}"/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{form.fieldWrapper}">
 							<g:HTMLPanel styleName="{form.field}">
 								<label class='{form.fieldLabel}'>Port</label>
-								<g:TextBox name='dbport' ui:field='portTextBox' />
+								<g:TextBox name='dbport' ui:field='portTextBox' styleName="{deployer.greyBorder}"/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</g:HTMLPanel>

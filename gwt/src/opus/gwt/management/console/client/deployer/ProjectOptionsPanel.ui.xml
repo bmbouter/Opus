@@ -31,7 +31,7 @@
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{form.content}">
-				<g:HTMLPanel>
+				<g:HTMLPanel styleName="{form.formHeading}">
 					<h1>Superuser Setup</h1>
 					Superuser setup is required if you wish to be able to assign local groups and permissions.
 				</g:HTMLPanel>
@@ -39,26 +39,26 @@
 					<g:HTMLPanel styleName="{form.fieldWrapper}">
 						<g:HTMLPanel styleName="{form.field}">
 							<label class='{form.fieldLabel}'>Username</label>
-							<g:TextBox name='superusername' ui:field='usernameTextBox'/>
+							<g:TextBox name='superusername' ui:field='usernameTextBox' styleName="{deployer.greyBorder}"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{form.fieldWrapper}">
 						<g:HTMLPanel styleName="{form.field}">
 							<label class='{form.fieldLabel}'>Password</label>
-							<g:PasswordTextBox name='superpassword' ui:field='passwordTextBox'/>
+							<g:PasswordTextBox name='superpassword' ui:field='passwordTextBox' styleName="{deployer.greyBorder}"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{form.fieldWrapper}">
 						<g:HTMLPanel styleName="{form.field}">
 							<label class='{form.fieldLabel}' >Password Confirm</label>
-							<g:PasswordTextBox name='superpasswordconfirm' ui:field='passwordConfirmTextBox' />
+							<g:PasswordTextBox name='superpasswordconfirm' ui:field='passwordConfirmTextBox' styleName="{deployer.greyBorder}" />
 							<g:Label ui:field="passwordError" styleName="{form.error}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{form.fieldWrapper}">
 						<g:HTMLPanel styleName="{form.field}">
 							<label class='{form.fieldLabel}'>Email</label>
-							<g:TextBox name ='superemail' ui:field='emailTextBox' />
+							<g:TextBox name ='superemail' ui:field='emailTextBox' styleName="{deployer.greyBorder}" />
 							<g:Label ui:field="emailError" styleName="{form.error}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>

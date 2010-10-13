@@ -56,6 +56,7 @@ public class DeploymentOptionsPanel extends Composite {
 	@UiField TooltipPanel active;
 	@UiField ProjectDeployerStyle deployer;
 	@UiField CheckBox debugCheckBox;
+	@UiField Label error;
 
 	public DeploymentOptionsPanel(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -65,18 +66,19 @@ public class DeploymentOptionsPanel extends Composite {
 		baseProtocolLabel.setText(JSVarHandler.getDeployerBaseURL().split("//")[0] + "//");
 		baseDomainLabel.setText(JSVarHandler.getDeployerBaseURL().split("//")[1]);
 		setTooltipInitialState();
+		error.setText("");
 	}
 	
 	private boolean validateFields(){
 		if(projectNameTextBox.getText().isEmpty()){
 			projectNameTextBox.setStyleName(deployer.redBorder());
-			Window.alert("Subdomain required to deploy");
+			error.setText("Subdomain required to deploy");
 			return false;
 		} else if(projectNameTextBox.getText().matches("[a-zA-Z_][a-zA-Z0-9_]*")){
 			return true;
 		} else {
 			projectNameTextBox.setStyleName(deployer.redBorder());
-			Window.alert("Subdomain must start with a letter.");
+			error.setText("Can only contain letters.");
 			return false;
 		}
 	}
@@ -103,21 +105,31 @@ public class DeploymentOptionsPanel extends Composite {
 	}
 	
 	@UiHandler("projectNameTextBox")
-	void usernameTextBoxOnFocus(FocusEvent event) {
-		active.setVisible(true);
-		
-		int x = getTooltipPosition(projectNameTextBox)[0];
-		int y = getTooltipPosition(projectNameTextBox)[1];
-		
-		setTooltipPosition(x, y);
-		setTooltipText("Enter a subdomain name for your project");
+	void projectNameTextBoxOnFocus(FocusEvent event) {
+		if(projectNameTextBox.getStyleName().equals(deployer.greyBorder())) {
+			active.setVisible(true);
+			
+			int x = getTooltipPosition(projectNameTextBox)[0];
+			int y = getTooltipPosition(projectNameTextBox)[1];
+			
+			setTooltipPosition(x, y);
+			setTooltipText("Enter a subdomain name for your project");
+		}
 	}
 	
 	@UiHandler("projectNameTextBox")
 	void projectNameTextboxOnKeyUp(KeyUpEvent event){
 		subDomainLabel.setText(projectNameTextBox.getText() + ".");
-		if( projectNameTextBox.getText().isEmpty() )
+		if(projectNameTextBox.getText().isEmpty()) {
+			error.setText("Subdomain required to deploy");
+			projectNameTextBox.setStyleName(deployer.redBorder());
+			active.hide();
 			subDomainLabel.setText("");
+		} else {
+			active.show();
+			projectNameTextBox.setStyleName(deployer.greyBorder());
+			error.setText("");
+		}
 	}
 	
 	/**

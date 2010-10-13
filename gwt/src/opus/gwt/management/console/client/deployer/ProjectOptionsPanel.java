@@ -167,8 +167,8 @@ public class ProjectOptionsPanel extends Composite {
 				passwordConfirmTextBox.setStyleName(deployer.redBorder());
 			} else {
 				passwordError.setText("");
-				passwordTextBox.removeStyleName(deployer.redBorder());
-				passwordConfirmTextBox.removeStyleName(deployer.redBorder());
+				passwordTextBox.setStyleName(deployer.greyBorder());
+				passwordConfirmTextBox.setStyleName(deployer.greyBorder());
 			}
 		} else {
 			
@@ -185,8 +185,8 @@ public class ProjectOptionsPanel extends Composite {
 				passwordConfirmTextBox.setStyleName(deployer.redBorder());
 			} else {
 				passwordError.setText("");
-				passwordTextBox.removeStyleName(deployer.redBorder());
-				passwordConfirmTextBox.removeStyleName(deployer.redBorder());
+				passwordTextBox.setStyleName(deployer.greyBorder());
+				passwordConfirmTextBox.setStyleName(deployer.greyBorder());
 			}
 		} else {
 			
@@ -202,7 +202,7 @@ public class ProjectOptionsPanel extends Composite {
 				emailTextBox.setStyleName(deployer.redBorder());
 			} else {
 				emailError.setText("");
-				emailTextBox.removeStyleName(deployer.redBorder());
+				emailTextBox.setStyleName(deployer.greyBorder());
 			}
 		} else {
 			
@@ -248,9 +248,9 @@ public class ProjectOptionsPanel extends Composite {
 	}
 	
 	private void removeAllStyles() {
-		passwordTextBox.removeStyleName(deployer.redBorder());
-		passwordConfirmTextBox.removeStyleName(deployer.redBorder());
-		emailTextBox.removeStyleName(deployer.redBorder());
+		passwordTextBox.setStyleName(deployer.greyBorder());
+		passwordConfirmTextBox.setStyleName(deployer.greyBorder());
+		emailTextBox.setStyleName(deployer.greyBorder());
 	}
 	
 	private boolean isEmailValid() {

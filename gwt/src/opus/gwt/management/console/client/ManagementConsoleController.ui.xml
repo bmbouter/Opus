@@ -21,7 +21,7 @@
 	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle"/>
 	
 	<g:DockLayoutPanel unit='EM'>	
-		<g:north size="5">
+		<g:north size="3">
 			<c:NavigationPanel ui:field="navigationPanel" styleName="{style.navigationPanel}"/>
 		</g:north>
 		<g:north size="2">

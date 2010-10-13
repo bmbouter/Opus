@@ -37,7 +37,8 @@
 					<g:HTMLPanel styleName="{form.fieldWrapper}">
 						<g:HTMLPanel styleName="{form.field}">
 							<label class="{form.fieldLabel}">Deploy as:</label>
-							<g:TextBox ui:field='projectNameTextBox'/>
+							<g:TextBox ui:field='projectNameTextBox' styleName="{deployer.greyBorder}"/>
+							<g:Label ui:field="error" styleName="{form.error}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{form.fieldWrapper}">

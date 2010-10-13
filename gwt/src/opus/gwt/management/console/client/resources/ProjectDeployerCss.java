@@ -22,5 +22,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class ProjectDeployerCss extends Widget {
 	  public interface ProjectDeployerStyle extends CssResource {
 	    String redBorder();
+	    String greyBorder();
 	  }
 }

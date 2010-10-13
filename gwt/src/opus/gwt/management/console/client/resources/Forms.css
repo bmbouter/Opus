@@ -19,9 +19,16 @@ select {
 	width: 100%;
 }
 
+.formHeading {
+	width: 100%;
+	float: left;
+	padding: 0px 20px 5px 0px;
+	border-bottom: 2px solid #444444;
+}
+
 .formWrapper {
-	padding: 10px 0px 0px 0px;
-	width: 500px;
+	padding: 20px 20px 0px 0px;
+	width: 600px;
 	height: auto;
 	float: left;
 }
@@ -55,7 +62,6 @@ select {
 	border-radius: 3px;
 	-webkit-box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
 	box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
-	border: 1px solid #888888;
 	float: left;
 	/* Activate these later for styling
 	background-color: #C2C2C2;

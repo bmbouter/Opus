@@ -47,6 +47,10 @@
 	border: 1px solid #FF0000;
 }
 
+.greyBorder {
+	border: 1px solid #888888;
+}
+
 .right {
 	float: right;
 }
