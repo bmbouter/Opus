@@ -1,10 +1,12 @@
-h1 {
+.content h1 {
 	font-size: 1.5em;
-	margin: 0px;
-	padding: 0px;
+	margin: 0px 0px 6px 0px;
+	padding: 0px 10px 2px 0px;
+	width: 96%;
+	border-bottom: 2px solid #444444;
 }
 
-h2 {
+.content h2 {
 	font-size: 1.2em;
 	margin: 0px;
 	padding: 0px;
@@ -17,13 +19,6 @@ select {
 .content {
 	padding: 0px 0px 0px 10px;
 	width: 100%;
-}
-
-.formHeading {
-	width: 100%;
-	float: left;
-	padding: 0px 20px 5px 0px;
-	border-bottom: 2px solid #444444;
 }
 
 .formWrapper {
@@ -74,13 +69,21 @@ select {
 .buttons {
 	padding: 10px 0px 0px 0px;
 	float: left;
+	width: 10em;
 }
 
 .button {
-	background: #BBBBBB;
-	border: #999999 solid 1px;
+	background: literal("-webkit-gradient(linear, 0% 0%, 0% 100%, from(#588b34), to(#477725))");
+	background: literal("-moz-linear-gradient(linear, 0% 0%, 0% 100%, from(#0C940C), to(#136613))");
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	border: #466625 solid 1px;
 	display: block;
 	float: left;
+	color: #FFFFFF;
+	height: 3em;
+	width: 11em;
 }
 
 .header { 
@@ -98,6 +101,7 @@ select {
     font-size: 40px;
     color: #CC8202;
     font-weight: bold;
+    border: none;
 }
 
 .insetType {
@@ -109,4 +113,8 @@ select {
 	float: right;
 	margin: 3px 0px 0px 5px;
 	display: inline;
+}
+
+.right {
+	float: right;
 }

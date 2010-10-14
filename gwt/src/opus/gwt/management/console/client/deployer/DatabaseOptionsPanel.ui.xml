@@ -68,9 +68,13 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{form.buttons}">	
-						<g:Button ui:field="previousButton" text="Previous" styleName="{form.button}"/>
-						<g:Button ui:field="nextButton" text="Next" styleName="{form.button}"/>
+					<g:HTMLPanel styleName="{form.fieldWrapper}">
+						<g:HTMLPanel styleName="{form.fieldLabel}">
+							<g:Button ui:field="previousButton" text="&laquo; Previous" styleName="{form.button} {form.right}"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{form.fieldLabel}">
+							<g:Button ui:field="nextButton" text="Next &raquo;" styleName="{form.button}"/>
+						</g:HTMLPanel>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</g:HTMLPanel>

@@ -8,25 +8,16 @@
 	z-index: 1;
 }
 
+span {
+	display: inline;
+}
+
 .inactive {
 	font-size: 1.1em;
 	float: left;
 	padding: 0.4em 0 0 0.5em;
 }
 
-span {
-	display: inline;
-	margin-left: 5px;
-	margin-right: 5px;
-}
-
-/*
-.inactive {
-	padding: 3px 0px 0px 0px;
-	display: inline;
-	float: left;
-}
-*/
 .active {
 	font-size: 1.1em;
 	padding: 3px 0px 0px 0px;
