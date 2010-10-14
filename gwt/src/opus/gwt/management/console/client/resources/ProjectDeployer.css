@@ -68,3 +68,13 @@
 	font-size: 2.5em;
 	padding: 0 0 0 8em;
 }
+.loadingPopup{}
+.loadingGlass {
+	background: black;
+	opacity: 0.5;
+	/*width: 100%;
+	height: 100%;*/
+}
+.loadingImage {
+	padding: 0 0 0 25%;
+}

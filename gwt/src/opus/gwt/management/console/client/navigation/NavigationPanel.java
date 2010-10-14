@@ -165,6 +165,7 @@ public class NavigationPanel extends Composite {
 					testLabel.addClickHandler(new ClickHandler() {
 				        public void onClick(ClickEvent event) {
 				        	eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
+				        	projectListPopup.hide();
 				        }
 				     });
 					FP.add(testLabel);
