@@ -15,9 +15,11 @@
 ############################################################################*/
 
 .rootLayoutPanel {
-	/*min-height: 768px;*/
 	min-height: 600px;
 	min-width: 1000px;	
+}
+.mainDockLayoutPanel {
+	background: url('body-bg.png') 0px 225px repeat-x, #F0F0F0;
 }
 .mainContentPanel {
 	background: white;

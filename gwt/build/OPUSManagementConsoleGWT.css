@@ -5,7 +5,6 @@ html, body {
 	width: 100%;
 	margin: 0;
 	padding: 0;
-	background: url('body-bg.png') 0px 225px repeat-x, #F0F0F0;
 }
 iframe {
 	visibility: hidden;	
