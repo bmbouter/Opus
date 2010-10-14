@@ -19,6 +19,9 @@ package opus.gwt.management.console.client;
 import java.util.HashMap;
 
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
+import opus.gwt.management.console.client.event.BreadCrumbEvent;
+import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
 import opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle;
@@ -57,10 +60,11 @@ public class IconPanel extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		iconMap = new HashMap<String, Integer>();
-		registerEvents();
+		registerHandlers();
+		setupBreadCrumbs();
 	}
 	
-	private void registerEvents(){
+	private void registerHandlers(){
 		eventBus.addHandler(UpdateProjectsEvent.TYPE, 
 				new UpdateProjectsEventHandler(){
 					public void onUpdateProjects(UpdateProjectsEvent event){
@@ -69,6 +73,19 @@ public class IconPanel extends Composite {
 						}
 					}
 		});
+		eventBus.addHandler(PanelTransitionEvent.TYPE, 
+				new PanelTransitionEventHandler(){
+					public void onPanelTransition(PanelTransitionEvent event){
+						if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTS ){
+							setupBreadCrumbs();
+						}
+					}
+		});
+	}
+	
+	private void setupBreadCrumbs(){
+		String[] crumbs = {"Projects"};
+		eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_CRUMBS, crumbs));
 	}
 	
 	public void addProjectIcon(String name) {

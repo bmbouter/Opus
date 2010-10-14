@@ -23,16 +23,20 @@ import opus.gwt.management.console.client.event.DeployProjectEvent;
 import opus.gwt.management.console.client.event.DeployProjectEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
+import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -54,13 +58,20 @@ public class ProjectDeployerController extends Composite {
 	private HandlerManager eventBus;
 	private FormPanel deployerForm;
 	private String createdProjectName;
+	private PopupPanel loadingPopup;
+	private Image loadingImage;
 		
 	@UiField DeckPanel deployerDeckPanel;
+	@UiField ProjectDeployerStyle style;
 	
 	public ProjectDeployerController(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		createdProjectName = "";
 		this.eventBus = eventBus;
+		loadingPopup = new PopupPanel(false, true);
+		loadingImage = new Image("/loadinfo.net.gif");
+		//loadingImage.setStyleName(style.loadingImage());
+		loadingPopup.add(loadingImage);
 		this.deployerForm = new FormPanel();
 		this.appBrowserPanel = new AppBrowserPanel(eventBus);
 		this.projectOptionsPanel = new ProjectOptionsPanel(eventBus);
@@ -96,13 +107,14 @@ public class ProjectDeployerController extends Composite {
 		deployerForm.setMethod(FormPanel.METHOD_POST);
 		deployerForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		    public void onSubmitComplete(SubmitCompleteEvent event) {
+		    	/*Window.alert(event.getResults());
 		    	if( event.getResults().equals("success") ){
 		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
 		    	} else {
 		    		ErrorPanel ep = new ErrorPanel(eventBus);
 		    		deployerDeckPanel.add(ep);
 		    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
-		    	}
+		    	}*/
 		     }});
 	}
 	
@@ -182,5 +194,13 @@ public class ProjectDeployerController extends Composite {
 		formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 		deployerDeckPanel.add(deployerForm);
 		deployerForm.submit();
+		loadingPopup.setGlassEnabled(true);
+		loadingPopup.setGlassStyleName(style.loadingGlass());
+		loadingPopup.show();
+		int left = ( Window.getClientWidth() / 2 ) - (loadingImage.getOffsetWidth() / 2);
+		int top = ( Window.getClientHeight() / 2) -  (loadingImage.getOffsetHeight() / 2);
+		loadingPopup.setSize(Integer.toString(Window.getClientWidth()), Integer.toString(Window.getClientHeight()));
+		loadingPopup.setPopupPosition(left, top);
+		loadingPopup.show();
 	}
 }

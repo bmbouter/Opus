@@ -23,6 +23,8 @@ import opus.gwt.management.console.client.event.AuthenticationEvent;
 import opus.gwt.management.console.client.event.AuthenticationEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
+import opus.gwt.management.console.client.event.UpdateProjectsEvent;
+import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle;
@@ -58,9 +60,9 @@ public class ManagementConsoleController extends Composite {
 		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
 		this.eventBus = eventBus;
 		authenticationPanel = new AuthenticationPanel(eventBus);
-		iconPanel = new IconPanel(eventBus);
 		navigationPanel.setEventBus(eventBus);
 		breadCrumbsPanel.setEventBus(eventBus);
+		iconPanel = new IconPanel(eventBus);
 		registerEvents();
 		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
 		//showDeployer();
@@ -89,6 +91,17 @@ public class ManagementConsoleController extends Composite {
 					}
 				}
 		});
+		eventBus.addHandler(UpdateProjectsEvent.TYPE, 
+				new UpdateProjectsEventHandler(){
+					public void onUpdateProjects(UpdateProjectsEvent event){
+						if( event.getProjects().length() == 0 ){
+							showDeployer();
+						} else {
+							showIconPanel();
+						}
+						
+					}
+			});
 	}
 	
 	private void showAuthentication(){
@@ -99,7 +112,6 @@ public class ManagementConsoleController extends Composite {
 	
 	private void startConsole(){
 		eventBus.fireEvent(new AsyncRequestEvent("handleProjects"));
-		showDeployer();
 	}
 	
 	private void showDeployer(){

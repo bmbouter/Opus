@@ -58,8 +58,9 @@ public class ProjectManagerController extends Composite {
 	}
 	
 	private void setupBreadCrumbs(){
-		String[] crumbs = {projectName, dashboardPanel.getTitle()};
+		String[] crumbs = {"Projects", projectName, dashboardPanel.getTitle()};
 		eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_CRUMBS, crumbs));
+		eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, projectName));
 	}
 	
 	private void registerEvents(){
