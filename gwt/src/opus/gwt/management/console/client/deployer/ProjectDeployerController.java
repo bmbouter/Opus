@@ -109,7 +109,11 @@ public class ProjectDeployerController extends Composite {
 		    public void onSubmitComplete(SubmitCompleteEvent event) {
 		    	//if( event.getResults().equals("success") ){
 		    		loadingPopup.hide();
-		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
+		    		//eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
+		    		ErrorPanel ep = new ErrorPanel(eventBus);
+		    		ep.errorHTML.setHTML(event.getResults());
+		    		deployerDeckPanel.add(ep);
+		    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
 		    	/*} else {
 		    		ErrorPanel ep = new ErrorPanel(eventBus);
 		    		deployerDeckPanel.add(ep);

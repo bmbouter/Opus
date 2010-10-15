@@ -68,6 +68,10 @@
 	font-size: 2.5em;
 	padding: 0 0 0 8em;
 }
+.errorHTML {
+	width: 100%;
+	height: 100%;
+}
 .loadingPopup{}
 .loadingGlass {
 	background: black;
