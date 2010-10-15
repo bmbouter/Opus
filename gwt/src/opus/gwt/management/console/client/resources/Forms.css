@@ -89,28 +89,6 @@ select {
 	cursor: hand;
 }
 
-.header { 
-    background: #ED9E16;
-    height: 60px;
-    border: solid #CC8202 0px;
-    margin-bottom: 5px;
-    border-top-right-radius: 3px;
-    border-top-left-radius: 3px;
-}
-
-.header h1 {
-    margin: 0px;
-    padding: 8px 0 0 10px;
-    font-size: 40px;
-    color: #CC8202;
-    font-weight: bold;
-    border: none;
-}
-
-.insetType {
-	text-shadow: rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;
-}
-
 .error {
 	color: red;
 	float: right;
