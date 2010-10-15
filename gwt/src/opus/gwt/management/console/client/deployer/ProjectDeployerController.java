@@ -35,11 +35,14 @@ import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -61,7 +64,6 @@ public class ProjectDeployerController extends Composite {
 	private FormPanel deployerForm;
 	private String createdProjectName;
 	private PopupPanel loadingPopup;
-	private Image loadingImage;
 	private JSVariableHandler jsVarHandler;
 		
 	@UiField DeckPanel deployerDeckPanel;
@@ -73,16 +75,14 @@ public class ProjectDeployerController extends Composite {
 		this.eventBus = eventBus;
 		this.jsVarHandler = new JSVariableHandler();
 		this.loadingPopup = new PopupPanel(false, true);
-		this.loadingImage = new Image(OpusImages.INSTANCE.loadingSpinner());
-		//loadingImage.setStyleName(style.loadingImage());
-		loadingPopup.add(loadingImage);
 		this.deployerForm = new FormPanel();
 		this.appBrowserPanel = new AppBrowserPanel(eventBus);
 		this.projectOptionsPanel = new ProjectOptionsPanel(eventBus);
 		this.databaseOptionsPanel = new DatabaseOptionsPanel(eventBus);
 		this.deploymentOptionsPanel = new DeploymentOptionsPanel(eventBus);
+		setupLoadingPopup();
 		setupdeployerDeckPanel();
-		registerEvents();
+		registerHandlers();
 		setupBreadCrumbs();
 		setupDeployerForm();
 	}
@@ -111,23 +111,21 @@ public class ProjectDeployerController extends Composite {
 		deployerForm.setMethod(FormPanel.METHOD_POST);
 		deployerForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		    public void onSubmitComplete(SubmitCompleteEvent event) {
-		    	//if( event.getResults().equals("success") ){
+		    	if( event.getResults().equals("success") ){
 		    		loadingPopup.hide();
-		    		//eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
-		    		ErrorPanel ep = new ErrorPanel(eventBus);
+		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
+		    		deployerDeckPanel.remove(deployerDeckPanel.getWidgetIndex(deployerForm));
+		    	} else {
+		    		loadingPopup.hide();
+		    	 	ErrorPanel ep = new ErrorPanel(eventBus);
 		    		ep.errorHTML.setHTML(event.getResults());
 		    		deployerDeckPanel.add(ep);
 		    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
-		    		deployerDeckPanel.remove(deployerDeckPanel.getWidgetIndex(deployerForm));
-		    	/*} else {
-		    		ErrorPanel ep = new ErrorPanel(eventBus);
-		    		deployerDeckPanel.add(ep);
-		    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
-		    	}*/
+		    	}
 		     }});
 	}
 	
-	private void registerEvents(){
+	private void registerHandlers(){
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
 			new PanelTransitionEventHandler(){
 				public void onPanelTransition(PanelTransitionEvent event){
@@ -150,6 +148,17 @@ public class ProjectDeployerController extends Composite {
 		});
 	}
 	
+	private void setupLoadingPopup(){
+		FlowPanel fp = new FlowPanel();
+		Label label = new Label("Deploying Project...");
+		Image loadingImage = new Image(OpusImages.INSTANCE.loadingSpinner());
+		loadingImage.setStyleName(style.loadingImage());
+		label.setStyleName(style.loadingLabel());
+		fp.add(loadingImage);
+		fp.add(label);
+		loadingPopup.add(fp);	
+	}
+
 	public void setFocus(Widget panel){
 		if( panel.getClass().equals(databaseOptionsPanel.getClass()) ){
 			deploymentOptionsPanel.setFocus();
@@ -167,11 +176,6 @@ public class ProjectDeployerController extends Composite {
 		deployerForm.setAction(deploymentURL.replaceAll("projectName", deploymentOptionsPanel.getProjectName()));
 		
 		formContainerPanel.add(new Hidden("csrfmiddlewaretoken", jsVarHandler.getCSRFTokenURL()));		
-		Window.alert(formContainerPanel.toString());
-		
-		for(int i=0; i < Cookies.getCookieNames().size(); i++){
-			Window.alert(Cookies.getCookieNames().iterator().next());
-		}
   
 		ArrayList<String> paths = appBrowserPanel.getAppPaths();
 		ArrayList<String> apptypes = appBrowserPanel.getAppTypes();
@@ -203,8 +207,6 @@ public class ProjectDeployerController extends Composite {
 		formContainerPanel.add(deploymentOptionsPanel);
 		formContainerPanel.add(projectOptionsPanel);
 		formContainerPanel.add(databaseOptionsPanel);
-	 
-		//Add csrf-token
 		
 		this.deployerForm.add(formContainerPanel);
 		deployerDeckPanel.add(deployerForm);
@@ -213,9 +215,9 @@ public class ProjectDeployerController extends Composite {
 		loadingPopup.setGlassEnabled(true);
 		loadingPopup.setGlassStyleName(style.loadingGlass());
 		loadingPopup.show();
-		int left = ( Window.getClientWidth() / 2 ) - (loadingImage.getOffsetWidth() / 2);
-		int top = ( Window.getClientHeight() / 2) -  (loadingImage.getOffsetHeight() / 2);
-		loadingPopup.setSize(Integer.toString(Window.getClientWidth()), Integer.toString(Window.getClientHeight()));
+		int left = ( Window.getClientWidth() / 2 ) - 150;
+		int top = ( Window.getClientHeight() / 2) - 10;
+		//loadingPopup.setSize(Integer.toString(Window.getClientWidth()), Integer.toString(Window.getClientHeight()));
 		loadingPopup.setPopupPosition(left, top);
 		loadingPopup.show();
 	}

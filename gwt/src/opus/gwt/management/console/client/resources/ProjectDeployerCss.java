@@ -26,5 +26,6 @@ public class ProjectDeployerCss extends Widget {
 		  String loadingPopup();
 		  String loadingImage();
 		  String loadingGlass();
+		  String loadingLabel();
 	  }
 }

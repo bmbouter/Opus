@@ -93,15 +93,20 @@
 .errorHTML {
 	width: 100%;
 	height: 100%;
-	overflow: auto;
+	overflow: scroll;
 }
 .loadingPopup{}
 .loadingGlass {
 	background: black;
 	opacity: 0.75;
-	/*width: 100%;
-	height: 100%;*/
 }
 .loadingImage {
-	padding: 0 0 0 25%;
+	float: left;
+}
+.loadingLabel{
+	float: left;
+	font-size: 2em;
+	color: white;
+	margin-left: 0.5em;
+	margin-top: 0.2em;
 }
