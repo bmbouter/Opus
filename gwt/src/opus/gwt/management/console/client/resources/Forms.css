@@ -82,8 +82,11 @@ select {
 	display: block;
 	float: left;
 	color: #FFFFFF;
-	height: 3em;
-	width: 11em;
+	height: 2.10em;
+	width: 9em;
+	font-size: 1.25em;
+	cursor: pointer;
+	cursor: hand;
 }
 
 .header { 

@@ -14,4 +14,5 @@
 #   limitations under the License.                                           #
 ##############################################################################
 
-COMMUNITY_URL = "http://apps.opus.ncsu.edu"
+REPO_URL = "http://apps.opus.ncsu.edu"
+COMMUNITY_URL = "http://home.opus.ncsu.edu"
