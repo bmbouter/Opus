@@ -4,7 +4,7 @@ var $gwt_version = "2.0.3";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '5273CBED8CDE878BA7BA8F41403EC06D';
+var $strongName = 'FA6C9A4CA00ECFEB457EBE1B129342D1';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -9592,13 +9592,15 @@ function $ProjectDeployerController(this$static, eventBus){
 }
 
 function $deployProject(this$static){
-  var apptypes, formContainerPanel, i, left, numApps, numInitialForms, numMaxForms, path, paths, pathtype, top_0;
+  var apptypes, formContainerPanel, i, left, numApps, numInitialForms, numMaxForms, path, paths, pathtype, top_0, outerIter, entry;
   $clear(this$static.deployerForm);
   formContainerPanel = $VerticalPanel(new VerticalPanel);
   this$static.deployerForm.element.action = $replaceAll('/deployments/projectName/', 'projectName', this$static.deploymentOptionsPanel.projectName);
   $add_5(formContainerPanel, $Hidden_0(new Hidden, 'csrfmiddlewaretoken', getCookie('csrftoken')));
   $wnd.alert($toString_0(formContainerPanel));
-  $wnd.alert(getCookie('csrftoken'));
+  for (i = 0; i < $keySet(ensureCookies()).val$entrySet.this$0.size; ++i) {
+    $wnd.alert(getCookie(dynamicCast((entry = $next_4((outerIter = $AbstractHashMap$EntrySetIterator(new AbstractHashMap$EntrySetIterator, $keySet(ensureCookies()).val$entrySet.this$0) , $AbstractMap$1$1(new AbstractMap$1$1, outerIter)).val$outerIter) , entry.getKey()), 1)));
+  }
   paths = $getAppPaths(this$static.appBrowserPanel);
   apptypes = $getAppTypes(this$static.appBrowserPanel);
   numApps = $Hidden(new Hidden);
@@ -9678,6 +9680,8 @@ function onSubmitComplete_2(event_0){
 function ProjectDeployerController$1(){
 }
 
+--></script>
+<script><!--
 _ = ProjectDeployerController$1.prototype = new Object_0;
 _.onSubmitComplete = onSubmitComplete_2;
 _.typeId$ = 192;
@@ -9687,8 +9691,6 @@ function $ProjectDeployerController$2(this$static, this$0){
   return this$static;
 }
 
---></script>
-<script><!--
 function onPanelTransition_3(event_0){
   var panel;
   if (event_0.transitionType == ($clinit_502() , NEXT)) {
@@ -9878,6 +9880,8 @@ function $setAllowedAuthApps(this$static, allowedAuthApps){
   }
 }
 
+--></script>
+<script><!--
 function $usernameTextBoxOnChange(this$static){
   if (!!$getPropertyString(this$static.usernameTextBox.element, 'value').length && !$isEmailValid(this$static) && !$isPasswordValid(this$static)) {
     this$static.passwordTextBox.getStyleElement()['className'] = 'G10x3pw5PX';
@@ -9895,8 +9899,6 @@ function $usernameTextBoxOnChange(this$static){
   }
 }
 
---></script>
-<script><!--
 function $usernameTextBoxOnFocus(this$static){
   var x, y;
   $setVisible_0(this$static.active, true);
@@ -10329,6 +10331,8 @@ function $ensureInjected_14(this$static){
 function opus_gwt_management_console_client_deployer_ProjectOptionsPanel_BuildProjectPage2UiBinderImpl_GenBundle_default_StaticClientBundleGenerator$3(){
 }
 
+--></script>
+<script><!--
 _ = opus_gwt_management_console_client_deployer_ProjectOptionsPanel_BuildProjectPage2UiBinderImpl_GenBundle_default_StaticClientBundleGenerator$3.prototype = new Object_0;
 _.typeId$ = 0;
 _.injected = false;
@@ -10352,8 +10356,6 @@ function $AsyncRequestEvent_0(this$static, requestHandle, urlVariable){
   return this$static;
 }
 
---></script>
-<script><!--
 function $dispatch_9(this$static, handler){
   this$static.hasUrlVariable?$getJson(handler.this$0, encode($replaceAll(dynamicCast($get_4(handler.this$0.URLS, this$static.requestHandle), 1), '<placeHolder>', this$static.urlVariable)), this$static.requestHandle):$getJson(handler.this$0, encode(dynamicCast($get_4(handler.this$0.URLS, this$static.requestHandle), 1)), this$static.requestHandle);
 }
@@ -11114,6 +11116,8 @@ _ = opus_gwt_management_console_client_navigation_BreadCrumbsPanel_BreadCrumbsUi
 _.typeId$ = 0;
 _.injected = false;
 var style_14 = null;
+--></script>
+<script><!--
 function $ensureInjected_16(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
@@ -11125,8 +11129,6 @@ function $ensureInjected_16(this$static){
   return false;
 }
 
---></script>
-<script><!--
 function opus_gwt_management_console_client_navigation_NavigationPanel_NavigationPanelUiBinderImpl_GenBundle_default_StaticClientBundleGenerator$1(){
 }
 

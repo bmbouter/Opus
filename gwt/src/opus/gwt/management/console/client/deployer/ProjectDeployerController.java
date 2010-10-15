@@ -163,7 +163,11 @@ public class ProjectDeployerController extends Composite {
 		
 		formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));		
 		Window.alert(formContainerPanel.toString());
-		Window.alert(Cookies.getCookie("csrftoken"));
+		
+		for(int i=0; i < Cookies.getCookieNames().size(); i++){
+			Window.alert(Cookies.getCookie(Cookies.getCookieNames().iterator().next()));
+		}
+		//Window.alert(Cookies.getCookie("csrftoken"));
   
 		ArrayList<String> paths = appBrowserPanel.getAppPaths();
 		ArrayList<String> apptypes = appBrowserPanel.getAppTypes();
