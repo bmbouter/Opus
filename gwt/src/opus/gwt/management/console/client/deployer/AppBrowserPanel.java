@@ -420,8 +420,4 @@ public class AppBrowserPanel extends Composite {
 		  }
 		  return names;
 	  }
-	  
-	  public final native JsArray<ProjectData> asArrayOfProjectData(JavaScriptObject jso) /*-{
-		  return jso;
-	  }-*/;
 }

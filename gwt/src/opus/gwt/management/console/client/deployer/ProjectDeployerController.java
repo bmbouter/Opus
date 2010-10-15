@@ -179,6 +179,7 @@ public class ProjectDeployerController extends Composite {
   
 		ArrayList<String> paths = appBrowserPanel.getAppPaths();
 		ArrayList<String> apptypes = appBrowserPanel.getAppTypes();
+		ArrayList<String> appNames = appBrowserPanel.getAppNames();
 		Hidden numApps = new Hidden();
 		numApps.setName("form-TOTAL_FORMS");
 		numApps.setValue(String.valueOf(paths.size()));
@@ -197,11 +198,18 @@ public class ProjectDeployerController extends Composite {
 			RadioButton pathtype = new RadioButton("form-" + i + "-apptype");
 			pathtype.setFormValue(apptypes.get(i));
 			pathtype.setValue(true);
+			
 			TextBox path = new TextBox();
 			path.setName("form-" + i +"-apppath");
 			path.setValue(paths.get(i));
+			
+			TextBox appName = new TextBox();
+			appName.setName("form-" + i + "-appname");
+			appName.setValue(appNames.get(i));
+			
 			formContainerPanel.add(pathtype);
 			formContainerPanel.add(path);
+			formContainerPanel.add(appName);
 		}
 	  
 		formContainerPanel.add(deploymentOptionsPanel);
