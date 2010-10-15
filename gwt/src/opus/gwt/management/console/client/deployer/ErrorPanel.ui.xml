@@ -20,9 +20,7 @@
 	<ui:style src="../resources/ProjectDeployer.css"/>
 	
 	<g:SimplePanel>
-		<g:ScrollPanel>
 			<g:HTML ui:field="errorHTML" styleName="{style.errorHTML}"/>
 			<!--  <g:Label styleName="{style.errorLabel}">An error occurred while trying to deploy your project.</g:Label>-->
-		</g:ScrollPanel>
 	</g:SimplePanel>
 </ui:UiBinder> 

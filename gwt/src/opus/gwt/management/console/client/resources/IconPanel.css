@@ -1,0 +1,5 @@
+@external @sprite .myImage {
+  gwt-image: 'projectdefaulticon';
+  border: red;
+  width: 10px;
+}

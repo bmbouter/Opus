@@ -16,11 +16,18 @@
 
 package opus.gwt.management.console.client.resources;
 
+import opus.gwt.management.console.client.resources.images.OpusImages;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Widget;
 
-public class PanelManagerCss extends Widget {
-	  public interface PanelManagerStyle extends CssResource {
+public interface ManagementConsoleControllerResources extends ClientBundle {
+	public static final ManagementConsoleControllerResources INSTANCE = GWT.create(ManagementConsoleControllerResources.class);
+	
+	public interface ManagementConsoleControllerStyle extends CssResource {
 	    String dashboardsPopup();
 	    String popupLabel();
 	    String popupLabelActive();
@@ -30,5 +37,5 @@ public class PanelManagerCss extends Widget {
 	    String projectIconActive();
 	    String lastLabel();
 	    String rootLayoutPanel();
-	  }
+	}
 }

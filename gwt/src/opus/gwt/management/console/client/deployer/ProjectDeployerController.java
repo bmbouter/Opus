@@ -25,6 +25,7 @@ import opus.gwt.management.console.client.event.DeployProjectEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
+import opus.gwt.management.console.client.resources.images.OpusImages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
@@ -72,7 +73,7 @@ public class ProjectDeployerController extends Composite {
 		this.eventBus = eventBus;
 		this.jsVarHandler = new JSVariableHandler();
 		this.loadingPopup = new PopupPanel(false, true);
-		this.loadingImage = new Image("/loadinfo.net.gif");
+		this.loadingImage = new Image(OpusImages.INSTANCE.loadingSpinner());
 		//loadingImage.setStyleName(style.loadingImage());
 		loadingPopup.add(loadingImage);
 		this.deployerForm = new FormPanel();
@@ -117,6 +118,7 @@ public class ProjectDeployerController extends Composite {
 		    		ep.errorHTML.setHTML(event.getResults());
 		    		deployerDeckPanel.add(ep);
 		    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
+		    		deployerDeckPanel.remove(deployerDeckPanel.getWidgetIndex(deployerForm));
 		    	/*} else {
 		    		ErrorPanel ep = new ErrorPanel(eventBus);
 		    		deployerDeckPanel.add(ep);

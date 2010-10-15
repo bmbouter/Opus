@@ -24,7 +24,9 @@ import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
-import opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle;
+import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources;
+import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
+import opus.gwt.management.console.client.resources.images.OpusImages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -40,6 +42,9 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -53,7 +58,8 @@ public class IconPanel extends Composite {
 	
 	@UiField ScrollPanel iconScrollPanel;
 	@UiField FlowPanel projectIconsFlowPanel;
-	@UiField PanelManagerStyle style;
+	@UiField ManagementConsoleControllerStyle style;
+	@UiField OpusImages res;
 
 	
 	public IconPanel(HandlerManager eventBus) {
@@ -89,10 +95,13 @@ public class IconPanel extends Composite {
 	}
 	
 	public void addProjectIcon(String name) {
-		HTML project = new HTML();
+		FlowPanel project = new FlowPanel();
 		final String projectName = name;
 		
-		project.setHTML("<img src='/projectdefaulticon.png' width='64' height='64'/><br/>" + projectName);
+		Image projectImg = new Image(res.projectdefaulticon());
+		
+		project.add(projectImg);
+		project.add(new Label(projectName));
 		
 		final FocusPanel testLabel = new FocusPanel();
 		testLabel.add(project);
