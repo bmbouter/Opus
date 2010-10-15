@@ -165,7 +165,7 @@ public class ProjectDeployerController extends Composite {
 		Window.alert(formContainerPanel.toString());
 		
 		for(int i=0; i < Cookies.getCookieNames().size(); i++){
-			Window.alert(Cookies.getCookie(Cookies.getCookieNames().iterator().next()));
+			Window.alert(Cookies.getCookieNames().iterator().next());
 		}
 		//Window.alert(Cookies.getCookie("csrftoken"));
   
