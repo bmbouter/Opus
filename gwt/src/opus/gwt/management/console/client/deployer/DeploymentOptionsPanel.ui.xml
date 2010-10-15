@@ -24,8 +24,8 @@
 	<g:SimplePanel>
 		<g:HTMLPanel>
 			<t:TooltipPanel ui:field="active" />
-			<g:HTMLPanel styleName="{form.header}">
-				<g:HTMLPanel styleName="{form.insetType}">
+			<g:HTMLPanel styleName="{deployer.header}">
+				<g:HTMLPanel styleName="{deployer.insetType}">
 					<h1>Deployment Options</h1>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
