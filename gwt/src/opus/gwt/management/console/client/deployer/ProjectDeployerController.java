@@ -18,6 +18,7 @@ package opus.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
 
+import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.DeployProjectEvent;
 import opus.gwt.management.console.client.event.DeployProjectEventHandler;
@@ -60,16 +61,18 @@ public class ProjectDeployerController extends Composite {
 	private String createdProjectName;
 	private PopupPanel loadingPopup;
 	private Image loadingImage;
+	private JSVariableHandler jsVarHandler;
 		
 	@UiField DeckPanel deployerDeckPanel;
 	@UiField ProjectDeployerStyle style;
 	
 	public ProjectDeployerController(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
-		createdProjectName = "";
+		this.createdProjectName = "";
 		this.eventBus = eventBus;
-		loadingPopup = new PopupPanel(false, true);
-		loadingImage = new Image("/loadinfo.net.gif");
+		this.jsVarHandler = new JSVariableHandler();
+		this.loadingPopup = new PopupPanel(false, true);
+		this.loadingImage = new Image("/loadinfo.net.gif");
 		//loadingImage.setStyleName(style.loadingImage());
 		loadingPopup.add(loadingImage);
 		this.deployerForm = new FormPanel();
@@ -109,7 +112,11 @@ public class ProjectDeployerController extends Composite {
 		    public void onSubmitComplete(SubmitCompleteEvent event) {
 		    	//if( event.getResults().equals("success") ){
 		    		loadingPopup.hide();
-		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
+		    		//eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
+		    		ErrorPanel ep = new ErrorPanel(eventBus);
+		    		ep.errorHTML.setHTML(event.getResults());
+		    		deployerDeckPanel.add(ep);
+		    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
 		    	/*} else {
 		    		ErrorPanel ep = new ErrorPanel(eventBus);
 		    		deployerDeckPanel.add(ep);
@@ -153,11 +160,16 @@ public class ProjectDeployerController extends Composite {
 	 
 	private void deployProject(){
 		deployerForm.clear();
-		createdProjectName = deploymentOptionsPanel.getProjectName();
-		deployerForm.setAction(deploymentURL.replaceAll("projectName", deploymentOptionsPanel.getProjectName())); 
-  
 		VerticalPanel formContainerPanel = new VerticalPanel();
-		this.deployerForm.add(formContainerPanel);
+		createdProjectName = deploymentOptionsPanel.getProjectName();
+		deployerForm.setAction(deploymentURL.replaceAll("projectName", deploymentOptionsPanel.getProjectName()));
+		
+		formContainerPanel.add(new Hidden("csrfmiddlewaretoken", jsVarHandler.getCSRFTokenURL()));		
+		Window.alert(formContainerPanel.toString());
+		
+		for(int i=0; i < Cookies.getCookieNames().size(); i++){
+			Window.alert(Cookies.getCookieNames().iterator().next());
+		}
   
 		ArrayList<String> paths = appBrowserPanel.getAppPaths();
 		ArrayList<String> apptypes = appBrowserPanel.getAppTypes();
@@ -191,9 +203,11 @@ public class ProjectDeployerController extends Composite {
 		formContainerPanel.add(databaseOptionsPanel);
 	 
 		//Add csrf-token
-		formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
+		
+		this.deployerForm.add(formContainerPanel);
 		deployerDeckPanel.add(deployerForm);
 		deployerForm.submit();
+		
 		loadingPopup.setGlassEnabled(true);
 		loadingPopup.setGlassStyleName(style.loadingGlass());
 		loadingPopup.show();

@@ -12,11 +12,12 @@
     </table>
     <table>
         <tr>
-            <td>App URL</td><td>App Type</td>
+            <td>App Name</td><td>App URL</td><td>App Type</td>
         </tr>
         {{ appsform.management_form }}
         {% for form in appsform.forms %}
         <tr>
+            <td>{{ form.appname }}</td>
             <td>{{ form.apppath }}</td>
             <td>{{ form.apptype }}</td>
         </tr>

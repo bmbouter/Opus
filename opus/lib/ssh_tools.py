@@ -22,8 +22,8 @@ import select
 from django.conf import settings
 
 #Provide Logging
-import opus.lib.log
-log = opus.lib.log.getLogger()
+from opus.lib import log
+log = log.get_logger("opus.lib.sshtools")
 
 class HostNotConnectableError(Exception):
     pass

@@ -131,19 +131,19 @@ class DeltacloudDriver(DriverBase):
             body = None
 
         # The actual request
-        #print (host, method, path+query_string, body, headers)
         if self._scheme.startswith("https"):
             connection = httplib.HTTPSConnection(host)
         else:
             connection = httplib.HTTPConnection(host)
+
         connection.request(method, location+query_string, body=body, headers=headers)
-        #print self._host, method, location+query_string, body, headers, self._scheme
         response = connection.getresponse()
         text = response.read()
         connection.close()
+
         if response.status < 200 or response.status >= 400:
             # Response was not successful (status 2xx or 3xx).
-            raise ServerError("Status returned from Deltacloud was %s." % response.status)
+            raise ServerError("Status returned from Deltacloud was %s.  The response body was: '''%s'''" % (response.status, text))
 
         try:
             return parseString(text)
@@ -214,8 +214,6 @@ class DeltacloudDriver(DriverBase):
 
         entry_point = self._entry_points["instances"]
         dom = self._request(entry_point, "POST", form_data=form_data)
-        if dom.documentElement.tagName != "instance":
-           raise ParsingError('Entry point for "instances" has something wrong with it!')
         instance = _xml_to_instance(dom.firstChild, self)
         dom.unlink()
         return instance
@@ -266,7 +264,6 @@ class DeltacloudDriver(DriverBase):
         on failure.
 
         """
-        raise NotImplementedError()
         return self._instance_action("destroy", instance_id)
 
     ##### Realms #####
@@ -341,6 +338,6 @@ def _xml_to_realm(xml, driver):
         xml.getAttribute("id"),
         driver,
         xml_get_text(xml, "name")[0],
-        xml_get_text(xml, "state")[0] is "AVAILABLE",
+        xml_get_text(xml, "state")[0].startswith("AVAILABLE"),
         -1,
     )

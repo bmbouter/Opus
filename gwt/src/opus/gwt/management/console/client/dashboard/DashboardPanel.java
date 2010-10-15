@@ -27,9 +27,11 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -42,7 +44,6 @@ public class DashboardPanel extends Composite {
 	private boolean active;
 	private HandlerManager eventBus;
 
-	@UiField FlowPanel applicationsFlowPanel;
 	@UiField Label dbnameLabel;
 	@UiField Label dbengineLabel;
 	@UiField Label activeLabel;
@@ -70,6 +71,9 @@ public class DashboardPanel extends Composite {
 	public void handleProjectInformation(Project projInfo){
 		dbnameLabel.setText(projInfo.getDBName());
 		dbengineLabel.setText(projInfo.getDBEngine());
+		String httpUrl = projInfo.getURLS().get(0);
+		String httpsUrl = projInfo.getURLS().get(1);
+		
 		if(projInfo.isActive()){
 			activeLabel.setText("Yes");
 			active = true;
@@ -79,10 +83,8 @@ public class DashboardPanel extends Composite {
 		}
 		for(int i =0; i < projInfo.getApps().length(); i++){
 			int index = projInfo.getApps().get(i).indexOf(".");
-			applicationsFlowPanel.add(new Label(projInfo.getApps().get(i).substring(index+1)));	
-		}
-		for(int i =0; i < projInfo.getURLS().length(); i++){
-			urlsFlowPanel.add(new HTML("<a href='" + projInfo.getURLS().get(i) + "'>" + projInfo.getURLS().get(i) + "</a>"));	
+			urlsFlowPanel.add(new HTMLPanel("<label>" + projInfo.getApps().get(i) + ": </label><br>" + "<a href='" + httpUrl + projInfo.getApps().get(i) + "/'>" + httpUrl + projInfo.getApps().get(i) + "/</a>" ));
+			urlsFlowPanel.add(new HTMLPanel("<a href='" + httpsUrl + projInfo.getApps().get(i) + "/'>" + httpsUrl + projInfo.getApps().get(i) + "/</a><br><br>" ));	
 		}
 		try {
 			ProjectSettingsData settings = projInfo.getAppSettings();
