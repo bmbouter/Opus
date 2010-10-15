@@ -28,10 +28,10 @@ urlpatterns = patterns('opus.project.dcmux.views',
     url(r'^images/?$', 'image_list', name='opus.project.dcmux.images'),
     url(r'^images/(.+)$', 'image_list', name='opus.project.dcmux.image'),
 
-    url(r'^instances/?$', 'instance_list', name='opus.project.dcmux.instances'),
-    url(r'^instances/(.+)$', 'instance_list', name='opus.project.dcmux.instance'),
+    # List (GET) or create (POST) instance
+    url(r'^instances/?$', 'instances_list', name='opus.project.dcmux.instances'),
     # Instance actions (start, stop, reboot...)
-    url(r'^instances/(.+)/(.+)/$', 'instance_action', name='opus.project.dcmux.instance_actions'),
-
-    # Instance create
+    url(r'^instances/(.+)/(.+)$', 'instance_action', name='opus.project.dcmux.instance_actions'),
+    # List specific instance
+    url(r'^instances/(.+)$', 'instance_list', name='opus.project.dcmux.instance'),
 )

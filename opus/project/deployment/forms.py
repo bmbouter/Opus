@@ -59,12 +59,14 @@ class ProjectForm(forms.Form):
 
 class AppForm(forms.Form):
     """Form to ask for parameters about one app within a project"""
+    appname = CharField(required=True)
     apppath = CharField(required=True)
     apptype = ChoiceField(
             required=True,
             widget=RadioSelect(),
             choices = (
                 ("git", "Git Repository URL"),
+                ("hg", "Mercurial URL"),
                 ("file", "Local Filesystem Path"),
             )
         )
@@ -108,6 +110,7 @@ class DeploymentForm(forms.Form):
     dbhost = CharField(required=False)
     dbport = IntegerField(required=False)
     active = BooleanField(required=False, initial=True)
+    debug = BooleanField(required=False, initial=True)
 
     def __init__(self, *args, **kwargs):
         noactive = kwargs.pop("noactive", False)

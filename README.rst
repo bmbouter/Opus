@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ================================
 Table of Contents
 ================================
@@ -120,6 +119,7 @@ Opus in its current form requires:
 * A C compiler to compile the secureops program (see below)
 * Celery and Django-celery (djcelery)
 * A Celery compatible message broker such as RabbitMQ
+* libcloud
 
 To build the Google Web Toolkit component, you need
 
@@ -514,6 +514,3 @@ In order for the GWT interface to function, the GWT media directory needs to be
 set up.  These are static css and javascript files. Set Apache (or any server)
 to serve these static files as described above in the `Apache Configuration`_
 section.
-=======
-See README.rst for documentation.
->>>>>>> 17de16ae614445e2d547c2e1d73b1f380dbff3d5

@@ -14,6 +14,8 @@ public class Application extends JavaScriptObject {                             
   public final native String getDescription() /*-{ return this.fields.description; }-*/; 
   public final native String getModel() /*-{ return this.model; }-*/;
   public final native String getPath()  /*-{ return this.fields.path; }-*/;
+  public final native String getType()  /*-{ return this.fields.type; }-*/;
+  public final native String getAppName()  /*-{ return this.fields.app_name; }-*/;
   public final native String getIconURL() /*-{
 	  	var url = this.fields.icon_url;
 	  	if( url == "" ){

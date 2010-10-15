@@ -17,6 +17,8 @@
 package opus.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
@@ -56,13 +58,13 @@ public class AppBrowserPanel extends Composite {
 	interface AppBrowserUiBinderUiBinder extends UiBinder<Widget, AppBrowserPanel> {}
 	
 	private final String tokenURL = "/project/configuration/token/?callback=";
+	private final String versionURL = "/json/application/pk/versions/?callback=";
 
 	private JSVariableHandler JSVarHandler;
 	private FlowPanel appFlowPanel;
 	private FlowPanel featuredAppFlowPanel;
 	private int[] featured;
 	private ArrayList<AppIcon> featuredIcons;
-	private ArrayList<AppIcon> allIcons;
 	private int navigationselection;
 	private boolean featuredListLoaded;
 	private boolean gridPopulationDelayed;
@@ -70,6 +72,9 @@ public class AppBrowserPanel extends Composite {
 	private AppIcon currentSelection;
 	private ArrayList<AppIcon> deployList;
 	private HandlerManager eventBus;
+	private HashMap<String,AppIcon> IconMap;
+	private HashMap<String,AppIcon> DeployListMap;
+	private HashMap<String,AppIcon> FeaturedIconMap;
 	
 	@UiField VerticalPanel VersionInfo;
 	@UiField HTML AppInfo;
@@ -93,6 +98,9 @@ public class AppBrowserPanel extends Composite {
 		eventBus.fireEvent(new AsyncRequestEvent("handleFeaturedList"));
 		eventBus.fireEvent(new AsyncRequestEvent("handleApplication"));
 		deployList = new ArrayList<AppIcon>();
+		IconMap = new HashMap<String,AppIcon>();
+		FeaturedIconMap = new HashMap<String,AppIcon>();
+		DeployListMap = new HashMap<String,AppIcon>();
 		appFlowPanel = new FlowPanel();
 		featuredAppFlowPanel = new FlowPanel();
 		mainDeckPanel.add(appFlowPanel);
@@ -102,7 +110,6 @@ public class AppBrowserPanel extends Composite {
 		featuredAppsLabel.setStyleName(style.featuredAppsLabelActive());
 		navigationselection = 2;
 		featuredIcons = new ArrayList<AppIcon>();
-		allIcons = new ArrayList<AppIcon>();
 		String token = JSVarHandler.getProjectToken();
 		if (token != null) {
 			this.addProject(token);
@@ -143,14 +150,16 @@ public class AppBrowserPanel extends Composite {
 					int pk = applications.get(i).getPk();
 					String iconPath = applications.get(i).getIconURL();
 					String path = applications.get(i).getPath();
+					String type = applications.get(i).getType();
+					String appName = applications.get(i).getAppName();
 					
 					if( iconPath.equals("") ){
 						iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";
 					} else if( iconPath.split("//").length < 2  ) {
 						iconPath = JSVarHandler.getCommunityBaseURL() + iconPath;
 					}
-					
-					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path);
+
+					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path, type, appName);					
 					
 					for (int j=0; j < featured.length; j++){
 	
@@ -160,8 +169,10 @@ public class AppBrowserPanel extends Composite {
 							//featuredIcons.set(j, appIcon);
 						}
 					}
+					
 					appFlowPanel.add(appIcon);
-					allIcons.add(appIcon);
+					IconMap.put(appIcon.getAppPk(), appIcon);
+					//Window.alert(appIcon.getAppPk());
 				} catch (Exception e){
 					//DOTO:need to handle these exceptions somehow
 					//		Not sure;
@@ -169,7 +180,16 @@ public class AppBrowserPanel extends Composite {
 
 				
 			}
-	
+			for (int j=0; j < featured.length; j++){
+				//Window.alert(String.valueOf(featured[j]));
+
+				AppIcon icon = IconMap.get(String.valueOf(featured[j]));
+				AppIcon featuredIcon = createAppIcon(icon.getName(),icon.getEmail(), icon.getAuthor(), icon.getDescription(), Integer.valueOf(icon.getAppPk()), icon.getIcon(), icon.getPath(), icon.getType(), icon.getAppName());
+				FeaturedIconMap.put(featuredIcon.getAppPk(), featuredIcon);
+
+				featuredAppFlowPanel.add(featuredIcon);
+
+			}
 			handleFeaturedAppsLabelFunction();
 			String token = JSVarHandler.getProjectToken();
 			if (token != null) {
@@ -189,12 +209,11 @@ public class AppBrowserPanel extends Composite {
 		VersionInfo.add(icon.getVersions());
 	}
 	
-	public AppIcon createAppIcon(String name, String email, String author, String info, int pk, String iconPath, String appPath) { 
-		final AppIcon icon = new AppIcon(name, email, author, iconPath, info, pk, appPath, eventBus);
+
+	public AppIcon createAppIcon(String name, String email, String author, String info, int pk, String iconPath, String appPath, String type, String appName) { 
+		final AppIcon icon = new AppIcon(name, email, author, iconPath, info, pk, appPath, type, appName, eventBus);
 		icon.setIconHTML("<img align='left' src='"+iconPath+"'/><b>"+name+"</b><br/>"+icon.getShortDescription());
 		icon.setStyleName(style.appIcon());
-		
-		eventBus.fireEvent(new AsyncRequestEvent("handleVersion", Integer.toString(pk)));
 		
 		icon.iconPanel.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
@@ -203,25 +222,38 @@ public class AppBrowserPanel extends Composite {
 	        	//if the icon is selected and it is in the DeployList, make style appIconSmallActive and set icon as currentSelection and display info, change previous selection to inactive
 	        	if(currentSelection != icon) {
 	        		if (currentSelection != null) {
-	        			if (deployList.contains(currentSelection)) {
-	        				currentSelection.setStyleName(style.appIconSmall());
+	        			IconMap.get(currentSelection.getAppPk()).setStyleName(style.appIcon());
+	        			if (DeployListMap.containsKey((currentSelection.getAppPk()))) {
+	        				DeployListMap.get(currentSelection.getAppPk()).setStyleName(style.appIconSmall());
 	        				RemoveButton.setEnabled(true);
 	        			} else {
-	        				currentSelection.setStyleName(style.appIcon());
 	        				RemoveButton.setEnabled(false);
 	        			}
+	        			if (FeaturedIconMap.containsKey(currentSelection.getAppPk())){
+        					FeaturedIconMap.get(currentSelection.getAppPk()).setStyleName(style.appIcon());
+        				}
 	        		}
-	        		if (deployList.contains(icon) == false) {
-	        			icon.setStyleName(style.appIconActive());
-	        			currentSelection = icon;
-	        			//setAppInfo(icon.getDescription(),icon.getVersions());
+	        		/*if (deployListReplacements.contains(icon)){
+	        			int index = deployListReplacements.indexOf(icon);
+	        			deployList.get(index).setStyleName(style.appIconSmallActive());
+	        		}*/
+	        		if (DeployListMap.containsKey(icon.getAppPk()) == false) {
+	        			IconMap.get(icon.getAppPk()).setStyleName(style.appIconActive());
+
+	        			if (FeaturedIconMap.containsKey(icon.getAppPk())){
+        					FeaturedIconMap.get(icon.getAppPk()).setStyleName(style.appIconActive());
+        				}
 	        			setAppInfo(icon);
 		        		AppActionButton.setText("Add to Deploy List");
 			        	AppActionButton.setStyleName(style.AppActionButton());
 			        	AppActionButton.setVisible(true);
 		        		RemoveButton.setEnabled(false);
 	        		} else {
-	        			icon.setStyleName(style.appIconSmallActive());
+	        			DeployListMap.get(icon.getAppPk()).setStyleName(style.appIconSmallActive());
+	        			IconMap.get(icon.getAppPk()).setStyleName(style.appIconActive());
+	        			if (FeaturedIconMap.containsKey(icon.getAppPk())){
+	        				FeaturedIconMap.get(icon.getAppPk()).setStyleName(style.appIconActive());
+	        			}
 	        			currentSelection = icon;
 	        			//setAppInfo(icon.getDescription(), icon.getVersions());
 	        			setAppInfo(icon);
@@ -229,6 +261,8 @@ public class AppBrowserPanel extends Composite {
 		        		AppActionButton.setVisible(false);
 		        		RemoveButton.setEnabled(true);
 	        		}
+        			currentSelection = icon;
+
 		        	icon.iconPanel.setFocus(false);
 		        	AppActionButton.setStyleName(style.AppActionButton());
 	        	}
@@ -245,7 +279,7 @@ public class AppBrowserPanel extends Composite {
 	@UiHandler("RemoveButton")
 	void handleRemoveButton(ClickEvent event){
 		AppActionButton.click();
-		if(deployList.contains(currentSelection)) {
+		if(DeployListMap.containsKey(currentSelection.getAppPk())) {
 			RemoveButton.setEnabled(true);
 		} else {
 			RemoveButton.setEnabled(false);
@@ -258,9 +292,9 @@ public class AppBrowserPanel extends Composite {
 		featuredAppsLabel.setStyleName(style.featuredAppsLabel());
 		mainDeckPanel.showWidget(0);
 		navigationselection = 1;
-		for (int i=0; i<featuredIcons.size(); i++){
-			appFlowPanel.add(featuredIcons.get(i));
-		}
+	//	for (int i=0; i<featuredIcons.size(); i++){
+	//		appFlowPanel.add(featuredIcons.get(i));
+	//	}
 	}
 	
 	@UiHandler("featuredAppsLabel")
@@ -273,48 +307,35 @@ public class AppBrowserPanel extends Composite {
 		featuredAppsLabel.setStyleName(style.featuredAppsLabelActive());
 		mainDeckPanel.showWidget(1);
 		navigationselection = 2;
-		for (int i=0; i<featuredIcons.size(); i++){
-			featuredAppFlowPanel.add(featuredIcons.get(i));
-		}
+		//for (int i=0; i<featuredIcons.size(); i++){
+			//featuredAppFlowPanel.add(featuredIcons.get(i));
+		//}
 	}
 	
 	@UiHandler("AppActionButton")
 	void handleAppActionButton(ClickEvent event){
-		//If the icon is in the AppList, change style to appIconSmallActive, change html to icon and name, add to DeployList and DeployListFlowPanel, change button text
-		//If the icon is in the DeployList, change style to appIconActive, change html to icon, name, short description, remove from DeployList, add to AppListFlowPanel, change button text
-		
-		if (deployList.contains(currentSelection)){
-			currentSelection.setStyleName(style.appIconActive());
-			currentSelection.setIconHTML("<img align='left' src='"+currentSelection.getIcon()+"'/><b>"+currentSelection.getName()+"</b><br/>"+currentSelection.getShortDescription());
-			deployList.remove(currentSelection);
-			appFlowPanel.add(currentSelection);
-			//Check which panel is on display. Check the list of featured. If this one is featured, add to featuredIcons.
 
-			appFlowPanel.add(currentSelection);
-			
-			for(int i=0; i<featured.length; i++){
-				if (featured[i] == Integer.valueOf(currentSelection.getAppPk())){
-					featuredIcons.add(currentSelection);
-					if(navigationselection == 2) {
-						featuredAppFlowPanel.add(currentSelection);
-					}
-				}
-			}
+		if (DeployListMap.containsKey(currentSelection.getAppPk())){
+			DeployListFlowPanel.remove(DeployListMap.get(currentSelection.getAppPk()));
+			DeployListMap.remove(currentSelection.getAppPk());
 			AppActionButton.setText("Add to Deploy List");
 			AppActionButton.setVisible(true);
 		} else {
-			currentSelection.setStyleName(style.appIconSmallActive());
-			currentSelection.setIconHTML("<img src='"+currentSelection.getIcon()+"'><br/>"+currentSelection.getName());
-			deployList.add(currentSelection);
-			DeployListFlowPanel.add(currentSelection);
+			
+			//create new icon and add it to the deploy list
+			AppIcon iconForDeployList = createAppIcon(currentSelection.getName(), currentSelection.getEmail(), currentSelection.getAuthor(), currentSelection.getDescription(), Integer.valueOf(currentSelection.getAppPk()), currentSelection.getIcon(), currentSelection.getPath(), currentSelection.getType(), currentSelection.getAppName());
+			iconForDeployList.setStyleName(style.appIconSmallActive());
+			iconForDeployList.setIconHTML("<img src='"+currentSelection.getIcon()+"'><br/>"+currentSelection.getName());
+			DeployListMap.put(iconForDeployList.getAppPk(),iconForDeployList);
+			DeployListFlowPanel.add(iconForDeployList);
 			//Remove from featuredIcons if it is one.
-			featuredIcons.remove(currentSelection);
 			AppActionButton.setText("Remove from Deploy List");
 			AppActionButton.setVisible(false);
 			RemoveButton.setEnabled(true);
+
 		}
 		
-		if(deployList.size() > 0) {
+		if(DeployListMap.size() > 0) {
 			DeployButton.setEnabled(true);
 		} else {
 			DeployButton.setEnabled(false);
@@ -323,7 +344,10 @@ public class AppBrowserPanel extends Composite {
 	
 	public void populateFeaturedList(JavaScriptObject jso){
 		featured = new int[20];
+
 		String[] s = jso.toString().split(",\\s*");
+		featured = new int[s.length];
+		//Window.alert(String.valueOf(s.length));
 		for (int i=0; i<s.length; i++){
 			featured[i] = Integer.valueOf(s[i]);
 		}
@@ -342,51 +366,62 @@ public class AppBrowserPanel extends Composite {
 		  JsArray<VersionData>versions = projectData.get(0).getVersions();
 		  //Window.alert("got inside importAppList");
 
-		  deployList.clear();
+		  DeployListMap.clear();
 		  for (int i=0; i < versions.length(); i++){
-			  for(int j=0; j<allIcons.size(); j++){
-				  if (allIcons.get(j).getAppPk().equals(versions.get(i).getAppPk())){
-					  AppIcon match = allIcons.get(j);
+			  for (Entry<String,AppIcon> e : IconMap.entrySet())
+				  if (e.getValue().getAppPk().equals(versions.get(i).getAppPk())){
+					  AppIcon match = e.getValue();
 					  match.setSelectedVersion(Integer.valueOf(versions.get(i).getVersionPk()));
 					  match.setStyleName(style.appIconSmall());
 					  match.setIconHTML("<img src='"+match.getIcon()+"'><br/>"+match.getName());
-					  deployList.add(match);
+					  DeployListMap.put(match.getAppPk(),match);
 					  DeployListFlowPanel.add(match);
-					  //Remove from featuredIcons if it is one.
-					  featuredIcons.remove(match);
 					  AppActionButton.setText("Remove from Deploy List");
 					  AppActionButton.setVisible(false);
 					  RemoveButton.setEnabled(false);
-					  j = allIcons.size();
+					  break;
 				  }
 			  }
 			//  this.createAppIcon(communityApps.get(i).getName(), communityApps.get(i).getInfo(), communityApps.get(i).getPk())
 			//  this.addApp(communityApps.get(i).getName(), communityApps.get(i).getPath(), communityApps.get(i).getType());
-		  }
+		 }
 
-	  }
 	  
+	  //Iterates through all icons in the deploy list and returns a list of all app paths
 	  public ArrayList<String> getAppPaths() {
 		  ArrayList<String> paths = new ArrayList<String>();
-		  for (int i=0; i<deployList.size(); i++){
-			  paths.add(deployList.get(i).getPath());
+		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
+			  paths.add(e.getValue().getPath());
 		  }
 		  return paths;
 	  }
 	  
 	  public ArrayList<String> getAppTypes() {
 		  ArrayList<String> types = new ArrayList<String>();
-		  for (int i=0; i < deployList.size(); i++){
-			  types.add(deployList.get(i).getType());
+		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
+			  types.add(e.getValue().getType());
 		  }
 		  return types;
 	  }
 	  
 	  public ArrayList<String> getApps() {
 		  ArrayList<String> apps = new ArrayList<String>();
-		  for (int i=0; i<deployList.size(); i++){
-			  apps.add(deployList.get(i).getName());
+		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
+			  apps.add(e.getValue().getName());
 		  }
 		  return apps;
 	  }
+	  
+	  public ArrayList<String> getAppNames() {
+		  ArrayList<String> names = new ArrayList<String>();
+		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
+			  String name = e.getValue().getAppName();
+			  names.add(name);
+		  }
+		  return names;
+	  }
+	  
+	  public final native JsArray<ProjectData> asArrayOfProjectData(JavaScriptObject jso) /*-{
+		  return jso;
+	  }-*/;
 }

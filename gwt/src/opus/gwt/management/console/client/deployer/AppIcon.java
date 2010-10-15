@@ -40,6 +40,8 @@ public class AppIcon extends Composite {
 	private String path;
 	private String desc;
 	private String pk;
+	private String type;
+	private String appName;
 	private JsArray <VersionData> versions;
 	private JSVariableHandler JSVarHandler;
 	private FormPanel versionForm;
@@ -48,7 +50,7 @@ public class AppIcon extends Composite {
 	private HandlerManager eventBus;
 
 	
-	public AppIcon(String name, String email, String author, String iconURL, String description, int pk, String path, HandlerManager eventBus) {
+	public AppIcon(String name, String email, String author, String iconURL, String description, int pk, String path, String type, String appName, HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
 		versionForm = new FormPanel();
@@ -63,6 +65,8 @@ public class AppIcon extends Composite {
 		this.path = path;
 		this.eventBus = eventBus;
 		registerEvents();
+		this.type = type;
+		this.appName = appName;
 	}
 	
 	public void setIconHTML(String html) {
@@ -89,6 +93,10 @@ public class AppIcon extends Composite {
 		return this.desc;
 	}
 	
+	public String getAppName(){
+		return this.appName;
+	}
+	
 	public String getShortDescription(){
 		if(this.desc.length() > 75) {
 			return this.desc.substring(0, 75) + "...";
@@ -98,7 +106,7 @@ public class AppIcon extends Composite {
 	}
 	
 	public String getPath() {
-		return versions.get(selectedVersion).getPath();
+		return path;
 	}
 	
 	public FormPanel getVersions(){
@@ -123,7 +131,7 @@ public class AppIcon extends Composite {
 	}
 	
 	public String getType(){
-		return "git";
+		return this.type;
 	}
 	
 	private void registerEvents(){

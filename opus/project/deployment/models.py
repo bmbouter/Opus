@@ -244,6 +244,15 @@ class DeployedProject(models.Model):
                 os.path.split(opus.__path__[0])[0],
                 )
 
+    def set_debug(self, d):
+        """Sets debug mode on or off. Remember to save afterwards"""
+        self.config['DEBUG'] = bool(d)
+        self.config['TEMPLATE_DEBUG'] = bool(d)
+        if d:
+            self.config['LOG_LEVEL'] = "DEBUG"
+        else:
+            self.config['LOG_LEVEL'] = "INFO"
+
     def activate(self, d=None):
         """Activate this project. This writes out the apache config with the
         current parameters. Also writes out the wsgi file. Finally, starts the
