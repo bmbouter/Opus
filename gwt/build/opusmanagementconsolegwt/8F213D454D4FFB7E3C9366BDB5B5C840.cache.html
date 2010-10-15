@@ -4,7 +4,7 @@ var $gwt_version = "2.0.3";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = 'BDF754DE05FC2F1D3229519C409ACB3A';
+var $strongName = '8F213D454D4FFB7E3C9366BDB5B5C840';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -7736,7 +7736,7 @@ function $ProjectSettingsPanel(this$static){
   this$static.textboxes = $ArrayList(new ArrayList);
   this$static.optionsForm.element.action = $wnd.deployerBaseURL + $replaceAll('/deployments/projectName/confapps', 'projectName', this$static.projectName);
   this$static.optionsForm.element.method = 'post';
-  $addHandler_1(this$static.optionsForm, $ProjectSettingsPanel$1(new ProjectSettingsPanel$1, this$static), getType_11());
+  $addHandler_1(this$static.optionsForm, new ProjectSettingsPanel$1, getType_11());
   return this$static;
 }
 
@@ -7757,9 +7757,8 @@ function $handleActivateButton(this$static){
 
 function $handleSaveButton(this$static){
   if ($validateForm(this$static)) {
-    $setWidget(this$static.formContainer, this$static.formContainer.bodyElem.rows.length, 0, $Hidden_0(new Hidden, 'csrfmiddlewaretoken', getCookie('csrftoken')));
+    $setWidget(this$static.formContainer, this$static.formContainer.bodyElem.rows.length, 0, $Hidden_0(new Hidden, 'csrfmiddlewaretoken', $wnd.csrftoken));
     $add_3(this$static.optionsForm, this$static.formContainer);
-    $add_0(($clinit_263() , get_1(null)), this$static.optionsForm);
     $submit_0(this$static.optionsForm);
   }
 }
@@ -7787,13 +7786,7 @@ _.formContainer = null;
 _.optionsForm = null;
 _.projectName = null;
 _.textboxes = null;
-function $ProjectSettingsPanel$1(this$static, this$0){
-  this$static.this$0 = this$0;
-  return this$static;
-}
-
 function onSubmitComplete_1(event_0){
-  detachNow(this.this$0.optionsForm);
 }
 
 function ProjectSettingsPanel$1(){
@@ -7802,7 +7795,6 @@ function ProjectSettingsPanel$1(){
 _ = ProjectSettingsPanel$1.prototype = new Object_0;
 _.onSubmitComplete = onSubmitComplete_1;
 _.typeId$ = 153;
-_.this$0 = null;
 function $ProjectSettingsPanel_ProjectSettingsUiBinderImpl$1(this$static, val$owner){
   this$static.val$owner = val$owner;
   return this$static;
@@ -7955,8 +7947,6 @@ function $getAppNames(this$static){
   return names;
 }
 
---></script>
-<script><!--
 function $getAppPaths(this$static){
   var e, e$iterator, paths;
   paths = $ArrayList(new ArrayList);
@@ -7967,6 +7957,8 @@ function $getAppPaths(this$static){
   return paths;
 }
 
+--></script>
+<script><!--
 function $getAppTypes(this$static){
   var e, e$iterator, types;
   types = $ArrayList(new ArrayList);
