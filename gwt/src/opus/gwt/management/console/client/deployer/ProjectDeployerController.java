@@ -107,10 +107,10 @@ public class ProjectDeployerController extends Composite {
 		deployerForm.setMethod(FormPanel.METHOD_POST);
 		deployerForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		    public void onSubmitComplete(SubmitCompleteEvent event) {
-		    	/*Window.alert(event.getResults());
-		    	if( event.getResults().equals("success") ){
+		    	//if( event.getResults().equals("success") ){
+		    		loadingPopup.hide();
 		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
-		    	} else {
+		    	/*} else {
 		    		ErrorPanel ep = new ErrorPanel(eventBus);
 		    		deployerDeckPanel.add(ep);
 		    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));

@@ -60,7 +60,7 @@
 							<g:Button ui:field="previousButton" text="&laquo; Previous" styleName="{form.button} {form.right}"/>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{form.fieldLabel}">
-							<g:Button ui:field="nextButton" text="Deploy New Project" styleName="{form.button}"/>
+							<g:Button ui:field="nextButton" text="Deploy Project" styleName="{form.button}"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
