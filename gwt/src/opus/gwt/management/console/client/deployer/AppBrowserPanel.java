@@ -146,7 +146,7 @@ public class AppBrowserPanel extends Composite {
 					
 					if( iconPath.equals("") ){
 						iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";
-					} else {
+					} else if( iconPath.split("//").length < 2  ) {
 						iconPath = JSVarHandler.getCommunityBaseURL() + iconPath;
 					}
 					

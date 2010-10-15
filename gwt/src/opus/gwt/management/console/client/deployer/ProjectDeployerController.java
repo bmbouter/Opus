@@ -18,6 +18,7 @@ package opus.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
 
+import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.DeployProjectEvent;
 import opus.gwt.management.console.client.event.DeployProjectEventHandler;
@@ -60,16 +61,18 @@ public class ProjectDeployerController extends Composite {
 	private String createdProjectName;
 	private PopupPanel loadingPopup;
 	private Image loadingImage;
+	private JSVariableHandler jsVarHandler;
 		
 	@UiField DeckPanel deployerDeckPanel;
 	@UiField ProjectDeployerStyle style;
 	
 	public ProjectDeployerController(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
-		createdProjectName = "";
+		this.createdProjectName = "";
 		this.eventBus = eventBus;
-		loadingPopup = new PopupPanel(false, true);
-		loadingImage = new Image("/loadinfo.net.gif");
+		this.jsVarHandler = new JSVariableHandler();
+		this.loadingPopup = new PopupPanel(false, true);
+		this.loadingImage = new Image("/loadinfo.net.gif");
 		//loadingImage.setStyleName(style.loadingImage());
 		loadingPopup.add(loadingImage);
 		this.deployerForm = new FormPanel();
@@ -161,7 +164,7 @@ public class ProjectDeployerController extends Composite {
 		createdProjectName = deploymentOptionsPanel.getProjectName();
 		deployerForm.setAction(deploymentURL.replaceAll("projectName", deploymentOptionsPanel.getProjectName()));
 		
-		formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));		
+		formContainerPanel.add(new Hidden("csrfmiddlewaretoken", jsVarHandler.getCSRFTokenURL()));		
 		Window.alert(formContainerPanel.toString());
 		
 		for(int i=0; i < Cookies.getCookieNames().size(); i++){

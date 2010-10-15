@@ -15,4 +15,4 @@
 ##############################################################################
 
 REPO_URL = "http://apps.opus.ncsu.edu"
-COMMUNITY_URL = "http://home.opus.ncsu.edu"
+COMMUNITY_URL = "http://opus.ncsu.edu"

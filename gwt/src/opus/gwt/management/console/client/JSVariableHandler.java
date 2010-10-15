@@ -39,5 +39,9 @@ public class JSVariableHandler {
 	public native String getBuildProjectURL()/*-{
 		return $wnd.buildProjectURL;
 	}-*/;
+	
+	public native String getCSRFTokenURL()/*-{
+		return $wnd.csrftoken;
+	}-*/;
 
 }
