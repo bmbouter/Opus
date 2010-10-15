@@ -157,11 +157,13 @@ public class ProjectDeployerController extends Composite {
 	 
 	private void deployProject(){
 		deployerForm.clear();
-		createdProjectName = deploymentOptionsPanel.getProjectName();
-		deployerForm.setAction(deploymentURL.replaceAll("projectName", deploymentOptionsPanel.getProjectName())); 
-  
 		VerticalPanel formContainerPanel = new VerticalPanel();
-		this.deployerForm.add(formContainerPanel);
+		createdProjectName = deploymentOptionsPanel.getProjectName();
+		deployerForm.setAction(deploymentURL.replaceAll("projectName", deploymentOptionsPanel.getProjectName()));
+		
+		formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));		
+		Window.alert(formContainerPanel.toString());
+		Window.alert(Cookies.getCookie("csrftoken"));
   
 		ArrayList<String> paths = appBrowserPanel.getAppPaths();
 		ArrayList<String> apptypes = appBrowserPanel.getAppTypes();
@@ -195,9 +197,11 @@ public class ProjectDeployerController extends Composite {
 		formContainerPanel.add(databaseOptionsPanel);
 	 
 		//Add csrf-token
-		formContainerPanel.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
+		
+		this.deployerForm.add(formContainerPanel);
 		deployerDeckPanel.add(deployerForm);
 		deployerForm.submit();
+		
 		loadingPopup.setGlassEnabled(true);
 		loadingPopup.setGlassStyleName(style.loadingGlass());
 		loadingPopup.show();
