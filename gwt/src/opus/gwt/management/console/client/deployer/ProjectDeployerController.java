@@ -238,7 +238,10 @@ public class ProjectDeployerController extends Composite {
 
 	        public void onResponseReceived(Request request, Response response) {
 	        	Window.alert("Received Response");
-	        	Window.alert(response.getText());
+	        	ErrorPanel ep = new ErrorPanel(eventBus);
+	    		ep.errorHTML.setHTML(response.getText());
+	    		deployerDeckPanel.add(ep);
+	    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
 	        }});
 	    } catch (RequestException e) {
 	    	
@@ -253,6 +256,6 @@ public class ProjectDeployerController extends Composite {
 		int top = ( Window.getClientHeight() / 2) - 10;
 		//loadingPopup.setSize(Integer.toString(Window.getClientWidth()), Integer.toString(Window.getClientHeight()));
 		loadingPopup.setPopupPosition(left, top);
-		loadingPopup.show();
+		//loadingPopup.show();
 	}
 }

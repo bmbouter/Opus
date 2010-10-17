@@ -4,7 +4,7 @@ var $gwt_version = "2.0.3";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '2B28E60AF93C707B0EF1E36B63EE96C1';
+var $strongName = 'A2E4125443F77BDC2555E7D0AC4684BB';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -2303,8 +2303,8 @@ function $cancel_1(this$static){
   }
 }
 
-function $fireOnResponseReceived(this$static){
-  var errorMsg, response, xhr;
+function $fireOnResponseReceived(this$static, callback){
+  var errorMsg, response, xhr, ep;
   if (!this$static.xmlHttpRequest) {
     return;
   }
@@ -2319,7 +2319,10 @@ function $fireOnResponseReceived(this$static){
    else {
     response = $Request$1(new Request$1, xhr);
     $wnd.alert('Received Response');
-    $wnd.alert(response.val$xmlHttpRequest.responseText);
+    ep = $ErrorPanel(new ErrorPanel);
+    ep.errorHTML.element.innerHTML = response.val$xmlHttpRequest.responseText || '';
+    $add_1(callback.this$0.deployerDeckPanel, ep);
+    $showWidget(callback.this$0.deployerDeckPanel, $indexOf(callback.this$0.deployerDeckPanel.children, ep));
   }
 }
 
@@ -2453,7 +2456,7 @@ function $doSend(this$static, requestData, callback){
   }
   $setHeaders(this$static, xmlHttpRequest);
   request = $Request(new Request, xmlHttpRequest, this$static.timeoutMillis, callback);
-  $setOnReadyStateChange(xmlHttpRequest, $RequestBuilder$1(new RequestBuilder$1, request));
+  $setOnReadyStateChange(xmlHttpRequest, $RequestBuilder$1(new RequestBuilder$1, request, callback));
   try {
     xmlHttpRequest.send(requestData);
   }
@@ -2469,13 +2472,13 @@ function $doSend(this$static, requestData, callback){
   return request;
 }
 
+--></script>
+<script><!--
 function $sendRequest(this$static, requestData, callback){
   throwIfNull('callback', callback);
   return $doSend(this$static, requestData, callback);
 }
 
---></script>
-<script><!--
 function $setHeaders(this$static, xmlHttpRequest){
   var $e0, e, header, header$iterator;
   if (!!this$static.headers && this$static.headers.size > 0) {
@@ -2515,8 +2518,9 @@ _.httpMethod = null;
 _.timeoutMillis = 0;
 _.url = null;
 var POST;
-function $RequestBuilder$1(this$static, val$request){
+function $RequestBuilder$1(this$static, val$request, val$callback){
   this$static.val$request = val$request;
+  this$static.val$callback = val$callback;
   return this$static;
 }
 
@@ -2527,7 +2531,7 @@ function getClass_75(){
 function onReadyStateChange(xhr){
   if (xhr.readyState == 4) {
     $clearOnReadyStateChange(xhr);
-    $fireOnResponseReceived(this.val$request);
+    $fireOnResponseReceived(this.val$request, this.val$callback);
   }
 }
 
@@ -2538,6 +2542,7 @@ _ = RequestBuilder$1.prototype = new Object_0;
 _.getClass$ = getClass_75;
 _.onReadyStateChange = onReadyStateChange;
 _.typeId$ = 0;
+_.val$callback = null;
 _.val$request = null;
 function $RequestBuilder$Method(this$static, name_0){
   this$static.name_0 = name_0;
@@ -3310,13 +3315,13 @@ function ensureHiddenDiv(){
   }
 }
 
+--></script>
+<script><!--
 function orphan(node){
   node.parentNode.removeChild(node);
 }
 
 var hiddenDiv = null;
---></script>
-<script><!--
 function $UiBinderUtil$TempAttachment(this$static, origParent, origSibling, element){
   this$static.origParent = origParent;
   this$static.origSibling = origSibling;
@@ -4401,6 +4406,8 @@ function $replaceElement_0(this$static, elem){
   this$static.attached && (this$static.element.__listener = this$static , undefined);
 }
 
+--></script>
+<script><!--
 function $setParent(this$static, parent_0){
   var oldParent;
   oldParent = this$static.parent_0;
@@ -4421,8 +4428,6 @@ function $setParent(this$static, parent_0){
   }
 }
 
---></script>
-<script><!--
 function $sinkEvents_0(this$static, eventBitsToAdd){
   this$static.eventsToSink == -1?$sinkEvents(this$static.element, eventBitsToAdd | (this$static.element.__eventBits || 0)):(this$static.eventsToSink |= eventBitsToAdd);
 }
@@ -5459,6 +5464,8 @@ function $FlexTable(this$static){
   return this$static;
 }
 
+--></script>
+<script><!--
 function $prepareCell(this$static, row, column){
   var cellCount, required;
   $prepareRow(this$static, row);
@@ -5470,8 +5477,6 @@ function $prepareCell(this$static, row, column){
   required > 0 && addCells(this$static.bodyElem, row, required);
 }
 
---></script>
-<script><!--
 function $prepareRow(this$static, row){
   var i, rowCount, tr;
   if (row < 0) {
@@ -6551,6 +6556,8 @@ function $PopupPanel$1(this$static, this$0){
   return this$static;
 }
 
+--></script>
+<script><!--
 function $onResize_0(this$static){
   var height, style, width, winHeight, winWidth;
   style = this$static.this$0.glass.style;
@@ -6570,8 +6577,6 @@ function getClass_153(){
   return Lcom_google_gwt_user_client_ui_PopupPanel$1_2_classLit;
 }
 
---></script>
-<script><!--
 function onResize_2(event_0){
   $onResize_0(this);
 }
@@ -7734,6 +7739,8 @@ function hashCode_5(){
   return this.value_0;
 }
 
+--></script>
+<script><!--
 function toPowerOfTwoString(value, shift){
   var bitMask, buf, bufSize, digits, pos;
   bufSize = ~~(32 / shift);
@@ -7761,8 +7768,6 @@ function toString_11(){
   return '' + this.value_0;
 }
 
---></script>
-<script><!--
 function valueOf(i){
   var rebase, result;
   if (i > -129 && i < 128) {
@@ -8915,6 +8920,8 @@ function ArrayList(){
 _ = ArrayList.prototype = new AbstractList;
 _.add_0 = add_2;
 _.contains = contains_2;
+--></script>
+<script><!--
 _.getClass$ = getClass_202;
 _.size_0 = size_2;
 _.toArray = toArray_0;
@@ -8939,8 +8946,6 @@ function HashMap(){
 _ = HashMap.prototype = new AbstractHashMap;
 _.getClass$ = getClass_203;
 _.typeId$ = 127;
---></script>
-<script><!--
 function $HashSet(this$static){
   this$static.map = $HashMap(new HashMap);
   return this$static;
@@ -11222,7 +11227,7 @@ function $deployProject(this$static){
   !builder.headers && (builder.headers = $HashMap(new HashMap));
   $put_0(builder.headers, 'Content-type', 'application/x-www-form-urlencoded');
   try {
-    $sendRequest(builder, $toString_2(this$static.deployerForm), new ProjectDeployerController$4);
+    $sendRequest(builder, $toString_2(this$static.deployerForm), $ProjectDeployerController$4(new ProjectDeployerController$4, this$static));
   }
    catch ($e0) {
     $e0 = caught_0($e0);
@@ -11236,7 +11241,6 @@ function $deployProject(this$static){
   left = ~~($getClientWidth_0($doc) / 2) - 150;
   top_0 = ~~($getClientHeight_0($doc) / 2) - 10;
   $setPopupPosition(this$static.loadingPopup, left, top_0);
-  $show(this$static.loadingPopup);
 }
 
 function $setFocus_1(this$static, panel){
@@ -11343,6 +11347,11 @@ _ = ProjectDeployerController$3.prototype = new Object_0;
 _.getClass$ = getClass_278;
 _.typeId$ = 197;
 _.this$0 = null;
+function $ProjectDeployerController$4(this$static, this$0){
+  this$static.this$0 = this$0;
+  return this$static;
+}
+
 function getClass_279(){
   return Lopus_gwt_management_console_client_deployer_ProjectDeployerController$4_2_classLit;
 }
@@ -11353,6 +11362,7 @@ function ProjectDeployerController$4(){
 _ = ProjectDeployerController$4.prototype = new Object_0;
 _.getClass$ = getClass_279;
 _.typeId$ = 0;
+_.this$0 = null;
 --></script>
 <script><!--
 function $ProjectOptionsPanel(this$static, eventBus){
