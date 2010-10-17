@@ -29,6 +29,10 @@ import opus.gwt.management.console.client.resources.images.OpusImages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
@@ -47,6 +51,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.http.client.Response;
 
 
 public class ProjectDeployerController extends Composite {
@@ -218,7 +223,28 @@ public class ProjectDeployerController extends Composite {
 		
 		this.deployerForm.add(formContainerPanel);
 		deployerDeckPanel.add(deployerForm);
-		deployerForm.submit();
+		
+		//deployerForm.submit();
+		//Window.alert(deployerForm.toString());
+		
+	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + createdProjectName);
+	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
+
+	    try {
+	      Request request = builder.sendRequest(deployerForm.toString(), new RequestCallback() {
+	        public void onError(Request request, Throwable exception) {
+	        	Window.alert("ERORR SENDING FORM WITH REQUEST BUILDER");
+	        }
+
+	        public void onResponseReceived(Request request, Response response) {
+	        	Window.alert("Received Response");
+	        	Window.alert(response.getText());
+	        }});
+	    } catch (RequestException e) {
+	    	
+	    }
+	    
+	    Window.alert("Post Builder");
 		
 		loadingPopup.setGlassEnabled(true);
 		loadingPopup.setGlassStyleName(style.loadingGlass());

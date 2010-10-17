@@ -228,7 +228,7 @@ public class ProjectSettingsPanel extends Composite {
 			formContainer.setWidget(formContainer.getRowCount(), 1, activeField);
 			optionsForm.add(formContainer);
 	
-			RootPanel.get().add(optionsForm);
+			//RootPanel.get().add(optionsForm);
 			optionsForm.submit();
 		}
 	}
