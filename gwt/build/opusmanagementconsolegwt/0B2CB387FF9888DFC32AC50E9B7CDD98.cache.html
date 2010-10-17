@@ -4,7 +4,7 @@ var $gwt_version = "2.0.3";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '62E4495A92451C5D1324A6912F41FC18';
+var $strongName = '0B2CB387FF9888DFC32AC50E9B7CDD98';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -11724,7 +11724,7 @@ function $deployProject(this$static){
   $add_5(formContainerPanel, this$static.databaseOptionsPanel);
   $add_3(this$static.deployerForm, formContainerPanel);
   $add_1(this$static.deployerDeckPanel, this$static.deployerForm);
-  builder = $RequestBuilder(new RequestBuilder, ($clinit_138() , POST), '/deployments/' + this$static.createdProjectName);
+  builder = $RequestBuilder(new RequestBuilder, ($clinit_138() , POST), '/deployments/' + this$static.createdProjectName + '/');
   throwIfEmptyOrNull('header', 'Content-type');
   throwIfEmptyOrNull('value', 'application/x-www-form-urlencoded');
   !builder.headers && (builder.headers = $HashMap(new HashMap));
@@ -11740,7 +11740,6 @@ function $deployProject(this$static){
   $wnd.alert('Post Builder');
   $setGlassEnabled(this$static.loadingPopup, true);
   $setGlassStyleName(this$static.loadingPopup, 'G1t2xd59LE');
-  $show(this$static.loadingPopup);
   left = ~~($getClientWidth_0($doc) / 2) - 150;
   top_0 = ~~($getClientHeight_0($doc) / 2) - 10;
   $setPopupPosition(this$static.loadingPopup, left, top_0);

@@ -227,7 +227,7 @@ public class ProjectDeployerController extends Composite {
 		//deployerForm.submit();
 		//Window.alert(deployerForm.toString());
 		
-	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + createdProjectName);
+	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + createdProjectName + "/");
 	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
 
 	    try {
@@ -251,7 +251,7 @@ public class ProjectDeployerController extends Composite {
 		
 		loadingPopup.setGlassEnabled(true);
 		loadingPopup.setGlassStyleName(style.loadingGlass());
-		loadingPopup.show();
+		//loadingPopup.show();
 		int left = ( Window.getClientWidth() / 2 ) - 150;
 		int top = ( Window.getClientHeight() / 2) - 10;
 		//loadingPopup.setSize(Integer.toString(Window.getClientWidth()), Integer.toString(Window.getClientHeight()));
