@@ -33,6 +33,7 @@ import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Cookies;
@@ -175,7 +176,7 @@ public class ProjectDeployerController extends Composite {
 	}
 	 
 	private void deployProject(){
-		deployerForm.clear();
+		/*deployerForm.clear();
 		VerticalPanel formContainerPanel = new VerticalPanel();
 		createdProjectName = deploymentOptionsPanel.getProjectName();
 		deployerForm.setAction(deploymentURL.replaceAll("projectName", deploymentOptionsPanel.getProjectName()));
@@ -225,13 +226,17 @@ public class ProjectDeployerController extends Composite {
 		deployerDeckPanel.add(deployerForm);
 		
 		//deployerForm.submit();
-		//Window.alert(deployerForm.toString());
+		//Window.alert(deployerForm.toString());*/
+		
+		StringBuffer formBuilder = new StringBuffer();
+		formBuilder.append("csrfmiddlewaretoken=");
+		formBuilder.append(URL.encodeComponent(jsVarHandler.getCSRFTokenURL()));
 		
 	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + createdProjectName + "/");
 	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
-
+	    
 	    try {
-	      Request request = builder.sendRequest(deployerForm.toString(), new RequestCallback() {
+	      Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
 	        public void onError(Request request, Throwable exception) {
 	        	Window.alert("ERORR SENDING FORM WITH REQUEST BUILDER");
 	        }
