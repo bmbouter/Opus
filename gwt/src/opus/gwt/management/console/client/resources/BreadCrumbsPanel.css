@@ -20,8 +20,15 @@ span {
 
 .active {
 	font-size: 1.1em;
-	padding: 3px 0px 0px 0px;
 	color: orange;
+	float: left;
+	padding: 0.4em 0 0 0.5em;
+}
+.crumbFlowPanel{
+	float: left;
+}
+.crumbArrow{
+	font-size: 1.1em;
 	float: left;
 	padding: 0.4em 0 0 0.5em;
 }

@@ -7,13 +7,16 @@ import opus.gwt.management.console.client.event.BreadCrumbEventHandler;
 import opus.gwt.management.console.client.resources.BreadCrumbsPanelCss.BreadCrumbsPanelStyle;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class BreadCrumbsPanel extends Composite {
@@ -71,14 +74,23 @@ public class BreadCrumbsPanel extends Composite {
 	}
 	
 	private void addBreadCrumb(String name, boolean isFirstCrumb){
-		HTML crumb = new HTML();
+		HTML arrow = new HTML();
+		arrow.setHTML("&raquo; ");
+		arrow.setStyleName(style.crumbArrow());
+		
+		HTML crumbName = new HTML();
+		crumbName.setText(name);
+		
+		FlowPanel crumb = new FlowPanel(); 
+		crumb.setStyleName(style.crumbFlowPanel());
 		if( isFirstCrumb ){
-			crumb.setText(name);
+			crumb.add(crumbName);
 		} else {
-			crumb.setHTML("&raquo; " + name);
+			crumb.add(arrow);
+			crumb.add(crumbName);
 		}
-		crumb.setStyleName(style.inactive());
-		breadCrumbLabels.put(name, crumb);
+		crumbName.setStyleName(style.inactive());
+		breadCrumbLabels.put(name, crumbName);
 		breadCrumbsContainer.add(crumb);
 	}
 

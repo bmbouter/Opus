@@ -33,26 +33,18 @@ import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.http.client.Response;
 
 
 public class ProjectDeployerController extends Composite {
@@ -67,7 +59,6 @@ public class ProjectDeployerController extends Composite {
 	private DeploymentOptionsPanel deploymentOptionsPanel;
 	private AppBrowserPanel appBrowserPanel;
 	private HandlerManager eventBus;
-	private FormPanel deployerForm;
 	private String createdProjectName;
 	private PopupPanel loadingPopup;
 	private JSVariableHandler jsVarHandler;
@@ -81,7 +72,6 @@ public class ProjectDeployerController extends Composite {
 		this.eventBus = eventBus;
 		this.jsVarHandler = new JSVariableHandler();
 		this.loadingPopup = new PopupPanel(false, true);
-		this.deployerForm = new FormPanel();
 		this.appBrowserPanel = new AppBrowserPanel(eventBus);
 		this.projectOptionsPanel = new ProjectOptionsPanel(eventBus);
 		this.databaseOptionsPanel = new DatabaseOptionsPanel(eventBus);
@@ -90,7 +80,6 @@ public class ProjectDeployerController extends Composite {
 		setupdeployerDeckPanel();
 		registerHandlers();
 		setupBreadCrumbs();
-		setupDeployerForm();
 	}
 	
 	private void setupdeployerDeckPanel(){
@@ -110,25 +99,6 @@ public class ProjectDeployerController extends Composite {
 	private void setupBreadCrumbs(){
 		String[] crumbs = {appBrowserPanel.getTitle(), projectOptionsPanel.getTitle(), databaseOptionsPanel.getTitle(), deploymentOptionsPanel.getTitle()};
 		eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_CRUMBS, crumbs));
-	}
-	
-	private void setupDeployerForm(){
-		deployerForm.clear();
-		deployerForm.setMethod(FormPanel.METHOD_POST);
-		deployerForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-		    public void onSubmitComplete(SubmitCompleteEvent event) {
-		    	if( event.getResults().equals("success") ){
-		    		loadingPopup.hide();
-		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
-		    		deployerDeckPanel.remove(deployerDeckPanel.getWidgetIndex(deployerForm));
-		    	} else {
-		    		loadingPopup.hide();
-		    	 	ErrorPanel ep = new ErrorPanel(eventBus);
-		    		ep.errorHTML.setHTML(event.getResults());
-		    		deployerDeckPanel.add(ep);
-		    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
-		    	}
-		     }});
 	}
 	
 	private void registerHandlers(){
@@ -176,58 +146,6 @@ public class ProjectDeployerController extends Composite {
 	}
 	 
 	private void deployProject(){
-		/*deployerForm.clear();
-		VerticalPanel formContainerPanel = new VerticalPanel();
-		createdProjectName = deploymentOptionsPanel.getProjectName();
-		deployerForm.setAction(deploymentURL.replaceAll("projectName", deploymentOptionsPanel.getProjectName()));
-		
-		formContainerPanel.add(new Hidden("csrfmiddlewaretoken", jsVarHandler.getCSRFTokenURL()));		
-  
-		ArrayList<String> paths = appBrowserPanel.getAppPaths();
-		ArrayList<String> apptypes = appBrowserPanel.getAppTypes();
-		ArrayList<String> appNames = appBrowserPanel.getAppNames();
-		Hidden numApps = new Hidden();
-		numApps.setName("form-TOTAL_FORMS");
-		numApps.setValue(String.valueOf(paths.size()));
-		formContainerPanel.add(numApps);
-		
-		Hidden numInitialForms = new Hidden();
-		numInitialForms.setName("form-INITIAL_FORMS");
-		numInitialForms.setValue("0");
-		formContainerPanel.add(numInitialForms);
-		
-		Hidden numMaxForms = new Hidden();
-		numMaxForms.setName("form-MAX_NUM_FORMS");
-		formContainerPanel.add(numMaxForms);
-		
-		for(int i=0; i < paths.size(); i++) {
-			RadioButton pathtype = new RadioButton("form-" + i + "-apptype");
-			pathtype.setFormValue(apptypes.get(i));
-			pathtype.setValue(true);
-			
-			TextBox path = new TextBox();
-			path.setName("form-" + i +"-apppath");
-			path.setValue(paths.get(i));
-			
-			TextBox appName = new TextBox();
-			appName.setName("form-" + i + "-appname");
-			appName.setValue(appNames.get(i));
-			
-			formContainerPanel.add(pathtype);
-			formContainerPanel.add(path);
-			formContainerPanel.add(appName);
-		}
-	  
-		formContainerPanel.add(deploymentOptionsPanel);
-		formContainerPanel.add(projectOptionsPanel);
-		formContainerPanel.add(databaseOptionsPanel);
-		
-		this.deployerForm.add(formContainerPanel);
-		deployerDeckPanel.add(deployerForm);
-		
-		//deployerForm.submit();
-		//Window.alert(deployerForm.toString());*/
-		
 		createdProjectName = deploymentOptionsPanel.getProjectName();
 		
 		ArrayList<String> paths = appBrowserPanel.getAppPaths();
@@ -261,33 +179,41 @@ public class ProjectDeployerController extends Composite {
 		
 	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + createdProjectName + "/");
 	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
+	    //builder.setHeader(header, value);
 	    
 	    try {
 	      Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
 	        public void onError(Request request, Throwable exception) {
+	        	ErrorPanel ep = new ErrorPanel(eventBus);
+	    		ep.errorHTML.setHTML("<p>Error Occured</p>");
+	    		deployerDeckPanel.add(ep);
+	    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
 	        	Window.alert("ERORR SENDING FORM WITH REQUEST BUILDER");
 	        }
 
 	        public void onResponseReceived(Request request, Response response) {
-	        	Window.alert("Received Response");
-	        	ErrorPanel ep = new ErrorPanel(eventBus);
-	    		ep.errorHTML.setHTML(response.getText());
-	    		deployerDeckPanel.add(ep);
-	    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
+		    	if( response.getText().contains("project is deployed") ){
+		    		loadingPopup.hide();
+		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
+		    	} else {
+		    		loadingPopup.hide();
+		    	 	ErrorPanel ep = new ErrorPanel(eventBus);
+		    		ep.errorHTML.setHTML(response.getText());
+		    		deployerDeckPanel.add(ep);
+		    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
+		    	}
 	        }});
 	    } catch (RequestException e) {
 	    	
 	    }
-	    
-	    Window.alert("Post Builder");
 		
 		loadingPopup.setGlassEnabled(true);
 		loadingPopup.setGlassStyleName(style.loadingGlass());
-		//loadingPopup.show();
+		loadingPopup.show();
 		int left = ( Window.getClientWidth() / 2 ) - 150;
 		int top = ( Window.getClientHeight() / 2) - 10;
 		//loadingPopup.setSize(Integer.toString(Window.getClientWidth()), Integer.toString(Window.getClientHeight()));
 		loadingPopup.setPopupPosition(left, top);
-		//loadingPopup.show();
+		loadingPopup.show();
 	}
 }
