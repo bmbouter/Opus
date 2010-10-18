@@ -19,6 +19,7 @@ package opus.gwt.management.console.client.deployer;
 import java.util.ArrayList;
 
 import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.DeployProjectEvent;
 import opus.gwt.management.console.client.event.DeployProjectEventHandler;
@@ -195,6 +196,7 @@ public class ProjectDeployerController extends Composite {
 		    	if( response.getText().contains("project is deployed") ){
 		    		loadingPopup.hide();
 		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
+		    		eventBus.fireEvent(new AsyncRequestEvent("handleProjects"));
 		    	} else {
 		    		loadingPopup.hide();
 		    	 	ErrorPanel ep = new ErrorPanel(eventBus);
