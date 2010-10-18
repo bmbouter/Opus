@@ -53,7 +53,7 @@ public class IconPanel extends Composite {
 	
 	@UiField ScrollPanel iconScrollPanel;
 	@UiField FlowPanel projectIconsFlowPanel;
-	@UiField PanelManagerStyle style;
+	@UiField PanelManagerStyle managerStyle;
 
 	
 	public IconPanel(HandlerManager eventBus) {
@@ -96,15 +96,15 @@ public class IconPanel extends Composite {
 		
 		final FocusPanel testLabel = new FocusPanel();
 		testLabel.add(project);
-		testLabel.setStyleName(style.projectIcon());
+		testLabel.setStyleName(managerStyle.projectIcon());
 		testLabel.addMouseOverHandler(new MouseOverHandler(){
 			public void onMouseOver(MouseOverEvent event){
-				testLabel.setStyleName(style.projectIconActive());
+				testLabel.setStyleName(managerStyle.projectIconActive());
 			}
 		});
 		testLabel.addMouseOutHandler(new MouseOutHandler(){
 			public void onMouseOut(MouseOutEvent event){
-				testLabel.setStyleName(style.projectIcon());
+				testLabel.setStyleName(managerStyle.projectIcon());
 			}
 		});
 		testLabel.addClickHandler(new ClickHandler() {
@@ -112,7 +112,7 @@ public class IconPanel extends Composite {
 	        	//console.mainDeckPanel.clear();
 	        	//console.navigationMenuPanel.clear();
 	        	//projectManager = new ProjectManagerController(eventBus); 
-	        	testLabel.setStyleName(style.projectIcon());
+	        	testLabel.setStyleName(managerStyle.projectIcon());
 	        }
 	     });
 		projectIconsFlowPanel.add(testLabel);	

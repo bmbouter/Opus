@@ -21,6 +21,11 @@
 	
 	<g:SimplePanel>
 		<g:HTMLPanel styleName="{style.dashboardMainPanel}">
+			<g:HTMLPanel styleName="{style.header}">
+				<g:HTMLPanel styleName="{style.insetType}">
+					<h1>Dashboard</h1>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
 			<g:Label styleName="{style.currentAppsLabel}">
 				Current Applications:
 			</g:Label>

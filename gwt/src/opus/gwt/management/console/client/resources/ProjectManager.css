@@ -21,8 +21,8 @@
 	font-size: .8em;
 	min-height: 400px;
 	min-width: 600px;
-	border: 3px solid grey;
-	-webkit-box-shadow: 2px 2px 7px #1F1F1F;	
+	border: 1px solid #CC8202;
+/*	-webkit-box-shadow: 2px 2px 7px #1F1F1F;	*/
 }
 
 .header { 
