@@ -91,6 +91,13 @@ public class DeploymentOptionsPanel extends Composite {
 		return projectName;
 	}
 	
+	public String getPostData(){
+		StringBuffer postData = new StringBuffer();
+		postData.append("&debug=");
+		postData.append(debugCheckBox.getValue());
+		return postData.toString();
+	}
+	
 	@UiHandler("nextButton")
 	void handleNextButton(ClickEvent event){
 		if( validateFields() ){

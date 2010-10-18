@@ -228,9 +228,36 @@ public class ProjectDeployerController extends Composite {
 		//deployerForm.submit();
 		//Window.alert(deployerForm.toString());*/
 		
+		createdProjectName = deploymentOptionsPanel.getProjectName();
+		
+		ArrayList<String> paths = appBrowserPanel.getAppPaths();
+		ArrayList<String> apptypes = appBrowserPanel.getAppTypes();
+		ArrayList<String> appNames = appBrowserPanel.getAppNames();
+		
 		StringBuffer formBuilder = new StringBuffer();
 		formBuilder.append("csrfmiddlewaretoken=");
-		formBuilder.append(URL.encodeComponent(jsVarHandler.getCSRFTokenURL()));
+		formBuilder.append( URL.encodeComponent(jsVarHandler.getCSRFTokenURL()));
+		
+		formBuilder.append("&form-TOTAL_FORMS=");
+		formBuilder.append( URL.encodeComponent(String.valueOf(paths.size())));
+		formBuilder.append("&form-INITIAL_FORMS=");
+		formBuilder.append( URL.encodeComponent(String.valueOf(0)));
+		formBuilder.append("&form-MAX_NUM_FORMS=");
+		
+		for(int i=0; i < paths.size(); i++) {
+			formBuilder.append("&form-" + i + "-apptype=");
+			formBuilder.append(apptypes.get(i));
+
+			formBuilder.append("&form-" + i + "-apppath=");
+			formBuilder.append(paths.get(i));
+
+			formBuilder.append("&form-" + i + "-appname=");
+			formBuilder.append(appNames.get(i));
+		}
+		
+		formBuilder.append(deploymentOptionsPanel.getPostData());
+		formBuilder.append(projectOptionsPanel.getPostData());
+		formBuilder.append(databaseOptionsPanel.getPostData());
 		
 	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + createdProjectName + "/");
 	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");

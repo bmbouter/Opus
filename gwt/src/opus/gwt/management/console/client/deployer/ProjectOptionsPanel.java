@@ -27,6 +27,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -225,6 +226,19 @@ public class ProjectOptionsPanel extends Composite {
 	
 	public void setFocus(){
 		usernameTextBox.setFocus(true);
+	}
+	
+	public String getPostData(){
+		StringBuffer postData = new StringBuffer();
+		postData.append("&superusername=");
+		postData.append( URL.encodeComponent(usernameTextBox.getValue()));
+		postData.append("&superpassword=");
+		postData.append( URL.encodeComponent(passwordTextBox.getValue()));
+		postData.append("&superemail=");
+		postData.append( URL.encodeComponent(emailTextBox.getValue()));
+		postData.append("&idprovider=");
+		postData.append( URL.encodeComponent(idProvider.getValue(idProvider.getSelectedIndex())));
+		return postData.toString();
 	}
 	
 	public boolean validateFields(){

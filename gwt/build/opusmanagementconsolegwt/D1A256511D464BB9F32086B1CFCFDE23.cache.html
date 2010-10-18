@@ -4,7 +4,7 @@ var $gwt_version = "2.0.3";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = 'B95C2E48F45D76E7CCD7F55FE592CF44';
+var $strongName = 'D1A256511D464BB9F32086B1CFCFDE23';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -4946,7 +4946,7 @@ function $CheckBox_0(this$static, elem){
   return this$static;
 }
 
-function $getValue_0(this$static){
+function $getValue_1(this$static){
   if (this$static.attached) {
     return $clinit_307() , this$static.inputElem.checked?TRUE:FALSE;
   }
@@ -4959,7 +4959,7 @@ function $replaceInputElement(this$static, elem){
   var accessKey, checked, enabled, formValue, newInputElem, sunkEvents, tabIndex, uid;
   newInputElem = elem;
   tabIndex = this$static.inputElem.tabIndex;
-  checked = $getValue_0(this$static).value_0;
+  checked = $getValue_1(this$static).value_0;
   enabled = !this$static.inputElem.disabled;
   formValue = this$static.inputElem.value;
   uid = this$static.inputElem.id;
@@ -4986,7 +4986,7 @@ function $setValue_1(this$static, value, fireEvents){
   if (!value) {
     throw $IllegalArgumentException_0(new IllegalArgumentException, 'value must not be null');
   }
-  oldValue = $getValue_0(this$static);
+  oldValue = $getValue_1(this$static);
   this$static.inputElem.checked = value.value_0;
   this$static.inputElem.defaultChecked = value.value_0;
   if (!!oldValue && oldValue.value_0 == value.value_0) {
@@ -5009,7 +5009,7 @@ function onLoad_1(){
 
 function onUnload_1(){
   this.inputElem.__listener = null;
-  $setValue_1(this, $getValue_0(this), false);
+  $setValue_1(this, $getValue_1(this), false);
 }
 
 function setName(name_0){
@@ -6327,6 +6327,11 @@ function $getItemText(this$static, index){
   return ($clinit_29() , this$static.element).children[index].text;
 }
 
+function $getValue_2(this$static, index){
+  $checkIndex(this$static, index);
+  return ($clinit_29() , this$static.element).children[index].value;
+}
+
 function $insertItem(this$static, item, value, index){
   var before, option, select;
   select = this$static.element;
@@ -6586,6 +6591,8 @@ function $setWidget_1(this$static, w){
   $maybeUpdateSize(this$static);
 }
 
+--></script>
+<script><!--
 function $show(this$static){
   if (this$static.showing) {
     return;
@@ -6597,8 +6604,6 @@ function getClass_154(){
   return Lcom_google_gwt_user_client_ui_PopupPanel_2_classLit;
 }
 
---></script>
-<script><!--
 function getContainerElement_0(){
   return $getFirstChildElement(($clinit_29() , this.element));
 }
@@ -6945,17 +6950,17 @@ function onBrowserEvent_2(event_0){
     case 8:
     case 4096:
     case 128:
-      this.oldValue = $getValue_0(this);
+      this.oldValue = $getValue_1(this);
       break;
     case 1:
       target = event_0.target;
       if (is_0(target) && $isOrHasChild_0(this.labelElem, target)) {
-        this.oldValue = $getValue_0(this);
+        this.oldValue = $getValue_1(this);
         return;
       }
 
       $onBrowserEvent(this, event_0);
-      fireIfNotEqual(this, this.oldValue, $getValue_0(this));
+      fireIfNotEqual(this, this.oldValue, $getValue_1(this));
       return;
   }
   $onBrowserEvent(this, event_0);
@@ -8126,7 +8131,12 @@ function $StringBuffer(this$static){
   return this$static;
 }
 
-function $append_0(this$static, x){
+function $append_1(this$static, x){
+  this$static.impl.string += x;
+  return this$static;
+}
+
+function $append_2(this$static, x){
   this$static.impl.string += x;
   return this$static;
 }
@@ -8181,7 +8191,7 @@ function $toString_3(this$static){
   iter = this$static.iterator_0();
   while (iter.hasNext()) {
     comma != null?(sb.impl.string += comma , undefined):(comma = ', ');
-    $append_0(sb, '' + iter.next_0());
+    $append_2(sb, '' + iter.next_0());
   }
   sb.impl.string += ']';
   return sb.impl.string;
@@ -10152,6 +10162,37 @@ function $createAppIcon(this$static, name_0, email, author, info, pk, iconPath, 
   return icon;
 }
 
+function $getAppNames(this$static){
+  var e, e$iterator, name_0, names;
+  names = $ArrayList(new ArrayList);
+  for (e$iterator = $AbstractHashMap$EntrySetIterator(new AbstractHashMap$EntrySetIterator, $AbstractHashMap$EntrySet(new AbstractHashMap$EntrySet, this$static.DeployListMap).this$0); $hasNext_3(e$iterator.iter);) {
+    e = e$iterator.last = dynamicCast($next_5(e$iterator.iter), 43);
+    name_0 = dynamicCast(e.getValue(), 59).appName;
+    setCheck(names.array, names.size++, name_0);
+  }
+  return names;
+}
+
+function $getAppPaths(this$static){
+  var e, e$iterator, paths;
+  paths = $ArrayList(new ArrayList);
+  for (e$iterator = $AbstractHashMap$EntrySetIterator(new AbstractHashMap$EntrySetIterator, $AbstractHashMap$EntrySet(new AbstractHashMap$EntrySet, this$static.DeployListMap).this$0); $hasNext_3(e$iterator.iter);) {
+    e = e$iterator.last = dynamicCast($next_5(e$iterator.iter), 43);
+    $add_7(paths, dynamicCast(e.getValue(), 59).path_0);
+  }
+  return paths;
+}
+
+function $getAppTypes(this$static){
+  var e, e$iterator, types;
+  types = $ArrayList(new ArrayList);
+  for (e$iterator = $AbstractHashMap$EntrySetIterator(new AbstractHashMap$EntrySetIterator, $AbstractHashMap$EntrySet(new AbstractHashMap$EntrySet, this$static.DeployListMap).this$0); $hasNext_3(e$iterator.iter);) {
+    e = e$iterator.last = dynamicCast($next_5(e$iterator.iter), 43);
+    $add_7(types, dynamicCast(e.getValue(), 59).type_0);
+  }
+  return types;
+}
+
 function $handleAllAppsLabel(this$static){
   this$static.allAppsLabel.getStyleElement()['className'] = 'G1t2xd59NQ';
   this$static.featuredAppsLabel.getStyleElement()['className'] = 'G1t2xd59FR';
@@ -10639,6 +10680,22 @@ function $DatabaseOptionsPanel(this$static, eventBus){
   return this$static;
 }
 
+function $getPostData(this$static){
+  var postData;
+  postData = $StringBuffer(new StringBuffer);
+  postData.impl.string += '&dbengine=';
+  $append_2(postData, encodeComponent($getValue_2(this$static.dbengineListBox, this$static.dbengineListBox.element.selectedIndex)));
+  postData.impl.string += '&dbname=';
+  $append_2(postData, encodeComponent($getPropertyString(this$static.nameTextBox.element, 'value')));
+  postData.impl.string += '&dbpassword=';
+  $append_2(postData, encodeComponent($getPropertyString(this$static.passwordTextBox.element, 'value')));
+  postData.impl.string += '&dbhost=';
+  $append_2(postData, encodeComponent($getPropertyString(this$static.hostTextBox.element, 'value')));
+  postData.impl.string += '&dbport=';
+  $append_2(postData, encodeComponent($getPropertyString(this$static.portTextBox.element, 'value')));
+  return postData.impl.string;
+}
+
 function $getTooltipPosition(textbox){
   var pos;
   pos = initDim(_3I_classLit, 242, -1, 2, 1);
@@ -10882,6 +10939,8 @@ function $DatabaseOptionsPanel_DatabaseOptionsUiBinderImpl$4(this$static, val$ow
   return this$static;
 }
 
+--></script>
+<script><!--
 function getClass_265(){
   return Lopus_gwt_management_console_client_deployer_DatabaseOptionsPanel_1DatabaseOptionsUiBinderImpl$4_2_classLit;
 }
@@ -10911,8 +10970,6 @@ function onFocus_0(event_0){
   $handlePasswordTextBoxOnFocus(this.val$owner);
 }
 
---></script>
-<script><!--
 function DatabaseOptionsPanel_DatabaseOptionsUiBinderImpl$5(){
 }
 
@@ -11007,13 +11064,22 @@ _.typeId$ = 186;
 _.val$owner = null;
 function $DeploymentOptionsPanel(this$static, eventBus){
   var active, attachRecord0, attachRecord1, attachRecord10, attachRecord11, attachRecord12, attachRecord2, attachRecord3, attachRecord4, attachRecord5, attachRecord6, attachRecord7, attachRecord8, attachRecord9, baseDomainLabel, baseProtocolLabel, debugCheckBox, domId0, domId0Element, domId1, domId10, domId10Element, domId11, domId11Element, domId12, domId12Element, domId13, domId13Element, domId14, domId14Element, domId15, domId15Element, domId16, domId16Element, domId17, domId17Element, domId18, domId18Element, domId19, domId19Element, domId1Element, domId2, domId20, domId20Element, domId21, domId21Element, domId22, domId22Element, domId2Element, domId3, domId3Element, domId4, domId4Element, domId5, domId5Element, domId6, domId6Element, domId7, domId7Element, domId8, domId8Element, domId9, domId9Element, error, f_HTMLPanel10, f_HTMLPanel11, f_HTMLPanel12, f_HTMLPanel13, f_HTMLPanel14, f_HTMLPanel15, f_HTMLPanel16, f_HTMLPanel2, f_HTMLPanel3, f_HTMLPanel4, f_HTMLPanel5, f_HTMLPanel6, f_HTMLPanel7, f_HTMLPanel8, f_HTMLPanel9, f_SimplePanel1, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames3, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames4, nextButton, previousButton, projectNameTextBox, subDomainLabel;
-  $initWidget(this$static, (!form_1 && (form_1 = new opus_gwt_management_console_client_deployer_DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$2) , !deployer_0 && (deployer_0 = new opus_gwt_management_console_client_deployer_DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$1) , domId0 = $createUniqueId($doc) , active = $TooltipPanel(new TooltipPanel) , domId1 = $createUniqueId($doc) , domId2 = $createUniqueId($doc) , f_HTMLPanel4 = $HTMLPanel(new HTMLPanel, '<h1>Deployment Options<\/h1>') , f_HTMLPanel3 = $HTMLPanel(new HTMLPanel, "<span id='" + domId2 + "'><\/span>") , domId3 = $createUniqueId($doc) , domId4 = $createUniqueId($doc) , f_HTMLPanel6 = $HTMLPanel(new HTMLPanel, '<h1>Deployment Location Options<\/h1>') , domId5 = $createUniqueId($doc) , domId6 = $createUniqueId($doc) , domId7 = $createUniqueId($doc) , domId8 = $createUniqueId($doc) , projectNameTextBox = $TextBox(new TextBox) , domId9 = $createUniqueId($doc) , error = $Label(new Label) , f_HTMLPanel9 = $HTMLPanel(new HTMLPanel, "<label class='G1t2xd59BX'>Deploy as:<\/label> <span id='" + domId8 + "'><\/span> <span id='" + domId9 + "'><\/span>") , f_HTMLPanel8 = $HTMLPanel(new HTMLPanel, "<span id='" + domId7 + "'><\/span>") , domId10 = $createUniqueId($doc) , domId11 = $createUniqueId($doc) , domId12 = $createUniqueId($doc) , baseDomainLabel = $Label(new Label) , domId13 = $createUniqueId($doc) , subDomainLabel = $Label(new Label) , domId14 = $createUniqueId($doc) , baseProtocolLabel = $Label(new Label) , f_HTMLPanel11 = $HTMLPanel(new HTMLPanel, "<label class='G1t2xd59BX'>Base URL:<\/label> <span id='" + domId12 + "'><\/span> <span id='" + domId13 + "'><\/span> <span id='" + domId14 + "'><\/span>") , f_HTMLPanel10 = $HTMLPanel(new HTMLPanel, "<span id='" + domId11 + "'><\/span>") , domId15 = $createUniqueId($doc) , domId16 = $createUniqueId($doc) , domId17 = $createUniqueId($doc) , debugCheckBox = $CheckBox(new CheckBox) , f_HTMLPanel13 = $HTMLPanel(new HTMLPanel, "<label class='G1t2xd59BX'>Debug Mode:<\/label> <span id='" + domId17 + "'><\/span>") , f_HTMLPanel12 = $HTMLPanel(new HTMLPanel, "<span id='" + domId16 + "'><\/span>") , domId18 = $createUniqueId($doc) , domId19 = $createUniqueId($doc) , domId20 = $createUniqueId($doc) , previousButton = $Button(new Button) , f_HTMLPanel15 = $HTMLPanel(new HTMLPanel, "<span id='" + domId20 + "'><\/span>") , domId21 = $createUniqueId($doc) , domId22 = $createUniqueId($doc) , nextButton = $Button(new Button) , f_HTMLPanel16 = $HTMLPanel(new HTMLPanel, "<span id='" + domId22 + "'><\/span>") , f_HTMLPanel14 = $HTMLPanel(new HTMLPanel, "<span id='" + domId19 + "'><\/span> <span id='" + domId21 + "'><\/span>") , f_HTMLPanel7 = $HTMLPanel(new HTMLPanel, "<span id='" + domId6 + "'><\/span> <span id='" + domId10 + "'><\/span> <span id='" + domId15 + "'><\/span> <span id='" + domId18 + "'><\/span>") , f_HTMLPanel5 = $HTMLPanel(new HTMLPanel, "<span id='" + domId4 + "'><\/span> <span id='" + domId5 + "'><\/span>") , f_HTMLPanel2 = $HTMLPanel(new HTMLPanel, "<span id='" + domId0 + "'><\/span> <span id='" + domId1 + "'><\/span> <span id='" + domId3 + "'><\/span>") , f_SimplePanel1 = $SimplePanel(new SimplePanel) , f_HTMLPanel4.element['className'] = 'G1t2xd59BW' , f_HTMLPanel3.element['className'] = 'G1t2xd59AW' , projectNameTextBox.element['className'] = 'G1t2xd59PV' , error.element['className'] = 'G1t2xd59PW' , f_HTMLPanel9.element['className'] = 'G1t2xd59AX' , f_HTMLPanel8.element['className'] = 'G1t2xd59CX' , baseDomainLabel.element['className'] = 'G1t2xd59JW' , subDomainLabel.element['className'] = 'G1t2xd59JW G1t2xd59LW' , baseProtocolLabel.element['className'] = 'G1t2xd59JW G1t2xd59HW' , f_HTMLPanel11.element['className'] = 'G1t2xd59AX' , f_HTMLPanel10.element['className'] = 'G1t2xd59CX' , debugCheckBox.setName('debug') , f_HTMLPanel13.element['className'] = 'G1t2xd59AX' , f_HTMLPanel12.element['className'] = 'G1t2xd59CX' , previousButton.element['className'] = 'G1t2xd59MW G1t2xd59EX' , $setInnerText_0(($clinit_29() , previousButton.element), '\xAB Previous') , f_HTMLPanel15.element['className'] = 'G1t2xd59BX' , nextButton.element['className'] = 'G1t2xd59MW' , $setInnerText_0(nextButton.element, 'Deploy Project') , f_HTMLPanel16.element['className'] = 'G1t2xd59BX' , f_HTMLPanel14.element['className'] = 'G1t2xd59CX' , f_HTMLPanel7.element['className'] = 'G1t2xd59DX' , f_HTMLPanel5.element['className'] = 'G1t2xd59OW' , $add_3(f_SimplePanel1, f_HTMLPanel2) , attachRecord0 = attachToDom(f_HTMLPanel2.element) , domId0Element = $doc.getElementById(domId0) , attachRecord1 = attachToDom(f_HTMLPanel3.element) , domId2Element = $doc.getElementById(domId2) , $detach(attachRecord1) , $removeFromParent_0(f_HTMLPanel4) , $add_6(f_HTMLPanel3.children_0, f_HTMLPanel4) , domId2Element.parentNode.replaceChild(f_HTMLPanel4.element, domId2Element) , $setParent(f_HTMLPanel4, f_HTMLPanel3) , domId1Element = $doc.getElementById(domId1) , attachRecord2 = attachToDom(f_HTMLPanel5.element) , domId4Element = $doc.getElementById(domId4) , attachRecord3 = attachToDom(f_HTMLPanel9.element) , domId8Element = $doc.getElementById(domId8) , domId9Element = $doc.getElementById(domId9) , $detach(attachRecord3) , $removeFromParent_0(projectNameTextBox) , $add_6(f_HTMLPanel9.children_0, projectNameTextBox) , domId8Element.parentNode.replaceChild(projectNameTextBox.element, domId8Element) , $setParent(projectNameTextBox, f_HTMLPanel9) , $removeFromParent_0(error) , $add_6(f_HTMLPanel9.children_0, error) , domId9Element.parentNode.replaceChild(error.element, domId9Element) , $setParent(error, f_HTMLPanel9) , attachRecord4 = attachToDom(f_HTMLPanel8.element) , domId7Element = $doc.getElementById(domId7) , $detach(attachRecord4) , $removeFromParent_0(f_HTMLPanel9) , $add_6(f_HTMLPanel8.children_0, f_HTMLPanel9) , domId7Element.parentNode.replaceChild(f_HTMLPanel9.element, domId7Element) , $setParent(f_HTMLPanel9, f_HTMLPanel8) , attachRecord5 = attachToDom(f_HTMLPanel7.element) , domId6Element = $doc.getElementById(domId6) , attachRecord6 = attachToDom(f_HTMLPanel11.element) , domId12Element = $doc.getElementById(domId12) , domId13Element = $doc.getElementById(domId13) , domId14Element = $doc.getElementById(domId14) , $detach(attachRecord6) , $removeFromParent_0(baseDomainLabel) , $add_6(f_HTMLPanel11.children_0, baseDomainLabel) , domId12Element.parentNode.replaceChild(baseDomainLabel.element, domId12Element) , $setParent(baseDomainLabel, f_HTMLPanel11) , $removeFromParent_0(subDomainLabel) , $add_6(f_HTMLPanel11.children_0, subDomainLabel) , domId13Element.parentNode.replaceChild(subDomainLabel.element, domId13Element) , $setParent(subDomainLabel, f_HTMLPanel11) , $removeFromParent_0(baseProtocolLabel) , $add_6(f_HTMLPanel11.children_0, baseProtocolLabel) , domId14Element.parentNode.replaceChild(baseProtocolLabel.element, domId14Element) , $setParent(baseProtocolLabel, f_HTMLPanel11) , attachRecord7 = attachToDom(f_HTMLPanel10.element) , domId11Element = $doc.getElementById(domId11) , $detach(attachRecord7) , $removeFromParent_0(f_HTMLPanel11) , $add_6(f_HTMLPanel10.children_0, f_HTMLPanel11) , domId11Element.parentNode.replaceChild(f_HTMLPanel11.element, domId11Element) , $setParent(f_HTMLPanel11, f_HTMLPanel10) , domId10Element = $doc.getElementById(domId10) , attachRecord8 = attachToDom(f_HTMLPanel13.element) , domId17Element = $doc.getElementById(domId17) , $detach(attachRecord8) , $removeFromParent_0(debugCheckBox) , $add_6(f_HTMLPanel13.children_0, debugCheckBox) , domId17Element.parentNode.replaceChild(debugCheckBox.element, domId17Element) , $setParent(debugCheckBox, f_HTMLPanel13) , attachRecord9 = attachToDom(f_HTMLPanel12.element) , domId16Element = $doc.getElementById(domId16) , $detach(attachRecord9) , $removeFromParent_0(f_HTMLPanel13) , $add_6(f_HTMLPanel12.children_0, f_HTMLPanel13) , domId16Element.parentNode.replaceChild(f_HTMLPanel13.element, domId16Element) , $setParent(f_HTMLPanel13, f_HTMLPanel12) , domId15Element = $doc.getElementById(domId15) , attachRecord10 = attachToDom(f_HTMLPanel15.element) , domId20Element = $doc.getElementById(domId20) , $detach(attachRecord10) , $removeFromParent_0(previousButton) , $add_6(f_HTMLPanel15.children_0, previousButton) , domId20Element.parentNode.replaceChild(previousButton.element, domId20Element) , $setParent(previousButton, f_HTMLPanel15) , attachRecord11 = attachToDom(f_HTMLPanel14.element) , domId19Element = $doc.getElementById(domId19) , attachRecord12 = attachToDom(f_HTMLPanel16.element) , domId22Element = $doc.getElementById(domId22) , $detach(attachRecord12) , $removeFromParent_0(nextButton) , $add_6(f_HTMLPanel16.children_0, nextButton) , domId22Element.parentNode.replaceChild(nextButton.element, domId22Element) , $setParent(nextButton, f_HTMLPanel16) , domId21Element = $doc.getElementById(domId21) , $detach(attachRecord11) , $removeFromParent_0(f_HTMLPanel15) , $add_6(f_HTMLPanel14.children_0, f_HTMLPanel15) , domId19Element.parentNode.replaceChild(f_HTMLPanel15.element, domId19Element) , $setParent(f_HTMLPanel15, f_HTMLPanel14) , $removeFromParent_0(f_HTMLPanel16) , $add_6(f_HTMLPanel14.children_0, f_HTMLPanel16) , domId21Element.parentNode.replaceChild(f_HTMLPanel16.element, domId21Element) , $setParent(f_HTMLPanel16, f_HTMLPanel14) , domId18Element = $doc.getElementById(domId18) , $detach(attachRecord5) , $removeFromParent_0(f_HTMLPanel8) , $add_6(f_HTMLPanel7.children_0, f_HTMLPanel8) , domId6Element.parentNode.replaceChild(f_HTMLPanel8.element, domId6Element) , $setParent(f_HTMLPanel8, f_HTMLPanel7) , $removeFromParent_0(f_HTMLPanel10) , $add_6(f_HTMLPanel7.children_0, f_HTMLPanel10) , domId10Element.parentNode.replaceChild(f_HTMLPanel10.element, domId10Element) , $setParent(f_HTMLPanel10, f_HTMLPanel7) , $removeFromParent_0(f_HTMLPanel12) , $add_6(f_HTMLPanel7.children_0, f_HTMLPanel12) , domId15Element.parentNode.replaceChild(f_HTMLPanel12.element, domId15Element) , $setParent(f_HTMLPanel12, f_HTMLPanel7) , $removeFromParent_0(f_HTMLPanel14) , $add_6(f_HTMLPanel7.children_0, f_HTMLPanel14) , domId18Element.parentNode.replaceChild(f_HTMLPanel14.element, domId18Element) , $setParent(f_HTMLPanel14, f_HTMLPanel7) , domId5Element = $doc.getElementById(domId5) , $detach(attachRecord2) , $removeFromParent_0(f_HTMLPanel6) , $add_6(f_HTMLPanel5.children_0, f_HTMLPanel6) , domId4Element.parentNode.replaceChild(f_HTMLPanel6.element, domId4Element) , $setParent(f_HTMLPanel6, f_HTMLPanel5) , $removeFromParent_0(f_HTMLPanel7) , $add_6(f_HTMLPanel5.children_0, f_HTMLPanel7) , domId5Element.parentNode.replaceChild(f_HTMLPanel7.element, domId5Element) , $setParent(f_HTMLPanel7, f_HTMLPanel5) , domId3Element = $doc.getElementById(domId3) , $detach(attachRecord0) , $removeFromParent_0(active) , $add_6(f_HTMLPanel2.children_0, active) , domId0Element.parentNode.replaceChild(active.element, domId0Element) , $setParent(active, f_HTMLPanel2) , $removeFromParent_0(f_HTMLPanel3) , $add_6(f_HTMLPanel2.children_0, f_HTMLPanel3) , domId1Element.parentNode.replaceChild(f_HTMLPanel3.element, domId1Element) , $setParent(f_HTMLPanel3, f_HTMLPanel2) , $removeFromParent_0(f_HTMLPanel5) , $add_6(f_HTMLPanel2.children_0, f_HTMLPanel5) , domId3Element.parentNode.replaceChild(f_HTMLPanel5.element, domId3Element) , $setParent(f_HTMLPanel5, f_HTMLPanel2) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1 = $DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$1(new DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$1, this$static) , $addDomHandler(nextButton, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1, ($clinit_75() , $clinit_75() , TYPE_0)) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2 = $DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$2(new DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$2, this$static) , $addDomHandler(previousButton, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2, TYPE_0) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames3 = $DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$3(new DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$3, this$static) , $addDomHandler(projectNameTextBox, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames3, ($clinit_79() , $clinit_79() , TYPE_1)) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames4 = $DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$4(new DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$4, this$static) , $addDomHandler(projectNameTextBox, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames4, ($clinit_105() , $clinit_105() , TYPE_3)) , this$static.active = active , this$static.baseDomainLabel = baseDomainLabel , this$static.baseProtocolLabel = baseProtocolLabel , this$static.error = error , this$static.projectNameTextBox = projectNameTextBox , this$static.subDomainLabel = subDomainLabel , $ensureInjected_9((!form_1 && (form_1 = new opus_gwt_management_console_client_deployer_DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$2) , form_1)) , $ensureInjected_8((!deployer_0 && (deployer_0 = new opus_gwt_management_console_client_deployer_DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$1) , deployer_0)) , f_SimplePanel1));
+  $initWidget(this$static, (!form_1 && (form_1 = new opus_gwt_management_console_client_deployer_DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$2) , !deployer_0 && (deployer_0 = new opus_gwt_management_console_client_deployer_DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$1) , domId0 = $createUniqueId($doc) , active = $TooltipPanel(new TooltipPanel) , domId1 = $createUniqueId($doc) , domId2 = $createUniqueId($doc) , f_HTMLPanel4 = $HTMLPanel(new HTMLPanel, '<h1>Deployment Options<\/h1>') , f_HTMLPanel3 = $HTMLPanel(new HTMLPanel, "<span id='" + domId2 + "'><\/span>") , domId3 = $createUniqueId($doc) , domId4 = $createUniqueId($doc) , f_HTMLPanel6 = $HTMLPanel(new HTMLPanel, '<h1>Deployment Location Options<\/h1>') , domId5 = $createUniqueId($doc) , domId6 = $createUniqueId($doc) , domId7 = $createUniqueId($doc) , domId8 = $createUniqueId($doc) , projectNameTextBox = $TextBox(new TextBox) , domId9 = $createUniqueId($doc) , error = $Label(new Label) , f_HTMLPanel9 = $HTMLPanel(new HTMLPanel, "<label class='G1t2xd59BX'>Deploy as:<\/label> <span id='" + domId8 + "'><\/span> <span id='" + domId9 + "'><\/span>") , f_HTMLPanel8 = $HTMLPanel(new HTMLPanel, "<span id='" + domId7 + "'><\/span>") , domId10 = $createUniqueId($doc) , domId11 = $createUniqueId($doc) , domId12 = $createUniqueId($doc) , baseDomainLabel = $Label(new Label) , domId13 = $createUniqueId($doc) , subDomainLabel = $Label(new Label) , domId14 = $createUniqueId($doc) , baseProtocolLabel = $Label(new Label) , f_HTMLPanel11 = $HTMLPanel(new HTMLPanel, "<label class='G1t2xd59BX'>Base URL:<\/label> <span id='" + domId12 + "'><\/span> <span id='" + domId13 + "'><\/span> <span id='" + domId14 + "'><\/span>") , f_HTMLPanel10 = $HTMLPanel(new HTMLPanel, "<span id='" + domId11 + "'><\/span>") , domId15 = $createUniqueId($doc) , domId16 = $createUniqueId($doc) , domId17 = $createUniqueId($doc) , debugCheckBox = $CheckBox(new CheckBox) , f_HTMLPanel13 = $HTMLPanel(new HTMLPanel, "<label class='G1t2xd59BX'>Debug Mode:<\/label> <span id='" + domId17 + "'><\/span>") , f_HTMLPanel12 = $HTMLPanel(new HTMLPanel, "<span id='" + domId16 + "'><\/span>") , domId18 = $createUniqueId($doc) , domId19 = $createUniqueId($doc) , domId20 = $createUniqueId($doc) , previousButton = $Button(new Button) , f_HTMLPanel15 = $HTMLPanel(new HTMLPanel, "<span id='" + domId20 + "'><\/span>") , domId21 = $createUniqueId($doc) , domId22 = $createUniqueId($doc) , nextButton = $Button(new Button) , f_HTMLPanel16 = $HTMLPanel(new HTMLPanel, "<span id='" + domId22 + "'><\/span>") , f_HTMLPanel14 = $HTMLPanel(new HTMLPanel, "<span id='" + domId19 + "'><\/span> <span id='" + domId21 + "'><\/span>") , f_HTMLPanel7 = $HTMLPanel(new HTMLPanel, "<span id='" + domId6 + "'><\/span> <span id='" + domId10 + "'><\/span> <span id='" + domId15 + "'><\/span> <span id='" + domId18 + "'><\/span>") , f_HTMLPanel5 = $HTMLPanel(new HTMLPanel, "<span id='" + domId4 + "'><\/span> <span id='" + domId5 + "'><\/span>") , f_HTMLPanel2 = $HTMLPanel(new HTMLPanel, "<span id='" + domId0 + "'><\/span> <span id='" + domId1 + "'><\/span> <span id='" + domId3 + "'><\/span>") , f_SimplePanel1 = $SimplePanel(new SimplePanel) , f_HTMLPanel4.element['className'] = 'G1t2xd59BW' , f_HTMLPanel3.element['className'] = 'G1t2xd59AW' , projectNameTextBox.element['className'] = 'G1t2xd59PV' , error.element['className'] = 'G1t2xd59PW' , f_HTMLPanel9.element['className'] = 'G1t2xd59AX' , f_HTMLPanel8.element['className'] = 'G1t2xd59CX' , baseDomainLabel.element['className'] = 'G1t2xd59JW' , subDomainLabel.element['className'] = 'G1t2xd59JW G1t2xd59LW' , baseProtocolLabel.element['className'] = 'G1t2xd59JW G1t2xd59HW' , f_HTMLPanel11.element['className'] = 'G1t2xd59AX' , f_HTMLPanel10.element['className'] = 'G1t2xd59CX' , debugCheckBox.setName('debug') , f_HTMLPanel13.element['className'] = 'G1t2xd59AX' , f_HTMLPanel12.element['className'] = 'G1t2xd59CX' , previousButton.element['className'] = 'G1t2xd59MW G1t2xd59EX' , $setInnerText_0(($clinit_29() , previousButton.element), '\xAB Previous') , f_HTMLPanel15.element['className'] = 'G1t2xd59BX' , nextButton.element['className'] = 'G1t2xd59MW' , $setInnerText_0(nextButton.element, 'Deploy Project') , f_HTMLPanel16.element['className'] = 'G1t2xd59BX' , f_HTMLPanel14.element['className'] = 'G1t2xd59CX' , f_HTMLPanel7.element['className'] = 'G1t2xd59DX' , f_HTMLPanel5.element['className'] = 'G1t2xd59OW' , $add_3(f_SimplePanel1, f_HTMLPanel2) , attachRecord0 = attachToDom(f_HTMLPanel2.element) , domId0Element = $doc.getElementById(domId0) , attachRecord1 = attachToDom(f_HTMLPanel3.element) , domId2Element = $doc.getElementById(domId2) , $detach(attachRecord1) , $removeFromParent_0(f_HTMLPanel4) , $add_6(f_HTMLPanel3.children_0, f_HTMLPanel4) , domId2Element.parentNode.replaceChild(f_HTMLPanel4.element, domId2Element) , $setParent(f_HTMLPanel4, f_HTMLPanel3) , domId1Element = $doc.getElementById(domId1) , attachRecord2 = attachToDom(f_HTMLPanel5.element) , domId4Element = $doc.getElementById(domId4) , attachRecord3 = attachToDom(f_HTMLPanel9.element) , domId8Element = $doc.getElementById(domId8) , domId9Element = $doc.getElementById(domId9) , $detach(attachRecord3) , $removeFromParent_0(projectNameTextBox) , $add_6(f_HTMLPanel9.children_0, projectNameTextBox) , domId8Element.parentNode.replaceChild(projectNameTextBox.element, domId8Element) , $setParent(projectNameTextBox, f_HTMLPanel9) , $removeFromParent_0(error) , $add_6(f_HTMLPanel9.children_0, error) , domId9Element.parentNode.replaceChild(error.element, domId9Element) , $setParent(error, f_HTMLPanel9) , attachRecord4 = attachToDom(f_HTMLPanel8.element) , domId7Element = $doc.getElementById(domId7) , $detach(attachRecord4) , $removeFromParent_0(f_HTMLPanel9) , $add_6(f_HTMLPanel8.children_0, f_HTMLPanel9) , domId7Element.parentNode.replaceChild(f_HTMLPanel9.element, domId7Element) , $setParent(f_HTMLPanel9, f_HTMLPanel8) , attachRecord5 = attachToDom(f_HTMLPanel7.element) , domId6Element = $doc.getElementById(domId6) , attachRecord6 = attachToDom(f_HTMLPanel11.element) , domId12Element = $doc.getElementById(domId12) , domId13Element = $doc.getElementById(domId13) , domId14Element = $doc.getElementById(domId14) , $detach(attachRecord6) , $removeFromParent_0(baseDomainLabel) , $add_6(f_HTMLPanel11.children_0, baseDomainLabel) , domId12Element.parentNode.replaceChild(baseDomainLabel.element, domId12Element) , $setParent(baseDomainLabel, f_HTMLPanel11) , $removeFromParent_0(subDomainLabel) , $add_6(f_HTMLPanel11.children_0, subDomainLabel) , domId13Element.parentNode.replaceChild(subDomainLabel.element, domId13Element) , $setParent(subDomainLabel, f_HTMLPanel11) , $removeFromParent_0(baseProtocolLabel) , $add_6(f_HTMLPanel11.children_0, baseProtocolLabel) , domId14Element.parentNode.replaceChild(baseProtocolLabel.element, domId14Element) , $setParent(baseProtocolLabel, f_HTMLPanel11) , attachRecord7 = attachToDom(f_HTMLPanel10.element) , domId11Element = $doc.getElementById(domId11) , $detach(attachRecord7) , $removeFromParent_0(f_HTMLPanel11) , $add_6(f_HTMLPanel10.children_0, f_HTMLPanel11) , domId11Element.parentNode.replaceChild(f_HTMLPanel11.element, domId11Element) , $setParent(f_HTMLPanel11, f_HTMLPanel10) , domId10Element = $doc.getElementById(domId10) , attachRecord8 = attachToDom(f_HTMLPanel13.element) , domId17Element = $doc.getElementById(domId17) , $detach(attachRecord8) , $removeFromParent_0(debugCheckBox) , $add_6(f_HTMLPanel13.children_0, debugCheckBox) , domId17Element.parentNode.replaceChild(debugCheckBox.element, domId17Element) , $setParent(debugCheckBox, f_HTMLPanel13) , attachRecord9 = attachToDom(f_HTMLPanel12.element) , domId16Element = $doc.getElementById(domId16) , $detach(attachRecord9) , $removeFromParent_0(f_HTMLPanel13) , $add_6(f_HTMLPanel12.children_0, f_HTMLPanel13) , domId16Element.parentNode.replaceChild(f_HTMLPanel13.element, domId16Element) , $setParent(f_HTMLPanel13, f_HTMLPanel12) , domId15Element = $doc.getElementById(domId15) , attachRecord10 = attachToDom(f_HTMLPanel15.element) , domId20Element = $doc.getElementById(domId20) , $detach(attachRecord10) , $removeFromParent_0(previousButton) , $add_6(f_HTMLPanel15.children_0, previousButton) , domId20Element.parentNode.replaceChild(previousButton.element, domId20Element) , $setParent(previousButton, f_HTMLPanel15) , attachRecord11 = attachToDom(f_HTMLPanel14.element) , domId19Element = $doc.getElementById(domId19) , attachRecord12 = attachToDom(f_HTMLPanel16.element) , domId22Element = $doc.getElementById(domId22) , $detach(attachRecord12) , $removeFromParent_0(nextButton) , $add_6(f_HTMLPanel16.children_0, nextButton) , domId22Element.parentNode.replaceChild(nextButton.element, domId22Element) , $setParent(nextButton, f_HTMLPanel16) , domId21Element = $doc.getElementById(domId21) , $detach(attachRecord11) , $removeFromParent_0(f_HTMLPanel15) , $add_6(f_HTMLPanel14.children_0, f_HTMLPanel15) , domId19Element.parentNode.replaceChild(f_HTMLPanel15.element, domId19Element) , $setParent(f_HTMLPanel15, f_HTMLPanel14) , $removeFromParent_0(f_HTMLPanel16) , $add_6(f_HTMLPanel14.children_0, f_HTMLPanel16) , domId21Element.parentNode.replaceChild(f_HTMLPanel16.element, domId21Element) , $setParent(f_HTMLPanel16, f_HTMLPanel14) , domId18Element = $doc.getElementById(domId18) , $detach(attachRecord5) , $removeFromParent_0(f_HTMLPanel8) , $add_6(f_HTMLPanel7.children_0, f_HTMLPanel8) , domId6Element.parentNode.replaceChild(f_HTMLPanel8.element, domId6Element) , $setParent(f_HTMLPanel8, f_HTMLPanel7) , $removeFromParent_0(f_HTMLPanel10) , $add_6(f_HTMLPanel7.children_0, f_HTMLPanel10) , domId10Element.parentNode.replaceChild(f_HTMLPanel10.element, domId10Element) , $setParent(f_HTMLPanel10, f_HTMLPanel7) , $removeFromParent_0(f_HTMLPanel12) , $add_6(f_HTMLPanel7.children_0, f_HTMLPanel12) , domId15Element.parentNode.replaceChild(f_HTMLPanel12.element, domId15Element) , $setParent(f_HTMLPanel12, f_HTMLPanel7) , $removeFromParent_0(f_HTMLPanel14) , $add_6(f_HTMLPanel7.children_0, f_HTMLPanel14) , domId18Element.parentNode.replaceChild(f_HTMLPanel14.element, domId18Element) , $setParent(f_HTMLPanel14, f_HTMLPanel7) , domId5Element = $doc.getElementById(domId5) , $detach(attachRecord2) , $removeFromParent_0(f_HTMLPanel6) , $add_6(f_HTMLPanel5.children_0, f_HTMLPanel6) , domId4Element.parentNode.replaceChild(f_HTMLPanel6.element, domId4Element) , $setParent(f_HTMLPanel6, f_HTMLPanel5) , $removeFromParent_0(f_HTMLPanel7) , $add_6(f_HTMLPanel5.children_0, f_HTMLPanel7) , domId5Element.parentNode.replaceChild(f_HTMLPanel7.element, domId5Element) , $setParent(f_HTMLPanel7, f_HTMLPanel5) , domId3Element = $doc.getElementById(domId3) , $detach(attachRecord0) , $removeFromParent_0(active) , $add_6(f_HTMLPanel2.children_0, active) , domId0Element.parentNode.replaceChild(active.element, domId0Element) , $setParent(active, f_HTMLPanel2) , $removeFromParent_0(f_HTMLPanel3) , $add_6(f_HTMLPanel2.children_0, f_HTMLPanel3) , domId1Element.parentNode.replaceChild(f_HTMLPanel3.element, domId1Element) , $setParent(f_HTMLPanel3, f_HTMLPanel2) , $removeFromParent_0(f_HTMLPanel5) , $add_6(f_HTMLPanel2.children_0, f_HTMLPanel5) , domId3Element.parentNode.replaceChild(f_HTMLPanel5.element, domId3Element) , $setParent(f_HTMLPanel5, f_HTMLPanel2) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1 = $DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$1(new DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$1, this$static) , $addDomHandler(nextButton, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1, ($clinit_75() , $clinit_75() , TYPE_0)) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2 = $DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$2(new DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$2, this$static) , $addDomHandler(previousButton, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2, TYPE_0) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames3 = $DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$3(new DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$3, this$static) , $addDomHandler(projectNameTextBox, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames3, ($clinit_79() , $clinit_79() , TYPE_1)) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames4 = $DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$4(new DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$4, this$static) , $addDomHandler(projectNameTextBox, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames4, ($clinit_105() , $clinit_105() , TYPE_3)) , this$static.active = active , this$static.baseDomainLabel = baseDomainLabel , this$static.baseProtocolLabel = baseProtocolLabel , this$static.debugCheckBox = debugCheckBox , this$static.error = error , this$static.projectNameTextBox = projectNameTextBox , this$static.subDomainLabel = subDomainLabel , $ensureInjected_9((!form_1 && (form_1 = new opus_gwt_management_console_client_deployer_DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$2) , form_1)) , $ensureInjected_8((!deployer_0 && (deployer_0 = new opus_gwt_management_console_client_deployer_DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$1) , deployer_0)) , f_SimplePanel1));
   this$static.eventBus = eventBus;
+  this$static.projectName = '';
   $setInnerText_0(this$static.baseProtocolLabel.element, $split($wnd.deployerBaseURL, '//', 0)[0] + '//');
   $setInnerText_0(this$static.baseDomainLabel.element, $split($wnd.deployerBaseURL, '//', 0)[1]);
   this$static.active.element.style['visibility'] = 'hidden';
   $setInnerText_0(this$static.error.element, '');
   return this$static;
+}
+
+function $getPostData_0(this$static){
+  var postData;
+  postData = $StringBuffer(new StringBuffer);
+  postData.impl.string += '&debug=';
+  $append_1(postData, $getValue_1(this$static.debugCheckBox));
+  return postData.impl.string;
 }
 
 function $getTooltipPosition_0(textbox){
@@ -11026,7 +11092,7 @@ function $getTooltipPosition_0(textbox){
 
 function $handleNextButton_1(this$static){
   if ($validateFields(this$static)) {
-    $getPropertyString(this$static.projectNameTextBox.element, 'value');
+    this$static.projectName = $getPropertyString(this$static.projectNameTextBox.element, 'value');
     $fireEvent(this$static.eventBus, ($clinit_506() , new DeployProjectEvent));
   }
 }
@@ -11092,8 +11158,10 @@ _.typeId$ = 187;
 _.active = null;
 _.baseDomainLabel = null;
 _.baseProtocolLabel = null;
+_.debugCheckBox = null;
 _.error = null;
 _.eventBus = null;
+_.projectName = null;
 _.projectNameTextBox = null;
 _.subDomainLabel = null;
 function $DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl$1(this$static, val$owner){
@@ -11240,10 +11308,30 @@ function $ProjectDeployerController(this$static, eventBus){
 }
 
 function $deployProject(this$static){
-  var $e0, builder, formBuilder, left, top_0;
+  var $e0, appNames, apptypes, builder, formBuilder, i, left, paths, top_0, regexp;
+  this$static.createdProjectName = this$static.deploymentOptionsPanel.projectName;
+  paths = $getAppPaths(this$static.appBrowserPanel);
+  apptypes = $getAppTypes(this$static.appBrowserPanel);
+  appNames = $getAppNames(this$static.appBrowserPanel);
   formBuilder = $StringBuffer(new StringBuffer);
   formBuilder.impl.string += 'csrfmiddlewaretoken=';
-  $append_0(formBuilder, encodeComponent($wnd.csrftoken));
+  $append_2(formBuilder, encodeComponent($wnd.csrftoken));
+  formBuilder.impl.string += '&form-TOTAL_FORMS=';
+  $append_2(formBuilder, encodeComponent('' + paths.size));
+  formBuilder.impl.string += '&form-INITIAL_FORMS=';
+  $append_2(formBuilder, (throwIfNull('decodedURLComponent', '0') , regexp = /%20/g , encodeURIComponent('0').replace(regexp, '+')));
+  formBuilder.impl.string += '&form-MAX_NUM_FORMS=';
+  for (i = 0; i < paths.size; ++i) {
+    formBuilder.impl.string += '&form-' + i + '-apptype=';
+    $append_2(formBuilder, dynamicCast((checkIndex(i, apptypes.size) , apptypes.array[i]), 1));
+    formBuilder.impl.string += '&form-' + i + '-apppath=';
+    $append_2(formBuilder, dynamicCast((checkIndex(i, paths.size) , paths.array[i]), 1));
+    formBuilder.impl.string += '&form-' + i + '-appname=';
+    $append_2(formBuilder, dynamicCast((checkIndex(i, appNames.size) , appNames.array[i]), 1));
+  }
+  $append_2(formBuilder, $getPostData_0(this$static.deploymentOptionsPanel));
+  $append_2(formBuilder, $getPostData_1(this$static.projectOptionsPanel));
+  $append_2(formBuilder, $getPostData(this$static.databaseOptionsPanel));
   builder = $RequestBuilder(new RequestBuilder, ($clinit_136() , POST), '/deployments/' + this$static.createdProjectName + '/');
   throwIfEmptyOrNull('header', 'Content-type');
   throwIfEmptyOrNull('value', 'application/x-www-form-urlencoded');
@@ -11426,6 +11514,20 @@ function $emailTextBoxOnFocus(this$static){
   }
 }
 
+function $getPostData_1(this$static){
+  var postData;
+  postData = $StringBuffer(new StringBuffer);
+  postData.impl.string += '&superusername=';
+  $append_2(postData, encodeComponent($getPropertyString(this$static.usernameTextBox.element, 'value')));
+  postData.impl.string += '&superpassword=';
+  $append_2(postData, encodeComponent($getPropertyString(this$static.passwordTextBox.element, 'value')));
+  postData.impl.string += '&superemail=';
+  $append_2(postData, encodeComponent($getPropertyString(this$static.emailTextBox.element, 'value')));
+  postData.impl.string += '&idprovider=';
+  $append_2(postData, encodeComponent($getValue_2(this$static.idProvider, this$static.idProvider.element.selectedIndex)));
+  return postData.impl.string;
+}
+
 function $getTooltipPosition_1(textbox){
   var pos;
   pos = initDim(_3I_classLit, 242, -1, 2, 1);
@@ -11572,6 +11674,8 @@ function $usernameTextBoxOnFocus(this$static){
   $show(this$static.active);
 }
 
+--></script>
+<script><!--
 function $validateFields_0(this$static){
   if ($getPropertyString(this$static.usernameTextBox.element, 'value').length) {
     if (!$getPropertyString(this$static.passwordTextBox.element, 'value').length) {
@@ -11605,8 +11709,6 @@ _.emailTextBox = null;
 _.eventBus = null;
 _.idProvider = null;
 _.passwordConfirmTextBox = null;
---></script>
-<script><!--
 _.passwordError = null;
 _.passwordTextBox = null;
 _.usernameTextBox = null;
@@ -12044,10 +12146,10 @@ function opus_gwt_management_console_client_deployer_ProjectDeployerController_a
 _ = opus_gwt_management_console_client_deployer_ProjectDeployerController_applicationDeployerUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$1.prototype = new Object_0;
 _.getClass$ = getClass_302;
 _.typeId$ = 0;
-_.injected = false;
-var deployer_1 = null, form_2 = null, style_12 = null;
 --></script>
 <script><!--
+_.injected = false;
+var deployer_1 = null, form_2 = null, style_12 = null;
 function $ensureInjected_12(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
@@ -12776,12 +12878,12 @@ function $NavigationPanel$1(this$static, this$0){
   return this$static;
 }
 
+--></script>
+<script><!--
 function getClass_323(){
   return Lopus_gwt_management_console_client_navigation_NavigationPanel$1_2_classLit;
 }
 
---></script>
-<script><!--
 function onAuthentication_0(event_0){
   event_0.authenticated_0 && ($setInnerText_0(($clinit_29() , this.this$0.loggedInUserButton.element), event_0.username_0) , undefined);
 }

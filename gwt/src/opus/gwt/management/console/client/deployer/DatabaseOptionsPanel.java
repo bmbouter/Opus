@@ -32,6 +32,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -132,6 +133,21 @@ public class DatabaseOptionsPanel extends Composite {
 	
 	public void setFocus(){
 		dbengineListBox.setFocus(true);
+	}
+	
+	public String getPostData(){
+		StringBuffer postData = new StringBuffer();
+		postData.append("&dbengine=");
+		postData.append( URL.encodeComponent(dbengineListBox.getValue(dbengineListBox.getSelectedIndex())));
+		postData.append("&dbname=");
+		postData.append( URL.encodeComponent(nameTextBox.getValue()));
+		postData.append("&dbpassword=");
+		postData.append( URL.encodeComponent(passwordTextBox.getValue()));
+		postData.append("&dbhost=");
+		postData.append( URL.encodeComponent(hostTextBox.getValue()));
+		postData.append("&dbport=");
+		postData.append( URL.encodeComponent(portTextBox.getValue()));
+		return postData.toString();
 	}
 	
 	@UiHandler("dbengineListBox")
