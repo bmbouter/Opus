@@ -38,7 +38,7 @@ public class ProjectSettingsPanel extends Composite {
 	
 	private final String optionsUrl = "/deployments/projectName/confapps";
 	private String projectName;
-	private JSVariableHandler JSVarHandler;
+	private JSVariableHandler jsVarHandler;
 	private boolean active;
 	private ManagementConsoleController managementCon;
 	private ProjectManagerController projectManagerController;
@@ -56,7 +56,7 @@ public class ProjectSettingsPanel extends Composite {
 	public ProjectSettingsPanel(ProjectManagerController projectManagerController) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.projectName = "";
-		this.JSVarHandler = new JSVariableHandler();
+		this.jsVarHandler = new JSVariableHandler();
 		this.projectManagerController = projectManagerController;
 		this.optionsForm = new FormPanel();
 		this.textboxes = new ArrayList<String>();
@@ -64,12 +64,12 @@ public class ProjectSettingsPanel extends Composite {
 	}
 	
 	public void setupOptionsForm(){
-		optionsForm.setAction((JSVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
+		optionsForm.setAction((jsVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
 		optionsForm.setMethod(FormPanel.METHOD_POST);
 		optionsForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 			public void onSubmitComplete(SubmitCompleteEvent event) {
 		        //managementCon.onDeployNewProject(projectName);
-		        RootPanel.detachNow(optionsForm);
+		        //RootPanel.detachNow(optionsForm);
 		    }
 			});
 	}
@@ -204,9 +204,9 @@ public class ProjectSettingsPanel extends Composite {
 	void handleSaveButton(ClickEvent event){
 		if(validateForm()){
 			//SaveButton.getElement().setAttribute("name", "Save");
-			formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
+			formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", jsVarHandler.getCSRFTokenURL()));
 			optionsForm.add(formContainer);
-			RootPanel.get().add(optionsForm);
+			//RootPanel.get().add(optionsForm);
 			optionsForm.submit();
 		}
 	}
@@ -228,7 +228,7 @@ public class ProjectSettingsPanel extends Composite {
 			formContainer.setWidget(formContainer.getRowCount(), 1, activeField);
 			optionsForm.add(formContainer);
 	
-			RootPanel.get().add(optionsForm);
+			//RootPanel.get().add(optionsForm);
 			optionsForm.submit();
 		}
 	}

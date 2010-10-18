@@ -17,16 +17,13 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style src="resources/PanelManager.css" field="managerStyle" type="opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle"/>
-	<ui:style src="resources/ProjectManager.css" field="style" />
-	<g:ScrollPanel ui:field='iconScrollPanel' styleName="{style.managerDeckPanel}">
-		<g:HTMLPanel>
-			<g:HTMLPanel styleName="{style.header}">
-				<g:HTMLPanel styleName="{style.insetType}">
-					<h1>Dashboard</h1>
-				</g:HTMLPanel>
-			</g:HTMLPanel>
-			<g:FlowPanel ui:field="projectIconsFlowPanel" />
-		</g:HTMLPanel>
+	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle"/>
+	<ui:with field="res" type="opus.gwt.management.console.client.resources.images.OpusImages" />
+	
+	<g:ScrollPanel ui:field='iconScrollPanel'>
+		<g:FlowPanel ui:field="projectIconsFlowPanel">
+			
+		</g:FlowPanel>
+
 	</g:ScrollPanel>
 </ui:UiBinder> 

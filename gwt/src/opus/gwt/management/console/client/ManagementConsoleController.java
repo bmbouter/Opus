@@ -27,7 +27,7 @@ import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
-import opus.gwt.management.console.client.resources.PanelManagerCss.PanelManagerStyle;
+import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
@@ -53,7 +53,7 @@ public class ManagementConsoleController extends Composite {
 	@UiField LayoutPanel contentLayoutPanel;
 	@UiField NavigationPanel navigationPanel;
 	@UiField BreadCrumbsPanel breadCrumbsPanel;
-	@UiField PanelManagerStyle style;
+	@UiField ManagementConsoleControllerStyle style;
 	
 	public ManagementConsoleController(HandlerManager eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
