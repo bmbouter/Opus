@@ -7,5 +7,7 @@ public class BreadCrumbsPanelCss extends Widget {
 	public interface BreadCrumbsPanelStyle extends CssResource {
 		String inactive();
 		String active();
+		String crumbFlowPanel();
+		String crumbArrow();
 	}
 }
