@@ -24,7 +24,7 @@ import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -40,14 +40,14 @@ public class DashboardPanel extends Composite {
 	
 	private JavaScriptObject appSettings;
 	private boolean active;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 
 	@UiField Label dbnameLabel;
 	@UiField Label dbengineLabel;
 	@UiField Label activeLabel;
 	@UiField FlowPanel urlsFlowPanel;
 	
-	public DashboardPanel(HandlerManager eventBus) {
+	public DashboardPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		registerEvents();

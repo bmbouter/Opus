@@ -30,7 +30,7 @@ import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -44,7 +44,7 @@ public class ManagementConsoleController extends Composite {
 	private static ManagementConsoleUiBinder uiBinder = GWT.create(ManagementConsoleUiBinder.class);
 	interface ManagementConsoleUiBinder extends UiBinder<Widget, ManagementConsoleController> {}
 	
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	private AuthenticationPanel authenticationPanel;
 	private ProjectDeployerController projectDeployerController;
 	private ProjectManagerController projectManagerController;
@@ -55,7 +55,7 @@ public class ManagementConsoleController extends Composite {
 	@UiField BreadCrumbsPanel breadCrumbsPanel;
 	@UiField ManagementConsoleControllerStyle style;
 	
-	public ManagementConsoleController(HandlerManager eventBus) {
+	public ManagementConsoleController(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
 		this.eventBus = eventBus;

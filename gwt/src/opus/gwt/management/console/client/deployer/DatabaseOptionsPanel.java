@@ -31,7 +31,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -53,7 +53,7 @@ public class DatabaseOptionsPanel extends Composite {
 	private HashMap<String, String> dbOptions;
 	private boolean optionsFlag;
 	private boolean postgresAutoConfig;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	
 	@UiField HTMLPanel dbFieldsPanel;
 	@UiField TextBox nameTextBox;
@@ -67,7 +67,7 @@ public class DatabaseOptionsPanel extends Composite {
 	@UiField TooltipPanel active;
 	@UiField ProjectDeployerStyle deployer;
 	
-	public DatabaseOptionsPanel(HandlerManager eventBus) {
+	public DatabaseOptionsPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		postgresAutoConfig = false;

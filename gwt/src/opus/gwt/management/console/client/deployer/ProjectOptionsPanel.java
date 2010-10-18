@@ -26,7 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -46,7 +46,7 @@ public class ProjectOptionsPanel extends Composite {
 	private static BuildProjectPage2UiBinder uiBinder = GWT.create(BuildProjectPage2UiBinder.class);
 	interface BuildProjectPage2UiBinder extends UiBinder<Widget, ProjectOptionsPanel> {}
 	
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	
 	@UiField TextBox usernameTextBox;
 	@UiField TextBox emailTextBox;
@@ -61,7 +61,7 @@ public class ProjectOptionsPanel extends Composite {
 	@UiField Label passwordError;
 	@UiField Label emailError;
 	
-	public ProjectOptionsPanel(HandlerManager eventBus) {
+	public ProjectOptionsPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		setTooltipInitialState();

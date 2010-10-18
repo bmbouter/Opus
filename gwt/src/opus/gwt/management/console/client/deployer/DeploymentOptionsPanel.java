@@ -26,7 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -43,7 +43,7 @@ public class DeploymentOptionsPanel extends Composite {
 	interface DeploymentOptionsBuildProjectUiBinder extends UiBinder<Widget, DeploymentOptionsPanel> {}
 
 	private JSVariableHandler JSVarHandler;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	private String projectName;
 	
 	@UiField Button nextButton;
@@ -57,7 +57,7 @@ public class DeploymentOptionsPanel extends Composite {
 	@UiField CheckBox debugCheckBox;
 	@UiField Label error;
 
-	public DeploymentOptionsPanel(HandlerManager eventBus) {
+	public DeploymentOptionsPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		projectName = "";

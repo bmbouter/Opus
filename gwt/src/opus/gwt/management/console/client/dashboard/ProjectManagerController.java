@@ -22,7 +22,7 @@ import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -38,13 +38,13 @@ public class ProjectManagerController extends Composite {
 	private DeleteProjectPanel deleteProjectPanel;
 	private ManageApps manageApps;
 	private ProjectSettingsPanel projectSettingsPanel;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	private String projectName;
 	
 	@UiField ProjectManagerStyle style;
 	@UiField DeckPanel managerDeckPanel;
 	
-	public ProjectManagerController(HandlerManager eventBus, String projectName){
+	public ProjectManagerController(EventBus eventBus, String projectName){
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		this.projectName = projectName;

@@ -29,7 +29,7 @@ import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDe
 import opus.gwt.management.console.client.resources.images.OpusImages;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -59,7 +59,7 @@ public class ProjectDeployerController extends Composite {
 	private DatabaseOptionsPanel databaseOptionsPanel;
 	private DeploymentOptionsPanel deploymentOptionsPanel;
 	private AppBrowserPanel appBrowserPanel;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	private String createdProjectName;
 	private PopupPanel loadingPopup;
 	private JSVariableHandler jsVarHandler;
@@ -67,7 +67,7 @@ public class ProjectDeployerController extends Composite {
 	@UiField DeckPanel deployerDeckPanel;
 	@UiField ProjectDeployerStyle style;
 	
-	public ProjectDeployerController(HandlerManager eventBus) {
+	public ProjectDeployerController(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.createdProjectName = "";
 		this.eventBus = eventBus;

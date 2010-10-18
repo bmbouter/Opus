@@ -17,7 +17,7 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -41,7 +41,7 @@ public class NavigationPanel extends Composite {
 	
 	private int projectCount;
 	private String deletedProject;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	private PopupPanel projectListPopup;
 	
 	@UiField HTMLPanel buttonHTMLPanel;
@@ -58,7 +58,7 @@ public class NavigationPanel extends Composite {
 		setupLogoutForm();
 	}
 	
-	public void setEventBus(HandlerManager eventBus){
+	public void setEventBus(EventBus eventBus){
 		this.eventBus = eventBus;
 		registerHandlers();
 	}

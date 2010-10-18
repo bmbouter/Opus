@@ -29,6 +29,7 @@ import opus.gwt.management.console.client.event.UpdateVersionEvent;
 import opus.gwt.management.console.client.event.UserInfoEvent;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.URL;
 
@@ -44,15 +45,15 @@ public class ServerCommunicator {
 	
 	private int requestId;
 	private HashMap<Integer, String> queryTypes;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	private JSVariableHandler JSvarHandler;
 	private HashMap<String, String> URLS;
 	
-	public ServerCommunicator(HandlerManager eventBus) {
+	public ServerCommunicator(ClientFactory clientFactory) {
 		this.URLS = new HashMap<String, String>();
 		this.queryTypes = new HashMap<Integer, String>();
 		this.requestId = 0;
-		this.eventBus = eventBus;
+		this.eventBus = clientFactory.getEventBus();
 		JSvarHandler = new JSVariableHandler();
 		setupURLS();
 		registerEvents();

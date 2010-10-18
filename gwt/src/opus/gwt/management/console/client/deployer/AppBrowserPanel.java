@@ -39,7 +39,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -71,7 +71,7 @@ public class AppBrowserPanel extends Composite {
 	private JsArray<Application> applicationData;
 	private AppIcon currentSelection;
 	private ArrayList<AppIcon> deployList;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	private HashMap<String,AppIcon> IconMap;
 	private HashMap<String,AppIcon> DeployListMap;
 	private HashMap<String,AppIcon> FeaturedIconMap;
@@ -88,7 +88,7 @@ public class AppBrowserPanel extends Composite {
 	@UiField AppBrowserStyle style;
 	
 	
-	public AppBrowserPanel(HandlerManager eventBus) {
+	public AppBrowserPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.featuredListLoaded = false;
 		this.gridPopulationDelayed = false;

@@ -9,7 +9,7 @@ import opus.gwt.management.console.client.resources.BreadCrumbsPanelCss.BreadCru
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
@@ -24,7 +24,7 @@ public class BreadCrumbsPanel extends Composite {
 	private static BreadCrumbsUiBinder uiBinder = GWT.create(BreadCrumbsUiBinder.class);
 	interface BreadCrumbsUiBinder extends UiBinder<Widget, BreadCrumbsPanel> {}
 	
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	private HTML activeCrumb;
 	private HashMap<String, HTML> breadCrumbLabels;
 	
@@ -37,7 +37,7 @@ public class BreadCrumbsPanel extends Composite {
 		breadCrumbLabels = new HashMap<String, HTML>();	
 	}
 
-	public void setEventBus(HandlerManager eventBus){
+	public void setEventBus(EventBus eventBus){
 		this.eventBus = eventBus;
 		registerHandlers();
 	}

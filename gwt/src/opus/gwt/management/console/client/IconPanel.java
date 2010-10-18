@@ -33,7 +33,7 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -50,7 +50,7 @@ public class IconPanel extends Composite {
 	interface IconPanelUiBinder extends UiBinder<Widget, IconPanel> {}
 	
 	private HashMap<String, Integer> iconMap;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	
 	@UiField ScrollPanel iconScrollPanel;
 	@UiField FlowPanel projectIconsFlowPanel;
@@ -58,7 +58,7 @@ public class IconPanel extends Composite {
 	@UiField OpusImages res;
 
 	
-	public IconPanel(HandlerManager eventBus) {
+	public IconPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		iconMap = new HashMap<String, Integer>();
