@@ -97,6 +97,7 @@ public class ManagementConsoleController extends Composite {
 				new UpdateProjectsEventHandler(){
 					public void onUpdateProjects(UpdateProjectsEvent event){
 						if( onStartUp ){
+							onStartUp = false;
 							if( event.getProjects().length() == 0 ){
 								showDeployer();
 							} else {
