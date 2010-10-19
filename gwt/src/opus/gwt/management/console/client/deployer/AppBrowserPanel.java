@@ -43,6 +43,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -153,11 +154,15 @@ public class AppBrowserPanel extends Composite {
 					String type = applications.get(i).getType();
 					String appName = applications.get(i).getAppName();
 					
+					Window.alert(iconPath);
+					
 					if( iconPath.equals("") ){
 						iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";
 					} else if( iconPath.split("//").length < 2  ) {
 						iconPath = JSVarHandler.getCommunityBaseURL() + iconPath;
 					}
+					
+					Window.alert(iconPath);
 
 					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path, type, appName);					
 					

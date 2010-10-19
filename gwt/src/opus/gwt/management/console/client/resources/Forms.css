@@ -2,14 +2,16 @@
 	font-size: 1.5em;
 	margin: 0px 0px 6px 0px;
 	padding: 0px 10px 2px 0px;
-	width: 96%;
+	width: 94%;
 	border-bottom: 2px solid #444444;
 }
 
 .content h2 {
-	font-size: 1.2em;
-	margin: 0px;
-	padding: 0px;
+	font-size: 1.5em;
+	margin: 50px 0 0 0;
+	padding: 0px 10px 0px 0px;
+	width: 94%;
+	border-bottom: 2px solid #444444;
 }
 
 select {
@@ -17,28 +19,35 @@ select {
 }
 
 .content {
-	padding: 0px 0px 0px 10px;
+	padding: 20px 0px 0px 30px;
 	width: 100%;
 }
 
 .formWrapper {
-	padding: 20px 20px 0px 0px;
-	width: 600px;
+	padding: 20px 20px 70px 0px;
+	width: 94%;
 	height: auto;
 	float: left;
 }
 
 .formWrapper .fieldWrapper {
-	width: 500px;
-	height: 1.5em;
-	margin: 0px 0px 10px 10px;
+	width: 94%;
+	height: auto;
+	margin: 0px 0px 5px 10px;
 	float: left;
 }
 
 .formWrapper .fieldLabel {
 	width: 10em;
-	margin: 0px 0px 0px 10px;
+	margin: 0px 0px 0px 5px;
 	text-align: right;
+	float: left;
+}
+
+.formWrapper .buttonWrapper {
+	width: 500px;
+	height: auto;
+	margin: 70px 0px 10px 10px;
 	float: left;
 }
 

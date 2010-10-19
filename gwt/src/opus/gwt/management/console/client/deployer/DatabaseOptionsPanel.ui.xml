@@ -68,7 +68,7 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{form.fieldWrapper}">
+					<g:HTMLPanel styleName="{form.buttonWrapper}">
 						<g:HTMLPanel styleName="{form.fieldLabel}">
 							<g:Button ui:field="previousButton" text="&laquo; Previous" styleName="{form.button} {form.right}"/>
 						</g:HTMLPanel>

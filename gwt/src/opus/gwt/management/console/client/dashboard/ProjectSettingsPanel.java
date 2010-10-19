@@ -60,6 +60,11 @@ public class ProjectSettingsPanel extends Composite {
 		this.optionsForm = new FormPanel();
 		this.textboxes = new ArrayList<String>();
 		setupOptionsForm();
+		registerHandlers();
+	}
+	
+	private void registerHandlers(){
+		
 	}
 	
 	public void setupOptionsForm(){

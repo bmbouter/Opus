@@ -62,16 +62,18 @@
 							<g:Label ui:field="emailError" styleName="{form.error}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{form.fieldWrapper}">
-						<h2>How your users will authenticate</h2>
-					</g:HTMLPanel>
+				</g:HTMLPanel>
+				<g:HTMLPanel>
+					<h2>How your users will authenticate</h2>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{form.formWrapper}">
 					<g:HTMLPanel styleName="{form.fieldWrapper}">
 						<g:HTMLPanel styleName="{form.field}">
 							<label class="{form.fieldLabel}">Identity Provider:</label>
 							<g:ListBox name="idprovider" ui:field="idProvider" styleName="{form.fieldLabel}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{form.fieldWrapper}">
+					<g:HTMLPanel styleName="{form.buttonWrapper}">
 						<g:HTMLPanel styleName="{form.fieldLabel}">
 							<g:Button ui:field="previousButton" text="&laquo; Previous" styleName="{form.button} {form.right}"/>
 						</g:HTMLPanel>
