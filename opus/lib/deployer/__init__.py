@@ -91,6 +91,32 @@ class ProjectDeployer(object):
         self.config['OPUS_SECURE_UPLOADS'] = os.path.join(self.projectdir, "opus_secure_uploads/")
         self.config.save()
 
+        # Set a new manage.py with appropriate paths
+        manage = """#!/usr/bin/env python
+from django.core.management import execute_from_command_line
+
+import os, os.path
+import sys
+projectpath = {projectdir!r}
+sys.path.append(projectpath)
+sys.path.append({opuspath!r})
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+os.environ['OPUS_SETTINGS_FILE'] = os.path.join(projectpath, 'opussettings.json')
+try:
+    open(os.path.join(projectpath, "settings.py"), 'r')
+except IOError, e:
+    sys.stderr.write("Error: Can't open the file 'settings.py' in %r.\\n" % projectpath)
+    sys.stderr.write(str(e)+'\\n')
+    sys.exit(1)
+
+if __name__ == "__main__":
+    execute_from_command_line()
+"""
+        with open(os.path.join(self.projectdir, "manage.py"), 'w') as manageout:
+            manageout.write(manage.format(
+                projectdir=self.projectdir,
+                opuspath=os.path.dirname(opus.__path__[0])))
+        
 
     def configure_database(self, engine, *args):
         """Configure the Django database
