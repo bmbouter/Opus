@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0RC1";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = 'A45DCCC34AB68E7154E2909D07237D32';
+var $strongName = '1AF4001190E7217930C392ABB6D2F314';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -2446,6 +2446,12 @@ function encodeComponent(decodedURLComponent){
   return throwIfNull('decodedURLComponent', decodedURLComponent) , regexp = /%20/g , encodeURIComponent(decodedURLComponent).replace(regexp, '+');
 }
 
+function encodeQueryString(decodedURLComponent){
+  var regexp;
+  throwIfNull('decodedURLComponent', decodedURLComponent);
+  return regexp = /%20/g , encodeURIComponent(decodedURLComponent).replace(regexp, '+');
+}
+
 function AutoDirectionHandler_0(){
 }
 
@@ -3351,13 +3357,13 @@ function CommandExecutor$1_0(this$0){
 function CommandExecutor$1(){
 }
 
+--></script>
+<script><!--
 _ = CommandExecutor$1_0.prototype = CommandExecutor$1.prototype = new Timer;
 _.getClass$ = function getClass_94(){
   return Lcom_google_gwt_user_client_CommandExecutor$1_2_classLit;
 }
 ;
---></script>
-<script><!--
 _.run = function run_1(){
   if (!this.this$0.executing) {
     return;
@@ -4478,14 +4484,14 @@ function AttachDetachException(){
 }
 
 _ = AttachDetachException_0.prototype = AttachDetachException.prototype = new UmbrellaException;
+--></script>
+<script><!--
 _.getClass$ = function getClass_111(){
   return Lcom_google_gwt_user_client_ui_AttachDetachException_2_classLit;
 }
 ;
 _.castableTypeMap$ = {3:1, 17:1, 55:1, 64:1};
 var attachCommand, detachCommand;
---></script>
-<script><!--
 function AttachDetachException$1_0(){
 }
 
@@ -5469,6 +5475,8 @@ function FormPanel$1(){
 }
 
 _ = FormPanel$1_0.prototype = FormPanel$1.prototype = new Object_0;
+--></script>
+<script><!--
 _.execute = function execute_6(){
   $fireEvent_2(this.this$0, new FormPanel$SubmitCompleteEvent_0($getContents(this.this$0.synthesizedFrame)));
 }
@@ -5479,8 +5487,6 @@ _.getClass$ = function getClass_136(){
 ;
 _.castableTypeMap$ = {25:1};
 _.this$0 = null;
---></script>
-<script><!--
 function FormPanel$SubmitCompleteEvent_0(){
 }
 
@@ -6473,12 +6479,12 @@ function RadioButton(){
 }
 
 _ = RadioButton_0.prototype = RadioButton.prototype = new CheckBox;
+--></script>
+<script><!--
 _.getClass$ = function getClass_165(){
   return Lcom_google_gwt_user_client_ui_RadioButton_2_classLit;
 }
 ;
---></script>
-<script><!--
 _.onBrowserEvent = function onBrowserEvent_3(event_0){
   var target;
   switch ($eventGetTypeInt(event_0.type)) {
@@ -7651,6 +7657,8 @@ _.toString$ = function toString_13(){
 }
 ;
 _.castableTypeMap$ = {56:1};
+--></script>
+<script><!--
 function UnsupportedOperationException_0(message){
   $fillInStackTrace();
   this.detailMessage = message;
@@ -7659,8 +7667,6 @@ function UnsupportedOperationException_0(message){
 function UnsupportedOperationException(){
 }
 
---></script>
-<script><!--
 _ = UnsupportedOperationException_0.prototype = UnsupportedOperationException.prototype = new RuntimeException;
 _.getClass$ = function getClass_199(){
   return Ljava_lang_UnsupportedOperationException_2_classLit;
@@ -9152,7 +9158,7 @@ function $ensureInjected_0(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_65();
-    $push_0(toInject, '.GAN2ORTCOG{min-height:600px;min-width:1000px;}.GAN2ORTCIG{background:url(body-bg.png) 0 225px repeat-x, #f0f0f0;}.GAN2ORTCHG{background:white;margin:1em auto;width:90%;padding:0;}.GAN2ORTCJG{box-shadow:10px 10px 10px white;-webkit-box-shadow:10px 10px 10px white;}.GAN2ORTCCH{background:black;border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;border-bottom:1px solid gray;}.GAN2ORTCPG{cursor:pointer;cursot:hand;background:black;border:none;color:white;float:left;border-right:1px solid gray;margin-left:0.75%;height:100%;}.GAN2ORTCAH{cursor:pointer;cursot:hand;background:white;border:none;color:black;float:left;border-top:1px solid gray;border-left:1px solid gray;border-right:1px solid gray;border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;margin-left:0.65%;height:100%;}.GAN2ORTCBH{cursor:pointer;cursot:hand;background:black;border:none;color:white;float:left;height:100%;}.GAN2ORTCCG{background:black;border:none;border-right:1px solid gray;color:orange;margin-right:0.2%;height:100%;float:right;}.GAN2ORTCOF{cursor:pointer;cursot:hand;background:black;border:none;color:white;margin-right:0.4%;height:100%;font-family:"Droid Serif";float:right;border:none;}.GAN2ORTCAG{border-left:1px solid gray;border-right:1px solid gray;border-bottom:1px solid gray;background:white;-moz-border-radius:0 5px 5px 5px;border-radius:0 5px 5px 5px;padding:0.5% 0.5% 0.5% 0.5%;}.GAN2ORTCKG{color:black;text-align:center;border-bottom:1px solid gray;width:90%;margin-right:5%;margin-left:5%;cursor:pointer;cursor:hand;}.GAN2ORTCLG{color:white;text-align:center;border-bottom:1px solid gray;width:90%;margin-right:5%;margin-left:5%;cursor:pointer;cursor:hand;background:orange;}.GAN2ORTCBG{border-bottom:none;}.GAN2ORTCFG{color:black;margin:15% 0 0 30%;}.GAN2ORTCEG{float:left;color:orange;font-size:1.25em;}.GAN2ORTCGG{float:left;color:black;}.GAN2ORTCDG{width:8%;margin:0 0 0 5.25%;border-radius:5px;border:#f08000;box-shadow:2px 2px 10px #b86200;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F08000), to(#F08000), color-stop(.5,#B86200));background:-moz-linear-gradient(0% 0% 90deg, #F08000, #F08000, #B86200 50%);}.GAN2ORTCMG{color:black;text-align:center;margin:2%;cursor:pointer;cursor:hand;float:left;}.GAN2ORTCNG{color:white;text-align:center;margin:2%;cursor:pointer;cursor:hand;background:gray;float:left;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;}');
+    $push_0(toInject, '.GAN2ORTCOG{min-height:600px;min-width:1000px;}.GAN2ORTCIG{background:url(body-bg.png) 0 225px repeat-x, #f0f0f0;}.GAN2ORTCHG{background:white;margin:1em auto;width:80%;padding:0;}.GAN2ORTCJG{box-shadow:10px 10px 10px white;-webkit-box-shadow:10px 10px 10px white;}.GAN2ORTCCH{background:black;border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;border-bottom:1px solid gray;}.GAN2ORTCPG{cursor:pointer;cursot:hand;background:black;border:none;color:white;float:left;border-right:1px solid gray;margin-left:0.75%;height:100%;}.GAN2ORTCAH{cursor:pointer;cursot:hand;background:white;border:none;color:black;float:left;border-top:1px solid gray;border-left:1px solid gray;border-right:1px solid gray;border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;margin-left:0.65%;height:100%;}.GAN2ORTCBH{cursor:pointer;cursot:hand;background:black;border:none;color:white;float:left;height:100%;}.GAN2ORTCCG{background:black;border:none;border-right:1px solid gray;color:orange;margin-right:0.2%;height:100%;float:right;}.GAN2ORTCOF{cursor:pointer;cursot:hand;background:black;border:none;color:white;margin-right:0.4%;height:100%;font-family:"Droid Serif";float:right;border:none;}.GAN2ORTCAG{border-left:1px solid gray;border-right:1px solid gray;border-bottom:1px solid gray;background:white;-moz-border-radius:0 5px 5px 5px;border-radius:0 5px 5px 5px;padding:0.5% 0.5% 0.5% 0.5%;}.GAN2ORTCKG{color:black;text-align:center;border-bottom:1px solid gray;width:90%;margin-right:5%;margin-left:5%;cursor:pointer;cursor:hand;}.GAN2ORTCLG{color:white;text-align:center;border-bottom:1px solid gray;width:90%;margin-right:5%;margin-left:5%;cursor:pointer;cursor:hand;background:orange;}.GAN2ORTCBG{border-bottom:none;}.GAN2ORTCFG{color:black;margin:15% 0 0 30%;}.GAN2ORTCEG{float:left;color:orange;font-size:1.25em;}.GAN2ORTCGG{float:left;color:black;}.GAN2ORTCDG{width:8%;margin:0 0 0 5.25%;border-radius:5px;border:#f08000;box-shadow:2px 2px 10px #b86200;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F08000), to(#F08000), color-stop(.5,#B86200));background:-moz-linear-gradient(0% 0% 90deg, #F08000, #F08000, #B86200 50%);}.GAN2ORTCMG{color:black;text-align:center;margin:2%;cursor:pointer;cursor:hand;float:left;}.GAN2ORTCNG{color:white;text-align:center;margin:2%;cursor:pointer;cursor:hand;background:gray;float:left;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;}');
     schedule();
     return true;
   }
@@ -9305,7 +9311,7 @@ function $ensureInjected_1(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_65();
-    $push_0(toInject, '.GAN2ORTCDI{min-height:600px;min-width:1000px;}.GAN2ORTCNH{background:url(body-bg.png) 0 225px repeat-x, #f0f0f0;}.GAN2ORTCMH{background:white;margin:1em auto;width:90%;padding:0;}.GAN2ORTCOH{box-shadow:10px 10px 10px white;-webkit-box-shadow:10px 10px 10px white;}.GAN2ORTCHI{background:black;border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;border-bottom:1px solid gray;}.GAN2ORTCEI{cursor:pointer;cursot:hand;background:black;border:none;color:white;float:left;border-right:1px solid gray;margin-left:0.75%;height:100%;}.GAN2ORTCFI{cursor:pointer;cursot:hand;background:white;border:none;color:black;float:left;border-top:1px solid gray;border-left:1px solid gray;border-right:1px solid gray;border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;margin-left:0.65%;height:100%;}.GAN2ORTCGI{cursor:pointer;cursot:hand;background:black;border:none;color:white;float:left;height:100%;}.GAN2ORTCHH{background:black;border:none;border-right:1px solid gray;color:orange;margin-right:0.2%;height:100%;float:right;}.GAN2ORTCDH{cursor:pointer;cursot:hand;background:black;border:none;color:white;margin-right:0.4%;height:100%;font-family:"Droid Serif";float:right;border:none;}.GAN2ORTCFH{border-left:1px solid gray;border-right:1px solid gray;border-bottom:1px solid gray;background:white;-moz-border-radius:0 5px 5px 5px;border-radius:0 5px 5px 5px;padding:0.5% 0.5% 0.5% 0.5%;}.GAN2ORTCPH{color:black;text-align:center;border-bottom:1px solid gray;width:90%;margin-right:5%;margin-left:5%;cursor:pointer;cursor:hand;}.GAN2ORTCAI{color:white;text-align:center;border-bottom:1px solid gray;width:90%;margin-right:5%;margin-left:5%;cursor:pointer;cursor:hand;background:orange;}.GAN2ORTCGH{border-bottom:none;}.GAN2ORTCKH{color:black;margin:15% 0 0 30%;}.GAN2ORTCJH{float:left;color:orange;font-size:1.25em;}.GAN2ORTCLH{float:left;color:black;}.GAN2ORTCIH{width:8%;margin:0 0 0 5.25%;border-radius:5px;border:#f08000;box-shadow:2px 2px 10px #b86200;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F08000), to(#F08000), color-stop(.5,#B86200));background:-moz-linear-gradient(0% 0% 90deg, #F08000, #F08000, #B86200 50%);}.GAN2ORTCBI{color:black;text-align:center;margin:2%;cursor:pointer;cursor:hand;float:left;}.GAN2ORTCCI{color:white;text-align:center;margin:2%;cursor:pointer;cursor:hand;background:gray;float:left;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;}');
+    $push_0(toInject, '.GAN2ORTCDI{min-height:600px;min-width:1000px;}.GAN2ORTCNH{background:url(body-bg.png) 0 225px repeat-x, #f0f0f0;}.GAN2ORTCMH{background:white;margin:1em auto;width:80%;padding:0;}.GAN2ORTCOH{box-shadow:10px 10px 10px white;-webkit-box-shadow:10px 10px 10px white;}.GAN2ORTCHI{background:black;border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;border-bottom:1px solid gray;}.GAN2ORTCEI{cursor:pointer;cursot:hand;background:black;border:none;color:white;float:left;border-right:1px solid gray;margin-left:0.75%;height:100%;}.GAN2ORTCFI{cursor:pointer;cursot:hand;background:white;border:none;color:black;float:left;border-top:1px solid gray;border-left:1px solid gray;border-right:1px solid gray;border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;margin-left:0.65%;height:100%;}.GAN2ORTCGI{cursor:pointer;cursot:hand;background:black;border:none;color:white;float:left;height:100%;}.GAN2ORTCHH{background:black;border:none;border-right:1px solid gray;color:orange;margin-right:0.2%;height:100%;float:right;}.GAN2ORTCDH{cursor:pointer;cursot:hand;background:black;border:none;color:white;margin-right:0.4%;height:100%;font-family:"Droid Serif";float:right;border:none;}.GAN2ORTCFH{border-left:1px solid gray;border-right:1px solid gray;border-bottom:1px solid gray;background:white;-moz-border-radius:0 5px 5px 5px;border-radius:0 5px 5px 5px;padding:0.5% 0.5% 0.5% 0.5%;}.GAN2ORTCPH{color:black;text-align:center;border-bottom:1px solid gray;width:90%;margin-right:5%;margin-left:5%;cursor:pointer;cursor:hand;}.GAN2ORTCAI{color:white;text-align:center;border-bottom:1px solid gray;width:90%;margin-right:5%;margin-left:5%;cursor:pointer;cursor:hand;background:orange;}.GAN2ORTCGH{border-bottom:none;}.GAN2ORTCKH{color:black;margin:15% 0 0 30%;}.GAN2ORTCJH{float:left;color:orange;font-size:1.25em;}.GAN2ORTCLH{float:left;color:black;}.GAN2ORTCIH{width:8%;margin:0 0 0 5.25%;border-radius:5px;border:#f08000;box-shadow:2px 2px 10px #b86200;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F08000), to(#F08000), color-stop(.5,#B86200));background:-moz-linear-gradient(0% 0% 90deg, #F08000, #F08000, #B86200 50%);}.GAN2ORTCBI{color:black;text-align:center;margin:2%;cursor:pointer;cursor:hand;float:left;}.GAN2ORTCCI{color:white;text-align:center;margin:2%;cursor:pointer;cursor:hand;background:gray;float:left;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;}');
     schedule();
     return true;
   }
@@ -9956,9 +9962,7 @@ function $populateAppGrid(this$static, applications){
         path = applications[i].fields.path;
         type = applications[i].fields.type;
         appName = applications[i].fields.app_name;
-        $wnd.alert(iconPath);
         $equals_2(iconPath, '')?(iconPath = 'https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png'):$split(iconPath, '//', 0).length < 2 && (iconPath = $wnd.communityBaseURL + iconPath);
-        $wnd.alert(iconPath);
         appIcon = $createAppIcon(this$static, name_0, email, author, desc, pk, iconPath, path, type, appName);
         for (j = 0; j < this$static.featured.length; ++j) {
           this$static.featured[j] == pk && $add_7(this$static.featuredIcons, appIcon);
@@ -10345,12 +10349,12 @@ _.onClick = function onClick_8(event_0){
 ;
 _.castableTypeMap$ = {6:1, 16:1};
 _.val$owner = null;
---></script>
-<script><!--
 function AppBrowserPanel_AppBrowserUiBinderUiBinderImpl$4_0(val$owner){
   this.val$owner = val$owner;
 }
 
+--></script>
+<script><!--
 function AppBrowserPanel_AppBrowserUiBinderUiBinderImpl$4(){
 }
 
@@ -10540,15 +10544,15 @@ function $getPostData(this$static){
   var postData, raw, raw_0, raw_1, raw_2;
   postData = new StringBuffer_0;
   postData.impl.string += '&dbengine=';
-  $append_2(postData, encodeComponent($getValue_2(this$static.dbengineListBox, this$static.dbengineListBox.element.selectedIndex)));
+  $append_2(postData, encodeQueryString($getValue_2(this$static.dbengineListBox, this$static.dbengineListBox.element.selectedIndex)));
   postData.impl.string += '&dbname=';
-  $append_2(postData, encodeComponent((raw = $getValueOrThrow(this$static.nameTextBox) , raw == null?'':raw)));
+  $append_2(postData, encodeQueryString((raw = $getValueOrThrow(this$static.nameTextBox) , raw == null?'':raw)));
   postData.impl.string += '&dbpassword=';
-  $append_2(postData, encodeComponent((raw_0 = $getValueOrThrow(this$static.passwordTextBox) , raw_0 == null?'':raw_0)));
+  $append_2(postData, encodeQueryString((raw_0 = $getValueOrThrow(this$static.passwordTextBox) , raw_0 == null?'':raw_0)));
   postData.impl.string += '&dbhost=';
-  $append_2(postData, encodeComponent((raw_1 = $getValueOrThrow(this$static.hostTextBox) , raw_1 == null?'':raw_1)));
+  $append_2(postData, encodeQueryString((raw_1 = $getValueOrThrow(this$static.hostTextBox) , raw_1 == null?'':raw_1)));
   postData.impl.string += '&dbport=';
-  $append_2(postData, encodeComponent((raw_2 = $getValueOrThrow(this$static.portTextBox) , raw_2 == null?'':raw_2)));
+  $append_2(postData, encodeQueryString((raw_2 = $getValueOrThrow(this$static.portTextBox) , raw_2 == null?'':raw_2)));
   return postData.impl.string;
 }
 
@@ -12026,13 +12030,13 @@ function $getPostData_1(this$static){
   var postData, raw, raw_0, raw_1;
   postData = new StringBuffer_0;
   postData.impl.string += '&superusername=';
-  $append_2(postData, encodeComponent((raw = $getValueOrThrow(this$static.usernameTextBox) , raw == null?'':raw)));
+  $append_2(postData, encodeQueryString((raw = $getValueOrThrow(this$static.usernameTextBox) , raw == null?'':raw)));
   postData.impl.string += '&superpassword=';
-  $append_2(postData, encodeComponent((raw_0 = $getValueOrThrow(this$static.passwordTextBox) , raw_0 == null?'':raw_0)));
+  $append_2(postData, encodeQueryString((raw_0 = $getValueOrThrow(this$static.passwordTextBox) , raw_0 == null?'':raw_0)));
   postData.impl.string += '&superemail=';
-  $append_2(postData, encodeComponent((raw_1 = $getValueOrThrow(this$static.emailTextBox) , raw_1 == null?'':raw_1)));
+  $append_2(postData, encodeQueryString((raw_1 = $getValueOrThrow(this$static.emailTextBox) , raw_1 == null?'':raw_1)));
   postData.impl.string += '&idprovider=';
-  $append_2(postData, encodeComponent($getValue_2(this$static.idProvider, this$static.idProvider.element.selectedIndex)));
+  $append_2(postData, encodeQueryString($getValue_2(this$static.idProvider, this$static.idProvider.element.selectedIndex)));
   return postData.impl.string;
 }
 
@@ -12188,7 +12192,7 @@ function $validateFields_0(this$static){
       return false;
     }
      else if ($equals_2($getPropertyString(this$static.passwordTextBox.element, 'value'), $getPropertyString(this$static.passwordConfirmTextBox.element, 'value'))) {
-      if ($isEmailValid(this$static)) {
+      if (!$isEmailValid(this$static)) {
         return false;
       }
     }

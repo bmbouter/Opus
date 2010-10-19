@@ -154,16 +154,12 @@ public class AppBrowserPanel extends Composite {
 					String type = applications.get(i).getType();
 					String appName = applications.get(i).getAppName();
 					
-					Window.alert(iconPath);
-					
 					if( iconPath.equals("") ){
 						iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";
 					} else if( iconPath.split("//").length < 2  ) {
 						iconPath = JSVarHandler.getCommunityBaseURL() + iconPath;
 					}
 					
-					Window.alert(iconPath);
-
 					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path, type, appName);					
 					
 					for (int j=0; j < featured.length; j++){
