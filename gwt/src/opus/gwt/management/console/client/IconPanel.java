@@ -91,6 +91,9 @@ public class IconPanel extends Composite {
 	}
 	
 	public void addProjectIcon(String name) {
+		iconMap.clear();
+		projectIconsFlowPanel.clear();
+		
 		FlowPanel project = new FlowPanel();
 		final String projectName = name;
 		

@@ -195,8 +195,8 @@ public class ProjectDeployerController extends Composite {
 	        public void onResponseReceived(Request request, Response response) {
 		    	if( response.getText().contains("Back to") ){
 		    		loadingPopup.hide();
-		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
 		    		eventBus.fireEvent(new AsyncRequestEvent("handleProjects"));
+		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
 		    	} else {
 		    		loadingPopup.hide();
 		    	 	ErrorPanel ep = new ErrorPanel(eventBus);
