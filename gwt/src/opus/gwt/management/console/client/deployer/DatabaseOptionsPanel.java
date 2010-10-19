@@ -138,15 +138,15 @@ public class DatabaseOptionsPanel extends Composite {
 	public String getPostData(){
 		StringBuffer postData = new StringBuffer();
 		postData.append("&dbengine=");
-		postData.append( URL.encodeComponent(dbengineListBox.getValue(dbengineListBox.getSelectedIndex())));
+		postData.append( URL.encodeQueryString(dbengineListBox.getValue(dbengineListBox.getSelectedIndex())));
 		postData.append("&dbname=");
-		postData.append( URL.encodeComponent(nameTextBox.getValue()));
+		postData.append( URL.encodeQueryString(nameTextBox.getValue()));
 		postData.append("&dbpassword=");
-		postData.append( URL.encodeComponent(passwordTextBox.getValue()));
+		postData.append( URL.encodeQueryString(passwordTextBox.getValue()));
 		postData.append("&dbhost=");
-		postData.append( URL.encodeComponent(hostTextBox.getValue()));
+		postData.append( URL.encodeQueryString(hostTextBox.getValue()));
 		postData.append("&dbport=");
-		postData.append( URL.encodeComponent(portTextBox.getValue()));
+		postData.append( URL.encodeQueryString(portTextBox.getValue()));
 		return postData.toString();
 	}
 	

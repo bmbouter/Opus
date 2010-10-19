@@ -231,23 +231,23 @@ public class ProjectOptionsPanel extends Composite {
 	public String getPostData(){
 		StringBuffer postData = new StringBuffer();
 		postData.append("&superusername=");
-		postData.append( URL.encodeComponent(usernameTextBox.getValue()));
+		postData.append( URL.encodeQueryString(usernameTextBox.getValue()));
 		postData.append("&superpassword=");
-		postData.append( URL.encodeComponent(passwordTextBox.getValue()));
+		postData.append( URL.encodeQueryString(passwordTextBox.getValue()));
 		postData.append("&superemail=");
-		postData.append( URL.encodeComponent(emailTextBox.getValue()));
+		postData.append( URL.encodeQueryString(emailTextBox.getValue()));
 		postData.append("&idprovider=");
-		postData.append( URL.encodeComponent(idProvider.getValue(idProvider.getSelectedIndex())));
+		postData.append( URL.encodeQueryString(idProvider.getValue(idProvider.getSelectedIndex())));
 		return postData.toString();
 	}
 	
 	public boolean validateFields(){
-		if(!usernameTextBox.getText().isEmpty()) {
-			if(passwordTextBox.getText().isEmpty()) {
+		if( !usernameTextBox.getText().isEmpty() ) {
+			if( passwordTextBox.getText().isEmpty() ) {
 				return false;
 			} else if( !passwordTextBox.getText().equals(passwordConfirmTextBox.getText()) ) {
 				return false;
-			} else if( isEmailValid() ) {
+			} else if( !isEmailValid() ) {
 				return false;
 			}
 		}
