@@ -63,12 +63,12 @@ public class ManagementConsoleController extends Composite {
 		navigationPanel.setEventBus(eventBus);
 		breadCrumbsPanel.setEventBus(eventBus);
 		iconPanel = new IconPanel(eventBus);
-		registerEvents();
+		registerHandlers();
 		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
 		//showDeployer();
 	}
 	
-	private void registerEvents(){
+	private void registerHandlers(){
 		eventBus.addHandler(AuthenticationEvent.TYPE, 
 			new AuthenticationEventHandler(){
 				public void onAuthentication(AuthenticationEvent event){

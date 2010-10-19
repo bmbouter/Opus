@@ -114,9 +114,7 @@ public class IconPanel extends Composite {
 		});
 		testLabel.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
-	        	//console.mainDeckPanel.clear();
-	        	//console.navigationMenuPanel.clear();
-	        	//projectManager = new ProjectManagerController(eventBus); 
+	        	eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName)); 
 	        	testLabel.setStyleName(style.projectIcon());
 	        }
 	     });

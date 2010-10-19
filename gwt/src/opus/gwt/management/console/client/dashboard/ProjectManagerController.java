@@ -36,7 +36,6 @@ public class ProjectManagerController extends Composite {
 
 	private DashboardPanel dashboardPanel;
 	private DeleteProjectPanel deleteProjectPanel;
-	private ManageApps manageApps;
 	private ProjectSettingsPanel projectSettingsPanel;
 	private EventBus eventBus;
 	private String projectName;
@@ -50,7 +49,6 @@ public class ProjectManagerController extends Composite {
 		this.projectName = projectName;
 		this.dashboardPanel = new DashboardPanel(eventBus);
 		this.deleteProjectPanel = new DeleteProjectPanel(eventBus);
-		//manageApps = new ManageApps();
 		this.projectSettingsPanel = new ProjectSettingsPanel(this);
 		setupmanagerDeckPanel();
 		registerEvents();
@@ -77,8 +75,6 @@ public class ProjectManagerController extends Composite {
 	private void setupmanagerDeckPanel(){
 		managerDeckPanel.add(dashboardPanel);
 		dashboardPanel.setTitle("Dashboard");
-		//managerDeckPanel.add(manageApps);
-		//managerDeckPanel.add(new HTML());
 		managerDeckPanel.add(deleteProjectPanel);
 		deleteProjectPanel.setTitle("Delete Project");
 		managerDeckPanel.add(projectSettingsPanel);

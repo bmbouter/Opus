@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0RC1";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '995A90B36C2861C014AEF05CA19FE394';
+var $strongName = '6B3FA32A09D2118504E453C46DADDA21';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -8854,7 +8854,7 @@ function $addProjectIcon(this$static, name_0){
   testLabel.element['className'] = 'GAN2ORTCMG';
   $addDomHandler(testLabel, new IconPanel$3_0(testLabel), ($clinit_107() , $clinit_107() , TYPE_5));
   $addDomHandler(testLabel, new IconPanel$4_0(testLabel), ($clinit_105() , $clinit_105() , TYPE_4));
-  $addDomHandler(testLabel, new IconPanel$5_0(testLabel), ($clinit_72() , $clinit_72() , TYPE_0));
+  $addDomHandler(testLabel, new IconPanel$5_0(this$static, name_0, testLabel), ($clinit_72() , $clinit_72() , TYPE_0));
   $add_2(this$static.projectIconsFlowPanel, testLabel);
   $put_0(this$static.iconMap, name_0, valueOf($indexOf(this$static.projectIconsFlowPanel.children, testLabel)));
 }
@@ -8962,7 +8962,9 @@ _.onMouseOut = function onMouseOut(event_0){
 ;
 _.castableTypeMap$ = {11:1, 16:1};
 _.val$testLabel = null;
-function IconPanel$5_0(val$testLabel){
+function IconPanel$5_0(this$0, val$projectName, val$testLabel){
+  this.this$0 = this$0;
+  this.val$projectName = val$projectName;
   this.val$testLabel = val$testLabel;
 }
 
@@ -8975,10 +8977,13 @@ _.getClass$ = function getClass_229(){
 }
 ;
 _.onClick = function onClick_0(event_0){
+  $fireEvent_0(this.this$0.eventBus, new PanelTransitionEvent_2(($clinit_554() , DASHBOARD), this.val$projectName));
   this.val$testLabel.getStyleElement()['className'] = 'GAN2ORTCMG';
 }
 ;
 _.castableTypeMap$ = {6:1, 16:1};
+_.this$0 = null;
+_.val$projectName = null;
 _.val$testLabel = null;
 function $clinit_411(){
   $clinit_411 = nullMethod;
@@ -9563,7 +9568,7 @@ function $validateForm(this$static){
 
 function ProjectSettingsPanel_0(){
   var ActivateButton, FormHolder, SaveButton, WarningLabel, attachRecord0, attachRecord1, domId0, domId0Element, domId1, domId1Element, domId2, domId2Element, domId3, domId3Element, domId4, domId4Element, f_DockLayoutPanel2, f_FlowPanel3, f_HTMLPanel1, f_Label4, formContainer, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2, optionsForm;
-  $initWidget(this, ($clinit_453() , domId0 = $createUniqueId($doc) , f_Label4 = new Label_0 , f_FlowPanel3 = new FlowPanel_0 , domId1 = $createUniqueId($doc) , WarningLabel = new Label_0 , domId2 = $createUniqueId($doc) , formContainer = new FlexTable_0 , optionsForm = new FormPanel_0 , domId3 = $createUniqueId($doc) , SaveButton = new Button_0 , domId4 = $createUniqueId($doc) , ActivateButton = new Button_0 , FormHolder = new HTMLPanel_0("<span id='" + domId1 + "'><\/span> <span id='" + domId2 + "'><\/span> <span id='" + domId3 + "'><\/span> <span id='" + domId4 + "'><\/span>") , f_DockLayoutPanel2 = new DockLayoutPanel_0(($clinit_53() , PCT)) , f_HTMLPanel1 = new HTMLPanel_0("<span id='" + domId0 + "'><\/span>") , $setTextOrHtml(f_Label4, 'Application Settings', false) , f_Label4.element['className'] = 'GAN2ORTCIV' , $add(f_FlowPanel3, f_Label4, f_FlowPanel3.element) , $insert(f_DockLayoutPanel2, f_FlowPanel3, ($clinit_228() , NORTH), 6.5) , $add_3(optionsForm, formContainer) , SaveButton.element.textContent = 'Save' , ActivateButton.element.textContent = 'Save and Activate' , $insert(f_DockLayoutPanel2, FormHolder, SOUTH, 93) , f_DockLayoutPanel2.element['className'] = 'GAN2ORTCNV' , f_HTMLPanel1.element['className'] = 'GAN2ORTCCV' , attachRecord0 = attachToDom(FormHolder.element) , domId1Element = $doc.getElementById(domId1) , domId2Element = $doc.getElementById(domId2) , domId3Element = $doc.getElementById(domId3) , domId4Element = $doc.getElementById(domId4) , attachRecord0.origParent?attachRecord0.origParent.insertBefore(attachRecord0.element, attachRecord0.origSibling):orphan(attachRecord0.element) , $removeFromParent_0(WarningLabel) , $add_6(FormHolder.children, WarningLabel) , domId1Element.parentNode.replaceChild(WarningLabel.element, domId1Element) , $setParent(WarningLabel, FormHolder) , $removeFromParent_0(optionsForm) , $add_6(FormHolder.children, optionsForm) , domId2Element.parentNode.replaceChild(optionsForm.element, domId2Element) , $setParent(optionsForm, FormHolder) , $removeFromParent_0(SaveButton) , $add_6(FormHolder.children, SaveButton) , domId3Element.parentNode.replaceChild(SaveButton.element, domId3Element) , $setParent(SaveButton, FormHolder) , $removeFromParent_0(ActivateButton) , $add_6(FormHolder.children, ActivateButton) , domId4Element.parentNode.replaceChild(ActivateButton.element, domId4Element) , $setParent(ActivateButton, FormHolder) , attachRecord1 = attachToDom(f_HTMLPanel1.element) , domId0Element = $doc.getElementById(domId0) , attachRecord1.origParent?attachRecord1.origParent.insertBefore(attachRecord1.element, attachRecord1.origSibling):orphan(attachRecord1.element) , $removeFromParent_0(f_DockLayoutPanel2) , $add_6(f_HTMLPanel1.children, f_DockLayoutPanel2) , domId0Element.parentNode.replaceChild(f_DockLayoutPanel2.element, domId0Element) , $setParent(f_DockLayoutPanel2, f_HTMLPanel1) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1 = new ProjectSettingsPanel_ProjectSettingsUiBinderImpl$1_0(this) , $addDomHandler(SaveButton, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1, ($clinit_72() , $clinit_72() , TYPE_0)) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2 = new ProjectSettingsPanel_ProjectSettingsUiBinderImpl$2_0(this) , $addDomHandler(ActivateButton, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2, TYPE_0) , this.formContainer = formContainer , this.optionsForm = optionsForm , $ensureInjected_5(style_9) , f_HTMLPanel1));
+  $initWidget(this, ($clinit_453() , domId0 = $createUniqueId($doc) , f_Label4 = new Label_0 , f_FlowPanel3 = new FlowPanel_0 , domId1 = $createUniqueId($doc) , WarningLabel = new Label_0 , domId2 = $createUniqueId($doc) , formContainer = new FlexTable_0 , optionsForm = new FormPanel_0 , domId3 = $createUniqueId($doc) , SaveButton = new Button_0 , domId4 = $createUniqueId($doc) , ActivateButton = new Button_0 , FormHolder = new HTMLPanel_0("<span id='" + domId1 + "'><\/span> <span id='" + domId2 + "'><\/span> <span id='" + domId3 + "'><\/span> <span id='" + domId4 + "'><\/span>") , f_DockLayoutPanel2 = new DockLayoutPanel_0(($clinit_53() , PCT)) , f_HTMLPanel1 = new HTMLPanel_0("<span id='" + domId0 + "'><\/span>") , $setTextOrHtml(f_Label4, 'Application Settings', false) , f_Label4.element['className'] = 'GAN2ORTCCS' , $add(f_FlowPanel3, f_Label4, f_FlowPanel3.element) , $insert(f_DockLayoutPanel2, f_FlowPanel3, ($clinit_228() , NORTH), 6.5) , $add_3(optionsForm, formContainer) , SaveButton.element.textContent = 'Save' , ActivateButton.element.textContent = 'Save and Activate' , $insert(f_DockLayoutPanel2, FormHolder, SOUTH, 93) , f_DockLayoutPanel2.element['className'] = 'GAN2ORTCHS' , f_HTMLPanel1.element['className'] = 'GAN2ORTCMR' , attachRecord0 = attachToDom(FormHolder.element) , domId1Element = $doc.getElementById(domId1) , domId2Element = $doc.getElementById(domId2) , domId3Element = $doc.getElementById(domId3) , domId4Element = $doc.getElementById(domId4) , attachRecord0.origParent?attachRecord0.origParent.insertBefore(attachRecord0.element, attachRecord0.origSibling):orphan(attachRecord0.element) , $removeFromParent_0(WarningLabel) , $add_6(FormHolder.children, WarningLabel) , domId1Element.parentNode.replaceChild(WarningLabel.element, domId1Element) , $setParent(WarningLabel, FormHolder) , $removeFromParent_0(optionsForm) , $add_6(FormHolder.children, optionsForm) , domId2Element.parentNode.replaceChild(optionsForm.element, domId2Element) , $setParent(optionsForm, FormHolder) , $removeFromParent_0(SaveButton) , $add_6(FormHolder.children, SaveButton) , domId3Element.parentNode.replaceChild(SaveButton.element, domId3Element) , $setParent(SaveButton, FormHolder) , $removeFromParent_0(ActivateButton) , $add_6(FormHolder.children, ActivateButton) , domId4Element.parentNode.replaceChild(ActivateButton.element, domId4Element) , $setParent(ActivateButton, FormHolder) , attachRecord1 = attachToDom(f_HTMLPanel1.element) , domId0Element = $doc.getElementById(domId0) , attachRecord1.origParent?attachRecord1.origParent.insertBefore(attachRecord1.element, attachRecord1.origSibling):orphan(attachRecord1.element) , $removeFromParent_0(f_DockLayoutPanel2) , $add_6(f_HTMLPanel1.children, f_DockLayoutPanel2) , domId0Element.parentNode.replaceChild(f_DockLayoutPanel2.element, domId0Element) , $setParent(f_DockLayoutPanel2, f_HTMLPanel1) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1 = new ProjectSettingsPanel_ProjectSettingsUiBinderImpl$1_0(this) , $addDomHandler(SaveButton, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1, ($clinit_72() , $clinit_72() , TYPE_0)) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2 = new ProjectSettingsPanel_ProjectSettingsUiBinderImpl$2_0(this) , $addDomHandler(ActivateButton, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2, TYPE_0) , this.formContainer = formContainer , this.optionsForm = optionsForm , $ensureInjected_5(style_9) , f_HTMLPanel1));
   this.projectName = '';
   this.optionsForm = new FormPanel_0;
   this.textboxes = new ArrayList_0;
@@ -9649,7 +9654,7 @@ function $ensureInjected_5(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCFV{padding:0;border-radius:5px;font-family:Helvetica, Arial, Verdana, sans-serif;font-size:0.8em;min-height:400px;min-width:600px;border:3px solid grey;-webkit-box-shadow:2px 2px 7px #1f1f1f;}.GAN2ORTCBV{background:#ed9e16;height:60px;border:solid #cc8202 0;margin-bottom:5px;border-top-right-radius:3px;border-top-left-radius:3px;}.GAN2ORTCBV h1{margin:0;padding:8px 0 0 10px;font-size:40px;color:#cc8202;font-weight:bold;border:none;}.GAN2ORTCDV{text-shadow:rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;}.GAN2ORTCCV{height:100%;width:100%;background:white;border-radius:10px;-webkt-border-radius:10px;-moz-border-radius:10px;padding:0 0.5% 0.5% 0.5%;}.GAN2ORTCNV{background:white;height:100%;width:100%;border-radius:10px;min-height:99%;}.GAN2ORTCPU{border-bottom:2px solid black;}.GAN2ORTCIV{color:#e87b33;text-shadow:1px 1px 0 #000;font-family:"Droid Serif";font-size:1.7em;float:left;height:100%;min-height:99%;margin-top:0.5%;}.GAN2ORTCMU{height:100%;width:100%;}.GAN2ORTCEV{padding:6px 2px 2px 2px;height:98%;width:98%;background:white;color:black;}.GAN2ORTCGV{width:100%;color:white;padding:0.45em 0.45em 0.45em 0.5em;font-size:1em;word-wrap:break-word;cursor:pointer;cursor:hand;min-width:100%;}.GAN2ORTCHV{width:100%;color:white;background:orange;padding:0.45em 0.45em 0.45em 0.5em;font-size:1em;border-radius:5px 0 0 5px;-moz-border-radius:5px 0 0 5px;word-wrap:break-word;cursor:pointer;cursor:hand;min-width:100%;}.GAN2ORTCJV{width:100%;}.GAN2ORTCLV{width:100%;height:100%;}.GAN2ORTCKV,.GAN2ORTCNU{float:left;margin:0 0 0 0.5%;}.GAN2ORTCMV{-webkit-box-shadow:2px 2px 2px #121212;-moz-box-shadow:2px 2px 2px #121212;box-shadow:2px 2px 2px #121212;border-radius:2px;width:20%;cursor:pointer;cursor:hand;font-family:"Droid Serif";font-size:125%;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF));color:black;height:80%;}.GAN2ORTCLU{color:red;margin-top:10px;}');
+    $push_0(toInject, '.GAN2ORTCPR{padding:0;border-radius:5px;font-family:Helvetica, Arial, Verdana, sans-serif;font-size:0.8em;min-height:400px;min-width:600px;border:3px solid grey;-webkit-box-shadow:2px 2px 7px #1f1f1f;}.GAN2ORTCLR{background:#ed9e16;height:60px;border:solid #cc8202 0;margin-bottom:5px;border-top-right-radius:3px;border-top-left-radius:3px;}.GAN2ORTCLR h1{margin:0;padding:8px 0 0 10px;font-size:40px;color:#cc8202;font-weight:bold;border:none;}.GAN2ORTCNR{text-shadow:rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;}.GAN2ORTCMR{height:100%;width:100%;background:white;border-radius:10px;-webkt-border-radius:10px;-moz-border-radius:10px;padding:0 0.5% 0.5% 0.5%;}.GAN2ORTCHS{background:white;height:100%;width:100%;border-radius:10px;min-height:99%;}.GAN2ORTCJR{border-bottom:2px solid black;}.GAN2ORTCCS{color:#e87b33;text-shadow:1px 1px 0 #000;font-family:"Droid Serif";font-size:1.7em;float:left;height:100%;min-height:99%;margin-top:0.5%;}.GAN2ORTCGR{height:100%;width:100%;}.GAN2ORTCOR{padding:6px 2px 2px 2px;height:98%;width:98%;background:white;color:black;}.GAN2ORTCAS{width:100%;color:white;padding:0.45em 0.45em 0.45em 0.5em;font-size:1em;word-wrap:break-word;cursor:pointer;cursor:hand;min-width:100%;}.GAN2ORTCBS{width:100%;color:white;background:orange;padding:0.45em 0.45em 0.45em 0.5em;font-size:1em;border-radius:5px 0 0 5px;-moz-border-radius:5px 0 0 5px;word-wrap:break-word;cursor:pointer;cursor:hand;min-width:100%;}.GAN2ORTCDS{width:100%;}.GAN2ORTCFS{width:100%;height:100%;}.GAN2ORTCES,.GAN2ORTCHR{float:left;margin:0 0 0 0.5%;}.GAN2ORTCGS{-webkit-box-shadow:2px 2px 2px #121212;-moz-box-shadow:2px 2px 2px #121212;box-shadow:2px 2px 2px #121212;border-radius:2px;width:20%;cursor:pointer;cursor:hand;font-family:"Droid Serif";font-size:125%;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF));color:black;height:80%;}.GAN2ORTCFR{color:red;margin-top:10px;}');
     schedule();
     return true;
   }
@@ -9673,7 +9678,7 @@ function $createAppIcon(this$static, name_0, email, author, info, pk, iconPath, 
   var icon;
   icon = new AppIcon_0(name_0, email, author, iconPath, info, pk, appPath, type, appName, this$static.eventBus);
   $setTextOrHtml(icon.iconHTML, "<img align='left' src='" + iconPath + "'/><b>" + name_0 + '<\/b><br/>' + (icon.desc.length > 75?icon.desc.substr(0, 75 - 0) + '...':icon.desc), true);
-  icon.element['className'] = 'GAN2ORTCLW';
+  icon.element['className'] = 'GAN2ORTCFT';
   $addDomHandler(icon.iconPanel, new AppBrowserPanel$4_0(this$static, icon), ($clinit_72() , $clinit_72() , TYPE_0));
   return icon;
 }
@@ -9710,8 +9715,8 @@ function $getAppTypes(this$static){
 }
 
 function $handleAllAppsLabel(this$static){
-  this$static.allAppsLabel.getStyleElement()['className'] = 'GAN2ORTCJW';
-  this$static.featuredAppsLabel.getStyleElement()['className'] = 'GAN2ORTCBX';
+  this$static.allAppsLabel.getStyleElement()['className'] = 'GAN2ORTCDT';
+  this$static.featuredAppsLabel.getStyleElement()['className'] = 'GAN2ORTCLT';
   $showWidget(this$static.mainDeckPanel, 0);
 }
 
@@ -9725,7 +9730,7 @@ function $handleAppActionButton(this$static){
   }
    else {
     iconForDeployList = $createAppIcon(this$static, this$static.currentSelection.name_0, this$static.currentSelection.email_0, this$static.currentSelection.author_0, this$static.currentSelection.desc, valueOf(__parseAndValidateInt(this$static.currentSelection.pk_0)).value_0, this$static.currentSelection.icon, this$static.currentSelection.path_0, this$static.currentSelection.type_0, this$static.currentSelection.appName);
-    iconForDeployList.element['className'] = 'GAN2ORTCOW';
+    iconForDeployList.element['className'] = 'GAN2ORTCIT';
     $setTextOrHtml(iconForDeployList.iconHTML, "<img src='" + this$static.currentSelection.icon + "'><br/>" + this$static.currentSelection.name_0, true);
     $put_0(this$static.DeployListMap, iconForDeployList.pk_0, iconForDeployList);
     $add_2(this$static.DeployListFlowPanel, iconForDeployList);
@@ -9737,8 +9742,8 @@ function $handleAppActionButton(this$static){
 }
 
 function $handleFeaturedAppsLabelFunction(this$static){
-  this$static.allAppsLabel.getStyleElement()['className'] = 'GAN2ORTCIW';
-  this$static.featuredAppsLabel.getStyleElement()['className'] = 'GAN2ORTCCX';
+  this$static.allAppsLabel.getStyleElement()['className'] = 'GAN2ORTCCT';
+  this$static.featuredAppsLabel.getStyleElement()['className'] = 'GAN2ORTCMT';
   $showWidget(this$static.mainDeckPanel, 1);
 }
 
@@ -9761,7 +9766,7 @@ function $importAppList(this$static, projectData){
       if ($equals_2(dynamicCast(e.getValue(), 65).pk_0, versions[i].app_pk)) {
         match = dynamicCast(e.getValue(), 65);
         $setSelectedVersion(match, valueOf(__parseAndValidateInt(versions[i].pk)).value_0);
-        match.getStyleElement()['className'] = 'GAN2ORTCNW';
+        match.getStyleElement()['className'] = 'GAN2ORTCHT';
         $setTextOrHtml(match.iconHTML, "<img src='" + match.icon + "'><br/>" + match.name_0, true);
         $put_0(this$static.DeployListMap, match.pk_0, match);
         $add_2(this$static.DeployListFlowPanel, match);
@@ -9831,7 +9836,7 @@ function $populateFeaturedList(this$static, jso){
 }
 
 function $setAppInfo(this$static, icon){
-  $setTextOrHtml(this$static.AppInfo, "<div class='GAN2ORTCAX'><img align='left' src='" + icon.icon + "' /><h1>" + icon.name_0 + '<\/h1><h2>Author: ' + icon.author_0 + '<\/h2><h2>Email: ' + icon.email_0 + '<\/h2><br />' + icon.desc + '<\/div>', true);
+  $setTextOrHtml(this$static.AppInfo, "<div class='GAN2ORTCKT'><img align='left' src='" + icon.icon + "' /><h1>" + icon.name_0 + '<\/h1><h2>Author: ' + icon.author_0 + '<\/h2><h2>Email: ' + icon.email_0 + '<\/h2><br />' + icon.desc + '<\/div>', true);
   $clear(this$static.VersionInfo);
   $add_5(this$static.VersionInfo, icon.versionForm);
 }
@@ -9856,8 +9861,8 @@ function AppBrowserPanel_0(eventBus){
   $add_1(this.mainDeckPanel, this.appFlowPanel);
   $add_1(this.mainDeckPanel, this.featuredAppFlowPanel);
   $showWidget(this.mainDeckPanel, 1);
-  this.allAppsLabel.getStyleElement()['className'] = 'GAN2ORTCIW';
-  this.featuredAppsLabel.getStyleElement()['className'] = 'GAN2ORTCCX';
+  this.allAppsLabel.getStyleElement()['className'] = 'GAN2ORTCCT';
+  this.featuredAppsLabel.getStyleElement()['className'] = 'GAN2ORTCMT';
   this.featuredIcons = new ArrayList_0;
   token = $wnd.projectToken;
   token != null && $fireEvent_0(this.eventBus, new AsyncRequestEvent_1(token));
@@ -9951,20 +9956,20 @@ _.getClass$ = function getClass_260(){
 _.onClick = function onClick_5(event_0){
   if (this.this$0.currentSelection != this.val$icon) {
     if (this.this$0.currentSelection) {
-      dynamicCast($get_3(this.this$0.IconMap, this.this$0.currentSelection.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCLW';
+      dynamicCast($get_3(this.this$0.IconMap, this.this$0.currentSelection.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCFT';
       if ($containsKey(this.this$0.DeployListMap, this.this$0.currentSelection.pk_0)) {
-        dynamicCast($get_3(this.this$0.DeployListMap, this.this$0.currentSelection.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCNW';
+        dynamicCast($get_3(this.this$0.DeployListMap, this.this$0.currentSelection.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCHT';
         this.this$0.RemoveButton.element['disabled'] = !true;
       }
        else {
         this.this$0.RemoveButton.element['disabled'] = !false;
       }
-      $containsKey(this.this$0.FeaturedIconMap, this.this$0.currentSelection.pk_0) && (dynamicCast($get_3(this.this$0.FeaturedIconMap, this.this$0.currentSelection.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCLW' , undefined);
+      $containsKey(this.this$0.FeaturedIconMap, this.this$0.currentSelection.pk_0) && (dynamicCast($get_3(this.this$0.FeaturedIconMap, this.this$0.currentSelection.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCFT' , undefined);
     }
     if ($containsKey(this.this$0.DeployListMap, this.val$icon.pk_0)) {
-      dynamicCast($get_3(this.this$0.DeployListMap, this.val$icon.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCOW';
-      dynamicCast($get_3(this.this$0.IconMap, this.val$icon.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCMW';
-      $containsKey(this.this$0.FeaturedIconMap, this.val$icon.pk_0) && (dynamicCast($get_3(this.this$0.FeaturedIconMap, this.val$icon.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCMW' , undefined);
+      dynamicCast($get_3(this.this$0.DeployListMap, this.val$icon.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCIT';
+      dynamicCast($get_3(this.this$0.IconMap, this.val$icon.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCGT';
+      $containsKey(this.this$0.FeaturedIconMap, this.val$icon.pk_0) && (dynamicCast($get_3(this.this$0.FeaturedIconMap, this.val$icon.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCGT' , undefined);
       this.this$0.currentSelection = this.val$icon;
       $setAppInfo(this.this$0, this.val$icon);
       this.this$0.AppActionButton.element.textContent = 'Remove from Deploy List';
@@ -9972,17 +9977,17 @@ _.onClick = function onClick_5(event_0){
       this.this$0.RemoveButton.element['disabled'] = !true;
     }
      else {
-      dynamicCast($get_3(this.this$0.IconMap, this.val$icon.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCMW';
-      $containsKey(this.this$0.FeaturedIconMap, this.val$icon.pk_0) && (dynamicCast($get_3(this.this$0.FeaturedIconMap, this.val$icon.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCMW' , undefined);
+      dynamicCast($get_3(this.this$0.IconMap, this.val$icon.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCGT';
+      $containsKey(this.this$0.FeaturedIconMap, this.val$icon.pk_0) && (dynamicCast($get_3(this.this$0.FeaturedIconMap, this.val$icon.pk_0), 65).getStyleElement()['className'] = 'GAN2ORTCGT' , undefined);
       $setAppInfo(this.this$0, this.val$icon);
       this.this$0.AppActionButton.element.textContent = 'Add to Deploy List';
-      this.this$0.AppActionButton.getStyleElement()['className'] = 'GAN2ORTCOV';
+      this.this$0.AppActionButton.getStyleElement()['className'] = 'GAN2ORTCIS';
       this.this$0.AppActionButton.element.style.display = '';
       this.this$0.RemoveButton.element['disabled'] = !false;
     }
     this.this$0.currentSelection = this.val$icon;
     this.val$icon.iconPanel.element.blur();
-    this.this$0.AppActionButton.getStyleElement()['className'] = 'GAN2ORTCOV';
+    this.this$0.AppActionButton.getStyleElement()['className'] = 'GAN2ORTCIS';
   }
 }
 ;
@@ -10007,7 +10012,7 @@ function $createAndBindUi_6(owner){
   VersionInfo = new VerticalPanel_0;
   domId7 = $createUniqueId($doc);
   AppActionButton = new Button_0;
-  f_HTMLPanel3 = new HTMLPanel_0("<div class='GAN2ORTCBW'> <div class='GAN2ORTCFW' id='ListGrid'> <span id='" + domId4 + "'><\/span> <\/div> <\/div> <div class='GAN2ORTCAW'> <span id='" + domId5 + "'><\/span> <br> <span id='" + domId6 + "'><\/span> <span id='" + domId7 + "'><\/span> <\/div>");
+  f_HTMLPanel3 = new HTMLPanel_0("<div class='GAN2ORTCLS'> <div class='GAN2ORTCPS' id='ListGrid'> <span id='" + domId4 + "'><\/span> <\/div> <\/div> <div class='GAN2ORTCKS'> <span id='" + domId5 + "'><\/span> <br> <span id='" + domId6 + "'><\/span> <span id='" + domId7 + "'><\/span> <\/div>");
   domId8 = $createUniqueId($doc);
   f_HTMLPanel4 = new HTMLPanel_0('<u>New Project Apps<\/u>');
   domId9 = $createUniqueId($doc);
@@ -10016,23 +10021,23 @@ function $createAndBindUi_6(owner){
   RemoveButton = new Button_0;
   domId11 = $createUniqueId($doc);
   DeployButton = new Button_0;
-  f_HTMLPanel1 = new HTMLPanel_0("<span id='" + domId0 + "'><\/span> <span id='" + domId3 + "'><\/span> <span id='" + domId8 + "'><\/span> <div class='GAN2ORTCDW'> <span id='" + domId9 + "'><\/span> <span id='" + domId10 + "'><\/span> <span id='" + domId11 + "'><\/span> <\/div>");
+  f_HTMLPanel1 = new HTMLPanel_0("<span id='" + domId0 + "'><\/span> <span id='" + domId3 + "'><\/span> <span id='" + domId8 + "'><\/span> <div class='GAN2ORTCNS'> <span id='" + domId9 + "'><\/span> <span id='" + domId10 + "'><\/span> <span id='" + domId11 + "'><\/span> <\/div>");
   $setTextOrHtml(featuredAppsLabel, 'Featured', false);
-  featuredAppsLabel.element['className'] = 'GAN2ORTCBX';
+  featuredAppsLabel.element['className'] = 'GAN2ORTCLT';
   $setTextOrHtml(allAppsLabel, 'All', false);
-  allAppsLabel.element['className'] = 'GAN2ORTCIW';
-  f_HTMLPanel2.element['className'] = 'GAN2ORTCGX';
-  AppInfo.element['className'] = 'GAN2ORTCPW';
-  VersionInfo.element['className'] = 'GAN2ORTCPW';
-  AppActionButton.element['className'] = 'GAN2ORTCPV';
-  f_HTMLPanel3.element['className'] = 'GAN2ORTCKW';
-  f_HTMLPanel4.element['className'] = 'GAN2ORTCFX';
-  DeployListFlowPanel.element['className'] = 'GAN2ORTCEW';
-  RemoveButton.element['className'] = 'GAN2ORTCGW';
+  allAppsLabel.element['className'] = 'GAN2ORTCCT';
+  f_HTMLPanel2.element['className'] = 'GAN2ORTCAU';
+  AppInfo.element['className'] = 'GAN2ORTCJT';
+  VersionInfo.element['className'] = 'GAN2ORTCJT';
+  AppActionButton.element['className'] = 'GAN2ORTCJS';
+  f_HTMLPanel3.element['className'] = 'GAN2ORTCET';
+  f_HTMLPanel4.element['className'] = 'GAN2ORTCPT';
+  DeployListFlowPanel.element['className'] = 'GAN2ORTCOS';
+  RemoveButton.element['className'] = 'GAN2ORTCAT';
   RemoveButton.element.textContent = 'Remove';
-  DeployButton.element['className'] = 'GAN2ORTCCW';
+  DeployButton.element['className'] = 'GAN2ORTCMS';
   DeployButton.element.textContent = 'Next';
-  f_HTMLPanel1.element['className'] = 'GAN2ORTCEX';
+  f_HTMLPanel1.element['className'] = 'GAN2ORTCOT';
   attachRecord0 = attachToDom(f_HTMLPanel2.element);
   domId1Element = $doc.getElementById(domId1);
   domId2Element = $doc.getElementById(domId2);
@@ -10224,7 +10229,7 @@ function $ensureInjected_6(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCAX h1{font-weight:bold;font-size:20px;padding:0 5px 0 0;margin-bottom:3px;color:#f2a938;}.GAN2ORTCAX h2{font-weight:normal;font-size:14px;padding:0 5px 0 0;margin-bottom:3px;margin-top:0;}.GAN2ORTCPW{padding-left:20px;}.GAN2ORTCPW img{margin:0 10px 10px 0;}.GAN2ORTCAX{margin-bottom:20px;}.GAN2ORTCOV{width:100px;height:50px;position:absolute;bottom:1%;right:1%;}.GAN2ORTCDX{font-weight:bold;}.GAN2ORTCKW{width:96%;height:60%;margin:0 1% 0 1%;border:solid #386e2d 3px;padding:10px;-webkit-border-radius:10px;-moz-border-radius:10px;background:white;font-size:1em;position:relative;}.GAN2ORTCPV{display:none;}.GAN2ORTCCW{position:absolute;top:55%;right:1%;min-width:5%;height:30%;}.GAN2ORTCGW{position:absolute;float:right;top:15%;right:1%;min-width:5%;height:30%;color:red;}.GAN2ORTCEW{width:98%;}.GAN2ORTCHW{margin:0;padding:0;}.GAN2ORTCIW{background:#5ab048;color:azure;width:100px;float:left;padding:3px;margin-left:2px;-webkit-border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;text-align:center;cursor:pointer;cursor:hand;position:absolute;bottom:0;left:150px;height:40%;}.GAN2ORTCBX{margin-left:40px;background:#5ab048;color:white;width:100px;float:left;padding:3px;-webkit-border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;text-align:center;cursor:pointer;cursor:hand;position:absolute;bottom:0;height:40%;}.GAN2ORTCJW{margin-left:2px;background:#386e2d;color:white;width:100px;float:left;padding:3px;-webkit-border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;text-align:center;position:absolute;bottom:0;left:150px;height:50%;}.GAN2ORTCCX{margin-left:40px;background:#386e2d;color:white;width:100px;float:left;padding:3px;-webkit-border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;text-align:center;position:absolute;bottom:0;height:50%;}.GAN2ORTCDW{margin-left:auto;margin-right:auto;width:95.5%;margin:1% 1% 2% 1%;height:15%;border:solid #f5cc7f 2px;overflow-x:hidden;overflow-y:hidden;padding:1%;background:#f5cc7f;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;border-bottom:2px solid #ad905a;border-right:2px solid #ad905a;position:relative;}.GAN2ORTCBW{float:left;width:60%;height:100%;}.GAN2ORTCAW{width:40%;height:100%;float:left;positon:relative;}.GAN2ORTCFW{height:100%;overflow-x:hidden;overflow-y:scroll;}.GAN2ORTCEX{height:100%;background:white;border-radius:10px;-webkt-border-radius:10px;-moz-border-radius:10px;}img{width:64px;height:64px;}.GAN2ORTCLW{color:black;text-align:left;cursor:pointer;cursor:hand;float:left;max-width:220px;min-width:220px;padding-top:10px;padding-bottom:10px;padding-left:5px;padding-right:5px;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;}.GAN2ORTCMW{color:black;text-align:left;cursor:pointer;cursor:hand;background:grey;float:left;max-width:220px;min-width:220px;padding-top:10px;padding-bottom:10px;padding-left:5px;padding-right:5px;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;color:white;}.GAN2ORTCNW{color:black;text-align:center;cursor:pointer;cursor:hand;float:left;min-width:7%;height:90%;padding:1% 1% 1% 1%;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;background:white;margin:0 1% 0 0;border:1px solid #f0f0f0;border-bottom:2px solid #ccc;border-right:2px solid #ccc;}.GAN2ORTCOW{color:white;text-align:center;cursor:pointer;cursor:hand;background:grey;float:left;min-width:7%;height:90%;padding:1% 1% 1% 1%;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;border:1px solid #f0f0f0;border-bottom:2px solid #ccc;border-right:2px solid #ccc;margin:0 1% 0 0;}.GAN2ORTCGX{height:3%;padding:0.8% 0 0 0;position:relative;}.GAN2ORTCFX{float:left;margin:2% 0 0.5% 1.5%;font-size:1.4em;font-weight:bold;height:3%;}');
+    $push_0(toInject, '.GAN2ORTCKT h1{font-weight:bold;font-size:20px;padding:0 5px 0 0;margin-bottom:3px;color:#f2a938;}.GAN2ORTCKT h2{font-weight:normal;font-size:14px;padding:0 5px 0 0;margin-bottom:3px;margin-top:0;}.GAN2ORTCJT{padding-left:20px;}.GAN2ORTCJT img{margin:0 10px 10px 0;}.GAN2ORTCKT{margin-bottom:20px;}.GAN2ORTCIS{width:100px;height:50px;position:absolute;bottom:1%;right:1%;}.GAN2ORTCNT{font-weight:bold;}.GAN2ORTCET{width:96%;height:60%;margin:0 1% 0 1%;border:solid #386e2d 3px;padding:10px;-webkit-border-radius:10px;-moz-border-radius:10px;background:white;font-size:1em;position:relative;}.GAN2ORTCJS{display:none;}.GAN2ORTCMS{position:absolute;top:55%;right:1%;min-width:5%;height:30%;}.GAN2ORTCAT{position:absolute;float:right;top:15%;right:1%;min-width:5%;height:30%;color:red;}.GAN2ORTCOS{width:98%;}.GAN2ORTCBT{margin:0;padding:0;}.GAN2ORTCCT{background:#5ab048;color:azure;width:100px;float:left;padding:3px;margin-left:2px;-webkit-border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;text-align:center;cursor:pointer;cursor:hand;position:absolute;bottom:0;left:150px;height:40%;}.GAN2ORTCLT{margin-left:40px;background:#5ab048;color:white;width:100px;float:left;padding:3px;-webkit-border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;text-align:center;cursor:pointer;cursor:hand;position:absolute;bottom:0;height:40%;}.GAN2ORTCDT{margin-left:2px;background:#386e2d;color:white;width:100px;float:left;padding:3px;-webkit-border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;text-align:center;position:absolute;bottom:0;left:150px;height:50%;}.GAN2ORTCMT{margin-left:40px;background:#386e2d;color:white;width:100px;float:left;padding:3px;-webkit-border-radius:10px 10px 0 0;-moz-border-radius:10px 10px 0 0;text-align:center;position:absolute;bottom:0;height:50%;}.GAN2ORTCNS{margin-left:auto;margin-right:auto;width:95.5%;margin:1% 1% 2% 1%;height:15%;border:solid #f5cc7f 2px;overflow-x:hidden;overflow-y:hidden;padding:1%;background:#f5cc7f;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;border-bottom:2px solid #ad905a;border-right:2px solid #ad905a;position:relative;}.GAN2ORTCLS{float:left;width:60%;height:100%;}.GAN2ORTCKS{width:40%;height:100%;float:left;positon:relative;}.GAN2ORTCPS{height:100%;overflow-x:hidden;overflow-y:scroll;}.GAN2ORTCOT{height:100%;background:white;border-radius:10px;-webkt-border-radius:10px;-moz-border-radius:10px;}img{width:64px;height:64px;}.GAN2ORTCFT{color:black;text-align:left;cursor:pointer;cursor:hand;float:left;max-width:220px;min-width:220px;padding-top:10px;padding-bottom:10px;padding-left:5px;padding-right:5px;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;}.GAN2ORTCGT{color:black;text-align:left;cursor:pointer;cursor:hand;background:grey;float:left;max-width:220px;min-width:220px;padding-top:10px;padding-bottom:10px;padding-left:5px;padding-right:5px;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;color:white;}.GAN2ORTCHT{color:black;text-align:center;cursor:pointer;cursor:hand;float:left;min-width:7%;height:90%;padding:1% 1% 1% 1%;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;background:white;margin:0 1% 0 0;border:1px solid #f0f0f0;border-bottom:2px solid #ccc;border-right:2px solid #ccc;}.GAN2ORTCIT{color:white;text-align:center;cursor:pointer;cursor:hand;background:grey;float:left;min-width:7%;height:90%;padding:1% 1% 1% 1%;border-radius:10px;-webkit-border-radius:10px;-moz-border-radius:10px;border:1px solid #f0f0f0;border-bottom:2px solid #ccc;border-right:2px solid #ccc;margin:0 1% 0 0;}.GAN2ORTCAU{height:3%;padding:0.8% 0 0 0;position:relative;}.GAN2ORTCPT{float:left;margin:2% 0 0.5% 1.5%;font-size:1.4em;font-weight:bold;height:3%;}');
     schedule();
     return true;
   }
@@ -10347,7 +10352,7 @@ function $ensureInjected_7(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCAAB{font-weight:bold;}');
+    $push_0(toInject, '.GAN2ORTCK2{font-weight:bold;}');
     schedule();
     return true;
   }
@@ -10546,32 +10551,32 @@ function $createAndBindUi_8(owner){
   domId7 = $createUniqueId($doc);
   domId8 = $createUniqueId($doc);
   dbengineListBox = new ListBox_0;
-  f_HTMLPanel8 = new HTMLPanel_0("<label class='GAN2ORTCOY'>DB Engine<\/label> <span id='" + domId8 + "'><\/span>");
+  f_HTMLPanel8 = new HTMLPanel_0("<label class='GAN2ORTCIV'>DB Engine<\/label> <span id='" + domId8 + "'><\/span>");
   f_HTMLPanel7 = new HTMLPanel_0("<span id='" + domId7 + "'><\/span>");
   domId9 = $createUniqueId($doc);
   domId10 = $createUniqueId($doc);
   domId11 = $createUniqueId($doc);
   domId12 = $createUniqueId($doc);
   nameTextBox = new TextBox_0;
-  f_HTMLPanel10 = new HTMLPanel_0("<label class='GAN2ORTCOY'>Name<\/label> <span id='" + domId12 + "'><\/span>");
+  f_HTMLPanel10 = new HTMLPanel_0("<label class='GAN2ORTCIV'>Name<\/label> <span id='" + domId12 + "'><\/span>");
   f_HTMLPanel9 = new HTMLPanel_0("<span id='" + domId11 + "'><\/span>");
   domId13 = $createUniqueId($doc);
   domId14 = $createUniqueId($doc);
   domId15 = $createUniqueId($doc);
   passwordTextBox = new PasswordTextBox_0;
-  f_HTMLPanel12 = new HTMLPanel_0("<label class='GAN2ORTCOY'>Password<\/label> <span id='" + domId15 + "'><\/span>");
+  f_HTMLPanel12 = new HTMLPanel_0("<label class='GAN2ORTCIV'>Password<\/label> <span id='" + domId15 + "'><\/span>");
   f_HTMLPanel11 = new HTMLPanel_0("<span id='" + domId14 + "'><\/span>");
   domId16 = $createUniqueId($doc);
   domId17 = $createUniqueId($doc);
   domId18 = $createUniqueId($doc);
   hostTextBox = new PasswordTextBox_0;
-  f_HTMLPanel14 = new HTMLPanel_0("<label class='GAN2ORTCOY'>Host<\/label> <span id='" + domId18 + "'><\/span>");
+  f_HTMLPanel14 = new HTMLPanel_0("<label class='GAN2ORTCIV'>Host<\/label> <span id='" + domId18 + "'><\/span>");
   f_HTMLPanel13 = new HTMLPanel_0("<span id='" + domId17 + "'><\/span>");
   domId19 = $createUniqueId($doc);
   domId20 = $createUniqueId($doc);
   domId21 = $createUniqueId($doc);
   portTextBox = new TextBox_0;
-  f_HTMLPanel16 = new HTMLPanel_0("<label class='GAN2ORTCOY'>Port<\/label> <span id='" + domId21 + "'><\/span>");
+  f_HTMLPanel16 = new HTMLPanel_0("<label class='GAN2ORTCIV'>Port<\/label> <span id='" + domId21 + "'><\/span>");
   f_HTMLPanel15 = new HTMLPanel_0("<span id='" + domId20 + "'><\/span>");
   dbFieldsPanel = new HTMLPanel_0("<span id='" + domId10 + "'><\/span> <span id='" + domId13 + "'><\/span> <span id='" + domId16 + "'><\/span> <span id='" + domId19 + "'><\/span>");
   domId22 = $createUniqueId($doc);
@@ -10588,36 +10593,36 @@ function $createAndBindUi_8(owner){
   f_HTMLPanel4 = new HTMLPanel_0("<span id='" + domId4 + "'><\/span> <span id='" + domId5 + "'><\/span>");
   databaseOptionsPanel = new HTMLPanel_0("<span id='" + domId0 + "'><\/span> <span id='" + domId1 + "'><\/span> <span id='" + domId3 + "'><\/span>");
   f_SimplePanel1 = new SimplePanel_0;
-  f_HTMLPanel3.element['className'] = 'GAN2ORTCOX';
-  f_HTMLPanel2.element['className'] = 'GAN2ORTCNX';
+  f_HTMLPanel3.element['className'] = 'GAN2ORTCIU';
+  f_HTMLPanel2.element['className'] = 'GAN2ORTCHU';
   dbengineListBox.element.name = 'dbengine';
-  f_HTMLPanel8.element['className'] = 'GAN2ORTCNY';
-  f_HTMLPanel7.element['className'] = 'GAN2ORTCPY';
-  nameTextBox.element['className'] = 'GAN2ORTCMX';
+  f_HTMLPanel8.element['className'] = 'GAN2ORTCHV';
+  f_HTMLPanel7.element['className'] = 'GAN2ORTCJV';
+  nameTextBox.element['className'] = 'GAN2ORTCGU';
   nameTextBox.element['name'] = 'dbname';
-  f_HTMLPanel10.element['className'] = 'GAN2ORTCNY';
-  f_HTMLPanel9.element['className'] = 'GAN2ORTCPY';
-  passwordTextBox.element['className'] = 'GAN2ORTCMX';
+  f_HTMLPanel10.element['className'] = 'GAN2ORTCHV';
+  f_HTMLPanel9.element['className'] = 'GAN2ORTCJV';
+  passwordTextBox.element['className'] = 'GAN2ORTCGU';
   passwordTextBox.element['name'] = 'dbpassword';
-  f_HTMLPanel12.element['className'] = 'GAN2ORTCNY';
-  f_HTMLPanel11.element['className'] = 'GAN2ORTCPY';
-  hostTextBox.element['className'] = 'GAN2ORTCMX';
+  f_HTMLPanel12.element['className'] = 'GAN2ORTCHV';
+  f_HTMLPanel11.element['className'] = 'GAN2ORTCJV';
+  hostTextBox.element['className'] = 'GAN2ORTCGU';
   hostTextBox.element['name'] = 'dbhost';
-  f_HTMLPanel14.element['className'] = 'GAN2ORTCNY';
-  f_HTMLPanel13.element['className'] = 'GAN2ORTCPY';
-  portTextBox.element['className'] = 'GAN2ORTCMX';
+  f_HTMLPanel14.element['className'] = 'GAN2ORTCHV';
+  f_HTMLPanel13.element['className'] = 'GAN2ORTCJV';
+  portTextBox.element['className'] = 'GAN2ORTCGU';
   portTextBox.element['name'] = 'dbport';
-  f_HTMLPanel16.element['className'] = 'GAN2ORTCNY';
-  f_HTMLPanel15.element['className'] = 'GAN2ORTCPY';
-  previousButton.element['className'] = 'GAN2ORTCJY GAN2ORTCB-';
+  f_HTMLPanel16.element['className'] = 'GAN2ORTCHV';
+  f_HTMLPanel15.element['className'] = 'GAN2ORTCJV';
+  previousButton.element['className'] = 'GAN2ORTCDV GAN2ORTCLV';
   previousButton.element.textContent = '\xAB Previous';
-  f_HTMLPanel18.element['className'] = 'GAN2ORTCOY';
-  nextButton.element['className'] = 'GAN2ORTCJY';
+  f_HTMLPanel18.element['className'] = 'GAN2ORTCIV';
+  nextButton.element['className'] = 'GAN2ORTCDV';
   nextButton.element.textContent = 'Next \xBB';
-  f_HTMLPanel19.element['className'] = 'GAN2ORTCOY';
-  f_HTMLPanel17.element['className'] = 'GAN2ORTCPY';
-  f_HTMLPanel6.element['className'] = 'GAN2ORTCA-';
-  f_HTMLPanel4.element['className'] = 'GAN2ORTCLY';
+  f_HTMLPanel19.element['className'] = 'GAN2ORTCIV';
+  f_HTMLPanel17.element['className'] = 'GAN2ORTCJV';
+  f_HTMLPanel6.element['className'] = 'GAN2ORTCKV';
+  f_HTMLPanel4.element['className'] = 'GAN2ORTCFV';
   $add_3(f_SimplePanel1, databaseOptionsPanel);
   attachRecord0 = attachToDom(databaseOptionsPanel.element);
   domId0Element = $doc.getElementById(domId0);
@@ -10852,7 +10857,7 @@ _.getClass$ = function getClass_274(){
 }
 ;
 _.onKeyUp = function onKeyUp_0(event_0){
-  setStyleName_0(this.val$owner.hostTextBox.element, 'GAN2ORTCFY', false);
+  setStyleName_0(this.val$owner.hostTextBox.element, 'GAN2ORTCPU', false);
 }
 ;
 _.castableTypeMap$ = {10:1, 16:1};
@@ -10870,7 +10875,7 @@ _.getClass$ = function getClass_275(){
 }
 ;
 _.onKeyUp = function onKeyUp_1(event_0){
-  setStyleName_0(this.val$owner.portTextBox.element, 'GAN2ORTCFY', false);
+  setStyleName_0(this.val$owner.portTextBox.element, 'GAN2ORTCPU', false);
 }
 ;
 _.castableTypeMap$ = {10:1, 16:1};
@@ -10996,7 +11001,7 @@ _.getClass$ = function getClass_282(){
 }
 ;
 _.onKeyUp = function onKeyUp_2(event_0){
-  setStyleName_0(this.val$owner.nameTextBox.element, 'GAN2ORTCFY', false);
+  setStyleName_0(this.val$owner.nameTextBox.element, 'GAN2ORTCPU', false);
 }
 ;
 _.castableTypeMap$ = {10:1, 16:1};
@@ -11014,7 +11019,7 @@ _.getClass$ = function getClass_283(){
 }
 ;
 _.onKeyUp = function onKeyUp_3(event_0){
-  setStyleName_0(this.val$owner.passwordTextBox.element, 'GAN2ORTCFY', false);
+  setStyleName_0(this.val$owner.passwordTextBox.element, 'GAN2ORTCPU', false);
 }
 ;
 _.castableTypeMap$ = {10:1, 16:1};
@@ -11031,7 +11036,7 @@ function $ensureInjected_8(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCIX{padding:0;border-radius:5px;font-family:Helvetica, Arial, Verdana, sans-serif;font-size:0.8em;-webkit-box-shadow:0 3px 5px #bfbfbf;-moz-box-shadow:0 3px 5px #bfbfbf;border:solid #cc8202 1px;}.GAN2ORTCNX{background:#ed9e16;height:60px;border:solid #cc8202 0;margin-bottom:5px;border-top-right-radius:3px;border-top-left-radius:3px;}.GAN2ORTCNX h1{margin:0;padding:8px 0 0 10px;font-size:40px;color:#cc8202;font-weight:bold;border:none;}.GAN2ORTCOX{text-shadow:rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;}.GAN2ORTCHY{width:100%;height:40px;display:block;float:left;background:url(shadow-left.png) top left no-repeat, url(shadow-right.png) top right no-repeat;margin-bottom:20px;}.GAN2ORTCFY{border:1px solid #f00;}.GAN2ORTCMX{border:1px solid #888;}.GAN2ORTCGY{float:right;}.GAN2ORTCIY{color:red;font-weight:bold;}.GAN2ORTCEY{padding:0 0 0 10px;}.GAN2ORTCLX{color:red;margin:10em 5em;font-weight:bold;font-size:2.5em;padding:0 0 0 8em;}.GAN2ORTCKX{width:100%;height:100%;overflow:scroll;}.GAN2ORTCPX{background:black;opacity:0.75;}.GAN2ORTCAY{float:left;}.GAN2ORTCBY{float:left;font-size:2em;color:white;margin-left:0.5em;margin-top:0.2em;}');
+    $push_0(toInject, '.GAN2ORTCCU{padding:0;border-radius:5px;font-family:Helvetica, Arial, Verdana, sans-serif;font-size:0.8em;-webkit-box-shadow:0 3px 5px #bfbfbf;-moz-box-shadow:0 3px 5px #bfbfbf;border:solid #cc8202 1px;}.GAN2ORTCHU{background:#ed9e16;height:60px;border:solid #cc8202 0;margin-bottom:5px;border-top-right-radius:3px;border-top-left-radius:3px;}.GAN2ORTCHU h1{margin:0;padding:8px 0 0 10px;font-size:40px;color:#cc8202;font-weight:bold;border:none;}.GAN2ORTCIU{text-shadow:rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;}.GAN2ORTCBV{width:100%;height:40px;display:block;float:left;background:url(shadow-left.png) top left no-repeat, url(shadow-right.png) top right no-repeat;margin-bottom:20px;}.GAN2ORTCPU{border:1px solid #f00;}.GAN2ORTCGU{border:1px solid #888;}.GAN2ORTCAV{float:right;}.GAN2ORTCCV{color:red;font-weight:bold;}.GAN2ORTCOU{padding:0 0 0 10px;}.GAN2ORTCFU{color:red;margin:10em 5em;font-weight:bold;font-size:2.5em;padding:0 0 0 8em;}.GAN2ORTCEU{width:100%;height:100%;overflow:scroll;}.GAN2ORTCJU{background:black;opacity:0.75;}.GAN2ORTCKU{float:left;}.GAN2ORTCLU{float:left;font-size:2em;color:white;margin-left:0.5em;margin-top:0.2em;}');
     schedule();
     return true;
   }
@@ -11057,7 +11062,7 @@ function $ensureInjected_9(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCLY h1{font-size:1.5em;margin:0 0 6px 0;padding:0 10px 2px 0;width:96%;border-bottom:2px solid #444;}.GAN2ORTCLY h2{font-size:1.2em;margin:0;padding:0;}select{margin:0 0 0 10px;}.GAN2ORTCLY{padding:0 0 0 10px;width:100%;}.GAN2ORTCA-{padding:20px 20px 0 0;width:600px;height:auto;float:left;}.GAN2ORTCA- .GAN2ORTCPY{width:500px;height:1.5em;margin:0 0 10px 10px;float:left;}.GAN2ORTCA- .GAN2ORTCOY{width:10em;margin:0 0 0 10px;text-align:right;float:left;}.GAN2ORTCA- .GAN2ORTCNY{float:left;}.GAN2ORTCA- input{height:1.6em;width:150px;margin:0 0 5px 10px;border-radius:3px;-webkit-box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);float:left;}.GAN2ORTCKY{padding:10px 0 0 0;float:left;width:10em;}.GAN2ORTCJY{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#588b34), to(#477725));background:-moz-linear-gradient(linear, 0% 0%, 0% 100%, from(#0C940C), to(#136613));-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;border:#466625 solid 1px;display:block;float:left;color:#fff;height:2.1em;width:9em;font-size:1.25em;cursor:pointer;cursor:hand;}.GAN2ORTCMY{color:red;float:right;margin:3px 0 0 5px;display:inline;}.GAN2ORTCB-{float:right;}');
+    $push_0(toInject, '.GAN2ORTCFV h1{font-size:1.5em;margin:0 0 6px 0;padding:0 10px 2px 0;width:96%;border-bottom:2px solid #444;}.GAN2ORTCFV h2{font-size:1.2em;margin:0;padding:0;}select{margin:0 0 0 10px;}.GAN2ORTCFV{padding:0 0 0 10px;width:100%;}.GAN2ORTCKV{padding:20px 20px 0 0;width:600px;height:auto;float:left;}.GAN2ORTCKV .GAN2ORTCJV{width:500px;height:1.5em;margin:0 0 10px 10px;float:left;}.GAN2ORTCKV .GAN2ORTCIV{width:10em;margin:0 0 0 10px;text-align:right;float:left;}.GAN2ORTCKV .GAN2ORTCHV{float:left;}.GAN2ORTCKV input{height:1.6em;width:150px;margin:0 0 5px 10px;border-radius:3px;-webkit-box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);float:left;}.GAN2ORTCEV{padding:10px 0 0 0;float:left;width:10em;}.GAN2ORTCDV{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#588b34), to(#477725));background:-moz-linear-gradient(linear, 0% 0%, 0% 100%, from(#0C940C), to(#136613));-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;border:#466625 solid 1px;display:block;float:left;color:#fff;height:2.1em;width:9em;font-size:1.25em;cursor:pointer;cursor:hand;}.GAN2ORTCGV{color:red;float:right;margin:3px 0 0 5px;display:inline;}.GAN2ORTCLV{float:right;}');
     schedule();
     return true;
   }
@@ -11081,7 +11086,7 @@ function $ensureInjected_10(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCE0{height:100%;min-height:300px;background:white;border-radius:10px;margin-right:10px;}.GAN2ORTCE1{background:white;height:100%;width:99%;border-radius:10px;margin:0 auto;}.GAN2ORTCK0{padding:0.45% 0.5% 0.25% 0.5%;}.GAN2ORTCL0{color:gray;text-shadow:1px 1px 0 #000;font-family:"Droid Serif";font-size:1.7em;float:left;}.GAN2ORTCM0{color:#e87b33;text-shadow:1px 1px 0 #000;font-family:"Droid Serif";font-size:1.7em;float:left;margin-left:0.5%;}.GAN2ORTCG0{height:98%;width:98%;background:white;color:black;}.GAN2ORTCF1{margin-bottom:0;margin-right:0;margin-top:0;height:95%;widht:100%;border:2px solid #4d4d4d;}.GAN2ORTCN0{border-radius:5px;background:white;height:80%;widht:80%;margin-right:10%;}.GAN2ORTCJ0{cursor:pointer;cursor:hand;font-family:"Droid Serif";border:2px outset #e8e8e8;border-radius:2px;width:6em;text-align:center;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF));color:black;height:1.67em;}.GAN2ORTCI0{border-radius:5px;background:white;cursor:pointer;cursor:hand;}.GAN2ORTCA0{height:100%;width:100%;position:relative;top:0;bottom:0;left:0;right:0;}.GAN2ORTCK-{background:#d1d1d1;margin-bottom:0.5%;margin-right:1%;margin-left:1%;}.GAN2ORTCN-{background:red;border:2px solid black;font-weight:bold;}.GAN2ORTCE-{background:white;width:100%;height:100%;margin-top:10%;}.GAN2ORTCD-{border-radius:20px;position:absolute;width:90%;height:70%;-webkit-box-shadow:5px 5px 5px #121212;-moz-box-shadow:5px 5px 5px #121212;box-shadow:5px 5px 5px #121212;}.GAN2ORTCM-{width:80%;height:100%;}.GAN2ORTCF-{width:80%;height:100%;margin-bottom:1%;}.GAN2ORTCC1{border-radius:5px;cursor:pointer;cursor:hand;font-family:"Droid Serif";font-size:1em;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF));color:black;width:100%;flow:left;-webkit-box-shadow:5px 5px 5px #121212;-moz-box-shadow:5px 5px 5px #121212;box-shadow:5px 5px 5px #121212;}.GAN2ORTCO-{float:left;padding:0 0.5em 0 0;}.GAN2ORTCC0{height:98%;width:94%;margin-left:4%;margin-top:2%;}.GAN2ORTCH-{background:#e3dfc3;border-radius:5px;}.GAN2ORTCB0{margin:1em 1em 1em 1em;min-width:50%;}.GAN2ORTCB1{margin:0;padding:0;display:block;position:absolute;top:80px;right:30px;list-style:none;margin:0;padding:0;height:32px;}.GAN2ORTCO0{color:black;border-radius:2px;min-width:30%;margin-top:0.5%;margin-bottom:0.5%;margin-left:0.5%;margin-right:0.5%;flow:left;}.GAN2ORTCP0{height:70%;border-radius:2px;min-width:10%;cursor:pointer;cursor:hand;font-family:"Droid Serif";background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF));color:black;flow:left;margin-top:0.5%;margin-bottom:0.5%;margin-left:0.5%;margin-right:0.5%;}.GAN2ORTCH0{min-width:15%;flow:left;margin-top:0.5%;margin-bottom:0.5%;margin-left:0.5%;margin-right:0.5%;}.GAN2ORTCF0{height:98%;width:98%;background:white;color:black;margin-left:1%;border:2px inset white;}.GAN2ORTCL-{height:100%;width:100%;position:relative;top:0;bottom:0;left:0;right:0;}.GAN2ORTCJ-{background:white;height:100%;width:99%;margin-left:1%;border:2px inset white;}.GAN2ORTCG-{height:100%;width:94%;margin-left:4%;}.GAN2ORTCD0{padding:1em 1em 1em 1em;}.GAN2ORTCI-{height:70%;border-radius:2px;min-width:10%;cursor:pointer;cursor:hand;font-family:"Droid Serif";background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF));color:black;flow:left;margin-top:0.5%;margin-bottom:0.5%;margin-left:0.5%;margin-right:0.5%;}.GAN2ORTCA1{margin:0;padding:0;height:1000px;}.GAN2ORTCD1{margin:10px 0;}');
+    $push_0(toInject, '.GAN2ORTCOW{height:100%;min-height:300px;background:white;border-radius:10px;margin-right:10px;}.GAN2ORTCOX{background:white;height:100%;width:99%;border-radius:10px;margin:0 auto;}.GAN2ORTCEX{padding:0.45% 0.5% 0.25% 0.5%;}.GAN2ORTCFX{color:gray;text-shadow:1px 1px 0 #000;font-family:"Droid Serif";font-size:1.7em;float:left;}.GAN2ORTCGX{color:#e87b33;text-shadow:1px 1px 0 #000;font-family:"Droid Serif";font-size:1.7em;float:left;margin-left:0.5%;}.GAN2ORTCAX{height:98%;width:98%;background:white;color:black;}.GAN2ORTCPX{margin-bottom:0;margin-right:0;margin-top:0;height:95%;widht:100%;border:2px solid #4d4d4d;}.GAN2ORTCHX{border-radius:5px;background:white;height:80%;widht:80%;margin-right:10%;}.GAN2ORTCDX{cursor:pointer;cursor:hand;font-family:"Droid Serif";border:2px outset #e8e8e8;border-radius:2px;width:6em;text-align:center;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF));color:black;height:1.67em;}.GAN2ORTCCX{border-radius:5px;background:white;cursor:pointer;cursor:hand;}.GAN2ORTCKW{height:100%;width:100%;position:relative;top:0;bottom:0;left:0;right:0;}.GAN2ORTCEW{background:#d1d1d1;margin-bottom:0.5%;margin-right:1%;margin-left:1%;}.GAN2ORTCHW{background:red;border:2px solid black;font-weight:bold;}.GAN2ORTCOV{background:white;width:100%;height:100%;margin-top:10%;}.GAN2ORTCNV{border-radius:20px;position:absolute;width:90%;height:70%;-webkit-box-shadow:5px 5px 5px #121212;-moz-box-shadow:5px 5px 5px #121212;box-shadow:5px 5px 5px #121212;}.GAN2ORTCGW{width:80%;height:100%;}.GAN2ORTCPV{width:80%;height:100%;margin-bottom:1%;}.GAN2ORTCMX{border-radius:5px;cursor:pointer;cursor:hand;font-family:"Droid Serif";font-size:1em;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF));color:black;width:100%;flow:left;-webkit-box-shadow:5px 5px 5px #121212;-moz-box-shadow:5px 5px 5px #121212;box-shadow:5px 5px 5px #121212;}.GAN2ORTCIW{float:left;padding:0 0.5em 0 0;}.GAN2ORTCMW{height:98%;width:94%;margin-left:4%;margin-top:2%;}.GAN2ORTCBW{background:#e3dfc3;border-radius:5px;}.GAN2ORTCLW{margin:1em 1em 1em 1em;min-width:50%;}.GAN2ORTCLX{margin:0;padding:0;display:block;position:absolute;top:80px;right:30px;list-style:none;margin:0;padding:0;height:32px;}.GAN2ORTCIX{color:black;border-radius:2px;min-width:30%;margin-top:0.5%;margin-bottom:0.5%;margin-left:0.5%;margin-right:0.5%;flow:left;}.GAN2ORTCJX{height:70%;border-radius:2px;min-width:10%;cursor:pointer;cursor:hand;font-family:"Droid Serif";background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF));color:black;flow:left;margin-top:0.5%;margin-bottom:0.5%;margin-left:0.5%;margin-right:0.5%;}.GAN2ORTCBX{min-width:15%;flow:left;margin-top:0.5%;margin-bottom:0.5%;margin-left:0.5%;margin-right:0.5%;}.GAN2ORTCPW{height:98%;width:98%;background:white;color:black;margin-left:1%;border:2px inset white;}.GAN2ORTCFW{height:100%;width:100%;position:relative;top:0;bottom:0;left:0;right:0;}.GAN2ORTCDW{background:white;height:100%;width:99%;margin-left:1%;border:2px inset white;}.GAN2ORTCAW{height:100%;width:94%;margin-left:4%;}.GAN2ORTCNW{padding:1em 1em 1em 1em;}.GAN2ORTCCW{height:70%;border-radius:2px;min-width:10%;cursor:pointer;cursor:hand;font-family:"Droid Serif";background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF));color:black;flow:left;margin-top:0.5%;margin-bottom:0.5%;margin-left:0.5%;margin-right:0.5%;}.GAN2ORTCKX{margin:0;padding:0;height:1000px;}.GAN2ORTCNX{margin:10px 0;}');
     schedule();
     return true;
   }
@@ -11130,7 +11135,7 @@ function $handlePreviousButton_0(this$static){
 
 function $projectNameTextBoxOnFocus(this$static){
   var x, y;
-  if ($equals_2($getPropertyString(this$static.projectNameTextBox.getStyleElement(), 'className'), 'GAN2ORTCL1')) {
+  if ($equals_2($getPropertyString(this$static.projectNameTextBox.getStyleElement(), 'className'), 'GAN2ORTCFY')) {
     $setVisible_0(this$static.active, true);
     x = $getTooltipPosition_0(this$static.projectNameTextBox)[0];
     y = $getTooltipPosition_0(this$static.projectNameTextBox)[1];
@@ -11145,20 +11150,20 @@ function $projectNameTextboxOnKeyUp(this$static){
   $setTextOrHtml(this$static.subDomainLabel, $getPropertyString(this$static.projectNameTextBox.element, 'value') + '.', false);
   if (!$getPropertyString(this$static.projectNameTextBox.element, 'value').length) {
     $setTextOrHtml(this$static.error, 'Subdomain required to deploy', false);
-    this$static.projectNameTextBox.getStyleElement()['className'] = 'GAN2ORTCE2';
+    this$static.projectNameTextBox.getStyleElement()['className'] = 'GAN2ORTCOY';
     $hide(this$static.active);
     $setTextOrHtml(this$static.subDomainLabel, '', false);
   }
    else {
     $show(this$static.active);
-    this$static.projectNameTextBox.getStyleElement()['className'] = 'GAN2ORTCL1';
+    this$static.projectNameTextBox.getStyleElement()['className'] = 'GAN2ORTCFY';
     $setTextOrHtml(this$static.error, '', false);
   }
 }
 
 function $validateFields(this$static){
   if (!$getPropertyString(this$static.projectNameTextBox.element, 'value').length) {
-    this$static.projectNameTextBox.getStyleElement()['className'] = 'GAN2ORTCE2';
+    this$static.projectNameTextBox.getStyleElement()['className'] = 'GAN2ORTCOY';
     $setTextOrHtml(this$static.error, 'Subdomain required to deploy', false);
     return false;
   }
@@ -11166,7 +11171,7 @@ function $validateFields(this$static){
     return true;
   }
    else {
-    this$static.projectNameTextBox.getStyleElement()['className'] = 'GAN2ORTCE2';
+    this$static.projectNameTextBox.getStyleElement()['className'] = 'GAN2ORTCOY';
     $setTextOrHtml(this$static.error, 'Can only contain letters.', false);
     return false;
   }
@@ -11219,7 +11224,7 @@ function $createAndBindUi_9(owner){
   projectNameTextBox = new TextBox_0;
   domId9 = $createUniqueId($doc);
   error = new Label_0;
-  f_HTMLPanel9 = new HTMLPanel_0("<label class='GAN2ORTCN2'>Deploy as:<\/label> <span id='" + domId8 + "'><\/span> <span id='" + domId9 + "'><\/span>");
+  f_HTMLPanel9 = new HTMLPanel_0("<label class='GAN2ORTCH-'>Deploy as:<\/label> <span id='" + domId8 + "'><\/span> <span id='" + domId9 + "'><\/span>");
   f_HTMLPanel8 = new HTMLPanel_0("<span id='" + domId7 + "'><\/span>");
   domId10 = $createUniqueId($doc);
   domId11 = $createUniqueId($doc);
@@ -11229,13 +11234,13 @@ function $createAndBindUi_9(owner){
   subDomainLabel = new Label_0;
   domId14 = $createUniqueId($doc);
   baseProtocolLabel = new Label_0;
-  f_HTMLPanel11 = new HTMLPanel_0("<label class='GAN2ORTCN2'>Base URL:<\/label> <span id='" + domId12 + "'><\/span> <span id='" + domId13 + "'><\/span> <span id='" + domId14 + "'><\/span>");
+  f_HTMLPanel11 = new HTMLPanel_0("<label class='GAN2ORTCH-'>Base URL:<\/label> <span id='" + domId12 + "'><\/span> <span id='" + domId13 + "'><\/span> <span id='" + domId14 + "'><\/span>");
   f_HTMLPanel10 = new HTMLPanel_0("<span id='" + domId11 + "'><\/span>");
   domId15 = $createUniqueId($doc);
   domId16 = $createUniqueId($doc);
   domId17 = $createUniqueId($doc);
   debugCheckBox = new CheckBox_0;
-  f_HTMLPanel13 = new HTMLPanel_0("<label class='GAN2ORTCN2'>Debug Mode:<\/label> <span id='" + domId17 + "'><\/span>");
+  f_HTMLPanel13 = new HTMLPanel_0("<label class='GAN2ORTCH-'>Debug Mode:<\/label> <span id='" + domId17 + "'><\/span>");
   f_HTMLPanel12 = new HTMLPanel_0("<span id='" + domId16 + "'><\/span>");
   domId18 = $createUniqueId($doc);
   domId19 = $createUniqueId($doc);
@@ -11251,29 +11256,29 @@ function $createAndBindUi_9(owner){
   f_HTMLPanel5 = new HTMLPanel_0("<span id='" + domId4 + "'><\/span> <span id='" + domId5 + "'><\/span>");
   f_HTMLPanel2 = new HTMLPanel_0("<span id='" + domId0 + "'><\/span> <span id='" + domId1 + "'><\/span> <span id='" + domId3 + "'><\/span>");
   f_SimplePanel1 = new SimplePanel_0;
-  f_HTMLPanel4.element['className'] = 'GAN2ORTCN1';
-  f_HTMLPanel3.element['className'] = 'GAN2ORTCM1';
-  projectNameTextBox.element['className'] = 'GAN2ORTCL1';
-  error.element['className'] = 'GAN2ORTCL2';
-  f_HTMLPanel9.element['className'] = 'GAN2ORTCM2';
-  f_HTMLPanel8.element['className'] = 'GAN2ORTCO2';
-  baseDomainLabel.element['className'] = 'GAN2ORTCF2';
-  subDomainLabel.element['className'] = 'GAN2ORTCF2 GAN2ORTCH2';
-  baseProtocolLabel.element['className'] = 'GAN2ORTCF2 GAN2ORTCD2';
-  f_HTMLPanel11.element['className'] = 'GAN2ORTCM2';
-  f_HTMLPanel10.element['className'] = 'GAN2ORTCO2';
+  f_HTMLPanel4.element['className'] = 'GAN2ORTCHY';
+  f_HTMLPanel3.element['className'] = 'GAN2ORTCGY';
+  projectNameTextBox.element['className'] = 'GAN2ORTCFY';
+  error.element['className'] = 'GAN2ORTCF-';
+  f_HTMLPanel9.element['className'] = 'GAN2ORTCG-';
+  f_HTMLPanel8.element['className'] = 'GAN2ORTCI-';
+  baseDomainLabel.element['className'] = 'GAN2ORTCPY';
+  subDomainLabel.element['className'] = 'GAN2ORTCPY GAN2ORTCB-';
+  baseProtocolLabel.element['className'] = 'GAN2ORTCPY GAN2ORTCNY';
+  f_HTMLPanel11.element['className'] = 'GAN2ORTCG-';
+  f_HTMLPanel10.element['className'] = 'GAN2ORTCI-';
   debugCheckBox.setName('debug');
-  f_HTMLPanel13.element['className'] = 'GAN2ORTCM2';
-  f_HTMLPanel12.element['className'] = 'GAN2ORTCO2';
-  previousButton.element['className'] = 'GAN2ORTCI2 GAN2ORTCA3';
+  f_HTMLPanel13.element['className'] = 'GAN2ORTCG-';
+  f_HTMLPanel12.element['className'] = 'GAN2ORTCI-';
+  previousButton.element['className'] = 'GAN2ORTCC- GAN2ORTCK-';
   previousButton.element.textContent = '\xAB Previous';
-  f_HTMLPanel15.element['className'] = 'GAN2ORTCN2';
-  nextButton.element['className'] = 'GAN2ORTCI2';
+  f_HTMLPanel15.element['className'] = 'GAN2ORTCH-';
+  nextButton.element['className'] = 'GAN2ORTCC-';
   nextButton.element.textContent = 'Deploy Project';
-  f_HTMLPanel16.element['className'] = 'GAN2ORTCN2';
-  f_HTMLPanel14.element['className'] = 'GAN2ORTCO2';
-  f_HTMLPanel7.element['className'] = 'GAN2ORTCP2';
-  f_HTMLPanel5.element['className'] = 'GAN2ORTCK2';
+  f_HTMLPanel16.element['className'] = 'GAN2ORTCH-';
+  f_HTMLPanel14.element['className'] = 'GAN2ORTCI-';
+  f_HTMLPanel7.element['className'] = 'GAN2ORTCJ-';
+  f_HTMLPanel5.element['className'] = 'GAN2ORTCE-';
   $add_3(f_SimplePanel1, f_HTMLPanel2);
   attachRecord0 = attachToDom(f_HTMLPanel2.element);
   domId0Element = $doc.getElementById(domId0);
@@ -11521,7 +11526,7 @@ function $ensureInjected_11(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCH1{padding:0;border-radius:5px;font-family:Helvetica, Arial, Verdana, sans-serif;font-size:0.8em;-webkit-box-shadow:0 3px 5px #bfbfbf;-moz-box-shadow:0 3px 5px #bfbfbf;border:solid #cc8202 1px;}.GAN2ORTCM1{background:#ed9e16;height:60px;border:solid #cc8202 0;margin-bottom:5px;border-top-right-radius:3px;border-top-left-radius:3px;}.GAN2ORTCM1 h1{margin:0;padding:8px 0 0 10px;font-size:40px;color:#cc8202;font-weight:bold;border:none;}.GAN2ORTCN1{text-shadow:rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;}.GAN2ORTCG2{width:100%;height:40px;display:block;float:left;background:url(shadow-left.png) top left no-repeat, url(shadow-right.png) top right no-repeat;margin-bottom:20px;}.GAN2ORTCE2{border:1px solid #f00;}.GAN2ORTCL1{border:1px solid #888;}.GAN2ORTCF2{float:right;}.GAN2ORTCH2{color:red;font-weight:bold;}.GAN2ORTCD2{padding:0 0 0 10px;}.GAN2ORTCK1{color:red;margin:10em 5em;font-weight:bold;font-size:2.5em;padding:0 0 0 8em;}.GAN2ORTCJ1{width:100%;height:100%;overflow:scroll;}.GAN2ORTCO1{background:black;opacity:0.75;}.GAN2ORTCP1{float:left;}.GAN2ORTCA2{float:left;font-size:2em;color:white;margin-left:0.5em;margin-top:0.2em;}');
+    $push_0(toInject, '.GAN2ORTCBY{padding:0;border-radius:5px;font-family:Helvetica, Arial, Verdana, sans-serif;font-size:0.8em;-webkit-box-shadow:0 3px 5px #bfbfbf;-moz-box-shadow:0 3px 5px #bfbfbf;border:solid #cc8202 1px;}.GAN2ORTCGY{background:#ed9e16;height:60px;border:solid #cc8202 0;margin-bottom:5px;border-top-right-radius:3px;border-top-left-radius:3px;}.GAN2ORTCGY h1{margin:0;padding:8px 0 0 10px;font-size:40px;color:#cc8202;font-weight:bold;border:none;}.GAN2ORTCHY{text-shadow:rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;}.GAN2ORTCA-{width:100%;height:40px;display:block;float:left;background:url(shadow-left.png) top left no-repeat, url(shadow-right.png) top right no-repeat;margin-bottom:20px;}.GAN2ORTCOY{border:1px solid #f00;}.GAN2ORTCFY{border:1px solid #888;}.GAN2ORTCPY{float:right;}.GAN2ORTCB-{color:red;font-weight:bold;}.GAN2ORTCNY{padding:0 0 0 10px;}.GAN2ORTCEY{color:red;margin:10em 5em;font-weight:bold;font-size:2.5em;padding:0 0 0 8em;}.GAN2ORTCDY{width:100%;height:100%;overflow:scroll;}.GAN2ORTCIY{background:black;opacity:0.75;}.GAN2ORTCJY{float:left;}.GAN2ORTCKY{float:left;font-size:2em;color:white;margin-left:0.5em;margin-top:0.2em;}');
     schedule();
     return true;
   }
@@ -11545,7 +11550,7 @@ function $ensureInjected_12(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCK2 h1{font-size:1.5em;margin:0 0 6px 0;padding:0 10px 2px 0;width:96%;border-bottom:2px solid #444;}.GAN2ORTCK2 h2{font-size:1.2em;margin:0;padding:0;}select{margin:0 0 0 10px;}.GAN2ORTCK2{padding:0 0 0 10px;width:100%;}.GAN2ORTCP2{padding:20px 20px 0 0;width:600px;height:auto;float:left;}.GAN2ORTCP2 .GAN2ORTCO2{width:500px;height:1.5em;margin:0 0 10px 10px;float:left;}.GAN2ORTCP2 .GAN2ORTCN2{width:10em;margin:0 0 0 10px;text-align:right;float:left;}.GAN2ORTCP2 .GAN2ORTCM2{float:left;}.GAN2ORTCP2 input{height:1.6em;width:150px;margin:0 0 5px 10px;border-radius:3px;-webkit-box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);float:left;}.GAN2ORTCJ2{padding:10px 0 0 0;float:left;width:10em;}.GAN2ORTCI2{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#588b34), to(#477725));background:-moz-linear-gradient(linear, 0% 0%, 0% 100%, from(#0C940C), to(#136613));-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;border:#466625 solid 1px;display:block;float:left;color:#fff;height:2.1em;width:9em;font-size:1.25em;cursor:pointer;cursor:hand;}.GAN2ORTCL2{color:red;float:right;margin:3px 0 0 5px;display:inline;}.GAN2ORTCA3{float:right;}');
+    $push_0(toInject, '.GAN2ORTCE- h1{font-size:1.5em;margin:0 0 6px 0;padding:0 10px 2px 0;width:96%;border-bottom:2px solid #444;}.GAN2ORTCE- h2{font-size:1.2em;margin:0;padding:0;}select{margin:0 0 0 10px;}.GAN2ORTCE-{padding:0 0 0 10px;width:100%;}.GAN2ORTCJ-{padding:20px 20px 0 0;width:600px;height:auto;float:left;}.GAN2ORTCJ- .GAN2ORTCI-{width:500px;height:1.5em;margin:0 0 10px 10px;float:left;}.GAN2ORTCJ- .GAN2ORTCH-{width:10em;margin:0 0 0 10px;text-align:right;float:left;}.GAN2ORTCJ- .GAN2ORTCG-{float:left;}.GAN2ORTCJ- input{height:1.6em;width:150px;margin:0 0 5px 10px;border-radius:3px;-webkit-box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);float:left;}.GAN2ORTCD-{padding:10px 0 0 0;float:left;width:10em;}.GAN2ORTCC-{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#588b34), to(#477725));background:-moz-linear-gradient(linear, 0% 0%, 0% 100%, from(#0C940C), to(#136613));-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;border:#466625 solid 1px;display:block;float:left;color:#fff;height:2.1em;width:9em;font-size:1.25em;cursor:pointer;cursor:hand;}.GAN2ORTCF-{color:red;float:right;margin:3px 0 0 5px;display:inline;}.GAN2ORTCK-{float:right;}');
     schedule();
     return true;
   }
@@ -11567,7 +11572,7 @@ _.castableTypeMap$ = {};
 _.injected = false;
 function ErrorPanel_0(){
   var errorHTML, f_SimplePanel1;
-  $initWidget(this, ($clinit_511() , errorHTML = new HTML_0 , f_SimplePanel1 = new SimplePanel_0 , errorHTML.element['className'] = 'GAN2ORTCF3' , $add_3(f_SimplePanel1, errorHTML) , this.errorHTML = errorHTML , $ensureInjected_13(style_13) , f_SimplePanel1));
+  $initWidget(this, ($clinit_511() , errorHTML = new HTML_0 , f_SimplePanel1 = new SimplePanel_0 , errorHTML.element['className'] = 'GAN2ORTCP-' , $add_3(f_SimplePanel1, errorHTML) , this.errorHTML = errorHTML , $ensureInjected_13(style_13) , f_SimplePanel1));
 }
 
 function ErrorPanel(){
@@ -11590,7 +11595,7 @@ function $ensureInjected_13(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCD3{padding:0;border-radius:5px;font-family:Helvetica, Arial, Verdana, sans-serif;font-size:0.8em;-webkit-box-shadow:0 3px 5px #bfbfbf;-moz-box-shadow:0 3px 5px #bfbfbf;border:solid #cc8202 1px;}.GAN2ORTCI3{background:#ed9e16;height:60px;border:solid #cc8202 0;margin-bottom:5px;border-top-right-radius:3px;border-top-left-radius:3px;}.GAN2ORTCI3 h1{margin:0;padding:8px 0 0 10px;font-size:40px;color:#cc8202;font-weight:bold;border:none;}.GAN2ORTCJ3{text-shadow:rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;}.GAN2ORTCC4{width:100%;height:40px;display:block;float:left;background:url(shadow-left.png) top left no-repeat, url(shadow-right.png) top right no-repeat;margin-bottom:20px;}.GAN2ORTCA4{border:1px solid #f00;}.GAN2ORTCH3{border:1px solid #888;}.GAN2ORTCB4{float:right;}.GAN2ORTCD4{color:red;font-weight:bold;}.GAN2ORTCP3{padding:0 0 0 10px;}.GAN2ORTCG3{color:red;margin:10em 5em;font-weight:bold;font-size:2.5em;padding:0 0 0 8em;}.GAN2ORTCF3{width:100%;height:100%;overflow:scroll;}.GAN2ORTCK3{background:black;opacity:0.75;}.GAN2ORTCL3{float:left;}.GAN2ORTCM3{float:left;font-size:2em;color:white;margin-left:0.5em;margin-top:0.2em;}');
+    $push_0(toInject, '.GAN2ORTCN-{padding:0;border-radius:5px;font-family:Helvetica, Arial, Verdana, sans-serif;font-size:0.8em;-webkit-box-shadow:0 3px 5px #bfbfbf;-moz-box-shadow:0 3px 5px #bfbfbf;border:solid #cc8202 1px;}.GAN2ORTCC0{background:#ed9e16;height:60px;border:solid #cc8202 0;margin-bottom:5px;border-top-right-radius:3px;border-top-left-radius:3px;}.GAN2ORTCC0 h1{margin:0;padding:8px 0 0 10px;font-size:40px;color:#cc8202;font-weight:bold;border:none;}.GAN2ORTCD0{text-shadow:rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;}.GAN2ORTCM0{width:100%;height:40px;display:block;float:left;background:url(shadow-left.png) top left no-repeat, url(shadow-right.png) top right no-repeat;margin-bottom:20px;}.GAN2ORTCK0{border:1px solid #f00;}.GAN2ORTCB0{border:1px solid #888;}.GAN2ORTCL0{float:right;}.GAN2ORTCN0{color:red;font-weight:bold;}.GAN2ORTCJ0{padding:0 0 0 10px;}.GAN2ORTCA0{color:red;margin:10em 5em;font-weight:bold;font-size:2.5em;padding:0 0 0 8em;}.GAN2ORTCP-{width:100%;height:100%;overflow:scroll;}.GAN2ORTCE0{background:black;opacity:0.75;}.GAN2ORTCF0{float:left;}.GAN2ORTCG0{float:left;font-size:2em;color:white;margin-left:0.5em;margin-top:0.2em;}');
     schedule();
     return true;
   }
@@ -11767,7 +11772,7 @@ function $onError(this$static){
 
 function $onResponseReceived(this$static, response){
   var ep;
-  if (response.val$xmlHttpRequest.responseText.indexOf('project is deployed') != -1) {
+  if (response.val$xmlHttpRequest.responseText.indexOf('Back to Project ' + this$static.this$0.createdProjectName) != -1) {
     $hide(this$static.this$0.loadingPopup);
     $fireEvent_0(this$static.this$0.eventBus, new PanelTransitionEvent_2(($clinit_554() , DASHBOARD), this$static.this$0.createdProjectName));
     $fireEvent_0(this$static.this$0.eventBus, new AsyncRequestEvent_0('handleProjects'));
@@ -11829,19 +11834,19 @@ function $emailTextBoxOnChange(this$static){
   if ($getPropertyString(this$static.usernameTextBox.element, 'value').length) {
     if ($isEmailValid(this$static)) {
       $setTextOrHtml(this$static.emailError, '', false);
-      this$static.emailTextBox.getStyleElement()['className'] = 'GAN2ORTCJ4';
+      this$static.emailTextBox.getStyleElement()['className'] = 'GAN2ORTCD1';
     }
      else {
       $hide(this$static.active);
       $setTextOrHtml(this$static.emailError, 'Enter a valid email address', false);
-      this$static.emailTextBox.getStyleElement()['className'] = 'GAN2ORTCC5';
+      this$static.emailTextBox.getStyleElement()['className'] = 'GAN2ORTCM1';
     }
   }
 }
 
 function $emailTextBoxOnFocus(this$static){
   var x, y;
-  if (!$equals_2($getPropertyString(this$static.emailTextBox.getStyleElement(), 'className'), 'GAN2ORTCC5')) {
+  if (!$equals_2($getPropertyString(this$static.emailTextBox.getStyleElement(), 'className'), 'GAN2ORTCM1')) {
     $setVisible_0(this$static.active, true);
     x = $getTooltipPosition_1(this$static.emailTextBox)[0];
     y = $getTooltipPosition_1(this$static.emailTextBox)[1];
@@ -11915,21 +11920,21 @@ function $passwordConfirmTextBoxOnChange(this$static){
   if ($getPropertyString(this$static.usernameTextBox.element, 'value').length) {
     if ($isPasswordValid(this$static)) {
       $setTextOrHtml(this$static.passwordError, '', false);
-      this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCJ4';
-      this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCJ4';
+      this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCD1';
+      this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCD1';
     }
      else {
       $hide(this$static.active);
       $setTextOrHtml(this$static.passwordError, 'Passwords do not match', false);
-      this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCC5';
-      this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCC5';
+      this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCM1';
+      this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCM1';
     }
   }
 }
 
 function $passwordConfirmTextBoxOnFocus(this$static){
   var x, y;
-  if (!$equals_2($getPropertyString(this$static.passwordTextBox.getStyleElement(), 'className'), 'GAN2ORTCC5')) {
+  if (!$equals_2($getPropertyString(this$static.passwordTextBox.getStyleElement(), 'className'), 'GAN2ORTCM1')) {
     $setVisible_0(this$static.active, true);
     x = $getTooltipPosition_2(this$static.passwordConfirmTextBox)[0];
     y = $getTooltipPosition_2(this$static.passwordConfirmTextBox)[1];
@@ -11945,21 +11950,21 @@ function $passwordTextBoxOnChange(this$static){
   if ($getPropertyString(this$static.usernameTextBox.element, 'value').length) {
     if ($isPasswordValid(this$static)) {
       $setTextOrHtml(this$static.passwordError, '', false);
-      this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCJ4';
-      this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCJ4';
+      this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCD1';
+      this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCD1';
     }
      else {
       $hide(this$static.active);
       $setTextOrHtml(this$static.passwordError, 'Passwords do not match', false);
-      this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCC5';
-      this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCC5';
+      this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCM1';
+      this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCM1';
     }
   }
 }
 
 function $passwordTextBoxOnFocus(this$static){
   var x, y;
-  if (!$equals_2($getPropertyString(this$static.passwordTextBox.getStyleElement(), 'className'), 'GAN2ORTCC5')) {
+  if (!$equals_2($getPropertyString(this$static.passwordTextBox.getStyleElement(), 'className'), 'GAN2ORTCM1')) {
     $setVisible_0(this$static.active, true);
     x = $getTooltipPosition_2(this$static.passwordTextBox)[0];
     y = $getTooltipPosition_2(this$static.passwordTextBox)[1];
@@ -11986,16 +11991,16 @@ function $setAllowedAuthApps(this$static, allowedAuthApps){
 
 function $usernameTextBoxOnChange(this$static){
   if (!!$getPropertyString(this$static.usernameTextBox.element, 'value').length && !$isEmailValid(this$static) && !$isPasswordValid(this$static)) {
-    this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCC5';
-    this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCC5';
-    this$static.emailTextBox.getStyleElement()['className'] = 'GAN2ORTCC5';
+    this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCM1';
+    this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCM1';
+    this$static.emailTextBox.getStyleElement()['className'] = 'GAN2ORTCM1';
     $setTextOrHtml(this$static.passwordError, 'Passwords do not match', false);
     $setTextOrHtml(this$static.emailError, 'Enter a valid email address', false);
   }
    else {
-    this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCJ4';
-    this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCJ4';
-    this$static.emailTextBox.getStyleElement()['className'] = 'GAN2ORTCJ4';
+    this$static.passwordTextBox.getStyleElement()['className'] = 'GAN2ORTCD1';
+    this$static.passwordConfirmTextBox.getStyleElement()['className'] = 'GAN2ORTCD1';
+    this$static.emailTextBox.getStyleElement()['className'] = 'GAN2ORTCD1';
     $setTextOrHtml(this$static.passwordError, '', false);
     $setTextOrHtml(this$static.emailError, '', false);
   }
@@ -12094,13 +12099,13 @@ function $createAndBindUi_12(owner){
   domId7 = $createUniqueId($doc);
   domId8 = $createUniqueId($doc);
   usernameTextBox = new TextBox_0;
-  f_HTMLPanel8 = new HTMLPanel_0("<label class='GAN2ORTCL5'>Username<\/label> <span id='" + domId8 + "'><\/span>");
+  f_HTMLPanel8 = new HTMLPanel_0("<label class='GAN2ORTCF2'>Username<\/label> <span id='" + domId8 + "'><\/span>");
   f_HTMLPanel7 = new HTMLPanel_0("<span id='" + domId7 + "'><\/span>");
   domId9 = $createUniqueId($doc);
   domId10 = $createUniqueId($doc);
   domId11 = $createUniqueId($doc);
   passwordTextBox = new PasswordTextBox_0;
-  f_HTMLPanel10 = new HTMLPanel_0("<label class='GAN2ORTCL5'>Password<\/label> <span id='" + domId11 + "'><\/span>");
+  f_HTMLPanel10 = new HTMLPanel_0("<label class='GAN2ORTCF2'>Password<\/label> <span id='" + domId11 + "'><\/span>");
   f_HTMLPanel9 = new HTMLPanel_0("<span id='" + domId10 + "'><\/span>");
   domId12 = $createUniqueId($doc);
   domId13 = $createUniqueId($doc);
@@ -12108,7 +12113,7 @@ function $createAndBindUi_12(owner){
   passwordConfirmTextBox = new PasswordTextBox_0;
   domId15 = $createUniqueId($doc);
   passwordError = new Label_0;
-  f_HTMLPanel12 = new HTMLPanel_0("<label class='GAN2ORTCL5'>Password Confirm<\/label> <span id='" + domId14 + "'><\/span> <span id='" + domId15 + "'><\/span>");
+  f_HTMLPanel12 = new HTMLPanel_0("<label class='GAN2ORTCF2'>Password Confirm<\/label> <span id='" + domId14 + "'><\/span> <span id='" + domId15 + "'><\/span>");
   f_HTMLPanel11 = new HTMLPanel_0("<span id='" + domId13 + "'><\/span>");
   domId16 = $createUniqueId($doc);
   domId17 = $createUniqueId($doc);
@@ -12116,7 +12121,7 @@ function $createAndBindUi_12(owner){
   emailTextBox = new TextBox_0;
   domId19 = $createUniqueId($doc);
   emailError = new Label_0;
-  f_HTMLPanel14 = new HTMLPanel_0("<label class='GAN2ORTCL5'>Email<\/label> <span id='" + domId18 + "'><\/span> <span id='" + domId19 + "'><\/span>");
+  f_HTMLPanel14 = new HTMLPanel_0("<label class='GAN2ORTCF2'>Email<\/label> <span id='" + domId18 + "'><\/span> <span id='" + domId19 + "'><\/span>");
   f_HTMLPanel13 = new HTMLPanel_0("<span id='" + domId17 + "'><\/span>");
   domId20 = $createUniqueId($doc);
   f_HTMLPanel15 = new HTMLPanel_0('<h2>How your users will authenticate<\/h2>');
@@ -12124,7 +12129,7 @@ function $createAndBindUi_12(owner){
   domId22 = $createUniqueId($doc);
   domId23 = $createUniqueId($doc);
   idProvider = new ListBox_0;
-  f_HTMLPanel17 = new HTMLPanel_0("<label class='GAN2ORTCL5'>Identity Provider:<\/label> <span id='" + domId23 + "'><\/span>");
+  f_HTMLPanel17 = new HTMLPanel_0("<label class='GAN2ORTCF2'>Identity Provider:<\/label> <span id='" + domId23 + "'><\/span>");
   f_HTMLPanel16 = new HTMLPanel_0("<span id='" + domId22 + "'><\/span>");
   domId24 = $createUniqueId($doc);
   domId25 = $createUniqueId($doc);
@@ -12140,40 +12145,40 @@ function $createAndBindUi_12(owner){
   f_HTMLPanel4 = new HTMLPanel_0("<span id='" + domId4 + "'><\/span> <span id='" + domId5 + "'><\/span>");
   projectOptionsPanel = new HTMLPanel_0("<span id='" + domId0 + "'><\/span> <span id='" + domId1 + "'><\/span> <span id='" + domId3 + "'><\/span>");
   f_SimplePanel1 = new SimplePanel_0;
-  f_HTMLPanel3.element['className'] = 'GAN2ORTCL4';
-  f_HTMLPanel2.element['className'] = 'GAN2ORTCK4';
-  usernameTextBox.element['className'] = 'GAN2ORTCJ4';
+  f_HTMLPanel3.element['className'] = 'GAN2ORTCF1';
+  f_HTMLPanel2.element['className'] = 'GAN2ORTCE1';
+  usernameTextBox.element['className'] = 'GAN2ORTCD1';
   usernameTextBox.element['name'] = 'superusername';
-  f_HTMLPanel8.element['className'] = 'GAN2ORTCK5';
-  f_HTMLPanel7.element['className'] = 'GAN2ORTCM5';
-  passwordTextBox.element['className'] = 'GAN2ORTCJ4';
+  f_HTMLPanel8.element['className'] = 'GAN2ORTCE2';
+  f_HTMLPanel7.element['className'] = 'GAN2ORTCG2';
+  passwordTextBox.element['className'] = 'GAN2ORTCD1';
   passwordTextBox.element['name'] = 'superpassword';
-  f_HTMLPanel10.element['className'] = 'GAN2ORTCK5';
-  f_HTMLPanel9.element['className'] = 'GAN2ORTCM5';
-  passwordConfirmTextBox.element['className'] = 'GAN2ORTCJ4';
+  f_HTMLPanel10.element['className'] = 'GAN2ORTCE2';
+  f_HTMLPanel9.element['className'] = 'GAN2ORTCG2';
+  passwordConfirmTextBox.element['className'] = 'GAN2ORTCD1';
   passwordConfirmTextBox.element['name'] = 'superpasswordconfirm';
-  passwordError.element['className'] = 'GAN2ORTCJ5';
-  f_HTMLPanel12.element['className'] = 'GAN2ORTCK5';
-  f_HTMLPanel11.element['className'] = 'GAN2ORTCM5';
-  emailTextBox.element['className'] = 'GAN2ORTCJ4';
+  passwordError.element['className'] = 'GAN2ORTCD2';
+  f_HTMLPanel12.element['className'] = 'GAN2ORTCE2';
+  f_HTMLPanel11.element['className'] = 'GAN2ORTCG2';
+  emailTextBox.element['className'] = 'GAN2ORTCD1';
   emailTextBox.element['name'] = 'superemail';
-  emailError.element['className'] = 'GAN2ORTCJ5';
-  f_HTMLPanel14.element['className'] = 'GAN2ORTCK5';
-  f_HTMLPanel13.element['className'] = 'GAN2ORTCM5';
-  f_HTMLPanel15.element['className'] = 'GAN2ORTCM5';
-  idProvider.element['className'] = 'GAN2ORTCL5';
+  emailError.element['className'] = 'GAN2ORTCD2';
+  f_HTMLPanel14.element['className'] = 'GAN2ORTCE2';
+  f_HTMLPanel13.element['className'] = 'GAN2ORTCG2';
+  f_HTMLPanel15.element['className'] = 'GAN2ORTCG2';
+  idProvider.element['className'] = 'GAN2ORTCF2';
   idProvider.element.name = 'idprovider';
-  f_HTMLPanel17.element['className'] = 'GAN2ORTCK5';
-  f_HTMLPanel16.element['className'] = 'GAN2ORTCM5';
-  previousButton.element['className'] = 'GAN2ORTCG5 GAN2ORTCO5';
+  f_HTMLPanel17.element['className'] = 'GAN2ORTCE2';
+  f_HTMLPanel16.element['className'] = 'GAN2ORTCG2';
+  previousButton.element['className'] = 'GAN2ORTCA2 GAN2ORTCI2';
   previousButton.element.textContent = '\xAB Previous';
-  f_HTMLPanel19.element['className'] = 'GAN2ORTCL5';
-  nextButton.element['className'] = 'GAN2ORTCG5';
+  f_HTMLPanel19.element['className'] = 'GAN2ORTCF2';
+  nextButton.element['className'] = 'GAN2ORTCA2';
   nextButton.element.textContent = 'Next \xBB';
-  f_HTMLPanel20.element['className'] = 'GAN2ORTCL5';
-  f_HTMLPanel18.element['className'] = 'GAN2ORTCM5';
-  f_HTMLPanel6.element['className'] = 'GAN2ORTCN5';
-  f_HTMLPanel4.element['className'] = 'GAN2ORTCI5';
+  f_HTMLPanel20.element['className'] = 'GAN2ORTCF2';
+  f_HTMLPanel18.element['className'] = 'GAN2ORTCG2';
+  f_HTMLPanel6.element['className'] = 'GAN2ORTCH2';
+  f_HTMLPanel4.element['className'] = 'GAN2ORTCC2';
   $add_3(f_SimplePanel1, projectOptionsPanel);
   attachRecord0 = attachToDom(projectOptionsPanel.element);
   domId0Element = $doc.getElementById(domId0);
@@ -12580,7 +12585,7 @@ function $ensureInjected_15(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCF4{padding:0;border-radius:5px;font-family:Helvetica, Arial, Verdana, sans-serif;font-size:0.8em;-webkit-box-shadow:0 3px 5px #bfbfbf;-moz-box-shadow:0 3px 5px #bfbfbf;border:solid #cc8202 1px;}.GAN2ORTCK4{background:#ed9e16;height:60px;border:solid #cc8202 0;margin-bottom:5px;border-top-right-radius:3px;border-top-left-radius:3px;}.GAN2ORTCK4 h1{margin:0;padding:8px 0 0 10px;font-size:40px;color:#cc8202;font-weight:bold;border:none;}.GAN2ORTCL4{text-shadow:rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;}.GAN2ORTCE5{width:100%;height:40px;display:block;float:left;background:url(shadow-left.png) top left no-repeat, url(shadow-right.png) top right no-repeat;margin-bottom:20px;}.GAN2ORTCC5{border:1px solid #f00;}.GAN2ORTCJ4{border:1px solid #888;}.GAN2ORTCD5{float:right;}.GAN2ORTCF5{color:red;font-weight:bold;}.GAN2ORTCB5{padding:0 0 0 10px;}.GAN2ORTCI4{color:red;margin:10em 5em;font-weight:bold;font-size:2.5em;padding:0 0 0 8em;}.GAN2ORTCH4{width:100%;height:100%;overflow:scroll;}.GAN2ORTCM4{background:black;opacity:0.75;}.GAN2ORTCN4{float:left;}.GAN2ORTCO4{float:left;font-size:2em;color:white;margin-left:0.5em;margin-top:0.2em;}');
+    $push_0(toInject, '.GAN2ORTCP0{padding:0;border-radius:5px;font-family:Helvetica, Arial, Verdana, sans-serif;font-size:0.8em;-webkit-box-shadow:0 3px 5px #bfbfbf;-moz-box-shadow:0 3px 5px #bfbfbf;border:solid #cc8202 1px;}.GAN2ORTCE1{background:#ed9e16;height:60px;border:solid #cc8202 0;margin-bottom:5px;border-top-right-radius:3px;border-top-left-radius:3px;}.GAN2ORTCE1 h1{margin:0;padding:8px 0 0 10px;font-size:40px;color:#cc8202;font-weight:bold;border:none;}.GAN2ORTCF1{text-shadow:rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;}.GAN2ORTCO1{width:100%;height:40px;display:block;float:left;background:url(shadow-left.png) top left no-repeat, url(shadow-right.png) top right no-repeat;margin-bottom:20px;}.GAN2ORTCM1{border:1px solid #f00;}.GAN2ORTCD1{border:1px solid #888;}.GAN2ORTCN1{float:right;}.GAN2ORTCP1{color:red;font-weight:bold;}.GAN2ORTCL1{padding:0 0 0 10px;}.GAN2ORTCC1{color:red;margin:10em 5em;font-weight:bold;font-size:2.5em;padding:0 0 0 8em;}.GAN2ORTCB1{width:100%;height:100%;overflow:scroll;}.GAN2ORTCG1{background:black;opacity:0.75;}.GAN2ORTCH1{float:left;}.GAN2ORTCI1{float:left;font-size:2em;color:white;margin-left:0.5em;margin-top:0.2em;}');
     schedule();
     return true;
   }
@@ -12606,7 +12611,7 @@ function $ensureInjected_16(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCI5 h1{font-size:1.5em;margin:0 0 6px 0;padding:0 10px 2px 0;width:96%;border-bottom:2px solid #444;}.GAN2ORTCI5 h2{font-size:1.2em;margin:0;padding:0;}select{margin:0 0 0 10px;}.GAN2ORTCI5{padding:0 0 0 10px;width:100%;}.GAN2ORTCN5{padding:20px 20px 0 0;width:600px;height:auto;float:left;}.GAN2ORTCN5 .GAN2ORTCM5{width:500px;height:1.5em;margin:0 0 10px 10px;float:left;}.GAN2ORTCN5 .GAN2ORTCL5{width:10em;margin:0 0 0 10px;text-align:right;float:left;}.GAN2ORTCN5 .GAN2ORTCK5{float:left;}.GAN2ORTCN5 input{height:1.6em;width:150px;margin:0 0 5px 10px;border-radius:3px;-webkit-box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);float:left;}.GAN2ORTCH5{padding:10px 0 0 0;float:left;width:10em;}.GAN2ORTCG5{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#588b34), to(#477725));background:-moz-linear-gradient(linear, 0% 0%, 0% 100%, from(#0C940C), to(#136613));-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;border:#466625 solid 1px;display:block;float:left;color:#fff;height:2.1em;width:9em;font-size:1.25em;cursor:pointer;cursor:hand;}.GAN2ORTCJ5{color:red;float:right;margin:3px 0 0 5px;display:inline;}.GAN2ORTCO5{float:right;}');
+    $push_0(toInject, '.GAN2ORTCC2 h1{font-size:1.5em;margin:0 0 6px 0;padding:0 10px 2px 0;width:96%;border-bottom:2px solid #444;}.GAN2ORTCC2 h2{font-size:1.2em;margin:0;padding:0;}select{margin:0 0 0 10px;}.GAN2ORTCC2{padding:0 0 0 10px;width:100%;}.GAN2ORTCH2{padding:20px 20px 0 0;width:600px;height:auto;float:left;}.GAN2ORTCH2 .GAN2ORTCG2{width:500px;height:1.5em;margin:0 0 10px 10px;float:left;}.GAN2ORTCH2 .GAN2ORTCF2{width:10em;margin:0 0 0 10px;text-align:right;float:left;}.GAN2ORTCH2 .GAN2ORTCE2{float:left;}.GAN2ORTCH2 input{height:1.6em;width:150px;margin:0 0 5px 10px;border-radius:3px;-webkit-box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);box-shadow:inset 1px 1px 1px rgba(0,0,0,0.2);float:left;}.GAN2ORTCB2{padding:10px 0 0 0;float:left;width:10em;}.GAN2ORTCA2{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#588b34), to(#477725));background:-moz-linear-gradient(linear, 0% 0%, 0% 100%, from(#0C940C), to(#136613));-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;border:#466625 solid 1px;display:block;float:left;color:#fff;height:2.1em;width:9em;font-size:1.25em;cursor:pointer;cursor:hand;}.GAN2ORTCD2{color:red;float:right;margin:3px 0 0 5px;display:inline;}.GAN2ORTCI2{float:right;}');
     schedule();
     return true;
   }
@@ -13665,15 +13670,15 @@ function $clinit_605(){
 <script><!--
 var loadingSpinner = null, projectdefaulticon = null;
 function $setGray(this$static){
-  this$static.content_0.getStyleElement()['className'] = 'GAN2ORTCEAB';
-  this$static.arrow.getStyleElement()['className'] = 'GAN2ORTCCAB';
+  this$static.content_0.getStyleElement()['className'] = 'GAN2ORTCO2';
+  this$static.arrow.getStyleElement()['className'] = 'GAN2ORTCM2';
 }
 
 function TooltipPanel_0(){
   var arrow, attachRecord0, attachRecord1, content_0, domId0, domId0Element, domId1, domId1Element, domId2, domId2Element, f_HTMLPanel1, text;
   $clinit_290();
   PopupPanel_0.call(this);
-  $setWidget_0(this, ($clinit_608() , domId0 = $createUniqueId($doc) , arrow = new HTMLPanel_0('') , domId1 = $createUniqueId($doc) , domId2 = $createUniqueId($doc) , text = new HTML_0 , content_0 = new HTMLPanel_0("<span id='" + domId2 + "'><\/span>") , f_HTMLPanel1 = new HTMLPanel_0("<span id='" + domId0 + "'><\/span> <span id='" + domId1 + "'><\/span>") , arrow.element['className'] = 'GAN2ORTCCAB' , content_0.element['className'] = 'GAN2ORTCEAB' , f_HTMLPanel1.element['className'] = 'GAN2ORTCBAB' , attachRecord0 = attachToDom(f_HTMLPanel1.element) , domId0Element = $doc.getElementById(domId0) , attachRecord1 = attachToDom(content_0.element) , domId2Element = $doc.getElementById(domId2) , attachRecord1.origParent?attachRecord1.origParent.insertBefore(attachRecord1.element, attachRecord1.origSibling):orphan(attachRecord1.element) , $removeFromParent_0(text) , $add_6(content_0.children, text) , domId2Element.parentNode.replaceChild(text.element, domId2Element) , $setParent(text, content_0) , domId1Element = $doc.getElementById(domId1) , attachRecord0.origParent?attachRecord0.origParent.insertBefore(attachRecord0.element, attachRecord0.origSibling):orphan(attachRecord0.element) , $removeFromParent_0(arrow) , $add_6(f_HTMLPanel1.children, arrow) , domId0Element.parentNode.replaceChild(arrow.element, domId0Element) , $setParent(arrow, f_HTMLPanel1) , $removeFromParent_0(content_0) , $add_6(f_HTMLPanel1.children, content_0) , domId1Element.parentNode.replaceChild(content_0.element, domId1Element) , $setParent(content_0, f_HTMLPanel1) , this.arrow = arrow , this.content_0 = content_0 , this.text_0 = text , $ensureInjected_20(style_18) , f_HTMLPanel1));
+  $setWidget_0(this, ($clinit_608() , domId0 = $createUniqueId($doc) , arrow = new HTMLPanel_0('') , domId1 = $createUniqueId($doc) , domId2 = $createUniqueId($doc) , text = new HTML_0 , content_0 = new HTMLPanel_0("<span id='" + domId2 + "'><\/span>") , f_HTMLPanel1 = new HTMLPanel_0("<span id='" + domId0 + "'><\/span> <span id='" + domId1 + "'><\/span>") , arrow.element['className'] = 'GAN2ORTCM2' , content_0.element['className'] = 'GAN2ORTCO2' , f_HTMLPanel1.element['className'] = 'GAN2ORTCL2' , attachRecord0 = attachToDom(f_HTMLPanel1.element) , domId0Element = $doc.getElementById(domId0) , attachRecord1 = attachToDom(content_0.element) , domId2Element = $doc.getElementById(domId2) , attachRecord1.origParent?attachRecord1.origParent.insertBefore(attachRecord1.element, attachRecord1.origSibling):orphan(attachRecord1.element) , $removeFromParent_0(text) , $add_6(content_0.children, text) , domId2Element.parentNode.replaceChild(text.element, domId2Element) , $setParent(text, content_0) , domId1Element = $doc.getElementById(domId1) , attachRecord0.origParent?attachRecord0.origParent.insertBefore(attachRecord0.element, attachRecord0.origSibling):orphan(attachRecord0.element) , $removeFromParent_0(arrow) , $add_6(f_HTMLPanel1.children, arrow) , domId0Element.parentNode.replaceChild(arrow.element, domId0Element) , $setParent(arrow, f_HTMLPanel1) , $removeFromParent_0(content_0) , $add_6(f_HTMLPanel1.children, content_0) , domId1Element.parentNode.replaceChild(content_0.element, domId1Element) , $setParent(content_0, f_HTMLPanel1) , this.arrow = arrow , this.content_0 = content_0 , this.text_0 = text , $ensureInjected_20(style_18) , f_HTMLPanel1));
   $maybeUpdateSize(this);
   this.autoHide = true;
 }
@@ -13700,7 +13705,7 @@ function $ensureInjected_20(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
     $clinit_63();
-    $push_0(toInject, '.GAN2ORTCBAB{width:125px;font-size:0.8em;color:#fff;float:right;}div.GAN2ORTCBAB{padding:0;margin:0;}.GAN2ORTCCAB{width:6%;height:100%;padding:3px 0 0 0;float:left;background:url(arrow.png) no-repeat 0 5px;padding:25px 0 0 0;}.GAN2ORTCDAB{width:6%;height:100%;padding:3px 0 0 0;float:left;padding:25px 0 0 0;background:url(arrow-red.png) no-repeat 0 5px;}.GAN2ORTCEAB{-moz-border-radius:3px;-webkit-border-radius:3px;background:#323232;padding:3px;width:90%;height:100%;float:right;font-size:0.8em;}.GAN2ORTCFAB{-moz-border-radius:3px;-webkit-border-radius:3px;background:#323232;padding:3px;width:90%;height:100%;float:right;font-size:0.8em;background:#f00;}');
+    $push_0(toInject, '.GAN2ORTCL2{width:125px;font-size:0.8em;color:#fff;float:right;}div.GAN2ORTCL2{padding:0;margin:0;}.GAN2ORTCM2{width:6%;height:100%;padding:3px 0 0 0;float:left;background:url(arrow.png) no-repeat 0 5px;padding:25px 0 0 0;}.GAN2ORTCN2{width:6%;height:100%;padding:3px 0 0 0;float:left;padding:25px 0 0 0;background:url(arrow-red.png) no-repeat 0 5px;}.GAN2ORTCO2{-moz-border-radius:3px;-webkit-border-radius:3px;background:#323232;padding:3px;width:90%;height:100%;float:right;font-size:0.8em;}.GAN2ORTCP2{-moz-border-radius:3px;-webkit-border-radius:3px;background:#323232;padding:3px;width:90%;height:100%;float:right;font-size:0.8em;background:#f00;}');
     schedule();
     return true;
   }

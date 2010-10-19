@@ -193,7 +193,7 @@ public class ProjectDeployerController extends Composite {
 	        }
 
 	        public void onResponseReceived(Request request, Response response) {
-		    	if( response.getText().contains("project is deployed") ){
+		    	if( response.getText().contains("Back to Project " + createdProjectName) ){
 		    		loadingPopup.hide();
 		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
 		    		eventBus.fireEvent(new AsyncRequestEvent("handleProjects"));
