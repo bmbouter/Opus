@@ -70,6 +70,8 @@ public class IconPanel extends Composite {
 		eventBus.addHandler(UpdateProjectsEvent.TYPE, 
 				new UpdateProjectsEventHandler(){
 					public void onUpdateProjects(UpdateProjectsEvent event){
+						iconMap.clear();
+						projectIconsFlowPanel.clear();
 						for( int i=0; i < event.getProjects().length(); i++ ){
 							addProjectIcon(event.getProjects().get(i).getName());
 						}
@@ -91,9 +93,6 @@ public class IconPanel extends Composite {
 	}
 	
 	public void addProjectIcon(String name) {
-		iconMap.clear();
-		projectIconsFlowPanel.clear();
-		
 		FlowPanel project = new FlowPanel();
 		final String projectName = name;
 		

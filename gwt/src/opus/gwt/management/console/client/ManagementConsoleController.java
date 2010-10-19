@@ -49,6 +49,7 @@ public class ManagementConsoleController extends Composite {
 	private ProjectDeployerController projectDeployerController;
 	private ProjectManagerController projectManagerController;
 	private IconPanel iconPanel;
+	private boolean onStartUp;
 	
 	@UiField LayoutPanel contentLayoutPanel;
 	@UiField NavigationPanel navigationPanel;
@@ -58,6 +59,7 @@ public class ManagementConsoleController extends Composite {
 	public ManagementConsoleController(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
+		onStartUp = true;
 		this.eventBus = eventBus;
 		authenticationPanel = new AuthenticationPanel(eventBus);
 		navigationPanel.setEventBus(eventBus);
@@ -94,14 +96,14 @@ public class ManagementConsoleController extends Composite {
 		eventBus.addHandler(UpdateProjectsEvent.TYPE, 
 				new UpdateProjectsEventHandler(){
 					public void onUpdateProjects(UpdateProjectsEvent event){
-						if( event.getProjects().length() == 0 ){
-							showDeployer();
-						} else {
-							showIconPanel();
+						if( onStartUp ){
+							if( event.getProjects().length() == 0 ){
+								showDeployer();
+							} else {
+								showIconPanel();
+							}
 						}
-						
-					}
-			});
+		}});
 	}
 	
 	private void showAuthentication(){
