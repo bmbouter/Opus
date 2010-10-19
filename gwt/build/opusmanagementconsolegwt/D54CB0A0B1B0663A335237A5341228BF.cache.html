@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0RC1";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = 'A3D875ACFF612DA0A20B60B729E9763F';
+var $strongName = 'D54CB0A0B1B0663A335237A5341228BF';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -12327,7 +12327,7 @@ function $onError(this$static){
 
 function $onResponseReceived(this$static, response){
   var ep;
-  if (response.val$xmlHttpRequest.responseText.indexOf('Back to Project ' + this$static.this$0.createdProjectName) != -1) {
+  if (response.val$xmlHttpRequest.responseText.indexOf('Back to') != -1) {
     $hide(this$static.this$0.loadingPopup);
     $fireEvent_0(this$static.this$0.eventBus, new PanelTransitionEvent_2(($clinit_563() , DASHBOARD), this$static.this$0.createdProjectName));
     $fireEvent_0(this$static.this$0.eventBus, new AsyncRequestEvent_0('handleProjects'));
