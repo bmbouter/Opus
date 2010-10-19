@@ -234,6 +234,8 @@ public class ProjectOptionsPanel extends Composite {
 		postData.append( URL.encodeQueryString(usernameTextBox.getValue()));
 		postData.append("&superpassword=");
 		postData.append( URL.encodeQueryString(passwordTextBox.getValue()));
+		postData.append("&superpasswordconfirm=");
+		postData.append( URL.encodeQueryString(passwordConfirmTextBox.getValue()));
 		postData.append("&superemail=");
 		postData.append( URL.encodeQueryString(emailTextBox.getValue()));
 		postData.append("&idprovider=");
