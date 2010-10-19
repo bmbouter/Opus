@@ -26,13 +26,7 @@
 			</g:Label>
 			<g:FlowPanel ui:field='applicationsFlowPanel' styleName="{style.currentAppsLabel}">
 			</g:FlowPanel>
-			<g:Label styleName='{style.projInfoItem}'>DBName:</g:Label>
-			<g:Label ui:field='dbnameLabel' styleName='{style.projInfoItem}'/>
-			<g:Label styleName='{style.projInfoItem}'>DBEngine:</g:Label>
-			<g:Label ui:field='dbengineLabel' styleName='{style.projInfoItem}'/>
-			<g:Label styleName='{style.projInfoItem}'>Active:</g:Label>
-			<g:Label ui:field='activeLabel' styleName='{style.projInfoItem}'/>
-			<g:Label styleName='{style.projInfoItem}'>Deployed At:</g:Label>
+			<g:Button ui:field='settingsButton' >Settings</g:Button>
 			<g:FlowPanel ui:field='urlsFlowPanel' styleName="{style.currentAppsLabel}">
 			</g:FlowPanel>
 		</g:HTMLPanel>

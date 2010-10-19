@@ -67,14 +67,8 @@ public class ProjectManagerController extends Composite {
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
 				new PanelTransitionEventHandler(){
 					public void onPanelTransition(PanelTransitionEvent event){
-						if( event.getTransitionType().equals("next") ){
-							Widget panel =  event.getPanel();
-							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(panel) + 1);
-							eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, managerDeckPanel.getWidget(managerDeckPanel.getVisibleWidget()).getTitle()));
-						} else if( event.getTransitionType().equals("previous") ){
-							Widget panel =  event.getPanel();
-							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(panel) - 1);
-							eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, managerDeckPanel.getWidget(managerDeckPanel.getVisibleWidget()).getTitle()));
+						if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS ){
+							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(projectSettingsPanel));
 						}
 					}
 			});
