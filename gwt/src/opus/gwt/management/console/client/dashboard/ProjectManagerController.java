@@ -22,7 +22,7 @@ import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -36,22 +36,20 @@ public class ProjectManagerController extends Composite {
 
 	private DashboardPanel dashboardPanel;
 	private DeleteProjectPanel deleteProjectPanel;
-	private ManageApps manageApps;
 	private ProjectSettingsPanel projectSettingsPanel;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	private String projectName;
 	
 	@UiField ProjectManagerStyle style;
 	@UiField DeckPanel managerDeckPanel;
 	
-	public ProjectManagerController(HandlerManager eventBus, String projectName){
+	public ProjectManagerController(EventBus eventBus, String projectName){
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		this.projectName = projectName;
 		this.dashboardPanel = new DashboardPanel(eventBus);
 		this.deleteProjectPanel = new DeleteProjectPanel(eventBus);
-		//manageApps = new ManageApps();
-		this.projectSettingsPanel = new ProjectSettingsPanel(this);
+		this.projectSettingsPanel = new ProjectSettingsPanel(eventBus);
 		setupmanagerDeckPanel();
 		registerEvents();
 		setupBreadCrumbs();
@@ -67,14 +65,8 @@ public class ProjectManagerController extends Composite {
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
 				new PanelTransitionEventHandler(){
 					public void onPanelTransition(PanelTransitionEvent event){
-						if( event.getTransitionType().equals("next") ){
-							Widget panel =  event.getPanel();
-							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(panel) + 1);
-							eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, managerDeckPanel.getWidget(managerDeckPanel.getVisibleWidget()).getTitle()));
-						} else if( event.getTransitionType().equals("previous") ){
-							Widget panel =  event.getPanel();
-							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(panel) - 1);
-							eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, managerDeckPanel.getWidget(managerDeckPanel.getVisibleWidget()).getTitle()));
+						if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS ){
+							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(projectSettingsPanel));
 						}
 					}
 			});
@@ -83,8 +75,6 @@ public class ProjectManagerController extends Composite {
 	private void setupmanagerDeckPanel(){
 		managerDeckPanel.add(dashboardPanel);
 		dashboardPanel.setTitle("Dashboard");
-		//managerDeckPanel.add(manageApps);
-		//managerDeckPanel.add(new HTML());
 		managerDeckPanel.add(deleteProjectPanel);
 		deleteProjectPanel.setTitle("Delete Project");
 		managerDeckPanel.add(projectSettingsPanel);

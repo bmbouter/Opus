@@ -35,7 +35,7 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -52,7 +52,7 @@ public class IconPanel extends Composite {
 	interface IconPanelUiBinder extends UiBinder<Widget, IconPanel> {}
 	
 	private HashMap<String, Integer> iconMap;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	
 	@UiField ScrollPanel iconScrollPanel;
 	@UiField FlowPanel projectIconsFlowPanel;
@@ -61,7 +61,7 @@ public class IconPanel extends Composite {
 	@UiField AppDescriptionPanel desc;
 
 	
-	public IconPanel(HandlerManager eventBus) {
+	public IconPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		iconMap = new HashMap<String, Integer>();
@@ -74,6 +74,8 @@ public class IconPanel extends Composite {
 		eventBus.addHandler(UpdateProjectsEvent.TYPE, 
 				new UpdateProjectsEventHandler(){
 					public void onUpdateProjects(UpdateProjectsEvent event){
+						iconMap.clear();
+						projectIconsFlowPanel.clear();
 						for( int i=0; i < event.getProjects().length(); i++ ){
 							addProjectIcon(event.getProjects().get(i).getName());
 						}
@@ -128,9 +130,7 @@ public class IconPanel extends Composite {
 		});
 		testLabel.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
-	        	//console.mainDeckPanel.clear();
-	        	//console.navigationMenuPanel.clear();
-	        	//projectManager = new ProjectManagerController(eventBus); 
+	        	eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName)); 
 	        	testLabel.setStyleName(style.projectIcon());
 	        }
 	     });

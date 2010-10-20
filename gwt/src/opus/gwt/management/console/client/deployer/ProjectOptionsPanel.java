@@ -26,7 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -46,7 +46,7 @@ public class ProjectOptionsPanel extends Composite {
 	private static BuildProjectPage2UiBinder uiBinder = GWT.create(BuildProjectPage2UiBinder.class);
 	interface BuildProjectPage2UiBinder extends UiBinder<Widget, ProjectOptionsPanel> {}
 	
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	
 	@UiField TextBox usernameTextBox;
 	@UiField TextBox emailTextBox;
@@ -61,7 +61,7 @@ public class ProjectOptionsPanel extends Composite {
 	@UiField Label passwordError;
 	@UiField Label emailError;
 	
-	public ProjectOptionsPanel(HandlerManager eventBus) {
+	public ProjectOptionsPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		setTooltipInitialState();
@@ -231,23 +231,25 @@ public class ProjectOptionsPanel extends Composite {
 	public String getPostData(){
 		StringBuffer postData = new StringBuffer();
 		postData.append("&superusername=");
-		postData.append( URL.encodeComponent(usernameTextBox.getValue()));
+		postData.append( URL.encodeQueryString(usernameTextBox.getValue()));
 		postData.append("&superpassword=");
-		postData.append( URL.encodeComponent(passwordTextBox.getValue()));
+		postData.append( URL.encodeQueryString(passwordTextBox.getValue()));
+		postData.append("&superpasswordconfirm=");
+		postData.append( URL.encodeQueryString(passwordConfirmTextBox.getValue()));
 		postData.append("&superemail=");
-		postData.append( URL.encodeComponent(emailTextBox.getValue()));
+		postData.append( URL.encodeQueryString(emailTextBox.getValue()));
 		postData.append("&idprovider=");
-		postData.append( URL.encodeComponent(idProvider.getValue(idProvider.getSelectedIndex())));
+		postData.append( URL.encodeQueryString(idProvider.getValue(idProvider.getSelectedIndex())));
 		return postData.toString();
 	}
 	
 	public boolean validateFields(){
-		if(!usernameTextBox.getText().isEmpty()) {
-			if(passwordTextBox.getText().isEmpty()) {
+		if( !usernameTextBox.getText().isEmpty() ) {
+			if( passwordTextBox.getText().isEmpty() ) {
 				return false;
 			} else if( !passwordTextBox.getText().equals(passwordConfirmTextBox.getText()) ) {
 				return false;
-			} else if( isEmailValid() ) {
+			} else if( !isEmailValid() ) {
 				return false;
 			}
 		}

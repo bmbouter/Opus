@@ -17,7 +17,7 @@
 package opus.gwt.management.console.client.deployer;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -31,7 +31,7 @@ public class ErrorPanel extends Composite {
 	
 	@UiField HTML errorHTML;
 	
-	public ErrorPanel(HandlerManager eventBus) {
+	public ErrorPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 	

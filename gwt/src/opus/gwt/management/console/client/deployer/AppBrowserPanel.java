@@ -39,10 +39,11 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -58,7 +59,6 @@ public class AppBrowserPanel extends Composite {
 	interface AppBrowserUiBinderUiBinder extends UiBinder<Widget, AppBrowserPanel> {}
 	
 	private final String tokenURL = "/project/configuration/token/?callback=";
-	private final String versionURL = "/json/application/pk/versions/?callback=";
 
 	private JSVariableHandler JSVarHandler;
 	private FlowPanel appFlowPanel;
@@ -71,7 +71,7 @@ public class AppBrowserPanel extends Composite {
 	private JsArray<Application> applicationData;
 	private AppIcon currentSelection;
 	private ArrayList<AppIcon> deployList;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	private HashMap<String,AppIcon> IconMap;
 	private HashMap<String,AppIcon> DeployListMap;
 	private HashMap<String,AppIcon> FeaturedIconMap;
@@ -88,7 +88,7 @@ public class AppBrowserPanel extends Composite {
 	@UiField AppBrowserStyle style;
 	
 	
-	public AppBrowserPanel(HandlerManager eventBus) {
+	public AppBrowserPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.featuredListLoaded = false;
 		this.gridPopulationDelayed = false;
@@ -158,7 +158,7 @@ public class AppBrowserPanel extends Composite {
 					} else if( iconPath.split("//").length < 2  ) {
 						iconPath = JSVarHandler.getCommunityBaseURL() + iconPath;
 					}
-
+					
 					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path, type, appName);					
 					
 					for (int j=0; j < featured.length; j++){
@@ -362,7 +362,6 @@ public class AppBrowserPanel extends Composite {
 	  }
 	  
 	  public void importAppList(JsArray<ProjectData> projectData) {
-		  
 		  JsArray<VersionData>versions = projectData.get(0).getVersions();
 		  //Window.alert("got inside importAppList");
 
@@ -381,10 +380,8 @@ public class AppBrowserPanel extends Composite {
 					  RemoveButton.setEnabled(false);
 					  break;
 				  }
-			  }
-			//  this.createAppIcon(communityApps.get(i).getName(), communityApps.get(i).getInfo(), communityApps.get(i).getPk())
-			//  this.addApp(communityApps.get(i).getName(), communityApps.get(i).getPath(), communityApps.get(i).getType());
-		 }
+		  	}
+		}
 
 	  
 	  //Iterates through all icons in the deploy list and returns a list of all app paths

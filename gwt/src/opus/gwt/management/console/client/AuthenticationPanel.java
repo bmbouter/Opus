@@ -26,7 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -51,7 +51,7 @@ public class AuthenticationPanel extends Composite {
 	private boolean loggedIn;
 	private String username;
 	private boolean firstLoginAttempt;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 	
 	@UiField Hidden csrftoken;
 	@UiField Button loginButton;
@@ -61,7 +61,7 @@ public class AuthenticationPanel extends Composite {
 	@UiField Label errorLabel;
 
 
-	public AuthenticationPanel(HandlerManager eventBus) {
+	public AuthenticationPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		loggedIn = false;

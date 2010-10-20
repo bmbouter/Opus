@@ -39,7 +39,7 @@
         baseURL = "{{ baseurl }}";
         repoBaseURL = "{{ repourl }}";
         deployerBaseURL = "{{ deployerurl }}";
-        communityURL = "{{ communityurl }}";
+        communityBaseURL = "{{ communityurl }}";
         csrftoken = "{% with csrf_token as csrf_token_clean %}{{ csrf_token_clean }}{% endwith %}";
         {% if project_token %}
             projectToken = "{{ project_token  }}";

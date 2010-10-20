@@ -17,6 +17,7 @@
 package opus.gwt.management.console.client.dashboard;
 
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
+import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
 import opus.gwt.management.console.client.overlays.Project;
@@ -24,9 +25,12 @@ import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -40,17 +44,20 @@ public class DashboardPanel extends Composite {
 	
 	private JavaScriptObject appSettings;
 	private boolean active;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 
-	@UiField Label dbnameLabel;
-	@UiField Label dbengineLabel;
-	@UiField Label activeLabel;
+	@UiField Button settingsButton;
 	@UiField FlowPanel urlsFlowPanel;
 	
-	public DashboardPanel(HandlerManager eventBus) {
+	public DashboardPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		registerEvents();
+	}
+	
+	@UiHandler("settingsButton")
+	void onSettingsButtonClick(ClickEvent event){
+		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS));
 	}
 	
 	private void registerEvents(){
@@ -67,7 +74,7 @@ public class DashboardPanel extends Composite {
 	}
 	
 	public void handleProjectInformation(Project projInfo){
-		dbnameLabel.setText(projInfo.getDBName());
+		/*dbnameLabel.setText(projInfo.getDBName());
 		dbengineLabel.setText(projInfo.getDBEngine());
 		String httpUrl = projInfo.getURLS().get(0);
 		String httpsUrl = projInfo.getURLS().get(1);
@@ -83,7 +90,7 @@ public class DashboardPanel extends Composite {
 			int index = projInfo.getApps().get(i).indexOf(".");
 			urlsFlowPanel.add(new HTMLPanel("<label>" + projInfo.getApps().get(i) + ": </label><br>" + "<a href='" + httpUrl + projInfo.getApps().get(i) + "/'>" + httpUrl + projInfo.getApps().get(i) + "/</a>" ));
 			urlsFlowPanel.add(new HTMLPanel("<a href='" + httpsUrl + projInfo.getApps().get(i) + "/'>" + httpsUrl + projInfo.getApps().get(i) + "/</a><br><br>" ));	
-		}
+		}*/
 		try {
 			ProjectSettingsData settings = projInfo.getAppSettings();
 			String a = settings.getApplicationSettings();

@@ -10,7 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -47,10 +47,10 @@ public class AppIcon extends Composite {
 	private FormPanel versionForm;
 	private VerticalPanel formContainer;
 	private int selectedVersion;
-	private HandlerManager eventBus;
+	private EventBus eventBus;
 
 	
-	public AppIcon(String name, String email, String author, String iconURL, String description, int pk, String path, String type, String appName, HandlerManager eventBus) {
+	public AppIcon(String name, String email, String author, String iconURL, String description, int pk, String path, String type, String appName, EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
 		versionForm = new FormPanel();
@@ -159,7 +159,6 @@ public class AppIcon extends Composite {
 			button.addClickHandler(new ClickHandler() {
 		        public void onClick(ClickEvent event) {
 		        	selectedVersion = j;
-		        	
 		        }
 			});
 		}
