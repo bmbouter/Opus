@@ -49,6 +49,7 @@ public class ManagementConsoleController extends Composite {
 	private ProjectDeployerController projectDeployerController;
 	private ProjectManagerController projectManagerController;
 	private IconPanel iconPanel;
+	private JSVariableHandler jsVarHandler;
 	private boolean onStartUp;
 	
 	@UiField LayoutPanel contentLayoutPanel;
@@ -60,6 +61,7 @@ public class ManagementConsoleController extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
 		onStartUp = true;
+		jsVarHandler = new JSVariableHandler();
 		this.eventBus = eventBus;
 		authenticationPanel = new AuthenticationPanel(eventBus);
 		navigationPanel.setEventBus(eventBus);
@@ -101,7 +103,11 @@ public class ManagementConsoleController extends Composite {
 							if( event.getProjects().length() == 0 ){
 								showDeployer();
 							} else {
-								showIconPanel();
+								if ( jsVarHandler.getProjectToken() != null) {
+									showDeployer();
+								} else {
+									showIconPanel();
+								}
 							}
 						}
 		}});

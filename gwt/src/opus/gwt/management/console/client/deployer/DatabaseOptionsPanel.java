@@ -104,10 +104,10 @@ public class DatabaseOptionsPanel extends Composite {
 	
 	private void setupDBOptions(){
 		if( optionsFlag ){
-			dbOptions.put("Sqlite3", "sqlite3");
-			dbOptions.put("Postgresql", "postgresql_psycopg2");
-			dbOptions.put("Mysql", "mysql");
-			dbOptions.put("Oracle", "oracle");
+			dbOptions.put("sqlite3", "sqlite3");
+			dbOptions.put("postgresql", "postgresql_psycopg2");
+			dbOptions.put("mysql", "mysql");
+			dbOptions.put("oracle", "oracle");
 		}
 		for(String key : dbOptions.keySet()){
 			if( key == "sqlite3" ){

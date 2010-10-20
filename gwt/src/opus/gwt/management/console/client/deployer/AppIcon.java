@@ -159,7 +159,6 @@ public class AppIcon extends Composite {
 			button.addClickHandler(new ClickHandler() {
 		        public void onClick(ClickEvent event) {
 		        	selectedVersion = j;
-		        	
 		        }
 			});
 		}

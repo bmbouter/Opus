@@ -59,7 +59,6 @@ public class AppBrowserPanel extends Composite {
 	interface AppBrowserUiBinderUiBinder extends UiBinder<Widget, AppBrowserPanel> {}
 	
 	private final String tokenURL = "/project/configuration/token/?callback=";
-	private final String versionURL = "/json/application/pk/versions/?callback=";
 
 	private JSVariableHandler JSVarHandler;
 	private FlowPanel appFlowPanel;
@@ -363,7 +362,6 @@ public class AppBrowserPanel extends Composite {
 	  }
 	  
 	  public void importAppList(JsArray<ProjectData> projectData) {
-		  
 		  JsArray<VersionData>versions = projectData.get(0).getVersions();
 		  //Window.alert("got inside importAppList");
 

@@ -21,4 +21,7 @@ public interface OpusImages extends ClientBundle {
 	
 	@Source("loadingSpinner.gif")
 	ImageResource loadingSpinner();
+	
+	@Source("ark.png")
+	ImageResource deployImg();
 }
