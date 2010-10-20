@@ -18,6 +18,7 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
+import opus.gwt.management.console.client.deployer.AppIcon;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
@@ -25,6 +26,7 @@ import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 import opus.gwt.management.console.client.resources.images.OpusImages;
+import opus.gwt.management.console.client.tools.AppDescriptionPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -56,6 +58,7 @@ public class IconPanel extends Composite {
 	@UiField FlowPanel projectIconsFlowPanel;
 	@UiField ManagementConsoleControllerStyle style;
 	@UiField OpusImages res;
+	@UiField AppDescriptionPanel desc;
 
 	
 	public IconPanel(HandlerManager eventBus) {
@@ -64,6 +67,7 @@ public class IconPanel extends Composite {
 		iconMap = new HashMap<String, Integer>();
 		registerHandlers();
 		setupBreadCrumbs();
+		setAppDescPanelInitialState();
 	}
 	
 	private void registerHandlers(){
@@ -94,7 +98,9 @@ public class IconPanel extends Composite {
 		FlowPanel project = new FlowPanel();
 		final String projectName = name;
 		
-		Image projectImg = new Image(res.projectdefaulticon());
+		//Image projectImg = new Image(res.projectdefaulticon());
+		Image projectImg = new Image(res.projectdefaulticon2().getUrl());
+		projectImg.setPixelSize(64, 64);
 		
 		project.add(projectImg);
 		project.add(new Label(projectName));
@@ -105,11 +111,19 @@ public class IconPanel extends Composite {
 		testLabel.addMouseOverHandler(new MouseOverHandler(){
 			public void onMouseOver(MouseOverEvent event){
 				testLabel.setStyleName(style.projectIconActive());
+				
+				desc.show();
+				desc.setPopupPosition(testLabel.getAbsoluteLeft() +
+						testLabel.getOffsetWidth(), testLabel.getAbsoluteTop() - 5);
+				desc.setTitle(projectName);
+				desc.setText("This is the description, blah, blah, blah");
 			}
 		});
 		testLabel.addMouseOutHandler(new MouseOutHandler(){
 			public void onMouseOut(MouseOutEvent event){
 				testLabel.setStyleName(style.projectIcon());
+				
+				desc.hide();
 			}
 		});
 		testLabel.addClickHandler(new ClickHandler() {
@@ -126,5 +140,13 @@ public class IconPanel extends Composite {
 	
 	public void removeProjectIcon(String name){
 		projectIconsFlowPanel.remove(iconMap.remove(name));
+	}
+	
+	private void setAppDescPanelInitialState() {
+		desc.setVisible(false);
+		desc.show();
+		desc.setPopupPosition(-100, -100);
+		desc.hide();
+		desc.setVisible(true);
 	}
 }

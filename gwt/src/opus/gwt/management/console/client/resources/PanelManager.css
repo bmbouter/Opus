@@ -14,6 +14,11 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
+.size {
+	-webkit-background-size: 64px;
+	-moz-background-size: 64px;
+}
+
 .rootLayoutPanel {
 	min-height: 600px;
 	min-width: 1000px;	
@@ -231,9 +236,12 @@
 	margin: 2%;
 	cursor: pointer;
 	cursor: hand;
-	background: gray;	
+	background: #444444;	
 	float: left;
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
+	-webkit-border-top-left-radius: 3px;
+	-webkit-border-bottom-left-radius: 3px;
+	-webkit-border-bottom-right-radius: 3px;
+	-moz-border-radius-topleft: 3px;
+	-moz-border-radius-bottomleft: 3px;
+	-moz-border-radius-bottomright: 3px;
 }
