@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0RC1";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = 'C81D5B2F41272D5B7ED5D9E56B838AB4';
+var $strongName = '9E4CDF3591C63DFECF565B89FEDB2FC3';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -9583,6 +9583,7 @@ function ProjectSettingsPanel_0(){
   var ActivateButton, FormHolder, SaveButton, WarningLabel, attachRecord0, attachRecord1, domId0, domId0Element, domId1, domId1Element, domId2, domId2Element, domId3, domId3Element, domId4, domId4Element, f_DockLayoutPanel2, f_FlowPanel3, f_HTMLPanel1, f_Label4, formContainer, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2, optionsForm;
   $initWidget(this, ($clinit_453() , domId0 = $createUniqueId($doc) , f_Label4 = new Label_0 , f_FlowPanel3 = new FlowPanel_0 , domId1 = $createUniqueId($doc) , WarningLabel = new Label_0 , domId2 = $createUniqueId($doc) , formContainer = new FlexTable_0 , optionsForm = new FormPanel_0 , domId3 = $createUniqueId($doc) , SaveButton = new Button_0 , domId4 = $createUniqueId($doc) , ActivateButton = new Button_0 , FormHolder = new HTMLPanel_0("<span id='" + domId1 + "'><\/span> <span id='" + domId2 + "'><\/span> <span id='" + domId3 + "'><\/span> <span id='" + domId4 + "'><\/span>") , f_DockLayoutPanel2 = new DockLayoutPanel_0(($clinit_53() , PCT)) , f_HTMLPanel1 = new HTMLPanel_0("<span id='" + domId0 + "'><\/span>") , $setTextOrHtml(f_Label4, 'Application Settings', false) , f_Label4.element['className'] = 'GAN2ORTCCS' , $add(f_FlowPanel3, f_Label4, f_FlowPanel3.element) , $insert(f_DockLayoutPanel2, f_FlowPanel3, ($clinit_228() , NORTH), 6.5) , $add_3(optionsForm, formContainer) , SaveButton.element.textContent = 'Save' , ActivateButton.element.textContent = 'Save and Activate' , $insert(f_DockLayoutPanel2, FormHolder, SOUTH, 93) , f_DockLayoutPanel2.element['className'] = 'GAN2ORTCHS' , f_HTMLPanel1.element['className'] = 'GAN2ORTCMR' , attachRecord0 = attachToDom(FormHolder.element) , domId1Element = $doc.getElementById(domId1) , domId2Element = $doc.getElementById(domId2) , domId3Element = $doc.getElementById(domId3) , domId4Element = $doc.getElementById(domId4) , attachRecord0.origParent?attachRecord0.origParent.insertBefore(attachRecord0.element, attachRecord0.origSibling):orphan(attachRecord0.element) , $removeFromParent_0(WarningLabel) , $add_6(FormHolder.children, WarningLabel) , domId1Element.parentNode.replaceChild(WarningLabel.element, domId1Element) , $setParent(WarningLabel, FormHolder) , $removeFromParent_0(optionsForm) , $add_6(FormHolder.children, optionsForm) , domId2Element.parentNode.replaceChild(optionsForm.element, domId2Element) , $setParent(optionsForm, FormHolder) , $removeFromParent_0(SaveButton) , $add_6(FormHolder.children, SaveButton) , domId3Element.parentNode.replaceChild(SaveButton.element, domId3Element) , $setParent(SaveButton, FormHolder) , $removeFromParent_0(ActivateButton) , $add_6(FormHolder.children, ActivateButton) , domId4Element.parentNode.replaceChild(ActivateButton.element, domId4Element) , $setParent(ActivateButton, FormHolder) , attachRecord1 = attachToDom(f_HTMLPanel1.element) , domId0Element = $doc.getElementById(domId0) , attachRecord1.origParent?attachRecord1.origParent.insertBefore(attachRecord1.element, attachRecord1.origSibling):orphan(attachRecord1.element) , $removeFromParent_0(f_DockLayoutPanel2) , $add_6(f_HTMLPanel1.children, f_DockLayoutPanel2) , domId0Element.parentNode.replaceChild(f_DockLayoutPanel2.element, domId0Element) , $setParent(f_DockLayoutPanel2, f_HTMLPanel1) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1 = new ProjectSettingsPanel_ProjectSettingsUiBinderImpl$1_0(this) , $addDomHandler(SaveButton, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1, ($clinit_72() , $clinit_72() , TYPE_0)) , handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2 = new ProjectSettingsPanel_ProjectSettingsUiBinderImpl$2_0(this) , $addDomHandler(ActivateButton, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2, TYPE_0) , this.formContainer = formContainer , this.optionsForm = optionsForm , $ensureInjected_5(style_9) , f_HTMLPanel1));
   this.projectName = '';
+  this.projectManagerController = this.projectManagerController;
   this.optionsForm = new FormPanel_0;
   this.textboxes = new ArrayList_0;
   this.optionsForm.element.action = $wnd.deployerBaseURL + $replaceAll('/deployments/projectName/confapps', 'projectName', this.projectName);
@@ -9602,16 +9603,17 @@ _.castableTypeMap$ = {28:1, 29:1, 30:1, 46:1, 47:1, 52:1};
 _.active = false;
 _.formContainer = null;
 _.optionsForm = null;
+_.projectManagerController = null;
 _.projectName = null;
 _.textboxes = null;
+--></script>
+<script><!--
 function ProjectSettingsPanel$1_0(){
 }
 
 function ProjectSettingsPanel$1(){
 }
 
---></script>
-<script><!--
 _ = ProjectSettingsPanel$1_0.prototype = ProjectSettingsPanel$1.prototype = new Object_0;
 _.getClass$ = function getClass_252(){
   return Lopus_gwt_management_console_client_dashboard_ProjectSettingsPanel$1_2_classLit;
@@ -10198,11 +10200,11 @@ function AppBrowserPanel_AppBrowserUiBinderUiBinderImpl$4_0(val$owner){
   this.val$owner = val$owner;
 }
 
+--></script>
+<script><!--
 function AppBrowserPanel_AppBrowserUiBinderUiBinderImpl$4(){
 }
 
---></script>
-<script><!--
 _ = AppBrowserPanel_AppBrowserUiBinderUiBinderImpl$4_0.prototype = AppBrowserPanel_AppBrowserUiBinderUiBinderImpl$4.prototype = new Object_0;
 _.getClass$ = function getClass_264(){
   return Lopus_gwt_management_console_client_deployer_AppBrowserPanel_1AppBrowserUiBinderUiBinderImpl$4_2_classLit;

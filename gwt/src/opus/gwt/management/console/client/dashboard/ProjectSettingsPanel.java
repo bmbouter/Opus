@@ -11,6 +11,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -52,7 +53,7 @@ public class ProjectSettingsPanel extends Composite {
 	@UiField ProjectManagerStyle style;
 
 
-	public ProjectSettingsPanel(ProjectManagerController projectManagerController) {
+	public ProjectSettingsPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.projectName = "";
 		this.jsVarHandler = new JSVariableHandler();
@@ -157,7 +158,7 @@ public class ProjectSettingsPanel extends Composite {
 					formContainer.setWidget(row++, 1,setting);
 				}
 			}
-			formContainer.setHTML(row, 0, "<hr width=\"90%\">");
+			formContainer.setHTML(row, 0, "<hr width=\"80%\">");
 			formContainer.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
 		}

@@ -380,10 +380,8 @@ public class AppBrowserPanel extends Composite {
 					  RemoveButton.setEnabled(false);
 					  break;
 				  }
-			  }
-			//  this.createAppIcon(communityApps.get(i).getName(), communityApps.get(i).getInfo(), communityApps.get(i).getPk())
-			//  this.addApp(communityApps.get(i).getName(), communityApps.get(i).getPath(), communityApps.get(i).getType());
-		 }
+		  	}
+		}
 
 	  
 	  //Iterates through all icons in the deploy list and returns a list of all app paths

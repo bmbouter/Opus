@@ -49,7 +49,7 @@ public class ProjectManagerController extends Composite {
 		this.projectName = projectName;
 		this.dashboardPanel = new DashboardPanel(eventBus);
 		this.deleteProjectPanel = new DeleteProjectPanel(eventBus);
-		this.projectSettingsPanel = new ProjectSettingsPanel(this);
+		this.projectSettingsPanel = new ProjectSettingsPanel(eventBus);
 		setupmanagerDeckPanel();
 		registerEvents();
 		setupBreadCrumbs();
