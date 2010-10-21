@@ -155,12 +155,12 @@ public class ProjectDeployerController extends Composite {
 		
 		StringBuffer formBuilder = new StringBuffer();
 		formBuilder.append("csrfmiddlewaretoken=");
-		formBuilder.append( URL.encodeComponent(jsVarHandler.getCSRFTokenURL()));
+		formBuilder.append( URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
 		
 		formBuilder.append("&form-TOTAL_FORMS=");
-		formBuilder.append( URL.encodeComponent(String.valueOf(paths.size())));
+		formBuilder.append( URL.encodeQueryString(String.valueOf(paths.size())));
 		formBuilder.append("&form-INITIAL_FORMS=");
-		formBuilder.append( URL.encodeComponent(String.valueOf(0)));
+		formBuilder.append( URL.encodeQueryString(String.valueOf(0)));
 		formBuilder.append("&form-MAX_NUM_FORMS=");
 		
 		for(int i=0; i < paths.size(); i++) {
