@@ -69,7 +69,6 @@ public class ManagementConsoleController extends Composite {
 		iconPanel = new IconPanel(eventBus);
 		registerHandlers();
 		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
-		showDeployer();
 	}
 	
 	private void registerHandlers(){

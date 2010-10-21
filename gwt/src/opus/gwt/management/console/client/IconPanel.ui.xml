@@ -23,7 +23,6 @@
 	
 	<g:ScrollPanel ui:field='iconScrollPanel'>
 		<g:FlowPanel ui:field="projectIconsFlowPanel">
-			<t:AppDescriptionPanel ui:field="desc" />
 		</g:FlowPanel>
 	</g:ScrollPanel>
 </ui:UiBinder> 

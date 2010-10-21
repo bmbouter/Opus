@@ -16,6 +16,7 @@
 
 package opus.gwt.management.console.client.dashboard;
 
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
@@ -53,6 +54,7 @@ public class ProjectManagerController extends Composite {
 		setupmanagerDeckPanel();
 		registerEvents();
 		setupBreadCrumbs();
+		eventBus.fireEvent(new AsyncRequestEvent("getProject", projectName));
 	}
 	
 	private void setupBreadCrumbs(){
