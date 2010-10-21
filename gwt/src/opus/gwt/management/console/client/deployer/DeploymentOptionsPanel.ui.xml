@@ -35,14 +35,14 @@
 				</g:HTMLPanel>
 				<g:HTMLPanel styleName="{form.formWrapper}">
 					<g:HTMLPanel styleName="{form.fieldWrapper}">
-						<g:HTMLPanel styleName="{form.field}">
+						<g:HTMLPanel styleName="{form.field} {form.padDown}">
 							<label class="{form.fieldLabel}">Deploy as:</label>
 							<g:TextBox ui:field='projectNameTextBox' styleName="{deployer.greyBorder}"/>
 							<g:Label ui:field="error" styleName="{form.error}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{form.fieldWrapper}">
-						<g:HTMLPanel styleName="{form.field}">
+						<g:HTMLPanel styleName="{form.field} {form.padDown}">
 							<label class="{form.fieldLabel}">Base URL:</label>
 							<g:Label ui:field="baseDomainLabel" styleName="{deployer.right}" />
 							<g:Label ui:field="subDomainLabel" styleName="{deployer.right} {deployer.subDomainLabel}" />
@@ -50,7 +50,7 @@
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{form.fieldWrapper}">
-						<g:HTMLPanel styleName="{form.field}">
+						<g:HTMLPanel styleName="{form.field} {form.padUp}">
 							<label class="{form.fieldLabel}">Debug Mode:</label>
 							<g:CheckBox name='debug' ui:field='debugCheckBox'/>
 						</g:HTMLPanel>

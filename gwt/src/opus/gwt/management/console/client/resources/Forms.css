@@ -14,6 +14,14 @@
 	border-bottom: 2px solid #444444;
 }
 
+.padDown {
+	margin-bottom: 10px;
+}
+
+.padUp {
+	margin-top: 5px;
+}
+
 select {
 	margin: 0px 0px 0px 10px;
 }

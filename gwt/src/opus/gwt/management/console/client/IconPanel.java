@@ -53,18 +53,18 @@ public class IconPanel extends Composite {
 	
 	private HashMap<String, Integer> iconMap;
 	private EventBus eventBus;
+	private AppDescriptionPanel desc;
 	
 	@UiField ScrollPanel iconScrollPanel;
 	@UiField FlowPanel projectIconsFlowPanel;
 	@UiField ManagementConsoleControllerStyle style;
 	@UiField OpusImages res;
-	@UiField AppDescriptionPanel desc;
-
 	
 	public IconPanel(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = eventBus;
 		iconMap = new HashMap<String, Integer>();
+		desc = new AppDescriptionPanel();
 		registerHandlers();
 		setupBreadCrumbs();
 		setAppDescPanelInitialState();
