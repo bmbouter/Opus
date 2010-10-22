@@ -14,6 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -61,7 +62,7 @@ public class ProjectSettingsPanel extends Composite {
 	@UiField ProjectManagerStyle style;
 
 
-	public ProjectSettingsPanel(EventBus eventBus) {
+	public ProjectSettingsPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.projectName = "";
 		this.jsVarHandler = new JSVariableHandler();

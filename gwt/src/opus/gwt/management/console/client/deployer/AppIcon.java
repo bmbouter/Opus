@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -50,7 +51,7 @@ public class AppIcon extends Composite {
 	private EventBus eventBus;
 
 	
-	public AppIcon(String name, String email, String author, String iconURL, String description, int pk, String path, String type, String appName, EventBus eventBus) {
+	public AppIcon(String name, String email, String author, String iconURL, String description, int pk, String path, String type, String appName, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		JSVarHandler = new JSVariableHandler();
 		versionForm = new FormPanel();
@@ -63,8 +64,8 @@ public class AppIcon extends Composite {
 		this.desc = description;
 		this.pk = String.valueOf(pk);
 		this.path = path;
-		this.eventBus = eventBus;
-		registerEvents();
+		this.eventBus = clientFactory.getEventBus();
+		registerHandlers();
 		this.type = type;
 		this.appName = appName;
 	}
@@ -134,7 +135,7 @@ public class AppIcon extends Composite {
 		return this.type;
 	}
 	
-	private void registerEvents(){
+	private void registerHandlers(){
 		eventBus.addHandler(UpdateVersionEvent.TYPE, 
 			new UpdateVersionEventHandler(){
 				public void onUpdateVersionInfo(UpdateVersionEvent event){

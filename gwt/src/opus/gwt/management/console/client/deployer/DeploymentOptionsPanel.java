@@ -26,6 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -57,9 +58,9 @@ public class DeploymentOptionsPanel extends Composite {
 	@UiField CheckBox debugCheckBox;
 	@UiField Label error;
 
-	public DeploymentOptionsPanel(EventBus eventBus) {
+	public DeploymentOptionsPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.eventBus = eventBus;
+		this.eventBus = clientFactory.getEventBus();
 		projectName = "";
 		JSVarHandler = new JSVariableHandler();
 		baseProtocolLabel.setText(JSVarHandler.getDeployerBaseURL().split("//")[0] + "//");

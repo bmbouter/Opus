@@ -17,6 +17,7 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -58,8 +59,8 @@ public class NavigationPanel extends Composite {
 		setupLogoutForm();
 	}
 	
-	public void setEventBus(EventBus eventBus){
-		this.eventBus = eventBus;
+	public void setEventBus(ClientFactory clientFactory){
+		this.eventBus = clientFactory.getEventBus();
 		registerHandlers();
 	}
 	

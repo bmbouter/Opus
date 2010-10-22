@@ -16,6 +16,7 @@
 
 package opus.gwt.management.console.client.dashboard;
 
+import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
@@ -44,15 +45,15 @@ public class ProjectManagerController extends Composite {
 	@UiField ProjectManagerStyle style;
 	@UiField DeckPanel managerDeckPanel;
 	
-	public ProjectManagerController(EventBus eventBus, String projectName){
+	public ProjectManagerController(ClientFactory clientFactory, String projectName){
 		initWidget(uiBinder.createAndBindUi(this));
-		this.eventBus = eventBus;
+		this.eventBus = clientFactory.getEventBus();
 		this.projectName = projectName;
-		this.dashboardPanel = new DashboardPanel(eventBus);
-		this.deleteProjectPanel = new DeleteProjectPanel(eventBus);
-		this.projectSettingsPanel = new ProjectSettingsPanel(eventBus);
+		this.dashboardPanel = new DashboardPanel(clientFactory);
+		this.deleteProjectPanel = new DeleteProjectPanel(clientFactory);
+		this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory);
 		setupmanagerDeckPanel();
-		registerEvents();
+		registerHandlers();
 		setupBreadCrumbs();
 		eventBus.fireEvent(new AsyncRequestEvent("getProject", projectName));
 	}
@@ -63,7 +64,7 @@ public class ProjectManagerController extends Composite {
 		eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, projectName));
 	}
 	
-	private void registerEvents(){
+	private void registerHandlers(){
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
 				new PanelTransitionEventHandler(){
 					public void onPanelTransition(PanelTransitionEvent event){

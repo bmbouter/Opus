@@ -27,8 +27,9 @@
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:Label styleName="{style.currentAppsLabel}">
-				Current Applications:
+				Current Applications: 
 			</g:Label>
+			<g:HTML ui:field="html" />
 			<g:FlowPanel ui:field='applicationsFlowPanel' styleName="{style.currentAppsLabel}">
 			</g:FlowPanel>
 			<g:Button ui:field='settingsButton' >Settings</g:Button>

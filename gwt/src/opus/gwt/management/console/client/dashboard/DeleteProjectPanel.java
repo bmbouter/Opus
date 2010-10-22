@@ -23,6 +23,7 @@ import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -54,9 +55,9 @@ public class DeleteProjectPanel extends Composite {
 	@UiField HTMLPanel mainDeleteProjectPanel;
 	@UiField FlowPanel titlePanel;
 	
-	public DeleteProjectPanel(EventBus eventBus) {
+	public DeleteProjectPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.eventBus = eventBus;
+		this.eventBus = clientFactory.getEventBus();
 		JSVarHandler = new JSVariableHandler();
 		deleteForm = new FormPanel();
 		projectName = "";

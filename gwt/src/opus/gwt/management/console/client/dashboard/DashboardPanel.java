@@ -16,29 +16,23 @@
 
 package opus.gwt.management.console.client.dashboard;
 
-import opus.gwt.management.console.client.event.AsyncRequestEvent;
+import opus.gwt.management.console.client.ClientFactory;
+import com.google.gwt.event.shared.EventBus;
 import opus.gwt.management.console.client.event.GetProjectEvent;
 import opus.gwt.management.console.client.event.GetProjectEventHandler;
-import opus.gwt.management.console.client.event.ImportAppListEvent;
-import opus.gwt.management.console.client.event.ImportAppListEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
-import opus.gwt.management.console.client.event.UpdateProjectsEvent;
-import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
 import opus.gwt.management.console.client.overlays.Project;
-import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DashboardPanel extends Composite {
@@ -52,11 +46,12 @@ public class DashboardPanel extends Composite {
 
 	@UiField Button settingsButton;
 	@UiField FlowPanel urlsFlowPanel;
+	@UiField HTML html;
 	
-	public DashboardPanel(EventBus eventBus) {
+	public DashboardPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.eventBus = eventBus;
-		registerEvents();
+		this.eventBus = clientFactory.getEventBus();
+		registerHandlers();
 	}
 	
 	@UiHandler("settingsButton")
@@ -64,14 +59,7 @@ public class DashboardPanel extends Composite {
 		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS));
 	}
 	
-	private void registerEvents(){
-		/*eventBus.addHandler(UpdateProjectsEvent.TYPE, 
-			new UpdateProjectsEventHandler(){
-				public void onUpdateProjects(UpdateProjectsEvent event){
-					handleProjectInformation(event.getProjects().get(0));
-				}
-		});*/
-		
+	private void registerHandlers(){
 		eventBus.addHandler(GetProjectEvent.TYPE,
 			new GetProjectEventHandler() {
 				public void onGetProject(GetProjectEvent event) {
@@ -82,41 +70,7 @@ public class DashboardPanel extends Composite {
 	}
 
 	public void handleProjectInformation(Project projInfo){
-		Window.alert(projInfo.getName());
-		
-		
-		/*//dbnameLabel.setText(projInfo.getDBName());
-		//dbengineLabel.setText(projInfo.getDBEngine());
-		String httpUrl = projInfo.getURLS().get(0);
-		String httpsUrl = projInfo.getURLS().get(1);
-		
-		if(projInfo.isActive()){
-			//activeLabel.setText("Yes");
-			active = true;
-		} else {
-			//activeLabel.setText("No");
-			active = false;
-		}
-		for(int i =0; i < projInfo.getApps().length(); i++){
-			int index = projInfo.getApps().get(i).indexOf(".");
-			urlsFlowPanel.add(new HTMLPanel("<label>" + projInfo.getApps().get(i) + ": </label><br>" + "<a href='" + httpUrl + projInfo.getApps().get(i) + "/'>" + httpUrl + projInfo.getApps().get(i) + "/</a>" ));
-			urlsFlowPanel.add(new HTMLPanel("<a href='" + httpsUrl + projInfo.getApps().get(i) + "/'>" + httpsUrl + projInfo.getApps().get(i) + "/</a><br><br>" ));	
-		}
-		try {
-			ProjectSettingsData settings = projInfo.getAppSettings();
-			String a = settings.getApplicationSettings();
-			//Get list of apps
-			String[] apps = a.split(";;;\\s*");
-			//Create panel to display options for all apps
-			//ProjectSettingsPanel options = projectManagerController.getOptionsPanel();
-			//options.importProjectSettings(settings, apps);
-			//projectManagerController.getOptionsPanel().setHasSettings(true);
-
-			//projectManagerController.getOptionsPanel().setActive(this.active);
-		} catch (Exception e) {
-			//projectManagerController.getOptionsPanel().setHasSettings(false);
-			//projectManagerController.getOptionsPanel().setActive(this.active);
-		}*/
+		html.setHTML(projInfo.getApps().get(0));
 	}
 	
 	public boolean isActive(){

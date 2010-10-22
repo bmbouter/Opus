@@ -56,7 +56,7 @@ public class ServerCommunicator {
 		this.eventBus = clientFactory.getEventBus();
 		JSvarHandler = new JSVariableHandler();
 		setupURLS();
-		registerEvents();
+		registerHandlers();
 	}
 	
 	private void setupURLS(){
@@ -70,7 +70,7 @@ public class ServerCommunicator {
 		URLS.put("getProject", JSvarHandler.getDeployerBaseURL() + projectURL);
 	}
 	
-	private void registerEvents(){
+	private void registerHandlers(){
 		eventBus.addHandler(AsyncRequestEvent.TYPE, 
 			new AsyncRequestEventHandler(){
 				public void onAsyncRequest(AsyncRequestEvent event){

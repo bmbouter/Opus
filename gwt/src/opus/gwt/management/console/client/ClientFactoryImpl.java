@@ -1,5 +1,6 @@
 package opus.gwt.management.console.client;
 
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 

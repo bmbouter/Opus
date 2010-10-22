@@ -11,8 +11,8 @@ public class AuthenticationTest extends GWTTestCase {
 	}
 	
 	public void testAuthentication(){
-		HandlerManager eventBus = new HandlerManager(null);
-		AuthenticationPanel authenticationPanel = new AuthenticationPanel(eventBus);
+		HandlerManager clientFactory = new HandlerManager(null);
+		AuthenticationPanel authenticationPanel = new AuthenticationPanel(clientFactory);
 		
 		
 	}
