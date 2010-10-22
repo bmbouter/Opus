@@ -35,6 +35,7 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -60,9 +61,9 @@ public class IconPanel extends Composite {
 	@UiField ManagementConsoleControllerStyle style;
 	@UiField OpusImages res;
 	
-	public IconPanel(EventBus eventBus) {
+	public IconPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.eventBus = eventBus;
+		this.eventBus = clientFactory.getEventBus();
 		iconMap = new HashMap<String, Integer>();
 		desc = new AppDescriptionPanel();
 		registerHandlers();

@@ -30,6 +30,7 @@ import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 
 import com.google.gwt.core.client.GWT;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -45,6 +46,7 @@ public class ManagementConsoleController extends Composite {
 	interface ManagementConsoleUiBinder extends UiBinder<Widget, ManagementConsoleController> {}
 	
 	private EventBus eventBus;
+	private ClientFactory clientFactory;
 	private AuthenticationPanel authenticationPanel;
 	private ProjectDeployerController projectDeployerController;
 	private ProjectManagerController projectManagerController;
@@ -57,16 +59,17 @@ public class ManagementConsoleController extends Composite {
 	@UiField BreadCrumbsPanel breadCrumbsPanel;
 	@UiField ManagementConsoleControllerStyle style;
 	
-	public ManagementConsoleController(EventBus eventBus) {
+	public ManagementConsoleController(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
 		onStartUp = true;
 		jsVarHandler = new JSVariableHandler();
-		this.eventBus = eventBus;
-		authenticationPanel = new AuthenticationPanel(eventBus);
-		navigationPanel.setEventBus(eventBus);
-		breadCrumbsPanel.setEventBus(eventBus);
-		iconPanel = new IconPanel(eventBus);
+		this.eventBus = clientFactory.getEventBus();
+		this.clientFactory = clientFactory;
+		authenticationPanel = new AuthenticationPanel(clientFactory);
+		navigationPanel.setEventBus(clientFactory);
+		breadCrumbsPanel.setEventBus(clientFactory);
+		iconPanel = new IconPanel(clientFactory);
 		registerHandlers();
 		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
 	}
@@ -125,7 +128,7 @@ public class ManagementConsoleController extends Composite {
 	private void showDeployer(){
 		RootLayoutPanel.get().clear();
 		RootLayoutPanel.get().add(this);
-		projectDeployerController = new ProjectDeployerController(eventBus);
+		projectDeployerController = new ProjectDeployerController(clientFactory);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(projectDeployerController);
 		contentLayoutPanel.setVisible(true);
@@ -134,7 +137,7 @@ public class ManagementConsoleController extends Composite {
 	private void manageProjects(String projectName){
 		RootLayoutPanel.get().clear();
 		RootLayoutPanel.get().add(this);
-		projectManagerController = new ProjectManagerController(eventBus, projectName);
+		projectManagerController = new ProjectManagerController(clientFactory, projectName);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(projectManagerController);
 		contentLayoutPanel.setVisible(true);	

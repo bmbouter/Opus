@@ -18,6 +18,7 @@ package opus.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
 
+import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
@@ -63,20 +64,22 @@ public class ProjectDeployerController extends Composite {
 	private String createdProjectName;
 	private PopupPanel loadingPopup;
 	private JSVariableHandler jsVarHandler;
+	private ClientFactory clientFactory;
 		
 	@UiField DeckPanel deployerDeckPanel;
 	@UiField ProjectDeployerStyle style;
 	
-	public ProjectDeployerController(EventBus eventBus) {
+	public ProjectDeployerController(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.createdProjectName = "";
-		this.eventBus = eventBus;
+		this.eventBus = clientFactory.getEventBus();
+		this.clientFactory = clientFactory;
 		this.jsVarHandler = new JSVariableHandler();
 		this.loadingPopup = new PopupPanel(false, true);
-		this.appBrowserPanel = new AppBrowserPanel(eventBus);
-		this.projectOptionsPanel = new ProjectOptionsPanel(eventBus);
-		this.databaseOptionsPanel = new DatabaseOptionsPanel(eventBus);
-		this.deploymentOptionsPanel = new DeploymentOptionsPanel(eventBus);
+		this.appBrowserPanel = new AppBrowserPanel(clientFactory);
+		this.projectOptionsPanel = new ProjectOptionsPanel(clientFactory);
+		this.databaseOptionsPanel = new DatabaseOptionsPanel(clientFactory);
+		this.deploymentOptionsPanel = new DeploymentOptionsPanel(clientFactory);
 		setupLoadingPopup();
 		setupdeployerDeckPanel();
 		registerHandlers();
@@ -185,7 +188,7 @@ public class ProjectDeployerController extends Composite {
 	    try {
 	      Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
 	        public void onError(Request request, Throwable exception) {
-	        	ErrorPanel ep = new ErrorPanel(eventBus);
+	        	ErrorPanel ep = new ErrorPanel(clientFactory);
 	    		ep.errorHTML.setHTML("<p>Error Occured</p>");
 	    		deployerDeckPanel.add(ep);
 	    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
@@ -199,7 +202,7 @@ public class ProjectDeployerController extends Composite {
 		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
 		    	} else {
 		    		loadingPopup.hide();
-		    	 	ErrorPanel ep = new ErrorPanel(eventBus);
+		    	 	ErrorPanel ep = new ErrorPanel(clientFactory);
 		    		ep.errorHTML.setHTML(response.getText());
 		    		deployerDeckPanel.add(ep);
 		    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));

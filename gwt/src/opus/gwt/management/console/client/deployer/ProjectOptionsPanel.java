@@ -26,6 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -61,16 +62,16 @@ public class ProjectOptionsPanel extends Composite {
 	@UiField Label passwordError;
 	@UiField Label emailError;
 	
-	public ProjectOptionsPanel(EventBus eventBus) {
+	public ProjectOptionsPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.eventBus = eventBus;
+		this.eventBus = clientFactory.getEventBus();
 		setTooltipInitialState();
-		registerEvents();
+		registerHandlers();
 		passwordError.setText("");
 		emailError.setText("");
 	}
 	
-	private void registerEvents(){
+	private void registerHandlers(){
 		eventBus.addHandler(UpdateDBOptionsEvent.TYPE, 
 				new UpdateDBOptionsEventHandler(){
 					public void onUpdateDBOptions(UpdateDBOptionsEvent event){

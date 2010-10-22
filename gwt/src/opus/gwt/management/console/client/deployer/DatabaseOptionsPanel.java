@@ -31,6 +31,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -67,17 +68,17 @@ public class DatabaseOptionsPanel extends Composite {
 	@UiField TooltipPanel active;
 	@UiField ProjectDeployerStyle deployer;
 	
-	public DatabaseOptionsPanel(EventBus eventBus) {
+	public DatabaseOptionsPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.eventBus = eventBus;
+		this.eventBus = clientFactory.getEventBus();
 		postgresAutoConfig = false;
 		dbOptions = new HashMap<String, String>();
-		registerEvents();
+		registerHandlers();
 		checkForDBOptions();
 		setTooltipInitialState();
 	}
 	
-	private void registerEvents(){
+	private void registerHandlers(){
 		eventBus.addHandler(UpdateDBOptionsEvent.TYPE, 
 			new UpdateDBOptionsEventHandler(){
 				public void onUpdateDBOptions(UpdateDBOptionsEvent event){

@@ -26,6 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -61,17 +62,17 @@ public class AuthenticationPanel extends Composite {
 	@UiField Label errorLabel;
 
 
-	public AuthenticationPanel(EventBus eventBus) {
+	public AuthenticationPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.eventBus = eventBus;
+		this.eventBus = clientFactory.getEventBus();
 		loggedIn = false;
 		username = "";
 		firstLoginAttempt = true;
-		registerEvents();
+		registerHandlers();
 		setupAuthenticationForm();
 	}
 	
-	private void registerEvents(){
+	private void registerHandlers(){
 		eventBus.addHandler(UserInfoEvent.TYPE, 
 			new UserInfoEventHandler(){
 				public void onUserInfo(UserInfoEvent event){

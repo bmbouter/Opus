@@ -39,6 +39,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -72,6 +73,7 @@ public class AppBrowserPanel extends Composite {
 	private AppIcon currentSelection;
 	private ArrayList<AppIcon> deployList;
 	private EventBus eventBus;
+	private ClientFactory clientFactory;
 	private HashMap<String,AppIcon> IconMap;
 	private HashMap<String,AppIcon> DeployListMap;
 	private HashMap<String,AppIcon> FeaturedIconMap;
@@ -88,13 +90,14 @@ public class AppBrowserPanel extends Composite {
 	@UiField AppBrowserStyle style;
 	
 	
-	public AppBrowserPanel(EventBus eventBus) {
+	public AppBrowserPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.featuredListLoaded = false;
 		this.gridPopulationDelayed = false;
-		this.eventBus = eventBus;
+		this.eventBus = clientFactory.getEventBus();
+		this.clientFactory = clientFactory;
 		this.JSVarHandler = new JSVariableHandler();
-		registerEvents();
+		registerHandlers();
 		eventBus.fireEvent(new AsyncRequestEvent("handleFeaturedList"));
 		eventBus.fireEvent(new AsyncRequestEvent("handleApplication"));
 		deployList = new ArrayList<AppIcon>();
@@ -116,7 +119,7 @@ public class AppBrowserPanel extends Composite {
 		}
 	}
 
-	private void registerEvents(){
+	private void registerHandlers(){
 		eventBus.addHandler(UpdateApplicationEvent.TYPE, 
 			new UpdateApplicationEventHandler(){
 				public void onUpdateAppInfo(UpdateApplicationEvent event){
@@ -211,7 +214,7 @@ public class AppBrowserPanel extends Composite {
 	
 
 	public AppIcon createAppIcon(String name, String email, String author, String info, int pk, String iconPath, String appPath, String type, String appName) { 
-		final AppIcon icon = new AppIcon(name, email, author, iconPath, info, pk, appPath, type, appName, eventBus);
+		final AppIcon icon = new AppIcon(name, email, author, iconPath, info, pk, appPath, type, appName, clientFactory);
 		icon.setIconHTML("<img align='left' src='"+iconPath+"'/><b>"+name+"</b><br/>"+icon.getShortDescription());
 		icon.setStyleName(style.appIcon());
 		
