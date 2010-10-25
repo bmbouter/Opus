@@ -16,7 +16,7 @@
 
 package opus.gwt.management.console.client.deployer;
 
-import opus.gwt.management.console.client.JSVariableHandler;
+import opus.community.gwt.site.appbrowser.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.DeployProjectEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;

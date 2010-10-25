@@ -2,7 +2,7 @@ package opus.gwt.management.console.client.dashboard;
 
 import java.util.ArrayList;
 
-import opus.gwt.management.console.client.JSVariableHandler;
+import opus.community.gwt.site.appbrowser.client.JSVariableHandler;
 import opus.gwt.management.console.client.ManagementConsoleController;
 import opus.gwt.management.console.client.deployer.ErrorPanel;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
