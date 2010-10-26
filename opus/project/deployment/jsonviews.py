@@ -45,6 +45,7 @@ def projectlist(request):
 
     ret = []
     for d in deployments:
+        '''
         info = {}
 
         info['name'] = d.name
@@ -55,8 +56,8 @@ def projectlist(request):
                 kwargs=dict(projectname=d.name))
         info['urls'] = d.get_urls()
         info['active'] = d.active
-
-        ret.append(info)
+        '''
+        ret.append(projectinfo_json(d))
 
     return render(ret, request)
 
@@ -64,6 +65,12 @@ def projectlist(request):
 @get_project_object
 def projectinfo(request, project):
     
+    info = projectinfo_json(project)
+    
+    return render(info, request)
+
+@login_required
+def projectinfo_json(project):
     info = {}
 
     info['name'] = project.name
@@ -102,8 +109,8 @@ def projectinfo(request, project):
                         choice.append(False)
             else:
                 setting[3] = project.config.get(name, setting[3])
-
-    return render(info, request)
+                
+    return info
 
 def get_user(request):
     # No login required here
