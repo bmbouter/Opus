@@ -69,7 +69,6 @@ def projectinfo(request, project):
     
     return render(info, request)
 
-@login_required
 def projectinfo_json(project):
     info = {}
 
