@@ -1,12 +1,19 @@
 package opus.gwt.management.console.client;
 
-import opus.gwt.management.console.client.ClientFactory;
+import java.util.HashMap;
+
+import opus.gwt.management.console.client.overlays.Application;
+import opus.gwt.management.console.client.overlays.Project;
+
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 
 public class ClientFactoryImpl implements ClientFactory {
 	private final EventBus eventBus = new SimpleEventBus();
 	private final JSVariableHandler jsVarHandler = new JSVariableHandler();
+	private HashMap<String, Application> applications = null;
+	private HashMap<String, Project> projects = null;
 	
 	@Override
 	public EventBus getEventBus(){
@@ -16,5 +23,25 @@ public class ClientFactoryImpl implements ClientFactory {
 	@Override
 	public JSVariableHandler getJSVariableHandler(){
 		return jsVarHandler;
+	}
+
+	@Override
+	public HashMap<String, Application> getApplications() {
+		return applications;
+	}
+	
+	@Override
+	public void setApplications(HashMap<String, Application> applications) {
+		this.applications = applications;
+	}
+	
+	@Override
+	public HashMap<String, Project> getProjects() {
+		return projects;
+	}
+	
+	@Override
+	public void setProjects(HashMap<String, Project> projects) {
+		this.projects = projects;
 	}
 }

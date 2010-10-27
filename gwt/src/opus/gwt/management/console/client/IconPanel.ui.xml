@@ -19,10 +19,17 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:t="urn:import:opus.gwt.management.console.client.tools">
 	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle"/>
+	<ui:style field="projectManager" src="resources/ProjectManager.css"/>
 	<ui:with field="res" type="opus.gwt.management.console.client.resources.images.OpusImages" />
 	
-	<g:ScrollPanel ui:field='iconScrollPanel'>
-		<g:FlowPanel ui:field="projectIconsFlowPanel">
-		</g:FlowPanel>
+	<g:ScrollPanel ui:field='iconScrollPanel' styleName="{projectManager.managerDeckPanel}">
+		<g:HTMLPanel styleName="{projectManager.dashboardMainPanel}">
+			<g:HTMLPanel styleName="{projectManager.header}">
+				<g:HTMLPanel styleName="{projectManager.insetType}">
+					<h1>Dashboard</h1>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			<g:FlowPanel ui:field="projectIconsFlowPanel" />
+		</g:HTMLPanel>
 	</g:ScrollPanel>
 </ui:UiBinder> 

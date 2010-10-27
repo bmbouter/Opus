@@ -20,13 +20,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
+import opus.gwt.management.console.client.event.GetApplicationsEvent;
+import opus.gwt.management.console.client.event.GetApplicationsEventHandler;
 import opus.gwt.management.console.client.event.ImportAppListEvent;
 import opus.gwt.management.console.client.event.ImportAppListEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
-import opus.gwt.management.console.client.event.UpdateApplicationEvent;
-import opus.gwt.management.console.client.event.UpdateApplicationEventHandler;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEventHandler;
 import opus.gwt.management.console.client.overlays.Application;
@@ -39,12 +40,10 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -69,14 +68,14 @@ public class AppBrowserPanel extends Composite {
 	private int navigationselection;
 	private boolean featuredListLoaded;
 	private boolean gridPopulationDelayed;
-	private JsArray<Application> applicationData;
+	private HashMap<String, Application> applicationData;
 	private AppIcon currentSelection;
 	private ArrayList<AppIcon> deployList;
 	private EventBus eventBus;
 	private ClientFactory clientFactory;
-	private HashMap<String,AppIcon> IconMap;
-	private HashMap<String,AppIcon> DeployListMap;
-	private HashMap<String,AppIcon> FeaturedIconMap;
+	private HashMap<String, AppIcon> IconMap;
+	private HashMap<String, AppIcon> DeployListMap;
+	private HashMap<String, AppIcon> FeaturedIconMap;
 	
 	@UiField VerticalPanel VersionInfo;
 	@UiField HTML AppInfo;
@@ -99,7 +98,7 @@ public class AppBrowserPanel extends Composite {
 		this.JSVarHandler = new JSVariableHandler();
 		registerHandlers();
 		eventBus.fireEvent(new AsyncRequestEvent("handleFeaturedList"));
-		eventBus.fireEvent(new AsyncRequestEvent("handleApplication"));
+		eventBus.fireEvent(new AsyncRequestEvent("getApplications"));
 		deployList = new ArrayList<AppIcon>();
 		IconMap = new HashMap<String,AppIcon>();
 		FeaturedIconMap = new HashMap<String,AppIcon>();
@@ -120,10 +119,10 @@ public class AppBrowserPanel extends Composite {
 	}
 
 	private void registerHandlers(){
-		eventBus.addHandler(UpdateApplicationEvent.TYPE, 
-			new UpdateApplicationEventHandler(){
-				public void onUpdateAppInfo(UpdateApplicationEvent event){
-					populateAppGrid(event.getAppInfo());
+		eventBus.addHandler(GetApplicationsEvent.TYPE, 
+			new GetApplicationsEventHandler(){
+				public void onGetApplications(GetApplicationsEvent event) {
+					populateAppGrid(clientFactory.getApplications());
 				}
 		});
 		eventBus.addHandler(UpdateFeaturedListEvent.TYPE, 
@@ -140,21 +139,21 @@ public class AppBrowserPanel extends Composite {
 		});
 	}
 	
-	public void populateAppGrid(JsArray <Application> applications) {
+	public void populateAppGrid(HashMap<String, Application> applications) {
 		this.applicationData = applications;
 		if(this.featuredListLoaded){
 			String innerHTML = "";
-			for (int i=0; i<applications.length(); i++){
+			for (Application app : applicationData.values()){
 				try {
-					String name = applications.get(i).getName();
-					String desc =  applications.get(i).getDescription();
-					String email = applications.get(i).getEmail();
-					String author = applications.get(i).getAuthor();
-					int pk = applications.get(i).getPk();
-					String iconPath = applications.get(i).getIconURL();
-					String path = applications.get(i).getPath();
-					String type = applications.get(i).getType();
-					String appName = applications.get(i).getAppName();
+					String name = app.getName();
+					String desc =  app.getDescription();
+					String email = app.getEmail();
+					String author = app.getAuthor();
+					int pk = app.getPk();
+					String iconPath = app.getIconURL();
+					String path = app.getPath();
+					String type = app.getType();
+					String appName = app.getAppName();
 					
 					if( iconPath.equals("") ){
 						iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";

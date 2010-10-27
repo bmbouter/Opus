@@ -19,6 +19,8 @@ package opus.gwt.management.console.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import opus.gwt.management.console.client.ClientFactory;
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerManager;
 

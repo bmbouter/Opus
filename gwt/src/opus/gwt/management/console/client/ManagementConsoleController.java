@@ -16,21 +16,25 @@
 
 package opus.gwt.management.console.client;
 
+import java.util.HashMap;
+
 import opus.gwt.management.console.client.dashboard.ProjectManagerController;
 import opus.gwt.management.console.client.deployer.ProjectDeployerController;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
 import opus.gwt.management.console.client.event.AuthenticationEventHandler;
+import opus.gwt.management.console.client.event.GetApplicationsEvent;
+import opus.gwt.management.console.client.event.GetApplicationsEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
+import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 
 import com.google.gwt.core.client.GWT;
-import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -72,9 +76,18 @@ public class ManagementConsoleController extends Composite {
 		iconPanel = new IconPanel(clientFactory);
 		registerHandlers();
 		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
+		eventBus.fireEvent(new AsyncRequestEvent("getApplications"));
 	}
 	
 	private void registerHandlers(){
+		eventBus.addHandler(GetApplicationsEvent.TYPE, 
+			new GetApplicationsEventHandler() {
+				public void onGetApplications(GetApplicationsEvent event) {
+					HashMap<String, Application> applications = event.getApplications();
+					clientFactory.setApplications(applications);
+				}
+		});
+		
 		eventBus.addHandler(AuthenticationEvent.TYPE, 
 			new AuthenticationEventHandler(){
 				public void onAuthentication(AuthenticationEvent event){

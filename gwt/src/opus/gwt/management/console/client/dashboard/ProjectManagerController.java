@@ -27,6 +27,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -41,6 +42,7 @@ public class ProjectManagerController extends Composite {
 	private ProjectSettingsPanel projectSettingsPanel;
 	private EventBus eventBus;
 	private String projectName;
+	private ClientFactory clientFactory;
 	
 	@UiField ProjectManagerStyle style;
 	@UiField DeckPanel managerDeckPanel;
@@ -49,13 +51,14 @@ public class ProjectManagerController extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = clientFactory.getEventBus();
 		this.projectName = projectName;
-		this.dashboardPanel = new DashboardPanel(clientFactory);
+		this.clientFactory = clientFactory;
+
+		this.dashboardPanel = new DashboardPanel(clientFactory, projectName);
 		this.deleteProjectPanel = new DeleteProjectPanel(clientFactory);
 		this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory);
 		setupmanagerDeckPanel();
 		registerHandlers();
 		setupBreadCrumbs();
-		eventBus.fireEvent(new AsyncRequestEvent("getProject", projectName));
 	}
 	
 	private void setupBreadCrumbs(){

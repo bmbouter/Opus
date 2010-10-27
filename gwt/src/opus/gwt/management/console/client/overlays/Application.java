@@ -4,8 +4,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 
 public class Application extends JavaScriptObject {                              // [1]
   // Overlay types always have protected, zero argument constructors.
-  protected Application() {}                                              // [2]
-
+  protected Application() {}                                             // [2]
+  
   // JSNI methods to get stock data.
   public final native int getPk() /*-{ return this.pk }-*/;
   public final native String getName() /*-{ return this.fields.name; }-*/; // [3]
@@ -27,5 +27,5 @@ public class Application extends JavaScriptObject {                             
 	  	} else {
 	  		return ''+url;
 	  	} 
-  	}-*/; 
+  	}-*/;
 } 

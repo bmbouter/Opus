@@ -18,23 +18,17 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="../resources/ProjectManager.css"/>
+	<ui:style field="manager" src="../resources/PanelManager.css" type="opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle"/>
 	
 	<g:SimplePanel>
 		<g:HTMLPanel styleName="{style.dashboardMainPanel}">
 			<g:HTMLPanel styleName="{style.header}">
 				<g:HTMLPanel styleName="{style.insetType}">
-					<h1>Dashboard</h1>
+					<h1>Dashboard: <g:Label styleName="{style.inline}" ui:field="projectLabel"/></h1>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			<g:Label styleName="{style.currentAppsLabel}">
-				Current Applications: 
-			</g:Label>
-			<g:HTML ui:field="html" />
-			<g:FlowPanel ui:field='applicationsFlowPanel' styleName="{style.currentAppsLabel}">
-			</g:FlowPanel>
+			<g:FlowPanel ui:field='applicationsFlowPanel' />
 			<g:Button ui:field='settingsButton' >Settings</g:Button>
-			<g:FlowPanel ui:field='urlsFlowPanel' styleName="{style.currentAppsLabel}">
-			</g:FlowPanel>
 		</g:HTMLPanel>
 	</g:SimplePanel>
 	
