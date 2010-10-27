@@ -4,7 +4,8 @@ import java.util.HashMap;
 
 import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.Project;
-
+import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 
 public interface ClientFactory {

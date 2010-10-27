@@ -2,8 +2,11 @@ package opus.gwt.management.console.client.dashboard;
 
 import java.util.ArrayList;
 
-import opus.gwt.management.console.client.JSVariableHandler;
+import opus.community.gwt.site.appbrowser.client.JSVariableHandler;
 import opus.gwt.management.console.client.ManagementConsoleController;
+import opus.gwt.management.console.client.deployer.ErrorPanel;
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
+import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 import opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle;
 
@@ -13,10 +16,17 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -31,13 +41,11 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 public class ProjectSettingsPanel extends Composite {
 
-	interface ProjectSettingsUiBinder extends UiBinder<Widget, ProjectSettingsPanel> {
-	}
+	interface ProjectSettingsUiBinder extends UiBinder<Widget, ProjectSettingsPanel> {}
+	private static ProjectSettingsUiBinder uiBinder = GWT.create(ProjectSettingsUiBinder.class);
 	
-	private static ProjectSettingsUiBinder uiBinder = GWT
-	.create(ProjectSettingsUiBinder.class);
+	private final String optionsUrl = "/deployments/projectName/confapps/";
 	
-	private final String optionsUrl = "/deployments/projectName/confapps";
 	private String projectName;
 	private JSVariableHandler jsVarHandler;
 	private boolean active;
@@ -80,9 +88,7 @@ public class ProjectSettingsPanel extends Composite {
 			});
 	}
 	
-	//DashboardPanel.handleProjectInformation() calls this method to import settings
 	public void importProjectSettings(ProjectSettingsData settings, String[] apps){
-		//Window.alert("importing settings");
 		int row = 0;
 		for (int i=0; i<apps.length; i++){
 			
@@ -208,17 +214,18 @@ public class ProjectSettingsPanel extends Composite {
 	
 	@UiHandler("SaveButton")
 	void handleSaveButton(ClickEvent event){
-		if(validateForm()){
-			//SaveButton.getElement().setAttribute("name", "Save");
-			formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", jsVarHandler.getCSRFTokenURL()));
+		if( validateForm() ){
+
+			//formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", jsVarHandler.getCSRFTokenURL()));
 			optionsForm.add(formContainer);
-			//RootPanel.get().add(optionsForm);
-			optionsForm.submit();
+			//optionsForm.submit();
+			
+			saveSettings();
 		}
 	}
 	@UiHandler("ActivateButton")
 	void handleActivateButton(ClickEvent event){
-		if(validateForm()){
+		if( validateForm() ){
 			formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
 			TextBox activeField = new TextBox();
 			activeField.setVisible(false);
@@ -237,5 +244,32 @@ public class ProjectSettingsPanel extends Composite {
 			//RootPanel.get().add(optionsForm);
 			optionsForm.submit();
 		}
+	}
+	
+	private void saveSettings(){
+	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, optionsUrl.replaceAll("projectName", this.projectName));
+	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
+		
+	    StringBuffer formBuilder = new StringBuffer();
+	    
+	    formBuilder.append("csrfmiddlewaretoken=");
+		formBuilder.append( URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
+		
+	    try {
+		      Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
+		        public void onError(Request request, Throwable exception) {
+		        	Window.alert("ERORR SENDING FORM WITH REQUEST BUILDER");
+		        }
+
+		        public void onResponseReceived(Request request, Response response) {
+			    	if( response.getText().contains("") ){
+			    	
+			    	} else {
+			    	
+			    	}
+		        }});
+		    } catch (RequestException e) {
+		    	
+		    }
 	}
 }

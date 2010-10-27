@@ -34,6 +34,8 @@ import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.ProjectData;
 import opus.gwt.management.console.client.overlays.VersionData;
 import opus.gwt.management.console.client.resources.AppBrowserCss.AppBrowserStyle;
+import opus.gwt.management.console.client.ClientFactory;
+import opus.gwt.management.console.client.JSVariableHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;

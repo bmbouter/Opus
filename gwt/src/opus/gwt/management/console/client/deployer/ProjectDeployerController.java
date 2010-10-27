@@ -18,8 +18,8 @@ package opus.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
 
+import opus.community.gwt.site.appbrowser.client.JSVariableHandler;
 import opus.gwt.management.console.client.ClientFactory;
-import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.DeployProjectEvent;
@@ -158,12 +158,12 @@ public class ProjectDeployerController extends Composite {
 		
 		StringBuffer formBuilder = new StringBuffer();
 		formBuilder.append("csrfmiddlewaretoken=");
-		formBuilder.append( URL.encodeComponent(jsVarHandler.getCSRFTokenURL()));
+		formBuilder.append( URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
 		
 		formBuilder.append("&form-TOTAL_FORMS=");
-		formBuilder.append( URL.encodeComponent(String.valueOf(paths.size())));
+		formBuilder.append( URL.encodeQueryString(String.valueOf(paths.size())));
 		formBuilder.append("&form-INITIAL_FORMS=");
-		formBuilder.append( URL.encodeComponent(String.valueOf(0)));
+		formBuilder.append( URL.encodeQueryString(String.valueOf(0)));
 		formBuilder.append("&form-MAX_NUM_FORMS=");
 		
 		for(int i=0; i < paths.size(); i++) {
