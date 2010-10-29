@@ -1,6 +1,9 @@
 package opus.gwt.management.console.client.tools;
 
+import java.util.HashMap;
+
 import opus.gwt.management.console.client.deployer.AppIcon;
+import opus.gwt.management.console.client.overlays.Application;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -31,6 +34,11 @@ public class DescriptionPanel extends PopupPanel {
 		setWidget(uiBinder.createAndBindUi(this));
 	}
 	
+	/**
+	 * Return an instance of the DescriptionPanel
+	 * NOTE: This isnt necessary for a functioning DescriptionPanel
+	 * @return an instance of the DescriptionPanel
+	 */
 	public static DescriptionPanel getInstance() {
 		if(instance == null) {
 			return new DescriptionPanel();
@@ -39,18 +47,34 @@ public class DescriptionPanel extends PopupPanel {
 		}
 	}
 	
-	public void setTitle(AppIcon icon) {
-		title.setText(icon.getAppName());
+	/**
+	 * Set the title that is displayed using an application
+	 * @param app the application to use
+	 */
+	public void setTitle(Application app) {
+		title.setText(app.getAppName());
 	}
 	
+	/**
+	 * Set the title that is displayed to a certain String
+	 * @param str the String title to set
+	 */
 	public void setTitle(String str) {
 		title.setText(str);
 	}
 	
-	public void setText(AppIcon icon) {
-		text.setText(icon.getDescription());
+	/**
+	 * Set the description that is displayed using an application
+	 * @param app the application to use
+	 */
+	public void setText(Application app) {
+		text.setText(app.getDescription());
 	}
 	
+	/**
+	 * Set the description that is displayed to a certain String
+	 * @param str the String description to set
+	 */
 	public void setText(String str) {
 		text.setText(str);
 	}

@@ -34,5 +34,9 @@ public interface ManagementConsoleControllerResources extends ClientBundle {
 	    String lastLabel();
 	    String rootLayoutPanel();
 	    String size();
+	    String appIcon();
+	    String appIconActive();
+	    String link();
+	    String text();
 	}
 }

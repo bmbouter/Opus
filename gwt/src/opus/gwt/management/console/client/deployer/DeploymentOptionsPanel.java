@@ -16,7 +16,8 @@
 
 package opus.gwt.management.console.client.deployer;
 
-import opus.community.gwt.site.appbrowser.client.JSVariableHandler;
+import opus.gwt.management.console.client.ClientFactory;
+import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.DeployProjectEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.resources.ProjectDeployerCss.ProjectDeployerStyle;
@@ -26,7 +27,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;

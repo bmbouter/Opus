@@ -222,6 +222,7 @@
 	background:	literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F08000), to(#F08000), color-stop(.5,#B86200))');
     background:	literal('-moz-linear-gradient(0% 0% 90deg, #F08000, #F08000, #B86200 50%)'); 
 }
+
 .projectIcon {
 	color: black;	
 	text-align: center;
@@ -231,6 +232,7 @@
 	float: left;
 	padding: 3px;
 }
+
 .projectIconActive{
 	color: white;	
 	text-align: center;
@@ -240,10 +242,43 @@
 	background: #444444;	
 	float: left;
 	padding: 3px;
-	-webkit-border-top-left-radius: 3px;
-	-webkit-border-bottom-left-radius: 3px;
-	-webkit-border-bottom-right-radius: 3px;
-	-moz-border-radius-topleft: 3px;
-	-moz-border-radius-bottomleft: 3px;
-	-moz-border-radius-bottomright: 3px;
+	-webkit-border-radius: 3px;
+	-webkit-border-top-right-radius: 0px;
+	-moz-border-radius: 3px;
+	-moz-border-radius-topright: 0px;
+}
+
+.appIcon {
+	width: auto;
+	height: auto;
+	color: #000000;
+	text-align: center;
+	margin: 2%;
+	float: left;
+}
+
+.appIcon:active {
+	outline: none;
+}
+
+.appIconActive {
+	width: auto;
+	height: auto;
+	color: #FFFFFF;
+	text-align: center;
+	margin: 2%;
+	background: #444444;
+	float: left;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+}
+
+.text {
+	color: #FFFFFF;
+}
+
+.link {
+	color: #ED9E16;
+	cursor: pointer;
 }

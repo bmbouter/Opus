@@ -2,22 +2,18 @@ package opus.gwt.management.console.client.navigation;
 
 import java.util.HashMap;
 
+import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.BreadCrumbEventHandler;
 import opus.gwt.management.console.client.resources.BreadCrumbsPanelCss.BreadCrumbsPanelStyle;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.SpanElement;
-import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class BreadCrumbsPanel extends Composite {

@@ -32,6 +32,7 @@
     margin-bottom: 5px;
     border-top-right-radius: 3px;
     border-top-left-radius: 3px;
+    width: 100%;
 }
 
 .header h1 {
@@ -50,7 +51,45 @@
 }
 
 .insetType {
+	float: left;
 	text-shadow: rgba(0,0,0,0.3) -1px 0, rgba(0,0,0,0.5) 0 -1px, rgba(255,255,255,0.3) 0 1px, rgba(0,0,0,0.1) -1px -2px;
+}
+
+.buttons {
+	min-width: 150px;
+	min-height: 40px;
+	float: right;
+	display: block;
+}
+
+.activate {
+	border: 0px;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-moz-box-shadow: rgba(0,0,0,0.3) -1px 0px, rgba(0,0,0,0.5) -1px -1px, rgba(255,255,255,0.3) 1px 1px, rgba(0,0,0,0.1) -1px -2px;
+    -webkit-box-shadow: rgba(0,0,0,0.3) -1px 0px, rgba(0,0,0,0.5) -1px -1px, rgba(255,255,255,0.3) 1px 1px, rgba(0,0,0,0.1) -1px -2px;
+	background: literal("-moz-linear-gradient(50% 100% 90deg, #CC8202, #CC8202)");
+    background: literal("-webkit-gradient(linear, 0% 0%, 0% 100%, from(#CC8202), to(#CC8202))");
+    color: #FFFFFF;
+    width: 150px;
+    margin: 5px;
+    float: right;
+}
+
+.delete {
+	border: 0px;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-moz-box-shadow: rgba(0,0,0,0.3) -1px 0px, rgba(0,0,0,0.5) -1px -1px, rgba(255,255,255,0.3) 1px 1px, rgba(0,0,0,0.1) -1px -2px;
+    -webkit-box-shadow: rgba(0,0,0,0.3) -1px 0px, rgba(0,0,0,0.5) -1px -1px, rgba(255,255,255,0.3) 1px 1px, rgba(0,0,0,0.1) -1px -2px;
+	background: literal("-moz-linear-gradient(50% 100% 90deg, #CC8202, #CC8202)");
+    background: literal("-webkit-gradient(linear, 0% 0%, 0% 100%, from(#CC8202), to(#CC8202))");
+    color: #FFFFFF;
+    width: 150px;
+    margin: 5px;
+    float: right;
 }
 
 .dashboardMainPanel{

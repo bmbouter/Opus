@@ -24,11 +24,11 @@ import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
-import opus.gwt.management.console.client.tools.DescriptionPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -44,7 +44,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DashboardPanel extends Composite {
@@ -55,7 +54,6 @@ public class DashboardPanel extends Composite {
 	private boolean active;
 	private EventBus eventBus;
 	private ClientFactory clientFactory;
-	private DescriptionPanel desc;
 	private HashMap<String, Application> applications;
 	private JSVariableHandler JSVarHandler;
 	private String projectName;
@@ -64,6 +62,8 @@ public class DashboardPanel extends Composite {
 	@UiField Button settingsButton;
 	@UiField ManagementConsoleControllerStyle manager;
 	@UiField Label projectLabel;
+	@UiField Button deactivateButton;
+	@UiField Button deleteButton;
 	
 	public DashboardPanel(ClientFactory clientFactory, String projectName) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -72,7 +72,6 @@ public class DashboardPanel extends Composite {
 		this.JSVarHandler = clientFactory.getJSVariableHandler();
 		this.applications = clientFactory.getApplications();
 		this.projectName = projectName;
-		desc = DescriptionPanel.getInstance();
 		projectLabel.setText(projectName);
 		handleProjectInformation(projectName);
 		//registerHandlers();
@@ -82,10 +81,6 @@ public class DashboardPanel extends Composite {
 	void onSettingsButtonClick(ClickEvent event){
 		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS));
 	}
-	
-//	private void registerHandlers(){
-//		
-//	}
 
 	public void handleProjectInformation(String projectName){
 		Project project = clientFactory.getProjects().get(projectName);
@@ -96,6 +91,11 @@ public class DashboardPanel extends Composite {
 			final Application app = applicationsMap.get(applicationsArray.get(i));
 			final FlowPanel application = new FlowPanel();
 			final FocusPanel applicationLabel = new FocusPanel();
+			
+			final Label appName = new Label(app.getName());
+			final Label httpLabel = new Label("HTTP");
+			final Label httpsLabel = new Label("HTTPS");
+			final Label settingsLabel = new Label("Settings");
 			
 			Image appIcon = new Image();
 			
@@ -108,25 +108,48 @@ public class DashboardPanel extends Composite {
 			appIcon.setSize("64px", "64px");
 			
 			application.add(appIcon);
-			application.add(new Label(app.getName()));
+			application.add(appName);
+			application.add(httpLabel);
+			application.add(httpsLabel);
+			application.add(settingsLabel);
+			application.setStyleName(manager.appIcon());
 			
 			applicationLabel.add(application);
-			applicationLabel.setStyleName(manager.projectIcon());
 
 			applicationLabel.addMouseOverHandler(new MouseOverHandler() {
 				public void onMouseOver(MouseOverEvent event){
-					applicationLabel.setStyleName(manager.projectIconActive());
-					desc.show();
-					desc.setPopupPosition(applicationLabel.getAbsoluteLeft() +
-							applicationLabel.getOffsetWidth(), applicationLabel.getAbsoluteTop() - 5);
-					desc.setTitle(app.getAppName());
-					desc.setText(app.getDescription());
+					applicationLabel.setStyleName(manager.appIconActive());
+					appName.addStyleName(manager.text());
+					httpLabel.addStyleName(manager.link());
+					httpsLabel.addStyleName(manager.link());
+					settingsLabel.addStyleName(manager.link());
 				}
 			});
 			applicationLabel.addMouseOutHandler(new MouseOutHandler() {
 				public void onMouseOut(MouseOutEvent event){
-					applicationLabel.setStyleName(manager.projectIcon());
-					desc.hide();
+					applicationLabel.setStyleName(manager.appIcon());
+					appName.removeStyleName(manager.text());
+					httpLabel.removeStyleName(manager.link());
+					httpsLabel.removeStyleName(manager.link());
+					settingsLabel.removeStyleName(manager.link());
+				}
+			});
+			
+			httpLabel.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					Window.alert("Clicked http link");
+				}
+			});
+			
+			httpsLabel.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					Window.alert("Clicked https link");
+				}
+			});
+			
+			settingsLabel.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					Window.alert("Clicked settings link");
 				}
 			});
 			
