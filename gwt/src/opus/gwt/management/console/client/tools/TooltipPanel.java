@@ -25,15 +25,25 @@ public class TooltipPanel extends PopupPanel {
 		setAutoHideEnabled(true);
 	}
 	
+	/**
+	 * Set the text to a certain String
+	 * @param html the String to use; can contain HTML
+	 */
 	public void setText(String html) {
 		text.setHTML(html);
 	}
 	
+	/**
+	 * Set the tooltip to a red color; typically used for errors
+	 */
 	public void setRed() {
 		content.setStyleName(style.tooltip_right_red());
 		arrow.setStyleName(style.tooltip_left_red());
 	}
 	
+	/**
+	 * Set the tooltip to a gray color; default color
+	 */
 	public void setGray() {
 		content.setStyleName(style.tooltip_right());
 		arrow.setStyleName(style.tooltip_left());

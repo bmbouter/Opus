@@ -5,7 +5,6 @@ import java.util.HashMap;
 import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.Project;
 
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 

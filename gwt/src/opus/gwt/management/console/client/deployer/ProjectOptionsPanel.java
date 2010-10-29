@@ -16,6 +16,7 @@
 
 package opus.gwt.management.console.client.deployer;
 
+import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.UpdateDBOptionsEvent;
 import opus.gwt.management.console.client.event.UpdateDBOptionsEventHandler;
@@ -26,7 +27,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import opus.gwt.management.console.client.ClientFactory;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;

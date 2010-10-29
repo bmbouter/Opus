@@ -2,11 +2,9 @@ package opus.gwt.management.console.client.dashboard;
 
 import java.util.ArrayList;
 
+import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ManagementConsoleController;
-import opus.gwt.management.console.client.deployer.ErrorPanel;
-import opus.gwt.management.console.client.event.AsyncRequestEvent;
-import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 import opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle;
 
@@ -14,8 +12,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
-import opus.gwt.management.console.client.ClientFactory;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -32,12 +28,12 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 public class ProjectSettingsPanel extends Composite {
 

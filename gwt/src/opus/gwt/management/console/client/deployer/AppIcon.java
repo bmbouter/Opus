@@ -1,6 +1,9 @@
 package opus.gwt.management.console.client.deployer;
 
 
+
+import opus.gwt.management.console.client.ClientFactory;
+import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.UpdateVersionEvent;
 import opus.gwt.management.console.client.event.UpdateVersionEventHandler;
 import opus.gwt.management.console.client.overlays.VersionData;
@@ -9,9 +12,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import opus.gwt.management.console.client.ClientFactory;
-import opus.gwt.management.console.client.JSVariableHandler;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -30,10 +30,8 @@ public class AppIcon extends Composite {
 	interface AppIconUiBinder extends UiBinder<Widget, AppIcon> {
 	}
 
-	@UiField
-	FocusPanel iconPanel;
-	@UiField
-	HTML iconHTML;
+	@UiField FocusPanel iconPanel;
+	@UiField HTML iconHTML;
 	
 	private String name;
 	private String email;

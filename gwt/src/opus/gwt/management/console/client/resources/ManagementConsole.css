@@ -145,23 +145,3 @@
 	background:	literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F08000), to(#F08000), color-stop(.5,#B86200))');
     background:	literal('-moz-linear-gradient(0% 0% 90deg, #F08000, #F08000, #B86200 50%)'); 
 }
-.projectIcon {
-	color: white;	
-	text-align: center;
-	margin: 2%;
-	cursor: pointer;
-	cursor: hand;
-	float: left;
-}
-.projectIconActive{
-	color: black;	
-	text-align: center;
-	margin: 2%;
-	cursor: pointer;
-	cursor: hand;
-	background: white;	
-	float: left;
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-}
