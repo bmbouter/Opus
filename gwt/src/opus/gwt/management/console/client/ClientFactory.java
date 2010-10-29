@@ -2,7 +2,7 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
-import opus.gwt.management.console.client.deployer.Application;
+import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.overlays.User;
 

@@ -30,6 +30,7 @@ import opus.gwt.management.console.client.event.ImportAppListEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEventHandler;
+import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.ProjectData;
 import opus.gwt.management.console.client.overlays.VersionData;
 import opus.gwt.management.console.client.resources.AppBrowserCss.AppBrowserStyle;

@@ -20,8 +20,8 @@ import java.util.HashMap;
 
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
-import opus.gwt.management.console.client.deployer.Application;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 
