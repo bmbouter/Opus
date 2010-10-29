@@ -191,11 +191,11 @@ public class DashboardPanel extends Composite {
 		formBuilder.append("csrfmiddlewaretoken=");
 		formBuilder.append( URL.encodeQueryString(JSVarHandler.getCSRFTokenURL()));
 		
-		formBuilder.append("&active=false");
+		formBuilder.append("&active=true");
 		
 		Window.alert(formBuilder.toString());
 		
-	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/");
+	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/" + "confapps/");
 		builder.setHeader("Content-type", "application/x-www-form-urlencoded");
 		
 		try {

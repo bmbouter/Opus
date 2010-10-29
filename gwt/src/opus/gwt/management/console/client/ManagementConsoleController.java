@@ -167,9 +167,7 @@ public class ManagementConsoleController extends Composite {
 	private void manageProjects(String projectName){
 		RootLayoutPanel.get().clear();
 		RootLayoutPanel.get().add(this);
-		Window.alert("before");
 		projectManagerController = new ProjectManagerController(clientFactory, projectName);
-		Window.alert("after");
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(projectManagerController);
 		contentLayoutPanel.setVisible(true);

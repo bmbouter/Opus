@@ -51,8 +51,8 @@ public class ProjectManagerController extends Composite {
 		this.eventBus = clientFactory.getEventBus();
 		this.projectName = projectName;
 		this.dashboardPanel = new DashboardPanel(clientFactory, projectName);
-		this.deleteProjectPanel = new DeleteProjectPanel(clientFactory, projectName);
-		this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory, projectName);
+		//this.deleteProjectPanel = new DeleteProjectPanel(clientFactory, projectName);
+		//this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory, projectName);
 		setupmanagerDeckPanel();
 		registerHandlers();
 		setupBreadCrumbs();
@@ -80,10 +80,10 @@ public class ProjectManagerController extends Composite {
 	private void setupmanagerDeckPanel(){
 		managerDeckPanel.add(dashboardPanel);
 		dashboardPanel.setTitle("Dashboard");
-		managerDeckPanel.add(deleteProjectPanel);
+		/*managerDeckPanel.add(deleteProjectPanel);
 		deleteProjectPanel.setTitle("Delete Project");
 		managerDeckPanel.add(projectSettingsPanel);
 		projectSettingsPanel.setTitle("Project Settings");
-		managerDeckPanel.showWidget(0);
+		managerDeckPanel.showWidget(0);*/
 	}
 }
