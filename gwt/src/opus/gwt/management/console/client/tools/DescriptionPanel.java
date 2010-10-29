@@ -3,7 +3,7 @@ package opus.gwt.management.console.client.tools;
 import java.util.HashMap;
 
 import opus.gwt.management.console.client.deployer.AppIcon;
-import opus.gwt.management.console.client.overlays.Application;
+import opus.gwt.management.console.client.deployer.Application;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseOutEvent;

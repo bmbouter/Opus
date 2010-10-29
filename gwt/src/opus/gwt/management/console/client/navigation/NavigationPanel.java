@@ -1,6 +1,8 @@
 package opus.gwt.management.console.client.navigation;
 
 
+import java.util.HashMap;
+
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
 import opus.gwt.management.console.client.event.AuthenticationEventHandler;
@@ -41,9 +43,9 @@ public class NavigationPanel extends Composite {
 	private final String logoutURL = "/accounts/logout/";
 	
 	private int projectCount;
-	private String deletedProject;
 	private EventBus eventBus;
 	private PopupPanel projectListPopup;
+	private ClientFactory clientFactory;
 	
 	@UiField HTMLPanel buttonHTMLPanel;
 	@UiField Button logoutButton;
@@ -56,11 +58,14 @@ public class NavigationPanel extends Composite {
 	public NavigationPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
 		projectListPopup = new PopupPanel();
-		setupLogoutForm();
+		setupLogoutForm();	
 	}
 	
-	public void setEventBus(ClientFactory clientFactory){
+	public void setClientFactory(ClientFactory clientFactory){
+		this.clientFactory = clientFactory;
 		this.eventBus = clientFactory.getEventBus();
+		setUsername(clientFactory.getUser().getUsername());
+		handleProjectNames(clientFactory.getProjects());
 		registerHandlers();
 	}
 	
@@ -122,52 +127,36 @@ public class NavigationPanel extends Composite {
 	}
 
 	
-	public void handleProjectNames(JsArray<Project> Projects){
+	public void handleProjectNames(HashMap<String, Project> Projects){
 		projectListPopup.clear();
-		projectCount = Projects.length();
-		//iconPanel.projectIconsFlowPanel.clear();
+		projectCount = Projects.size();
+	
 		if(projectCount != 0){
 			FlowPanel FP = new FlowPanel();
-			for(int i = 0; i < Projects.length(); i++){
-				if( !Projects.get(i).getName().equals(deletedProject)){
-					final String projectName = Projects.get(i).getName();
-					final Label testLabel = new Label(Projects.get(i).getName());
-					testLabel.setStyleName(style.popupLabel());
-					if( i == Projects.length() - 1 ){
-						testLabel.addStyleName(style.lastLabel());	
-						testLabel.addMouseOverHandler(new MouseOverHandler(){
-							public void onMouseOver(MouseOverEvent event){
-								testLabel.setStyleName(style.popupLabelActive());
-								testLabel.addStyleName(style.lastLabel());
-							}
-						});
-						testLabel.addMouseOutHandler(new MouseOutHandler(){
-							public void onMouseOut(MouseOutEvent event){
-								testLabel.setStyleName(style.popupLabel());
-								testLabel.addStyleName(style.lastLabel());
-							}
-						});
-					} else {
-					testLabel.addMouseOverHandler(new MouseOverHandler(){
-						public void onMouseOver(MouseOverEvent event){
-								testLabel.setStyleName(style.popupLabelActive());
-							}
-						});
-						testLabel.addMouseOutHandler(new MouseOutHandler(){
-							public void onMouseOut(MouseOutEvent event){
-								testLabel.setStyleName(style.popupLabel());
-							}
-						});
+			for(String key : Projects.keySet()){
+				final String projectName = Projects.get(key).getName();
+				final Label testLabel = new Label(Projects.get(key).getName());
+				testLabel.setStyleName(style.popupLabel());
+				testLabel.addStyleName(style.lastLabel());	
+				testLabel.addMouseOverHandler(new MouseOverHandler(){
+					public void onMouseOver(MouseOverEvent event){
+						testLabel.setStyleName(style.popupLabelActive());
+						testLabel.addStyleName(style.lastLabel());
 					}
-					testLabel.addClickHandler(new ClickHandler() {
-				        public void onClick(ClickEvent event) {
-				        	eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
-				        	projectListPopup.hide();
-				        }
-				     });
-					FP.add(testLabel);
-					//iconPanel.addProjectIcon(ProjectNames.get(i).getName());
-				}
+				});
+				testLabel.addMouseOutHandler(new MouseOutHandler(){
+					public void onMouseOut(MouseOutEvent event){
+						testLabel.setStyleName(style.popupLabel());
+						testLabel.addStyleName(style.lastLabel());
+					}
+				});
+				testLabel.addClickHandler(new ClickHandler() {
+			        public void onClick(ClickEvent event) {
+			        	eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
+			        	projectListPopup.hide();
+			        }
+			     });
+				FP.add(testLabel);				
 			}
 			projectListPopup.add(FP);
 		} else {

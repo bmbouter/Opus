@@ -1,6 +1,6 @@
 package opus.gwt.management.console.client.event;
 
-import opus.gwt.management.console.client.overlays.Application;
+import opus.gwt.management.console.client.deployer.Application;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;

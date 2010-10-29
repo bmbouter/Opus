@@ -18,13 +18,13 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
+import opus.gwt.management.console.client.deployer.Application;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.GetProjectsEvent;
 import opus.gwt.management.console.client.event.GetProjectsEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
-import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 import opus.gwt.management.console.client.resources.images.OpusImages;
@@ -72,9 +72,9 @@ public class IconPanel extends Composite {
 		iconMap = new HashMap<String, Integer>();
 		desc = DescriptionPanel.getInstance();
 		registerHandlers();
-		eventBus.fireEvent(new AsyncRequestEvent("getProjects"));
 		setupBreadCrumbs();
 		setAppDescPanelInitialState();
+		handleProjects();
 	}
 	
 	private void registerHandlers(){

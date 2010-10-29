@@ -28,7 +28,7 @@ import opus.gwt.management.console.client.event.UpdateDBOptionsEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateVersionEvent;
-import opus.gwt.management.console.client.event.UserInfoEvent;
+import opus.gwt.management.console.client.event.GetUserEvent;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.EventBus;
@@ -61,7 +61,7 @@ public class ServerCommunicator {
 	}
 	
 	private void setupURLS(){
-		URLS.put("handleUser", JSvarHandler.getDeployerBaseURL() + userURL);
+		URLS.put("getUser", JSvarHandler.getDeployerBaseURL() + userURL);
 		URLS.put("handleDBOptions", JSvarHandler.getDeployerBaseURL() + dbOptionsURL);
 		URLS.put("handleApplication", JSvarHandler.getRepoBaseURL() + applicationURL);
 		URLS.put("handleFeaturedList", JSvarHandler.getRepoBaseURL() + featuredListURL);
@@ -135,8 +135,8 @@ public class ServerCommunicator {
 			}
 	    } else {
 	    	
-		    if (queryType.equals("handleUser")) {
-		    	eventBus.fireEvent(new UserInfoEvent(jso));
+		    if (queryType.equals("getUser")) {
+		    	eventBus.fireEvent(new GetUserEvent(jso));
 		    } else if (queryType == "handleApplication") {
 		    	eventBus.fireEvent(new UpdateApplicationEvent(jso));
 		    } else if(queryType == "handleFeaturedList"){

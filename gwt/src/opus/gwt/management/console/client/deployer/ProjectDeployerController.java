@@ -74,7 +74,7 @@ public class ProjectDeployerController extends Composite {
 		this.createdProjectName = "";
 		this.eventBus = clientFactory.getEventBus();
 		this.clientFactory = clientFactory;
-		this.jsVarHandler = new JSVariableHandler();
+		this.jsVarHandler = clientFactory.getJSVariableHandler();
 		this.loadingPopup = new PopupPanel(false, true);
 		this.appBrowserPanel = new AppBrowserPanel(clientFactory);
 		this.projectOptionsPanel = new ProjectOptionsPanel(clientFactory);

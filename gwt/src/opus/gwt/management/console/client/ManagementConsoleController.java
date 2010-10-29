@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import opus.gwt.management.console.client.dashboard.DeleteProjectPanel;
 import opus.gwt.management.console.client.dashboard.ProjectManagerController;
+import opus.gwt.management.console.client.deployer.Application;
 import opus.gwt.management.console.client.deployer.ProjectDeployerController;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
@@ -28,13 +29,14 @@ import opus.gwt.management.console.client.event.GetApplicationsEvent;
 import opus.gwt.management.console.client.event.GetApplicationsEventHandler;
 import opus.gwt.management.console.client.event.GetProjectsEvent;
 import opus.gwt.management.console.client.event.GetProjectsEventHandler;
+import opus.gwt.management.console.client.event.GetUserEvent;
+import opus.gwt.management.console.client.event.GetUserEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
-import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 
@@ -60,10 +62,8 @@ public class ManagementConsoleController extends Composite {
 	private ProjectDeployerController projectDeployerController;
 	private ProjectManagerController projectManagerController;
 	private IconPanel iconPanel;
-	private DeleteProjectPanel deleteProjectPanel;
 	private JSVariableHandler jsVarHandler;
-	private boolean onStartUp;
-	private String projectName;
+
 	
 	@UiField LayoutPanel contentLayoutPanel;
 	@UiField NavigationPanel navigationPanel;
@@ -73,19 +73,11 @@ public class ManagementConsoleController extends Composite {
 	public ManagementConsoleController(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
-		onStartUp = true;
-		jsVarHandler = new JSVariableHandler();
-		this.eventBus = clientFactory.getEventBus();
 		this.clientFactory = clientFactory;
-		authenticationPanel = new AuthenticationPanel(clientFactory);
-		iconPanel = new IconPanel(clientFactory);
-		navigationPanel.setEventBus(clientFactory);
-		breadCrumbsPanel.setEventBus(clientFactory);
+		this.jsVarHandler = clientFactory.getJSVariableHandler();
+		this.eventBus = clientFactory.getEventBus();
 		registerHandlers();
-		deleteProjectPanel = new DeleteProjectPanel(clientFactory, projectName);
-		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
-		eventBus.fireEvent(new AsyncRequestEvent("getApplications"));
-		eventBus.fireEvent(new AsyncRequestEvent("getProjects"));
+		eventBus.fireEvent(new AsyncRequestEvent("getUser"));
 	}
 	
 	private void registerHandlers(){
@@ -94,17 +86,24 @@ public class ManagementConsoleController extends Composite {
 				public void onGetApplications(GetApplicationsEvent event) {
 					HashMap<String, Application> applications = event.getApplications();
 					clientFactory.setApplications(applications);
+					startConsole();
 				}
 		});
-		
+		eventBus.addHandler(GetUserEvent.TYPE, 
+				new GetUserEventHandler() {
+					public void onGetUser(GetUserEvent event) {
+						clientFactory.setUser(event.getUser());
+						eventBus.fireEvent(new AsyncRequestEvent("getProjects"));
+					}
+		});
 		eventBus.addHandler(GetProjectsEvent.TYPE, 
 			new GetProjectsEventHandler(){
 				public void onGetProjects(GetProjectsEvent event) {
 					HashMap<String, Project> projects = event.getProjects();
 					clientFactory.setProjects(projects);
+					eventBus.fireEvent(new AsyncRequestEvent("getApplications"));
 				}
 		});
-		
 		eventBus.addHandler(AuthenticationEvent.TYPE, 
 			new AuthenticationEventHandler(){
 				public void onAuthentication(AuthenticationEvent event){
@@ -127,22 +126,6 @@ public class ManagementConsoleController extends Composite {
 					}
 				}
 		});
-		eventBus.addHandler(UpdateProjectsEvent.TYPE, 
-				new UpdateProjectsEventHandler(){
-					public void onUpdateProjects(UpdateProjectsEvent event){
-						if( onStartUp ){
-							onStartUp = false;
-							if( event.getProjects().length() == 0 ){
-								showDeployer();
-							} else {
-								if ( jsVarHandler.getProjectToken() != null) {
-									showDeployer();
-								} else {
-									showIconPanel();
-								}
-							}
-						}
-		}});
 	}
 	
 	private void showAuthentication(){
@@ -152,7 +135,18 @@ public class ManagementConsoleController extends Composite {
 	}
 	
 	private void startConsole(){
-		eventBus.fireEvent(new AsyncRequestEvent("handleProjects"));
+		iconPanel = new IconPanel(clientFactory);
+		navigationPanel.setClientFactory(clientFactory);
+		breadCrumbsPanel.setClientFactory(clientFactory);
+		if( clientFactory.getProjects().size() > 0 ){
+			if( jsVarHandler.getProjectToken() != null ){
+				showDeployer();
+			} else {
+				showIconPanel();
+			}
+		} else {
+			showDeployer();
+		}
 	}
 	
 	private void showDeployer(){

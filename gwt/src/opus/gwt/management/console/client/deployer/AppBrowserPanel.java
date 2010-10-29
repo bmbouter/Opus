@@ -30,7 +30,6 @@ import opus.gwt.management.console.client.event.ImportAppListEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEventHandler;
-import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.ProjectData;
 import opus.gwt.management.console.client.overlays.VersionData;
 import opus.gwt.management.console.client.resources.AppBrowserCss.AppBrowserStyle;
@@ -98,7 +97,7 @@ public class AppBrowserPanel extends Composite {
 		this.JSVarHandler = new JSVariableHandler();
 		registerHandlers();
 		eventBus.fireEvent(new AsyncRequestEvent("handleFeaturedList"));
-		eventBus.fireEvent(new AsyncRequestEvent("getApplications"));
+		//eventBus.fireEvent(new AsyncRequestEvent("getApplications"));
 		deployList = new ArrayList<AppIcon>();
 		IconMap = new HashMap<String,AppIcon>();
 		FeaturedIconMap = new HashMap<String,AppIcon>();
@@ -116,15 +115,10 @@ public class AppBrowserPanel extends Composite {
 		if (token != null) {
 			this.addProject(token);
 		}
+		populateAppGrid(clientFactory.getApplications());
 	}
 
 	private void registerHandlers(){
-		eventBus.addHandler(GetApplicationsEvent.TYPE, 
-			new GetApplicationsEventHandler(){
-				public void onGetApplications(GetApplicationsEvent event) {
-					populateAppGrid(clientFactory.getApplications());
-				}
-		});
 		eventBus.addHandler(UpdateFeaturedListEvent.TYPE, 
 			new UpdateFeaturedListEventHandler(){
 				public void onUpdateFeaturedList(UpdateFeaturedListEvent event){

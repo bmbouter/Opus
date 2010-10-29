@@ -18,8 +18,8 @@ package opus.gwt.management.console.client;
 
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
-import opus.gwt.management.console.client.event.UserInfoEvent;
-import opus.gwt.management.console.client.event.UserInfoEventHandler;
+import opus.gwt.management.console.client.event.GetUserEvent;
+import opus.gwt.management.console.client.event.GetUserEventHandler;
 import opus.gwt.management.console.client.overlays.User;
 
 import com.google.gwt.core.client.GWT;
@@ -72,10 +72,10 @@ public class AuthenticationPanel extends Composite {
 	}
 	
 	private void registerHandlers(){
-		eventBus.addHandler(UserInfoEvent.TYPE, 
-			new UserInfoEventHandler(){
-				public void onUserInfo(UserInfoEvent event){
-					handleUserInformation(event.getUserInfo());
+		eventBus.addHandler(GetUserEvent.TYPE, 
+			new GetUserEventHandler(){
+				public void onGetUser(GetUserEvent event){
+					handleUserInformation(event.getUser());
 				}
 		});
 	}
