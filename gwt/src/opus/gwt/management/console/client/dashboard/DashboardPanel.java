@@ -195,7 +195,7 @@ public class DashboardPanel extends Composite {
 		
 		Window.alert(formBuilder.toString());
 		
-	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/" + "confapps/");
+	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/confapps");
 		builder.setHeader("Content-type", "application/x-www-form-urlencoded");
 		
 		try {

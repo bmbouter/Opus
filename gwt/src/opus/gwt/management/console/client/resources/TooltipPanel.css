@@ -14,7 +14,7 @@ div.tooltip {
     width: 4%;
     height: 100%;
     float: left;
-    background: url('arrow.png') no-repeat 0px 4px;
+    /*background: url('arrow.png') no-repeat 0px 4px;*/
     padding: 25px 0 0 0;
 }
 

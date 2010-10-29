@@ -2,10 +2,15 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="../resources/TooltipPanel.css" type="opus.gwt.management.console.client.resources.TooltipPanelCss.TooltipPanelStyle"/>
+	<ui:with field="res" type="opus.gwt.management.console.client.resources.images.OpusImages" />
+	
 	<g:HTMLPanel styleName="{style.tooltip}">
-		<g:HTMLPanel styleName="{style.tooltip_left}" ui:field="arrow" />
+		<g:HTMLPanel ui:field="arrow" >
+			<g:Image resource="{res.arrow}" styleName="{style.tooltip_left}"></g:Image>
+		</g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.tooltip_right}" ui:field="content">
 			<g:HTML ui:field="text" />
 		</g:HTMLPanel>
 	</g:HTMLPanel>
+	
 </ui:UiBinder> 

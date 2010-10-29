@@ -28,4 +28,7 @@ public interface OpusImages extends ClientBundle {
 	
 	@Source("ark.png")
 	ImageResource deployImg();
+	
+	@Source("arrow.png")
+	ImageResource arrow();
 }

@@ -339,7 +339,7 @@ public class ProjectOptionsPanel extends Composite {
 		
 		pos[0] = textbox.getAbsoluteLeft() + textbox.getOffsetWidth() + 5;
 		pos[1] = textbox.getAbsoluteTop() + 2;
-		
+	
 		return pos;
 	}
 }
