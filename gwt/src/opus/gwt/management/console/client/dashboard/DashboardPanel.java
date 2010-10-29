@@ -87,7 +87,8 @@ public class DashboardPanel extends Composite {
 		HashMap<String, Application> applicationsMap = clientFactory.getApplications();
 		JsArrayString applicationsArray = project.getApps();
 		
-		for(int i = 0; i < applicationsArray.length()-1; i++) {
+		for(int i = 0; i < applicationsArray.length() - 1; i++) {
+			
 			final Application app = applicationsMap.get(applicationsArray.get(i));
 			final FlowPanel application = new FlowPanel();
 			final FocusPanel applicationLabel = new FocusPanel();

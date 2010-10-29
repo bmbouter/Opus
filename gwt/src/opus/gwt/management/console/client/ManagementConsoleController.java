@@ -38,6 +38,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -150,7 +151,9 @@ public class ManagementConsoleController extends Composite {
 	private void manageProjects(String projectName){
 		RootLayoutPanel.get().clear();
 		RootLayoutPanel.get().add(this);
+		Window.alert("before");
 		projectManagerController = new ProjectManagerController(clientFactory, projectName);
+		Window.alert("after");
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(projectManagerController);
 		contentLayoutPanel.setVisible(true);	

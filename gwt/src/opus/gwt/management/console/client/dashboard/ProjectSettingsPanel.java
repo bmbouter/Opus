@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.ManagementConsoleController;
+import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 import opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -45,10 +47,9 @@ public class ProjectSettingsPanel extends Composite {
 	private String projectName;
 	private JSVariableHandler jsVarHandler;
 	private boolean active;
-	private ManagementConsoleController managementCon;
-	private ProjectManagerController projectManagerController;
 	private boolean hasSettings;
 	private ArrayList<String> textboxes;
+	private Project project;
 	
 	@UiField FlexTable formContainer;
 	@UiField FormPanel optionsForm;
@@ -58,14 +59,15 @@ public class ProjectSettingsPanel extends Composite {
 	@UiField ProjectManagerStyle style;
 
 
-	public ProjectSettingsPanel(ClientFactory clientFactory) {
+	public ProjectSettingsPanel(ClientFactory clientFactory, String projectName) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.projectName = "";
-		this.jsVarHandler = new JSVariableHandler();
-		this.projectManagerController = projectManagerController;
+		this.projectName = projectName;
+		this.jsVarHandler = clientFactory.getJSVariableHandler();
 		this.optionsForm = new FormPanel();
 		this.textboxes = new ArrayList<String>();
-		setupOptionsForm();
+		//setupOptionsForm();
+		this.project = clientFactory.getProjects().get(projectName);
+		importProjectSettings(project.getAppSettings(), project.getApps());
 		registerHandlers();
 	}
 	
@@ -84,26 +86,26 @@ public class ProjectSettingsPanel extends Composite {
 			});
 	}
 	
-	public void importProjectSettings(ProjectSettingsData settings, String[] apps){
+	public void importProjectSettings(ProjectSettingsData settings, JsArrayString apps){
 		int row = 0;
-		for (int i=0; i<apps.length; i++){
+		for (int i=0; i < apps.length(); i++){
 			
 			//Create header for app
 			Label appName = new Label();
-			appName.setText(apps[i]);
+			appName.setText(apps.get(i));
 			appName.addStyleName("SettingsAppName");
 			formContainer.setWidget(row++, 0, appName);
 			//Get list of settings for app
 			
-			JsArray<JavaScriptObject> appsettings = settings.getAppSettings(apps[i]);
+			JsArray<JavaScriptObject> appsettings = settings.getAppSettings(apps.get(i));
 			for(int j=0; j<appsettings.length(); j++){
 				//Window.alert(String.valueOf(j));
 				JsArray<JavaScriptObject> p = settings.getSettingsArray(appsettings.get(j));
 				String[] parts = p.join(";;").split(";;\\s*");
 				if (parts[2].equals("string")){
 					TextBox setting = new TextBox();
-					setting.setName(apps[i]+"-"+parts[0]);
-					setting.getElement().setId(apps[i]+parts[0]);
+					setting.setName(apps.get(i)+"-"+parts[0]);
+					setting.getElement().setId(apps.get(i) + parts[0]);
 					//Check default value
 					if (parts.length > 3){
 						//Window.alert("gotcha");
@@ -126,8 +128,8 @@ public class ProjectSettingsPanel extends Composite {
 						//setting.setValue(parts[3]);
 						setting.setText(parts[3]);
 					}
-					setting.setName(apps[i]+"-"+parts[0]);
-					setting.getElement().setId(apps[i]+parts[0]);
+					setting.setName(apps.get(i) + "-" + parts[0]);
+					setting.getElement().setId(apps.get(i) + parts[0]);
 					Label settingLabel = new Label();
 					settingLabel.setText(parts[1]);
 					settingLabel.addStyleName("SettingLabel");
@@ -138,7 +140,7 @@ public class ProjectSettingsPanel extends Composite {
 					//textboxes.add(setting);
 				} else if(parts[2].equals("choice")){
 					ListBox setting = new ListBox();
-					setting.setName(apps[i]+"-"+parts[0]);
+					setting.setName(apps.get(i) + "-" + parts[0]);
 					Label settingLabel = new Label();
 					settingLabel.setText(parts[1]);
 					setting.getElement().setInnerHTML(parts[3]);
@@ -152,7 +154,7 @@ public class ProjectSettingsPanel extends Composite {
 						//setting.setValue(parts[3]);
 						setting.setValue(Boolean.valueOf(parts[3]));
 					}
-					setting.setName(apps[i]+"-"+parts[0]);
+					setting.setName(apps.get(i) + "-" + parts[0]);
 					Label settingLabel = new Label();
 					settingLabel.setText(parts[1]);
 					settingLabel.addStyleName("SettingLabel");

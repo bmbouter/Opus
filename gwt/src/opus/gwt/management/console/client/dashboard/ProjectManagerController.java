@@ -47,13 +47,12 @@ public class ProjectManagerController extends Composite {
 	
 	public ProjectManagerController(ClientFactory clientFactory, String projectName){
 		initWidget(uiBinder.createAndBindUi(this));
+		this.clientFactory = clientFactory;
 		this.eventBus = clientFactory.getEventBus();
 		this.projectName = projectName;
-		this.clientFactory = clientFactory;
-
 		this.dashboardPanel = new DashboardPanel(clientFactory, projectName);
 		this.deleteProjectPanel = new DeleteProjectPanel(clientFactory);
-		this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory);
+		this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory, projectName);
 		setupmanagerDeckPanel();
 		registerHandlers();
 		setupBreadCrumbs();
