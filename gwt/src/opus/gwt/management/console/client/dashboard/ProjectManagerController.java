@@ -51,7 +51,7 @@ public class ProjectManagerController extends Composite {
 		this.eventBus = clientFactory.getEventBus();
 		this.projectName = projectName;
 		this.dashboardPanel = new DashboardPanel(clientFactory, projectName);
-		this.deleteProjectPanel = new DeleteProjectPanel(clientFactory);
+		this.deleteProjectPanel = new DeleteProjectPanel(clientFactory, projectName);
 		this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory, projectName);
 		setupmanagerDeckPanel();
 		registerHandlers();

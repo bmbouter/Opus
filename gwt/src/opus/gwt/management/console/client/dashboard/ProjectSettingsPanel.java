@@ -88,17 +88,17 @@ public class ProjectSettingsPanel extends Composite {
 	
 	public void importProjectSettings(ProjectSettingsData settings, JsArrayString apps){
 		int row = 0;
+
 		for (int i=0; i < apps.length(); i++){
-			
-			//Create header for app
 			Label appName = new Label();
 			appName.setText(apps.get(i));
 			appName.addStyleName("SettingsAppName");
 			formContainer.setWidget(row++, 0, appName);
-			//Get list of settings for app
 			
-			JsArray<JavaScriptObject> appsettings = settings.getAppSettings(apps.get(i));
-			for(int j=0; j<appsettings.length(); j++){
+			
+			//JsArray<JavaScriptObject> appsettings = settings.getAppSettings(apps.get(i));
+			/*
+			for(int j=0; j< appsettings.length() - 1; j++){
 				//Window.alert(String.valueOf(j));
 				JsArray<JavaScriptObject> p = settings.getSettingsArray(appsettings.get(j));
 				String[] parts = p.join(";;").split(";;\\s*");
@@ -163,12 +163,12 @@ public class ProjectSettingsPanel extends Composite {
 					formContainer.setWidget(row++, 1,setting);
 				}
 			}
+			*/
 			formContainer.setHTML(row, 0, "<hr width=\"80%\">");
 			formContainer.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
 		}
 		this.hasSettings = true;
-		//setActive(projectManagerController.getDashboard().isActive());
 	}
 	
 	public void setHasSettings(boolean state) {
