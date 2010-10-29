@@ -70,6 +70,8 @@ public class ProjectManagerController extends Composite {
 					public void onPanelTransition(PanelTransitionEvent event){
 						if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS ){
 							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(projectSettingsPanel));
+						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DELETE) {
+							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(deleteProjectPanel));
 						}
 					}
 			});

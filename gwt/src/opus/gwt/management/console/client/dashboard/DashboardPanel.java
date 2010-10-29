@@ -74,12 +74,21 @@ public class DashboardPanel extends Composite {
 		this.projectName = projectName;
 		projectLabel.setText(projectName);
 		handleProjectInformation(projectName);
-		//registerHandlers();
 	}
 	
 	@UiHandler("settingsButton")
 	void onSettingsButtonClick(ClickEvent event){
 		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS));
+	}
+	
+	@UiHandler("deactivateButton")
+	void onDeactivateButtonClick(ClickEvent event) {
+		Window.alert("Deactivate button clicked");
+	}
+	
+	@UiHandler("deleteButton")
+	void onDeleteButtonClick(ClickEvent event) {
+		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DELETE));
 	}
 
 	public void handleProjectInformation(String projectName){
@@ -153,6 +162,8 @@ public class DashboardPanel extends Composite {
 					Window.alert("Clicked settings link");
 				}
 			});
+			
+			
 			
 			applicationsFlowPanel.add(applicationLabel);
 		}
