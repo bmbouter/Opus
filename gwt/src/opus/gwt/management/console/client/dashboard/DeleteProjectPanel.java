@@ -16,7 +16,6 @@
 
 package opus.gwt.management.console.client.dashboard;
 
-import opus.community.gwt.site.appbrowser.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
@@ -24,6 +23,8 @@ import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import opus.gwt.management.console.client.ClientFactory;
+import opus.gwt.management.console.client.JSVariableHandler;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
