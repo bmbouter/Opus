@@ -78,33 +78,37 @@ public class IconPanel extends Composite {
 	}
 	
 	private void registerHandlers(){
-		eventBus.addHandler(GetProjectsEvent.TYPE, 
-				new GetProjectsEventHandler(){
-					public void onGetProjects(GetProjectsEvent event){
-						iconMap.clear();
-						projectIconsFlowPanel.clear();
-						
-						HashMap<String, Project> projects = event.getProjects();
-						clientFactory.setProjects(projects);
-						
-						for(Project project : projects.values()){
-							addProjectIcon(project);
-						}
-					}
-		});
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
-				new PanelTransitionEventHandler(){
-					public void onPanelTransition(PanelTransitionEvent event){
-						if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTS ){
-							setupBreadCrumbs();
-						}
+			new PanelTransitionEventHandler(){
+				public void onPanelTransition(PanelTransitionEvent event){
+					if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTS ){
+						setupBreadCrumbs();
 					}
+				}
+		});
+		
+		eventBus.addHandler(GetProjectsEvent.TYPE, 
+			new GetProjectsEventHandler(){
+				public void onGetProjects(GetProjectsEvent event) {
+					handleProjects();
+				}
 		});
 	}
 	
 	private void setupBreadCrumbs(){
 		String[] crumbs = {"Projects"};
 		eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_CRUMBS, crumbs));
+	}
+	
+	private void handleProjects() {
+		iconMap.clear();
+		projectIconsFlowPanel.clear();
+		
+		HashMap<String, Project> projects = clientFactory.getProjects();
+		
+		for(Project project : projects.values()){
+			addProjectIcon(project);
+		}
 	}
 	
 	public void addProjectIcon(Project project) {
