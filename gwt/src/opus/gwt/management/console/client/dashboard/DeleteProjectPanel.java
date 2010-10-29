@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -52,15 +53,16 @@ public class DeleteProjectPanel extends Composite {
 	private EventBus eventBus;
 	
 	@UiField Button deleteProjectButton;
-	@UiField HTMLPanel mainDeleteProjectPanel;
 	@UiField FlowPanel titlePanel;
+	@UiField Label projectLabel;
 	
-	public DeleteProjectPanel(ClientFactory clientFactory) {
+	public DeleteProjectPanel(ClientFactory clientFactory, String projectName) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = clientFactory.getEventBus();
 		JSVarHandler = new JSVariableHandler();
 		deleteForm = new FormPanel();
-		projectName = "";
+		this.projectName = projectName;
+		projectLabel.setText(projectName);
 		registerHandlers();
 		setupDeleteForm();
 	}

@@ -52,7 +52,7 @@ public class ProjectManagerController extends Composite {
 		this.clientFactory = clientFactory;
 
 		this.dashboardPanel = new DashboardPanel(clientFactory, projectName);
-		this.deleteProjectPanel = new DeleteProjectPanel(clientFactory);
+		this.deleteProjectPanel = new DeleteProjectPanel(clientFactory, projectName);
 		this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory);
 		setupmanagerDeckPanel();
 		registerHandlers();
@@ -71,6 +71,8 @@ public class ProjectManagerController extends Composite {
 					public void onPanelTransition(PanelTransitionEvent event){
 						if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS ){
 							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(projectSettingsPanel));
+						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DELETE) {
+							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(deleteProjectPanel));
 						}
 					}
 			});

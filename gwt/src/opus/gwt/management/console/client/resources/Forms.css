@@ -91,7 +91,7 @@ select {
 
 .button {
 	background: literal("-webkit-gradient(linear, 0% 0%, 0% 100%, from(#588b34), to(#477725))");
-	background: literal("-moz-linear-gradient(linear, 0% 0%, 0% 100%, from(#0C940C), to(#136613))");
+	background: literal("-moz-linear-gradient(linear, 0% 0%, 0% 100%, from(#588b34), to(#477725))");
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;

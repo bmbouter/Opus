@@ -18,6 +18,7 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
+import opus.gwt.management.console.client.dashboard.DeleteProjectPanel;
 import opus.gwt.management.console.client.dashboard.ProjectManagerController;
 import opus.gwt.management.console.client.deployer.ProjectDeployerController;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
@@ -55,8 +56,10 @@ public class ManagementConsoleController extends Composite {
 	private ProjectDeployerController projectDeployerController;
 	private ProjectManagerController projectManagerController;
 	private IconPanel iconPanel;
+	private DeleteProjectPanel deleteProjectPanel;
 	private JSVariableHandler jsVarHandler;
 	private boolean onStartUp;
+	private String projectName;
 	
 	@UiField LayoutPanel contentLayoutPanel;
 	@UiField NavigationPanel navigationPanel;
@@ -75,6 +78,7 @@ public class ManagementConsoleController extends Composite {
 		breadCrumbsPanel.setEventBus(clientFactory);
 		iconPanel = new IconPanel(clientFactory);
 		registerHandlers();
+		deleteProjectPanel = new DeleteProjectPanel(clientFactory, projectName);
 		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
 		eventBus.fireEvent(new AsyncRequestEvent("getApplications"));
 	}
@@ -153,7 +157,7 @@ public class ManagementConsoleController extends Composite {
 		projectManagerController = new ProjectManagerController(clientFactory, projectName);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(projectManagerController);
-		contentLayoutPanel.setVisible(true);	
+		contentLayoutPanel.setVisible(true);
 	}
 	
 	private void showIconPanel(){

@@ -86,8 +86,6 @@ public class IconPanel extends Composite {
 						HashMap<String, Project> projects = event.getProjects();
 						clientFactory.setProjects(projects);
 						
-						HashMap<String, Application> applicationsMap = clientFactory.getApplications();
-						
 						for(Project project : projects.values()){
 							addProjectIcon(project);
 						}
