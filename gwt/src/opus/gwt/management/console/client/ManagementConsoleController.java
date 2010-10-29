@@ -26,6 +26,8 @@ import opus.gwt.management.console.client.event.AuthenticationEvent;
 import opus.gwt.management.console.client.event.AuthenticationEventHandler;
 import opus.gwt.management.console.client.event.GetApplicationsEvent;
 import opus.gwt.management.console.client.event.GetApplicationsEventHandler;
+import opus.gwt.management.console.client.event.GetProjectsEvent;
+import opus.gwt.management.console.client.event.GetProjectsEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.event.UpdateProjectsEvent;
@@ -33,12 +35,14 @@ import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.overlays.Application;
+import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -74,13 +78,14 @@ public class ManagementConsoleController extends Composite {
 		this.eventBus = clientFactory.getEventBus();
 		this.clientFactory = clientFactory;
 		authenticationPanel = new AuthenticationPanel(clientFactory);
+		iconPanel = new IconPanel(clientFactory);
 		navigationPanel.setEventBus(clientFactory);
 		breadCrumbsPanel.setEventBus(clientFactory);
-		iconPanel = new IconPanel(clientFactory);
 		registerHandlers();
 		deleteProjectPanel = new DeleteProjectPanel(clientFactory, projectName);
 		eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
 		eventBus.fireEvent(new AsyncRequestEvent("getApplications"));
+		eventBus.fireEvent(new AsyncRequestEvent("getProjects"));
 	}
 	
 	private void registerHandlers(){
@@ -89,6 +94,14 @@ public class ManagementConsoleController extends Composite {
 				public void onGetApplications(GetApplicationsEvent event) {
 					HashMap<String, Application> applications = event.getApplications();
 					clientFactory.setApplications(applications);
+				}
+		});
+		
+		eventBus.addHandler(GetProjectsEvent.TYPE, 
+			new GetProjectsEventHandler(){
+				public void onGetProjects(GetProjectsEvent event) {
+					HashMap<String, Project> projects = event.getProjects();
+					clientFactory.setProjects(projects);
 				}
 		});
 		

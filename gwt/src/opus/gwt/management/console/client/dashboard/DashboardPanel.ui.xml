@@ -27,12 +27,14 @@
 					<h1>Dashboard: <g:Label styleName="{style.inline}" ui:field="projectLabel"/></h1>
 				</g:HTMLPanel>
 				<HTMLPanel styleName="{style.buttons}">
-					<g:Button ui:field="deactivateButton" styleName="{style.activate}">Deactivate Project</g:Button>
+					<g:Button ui:field="activeButton" styleName="{style.activate}"></g:Button>
 					<g:Button ui:field="deleteButton" styleName="{style.delete}">Delete Project</g:Button>
 				</HTMLPanel>
 			</g:HTMLPanel>
 			<g:FlowPanel ui:field='applicationsFlowPanel' />
 			<g:Button ui:field='settingsButton' >Settings</g:Button>
+			<g:FormPanel ui:field="optionsForm" />
+			<g:FlexTable ui:field="formContainer" />
 		</g:HTMLPanel>
 	</g:SimplePanel>
 	
