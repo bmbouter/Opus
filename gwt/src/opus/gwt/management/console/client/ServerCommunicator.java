@@ -18,17 +18,17 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
+import opus.gwt.management.console.client.event.AddProjectEvent;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AsyncRequestEventHandler;
 import opus.gwt.management.console.client.event.GetApplicationsEvent;
 import opus.gwt.management.console.client.event.GetProjectsEvent;
+import opus.gwt.management.console.client.event.GetUserEvent;
 import opus.gwt.management.console.client.event.ImportAppListEvent;
 import opus.gwt.management.console.client.event.UpdateApplicationEvent;
 import opus.gwt.management.console.client.event.UpdateDBOptionsEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
-import opus.gwt.management.console.client.event.UpdateProjectsEvent;
 import opus.gwt.management.console.client.event.UpdateVersionEvent;
-import opus.gwt.management.console.client.event.GetUserEvent;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.EventBus;
@@ -70,7 +70,7 @@ public class ServerCommunicator {
 		URLS.put("handleFeaturedList", JSvarHandler.getRepoBaseURL() + featuredListURL);
 		URLS.put("handleImportAppList", JSvarHandler.getRepoBaseURL() + importAppListURL);
 		URLS.put("handleVersion", JSvarHandler.getRepoBaseURL() + versionURL);
-		URLS.put("updateProjects", JSvarHandler.getDeployerBaseURL() + projectURL);
+		URLS.put("addProject", JSvarHandler.getDeployerBaseURL() + projectURL);
 		URLS.put("getProjects", JSvarHandler.getDeployerBaseURL() + projectURL);
 		URLS.put("getApplications", JSvarHandler.getRepoBaseURL() + applicationURL);
 	}
@@ -82,7 +82,7 @@ public class ServerCommunicator {
 					if( event.hasUrlVariable() ){
 						getJson(URL.encode(URLS.get(event.getRequestHandle()).replaceAll("<placeHolder>", event.getUrlVariable())), event.getRequestHandle());
 					} else {
-						getJson(URL.encode(URLS.get(event.getRequestHandle())), event.getRequestHandle());
+						getJson(URL.encode(URLS.get(event.getRequestHandle()).replaceAll("/<placeHolder>", "")), event.getRequestHandle());
 					}
 				}
 		});
@@ -146,9 +146,9 @@ public class ServerCommunicator {
 		    	eventBus.fireEvent(new UpdateFeaturedListEvent(jso));
 		    } else if (queryType.equals("handleDBOptions")){
 		    	eventBus.fireEvent(new UpdateDBOptionsEvent(jso));
-		    } else if (queryType.equals("updateProjects")) {
+		    } else if (queryType.equals("addProject")) {
 		    	Window.alert("test");
-		     	eventBus.fireEvent(new UpdateProjectsEvent(jso, clientFactory));
+		     	eventBus.fireEvent(new AddProjectEvent(jso));
 		    } else if (queryType.equals("handleImportAppList")) {	
 		    	eventBus.fireEvent(new ImportAppListEvent(jso));
 		    } else if(queryType == "handleVersion") {

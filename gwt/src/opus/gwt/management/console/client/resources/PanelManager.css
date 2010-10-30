@@ -21,7 +21,8 @@
 
 .rootLayoutPanel {
 	min-height: 800px;
-	min-width: 1000px;	
+	min-width: 1000px;
+	font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
 }
 .mainDockLayoutPanel {
 	background: url('body-bg.png') 0px 225px repeat-x, #F0F0F0;
@@ -41,70 +42,6 @@
 	
 }
 
-/*
-.mainPanel {
-  	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E3E3E3), to(#8F8F8F), color-stop(.6,#999999))');
-  	background-image: literal('-moz-linear-gradient(0% 0% 90deg, #E3E3E3, #8F8F8F, #999999 60%)');
-  	position: absolute;
-    top: 0; 
-    bottom: 0;
-    right: 0;
-    left: 0;
-    margin: 0;
-    min-width: 1024px;
-    min-height: 740px;
-    font-family: arial, sans-serif;
-    font-size: 1em;
-}
-.subMainPanel {
-    margin: 2% 1% 2% 1%;
-    background: #575757;
-    background:	literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#575757), to(#121212), color-stop(.4,#333333))');
-    background:	literal('-moz-linear-gradient(0% 0% 90deg, #575757, #121212, #333333 40%)');
-	border-radius: 10px;
-	-webkt-border-radius: 10px;
-	-moz-border-radius: 10px;
-	-webkit-box-shadow: 7px 7px 7px #121212;
-    -moz-box-shadow: 7px 7px 7px #121212;
-    box-shadow: 7px 7px 7px #121212;
-}
-.topBarPanel {
-	background: black;	
-	border-radius: 10px 10px 0 0;
-	-moz-border-radius: 10px 10px 0 0;
-	-webkit-border-radius: 10px 10px 0 0;
-	padding: 0.2% 0% 0% 1%;
-}
-.topBarLink {
-	cursor: pointer;
-	cursor: hand;
-	color: white;
-	float: left;
-	margin-right: 1%;
-}
-.titleBar {
-	padding: 0.4% 0% 0% 1%;
-    color: white;
-    font-size: 2.4em;
-    width: 100%;
-    height: 100%;
-    min-height: 95%;
-    text-shadow:10px 10px 5px #0F0F0F;
-    font-family: "Droid Serif";
-}
-.navigationMenu {
-	width: 100%;
-	height: 98%;
-	padding: 10% 0 0 6%;
-	margin-top: 20px;
-	font-size: 1em;
-}
-/*
-.mainDeckPanel{
-	width: 99%;
-	height: 97.5%;
-	padding: 0 0 0 0;
-}*/
 .topMenuPanel{
 	background: black;
 	border-radius: 10px 10px 0 0;

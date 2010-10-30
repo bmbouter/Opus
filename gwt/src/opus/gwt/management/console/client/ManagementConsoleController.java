@@ -18,12 +18,12 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
-import opus.gwt.management.console.client.dashboard.DeleteProjectPanel;
+import opus.gwt.management.console.client.dashboard.IconPanel;
 import opus.gwt.management.console.client.dashboard.ProjectManagerController;
 import opus.gwt.management.console.client.deployer.ProjectDeployerController;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
-import opus.gwt.management.console.client.event.AuthenticationEvent;
-import opus.gwt.management.console.client.event.AuthenticationEventHandler;
+import opus.gwt.management.console.client.event.DataReadyEvent;
+import opus.gwt.management.console.client.event.DataReadyEventHandler;
 import opus.gwt.management.console.client.event.GetApplicationsEvent;
 import opus.gwt.management.console.client.event.GetApplicationsEventHandler;
 import opus.gwt.management.console.client.event.GetProjectsEvent;
@@ -32,19 +32,19 @@ import opus.gwt.management.console.client.event.GetUserEvent;
 import opus.gwt.management.console.client.event.GetUserEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
-import opus.gwt.management.console.client.event.UpdateProjectsEvent;
-import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
+import opus.gwt.management.console.client.event.AddProjectEvent;
+import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
+import opus.gwt.management.console.client.tools.AuthenticationPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -61,7 +61,6 @@ public class ManagementConsoleController extends Composite {
 	private AuthenticationPanel authenticationPanel;
 	private ProjectDeployerController projectDeployerController;
 	private ProjectManagerController projectManagerController;
-	private IconPanel iconPanel;
 	private JSVariableHandler jsVarHandler;
 
 	
@@ -81,38 +80,11 @@ public class ManagementConsoleController extends Composite {
 	}
 	
 	private void registerHandlers(){
-		eventBus.addHandler(GetApplicationsEvent.TYPE, 
-			new GetApplicationsEventHandler() {
-				public void onGetApplications(GetApplicationsEvent event) {
-					HashMap<String, Application> applications = event.getApplications();
-					clientFactory.setApplications(applications);
-					startConsole();
-				}
-		});
-		eventBus.addHandler(GetUserEvent.TYPE, 
-				new GetUserEventHandler() {
-					public void onGetUser(GetUserEvent event) {
-						clientFactory.setUser(event.getUser());
-						eventBus.fireEvent(new AsyncRequestEvent("getProjects"));
-					}
-		});
-		eventBus.addHandler(GetProjectsEvent.TYPE, 
-			new GetProjectsEventHandler(){
-				public void onGetProjects(GetProjectsEvent event) {
-					HashMap<String, Project> projects = event.getProjects();
-					clientFactory.setProjects(projects);
-					eventBus.fireEvent(new AsyncRequestEvent("getApplications"));
-				}
-		});
-		eventBus.addHandler(AuthenticationEvent.TYPE, 
-			new AuthenticationEventHandler(){
-				public void onAuthentication(AuthenticationEvent event){
-					if( event.isAuthenticated() ){
+		eventBus.addHandler(DataReadyEvent.TYPE, 
+				new DataReadyEventHandler(){
+					public void onDataReady(DataReadyEvent event) {
 						startConsole();
-					} else if ( !event.isAuthenticated() ){
-						showAuthentication();
 					}
-				}
 		});
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
 			new PanelTransitionEventHandler(){
@@ -135,7 +107,6 @@ public class ManagementConsoleController extends Composite {
 	}
 	
 	private void startConsole(){
-		iconPanel = new IconPanel(clientFactory);
 		navigationPanel.setClientFactory(clientFactory);
 		breadCrumbsPanel.setClientFactory(clientFactory);
 		if( clientFactory.getProjects().size() > 0 ){
@@ -171,6 +142,7 @@ public class ManagementConsoleController extends Composite {
 		RootLayoutPanel.get().clear();
 		RootLayoutPanel.get().add(this);
 		contentLayoutPanel.clear();
+		IconPanel iconPanel = new IconPanel(clientFactory);
 		contentLayoutPanel.add(iconPanel);
 		contentLayoutPanel.setVisible(true);
 	}

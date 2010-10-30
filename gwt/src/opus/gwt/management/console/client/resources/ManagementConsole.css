@@ -38,7 +38,6 @@
     margin: 0;
     min-width: 1024px;
     min-height: 740px;
-    font-family: arial, sans-serif;
     font-size: 1em;
 }
 .subMainPanel {
@@ -75,7 +74,6 @@
     height: 100%;
     min-height: 95%;
     text-shadow:10px 10px 5px #0F0F0F;
-    font-family: "Droid Serif";
 }
 .navigationMenu {
 	width: 100%;

@@ -7,13 +7,12 @@ import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
 import opus.gwt.management.console.client.event.AuthenticationEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
-import opus.gwt.management.console.client.event.UpdateProjectsEvent;
-import opus.gwt.management.console.client.event.UpdateProjectsEventHandler;
+import opus.gwt.management.console.client.event.AddProjectEvent;
+import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.NavigationPanelCss.NavigationPanelStyle;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -29,11 +28,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 public class NavigationPanel extends Composite {
 
@@ -45,6 +44,7 @@ public class NavigationPanel extends Composite {
 	private int projectCount;
 	private EventBus eventBus;
 	private PopupPanel projectListPopup;
+	private FlowPanel projectNamesFlowPanel;
 	private ClientFactory clientFactory;
 	
 	@UiField HTMLPanel buttonHTMLPanel;
@@ -58,6 +58,7 @@ public class NavigationPanel extends Composite {
 	public NavigationPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
 		projectListPopup = new PopupPanel();
+		projectNamesFlowPanel = new FlowPanel();
 		setupLogoutForm();	
 	}
 	
@@ -70,17 +71,10 @@ public class NavigationPanel extends Composite {
 	}
 	
 	private void registerHandlers(){
-		eventBus.addHandler(AuthenticationEvent.TYPE, 
-			new AuthenticationEventHandler(){
-				public void onAuthentication(AuthenticationEvent event){
-					if( event.isAuthenticated() ){
-						setUsername(event.getUsername());
-					}
-		}});
-		eventBus.addHandler(UpdateProjectsEvent.TYPE, 
-			new UpdateProjectsEventHandler(){
-				public void onUpdateProjects(UpdateProjectsEvent event){
-					handleProjectNames(event.getProjects());
+		eventBus.addHandler(AddProjectEvent.TYPE, 
+			new AddProjectEventHandler(){
+				public void onAddProject(AddProjectEvent event){
+					addProject(event.getProject());
 		}});
 	}
 	
@@ -115,7 +109,7 @@ public class NavigationPanel extends Composite {
 	
 	@UiHandler("projectsButton")
 	void handleProjectsButtonMouseOver(MouseOverEvent event){
-		if(projectCount > 0) {
+		if(projectNamesFlowPanel.getWidgetCount() > 0) {
 			int left = projectsButton.getAbsoluteLeft() - ( projectListPopup.getOffsetWidth() / 2 );
 			int top = buttonHTMLPanel.getAbsoluteTop() + buttonHTMLPanel.getOffsetHeight();
 			projectListPopup.setPopupPosition(left, top);
@@ -126,44 +120,41 @@ public class NavigationPanel extends Composite {
 		}
 	}
 
-	
 	public void handleProjectNames(HashMap<String, Project> Projects){
 		projectListPopup.clear();
-		projectCount = Projects.size();
+		projectNamesFlowPanel.clear();
 	
-		if(projectCount != 0){
-			FlowPanel FP = new FlowPanel();
-			for(String key : Projects.keySet()){
-				final String projectName = Projects.get(key).getName();
-				final Label testLabel = new Label(Projects.get(key).getName());
-				testLabel.setStyleName(style.popupLabel());
-				testLabel.addStyleName(style.lastLabel());	
-				testLabel.addMouseOverHandler(new MouseOverHandler(){
-					public void onMouseOver(MouseOverEvent event){
-						testLabel.setStyleName(style.popupLabelActive());
-						testLabel.addStyleName(style.lastLabel());
-					}
-				});
-				testLabel.addMouseOutHandler(new MouseOutHandler(){
-					public void onMouseOut(MouseOutEvent event){
-						testLabel.setStyleName(style.popupLabel());
-						testLabel.addStyleName(style.lastLabel());
-					}
-				});
-				testLabel.addClickHandler(new ClickHandler() {
-			        public void onClick(ClickEvent event) {
-			        	eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
-			        	projectListPopup.hide();
-			        }
-			     });
-				FP.add(testLabel);				
-			}
-			projectListPopup.add(FP);
-		} else {
-			deployNewButton.click();
+		for(String key : Projects.keySet()){
+			projectNamesFlowPanel.add(addProject(Projects.get(key)));
 		}
+		projectListPopup.add(projectNamesFlowPanel);
 		projectListPopup.hide();
 		projectListPopup.setAutoHideEnabled(true);
 		projectListPopup.setStyleName(style.projectsPopup());
+	}
+	
+	private Label addProject(Project project){
+		final String projectName = project.getName();
+		final Label testLabel = new Label(project.getName());
+		testLabel.setStyleName(style.popupLabel());
+		testLabel.addStyleName(style.lastLabel());	
+		testLabel.addMouseOverHandler(new MouseOverHandler(){
+			public void onMouseOver(MouseOverEvent event){
+				testLabel.setStyleName(style.popupLabelActive());
+			}
+		});
+		testLabel.addMouseOutHandler(new MouseOutHandler(){
+			public void onMouseOut(MouseOutEvent event){
+				testLabel.setStyleName(style.popupLabel());
+			}
+		});
+		testLabel.addClickHandler(new ClickHandler() {
+	        public void onClick(ClickEvent event) {
+	        	eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
+	        	projectListPopup.hide();
+	        }
+	     });
+		
+		return testLabel;		
 	}
 }

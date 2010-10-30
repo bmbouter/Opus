@@ -16,20 +16,29 @@
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:t="urn:import:opus.gwt.management.console.client.tools">
-	<ui:style src="resources/PanelManager.css" type="opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle"/>
-	<ui:style field="projectManager" src="resources/ProjectManager.css"/>
-	<ui:with field="res" type="opus.gwt.management.console.client.resources.images.OpusImages" />
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="../resources/Authentication.css" />
 	
-	<g:ScrollPanel ui:field='iconScrollPanel' styleName="{projectManager.managerDeckPanel}">
-		<g:HTMLPanel styleName="{projectManager.dashboardMainPanel}">
-			<g:HTMLPanel styleName="{projectManager.header}">
-				<g:HTMLPanel styleName="{projectManager.insetType}">
-					<h1>Dashboard</h1>
+	<g:SimplePanel>
+		<g:FormPanel ui:field='authenticationForm'> 
+			<g:HTMLPanel styleName="{style.loginPanel}">
+				<g:HTMLPanel styleName="{style.header}">
+					Opus Management Console
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.fieldWrapper}">
+					<label class="{style.fieldLabel}">Username:</label>
+					<g:TextBox ui:field="usernameTextBox" name='username' />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.fieldWrapper}">
+					<label class="{style.fieldLabel}">Password:</label>
+					<g:PasswordTextBox ui:field="passwordTextBox" name='password' />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.fieldWrapper}">
+					<g:Label ui:field="errorLabel" visible="false" styleName="{style.errorLabel}">Username and/or Password are invalid.</g:Label>
+					<g:Button ui:field="loginButton" styleName="{style.loginButton}">Login</g:Button>
+					<g:Hidden ui:field="csrftoken" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			<g:FlowPanel ui:field="projectIconsFlowPanel" />
-		</g:HTMLPanel>
-	</g:ScrollPanel>
+		</g:FormPanel>
+	</g:SimplePanel>
 </ui:UiBinder> 

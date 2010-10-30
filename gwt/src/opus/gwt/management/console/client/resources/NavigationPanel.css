@@ -120,12 +120,10 @@
 }
 
 .popupLabelActive{
-	color: white;	
+	color: #3DABEB;
 	text-align: center;
-	/*border-bottom: 1px solid gray;*/
 	cursor: pointer;
 	cursor: hand;
-	background: orange;
 	padding: 0.25em 0.75em;
 }
 

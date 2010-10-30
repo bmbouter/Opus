@@ -192,16 +192,13 @@ public class ProjectDeployerController extends Composite {
 	    		ep.errorHTML.setHTML("<p>Error Occured</p>");
 	    		deployerDeckPanel.add(ep);
 	    		deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(ep));
-	        	Window.alert("ERORR SENDING FORM WITH REQUEST BUILDER");
 	        }
 
 	        public void onResponseReceived(Request request, Response response) {
 		    	if( response.getText().contains("Back to") ){
 		    		loadingPopup.hide();
 		    		Window.alert("step 1");
-		    		eventBus.fireEvent(new AsyncRequestEvent("updateProjects"));
-		    		Window.alert("step 2");
-		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
+		    		eventBus.fireEvent(new AsyncRequestEvent("addProject", createdProjectName));
 		    		Window.alert("step 3");
 		    	} else {
 		    		loadingPopup.hide();

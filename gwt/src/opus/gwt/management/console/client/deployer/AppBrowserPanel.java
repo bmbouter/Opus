@@ -23,8 +23,6 @@ import java.util.Map.Entry;
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
-import opus.gwt.management.console.client.event.GetApplicationsEvent;
-import opus.gwt.management.console.client.event.GetApplicationsEventHandler;
 import opus.gwt.management.console.client.event.ImportAppListEvent;
 import opus.gwt.management.console.client.event.ImportAppListEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;

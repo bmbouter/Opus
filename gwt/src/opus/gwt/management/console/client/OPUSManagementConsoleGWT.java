@@ -34,6 +34,7 @@ public class OPUSManagementConsoleGWT implements EntryPoint {
 	public void onModuleLoad() {
 		ClientFactory clientFactory = GWT.create(ClientFactory.class);
 		ServerCommunicator serverComm = new ServerCommunicator(clientFactory);
+		ModelController modelController = new ModelController(clientFactory);
 		ManagementConsoleController managementConsoleController = new ManagementConsoleController(clientFactory);
 	}
 }

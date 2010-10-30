@@ -17,7 +17,6 @@
 .managerDeckPanel {
 	padding: 0;	
 	border-radius: 5px;
-	font-family: Helvetica, Arial, Verdana, sans-serif;
 	font-size: .8em;
 	min-height: 400px;
 	min-width: 600px;
@@ -145,7 +144,6 @@
 .pageTitle {
 	color: #E87B33;
 	text-shadow: 1px 1px 0em #000000;
-	font-family: "Droid Serif";
 	font-size: 1.7em;
 	float: left;
 	height: 100%;
@@ -209,8 +207,7 @@
 	border-radius: 2px;
 	width: 20%;
 	cursor: pointer;
-	cursor: hand;	
-	font-family: "Droid Serif";
+	cursor: hand;
 	font-size: 125%;
 	background: literal('-webkit-gradient(linear, 0% 0%, 0% 100%, from(#E8E8E8), to(#E8E8E8), color-stop(.5,#BFBFBF))');
 	/*position: relative; direction: ltr; left: 0px; right: auto;*/

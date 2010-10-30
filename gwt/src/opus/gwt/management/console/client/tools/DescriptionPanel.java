@@ -1,8 +1,5 @@
 package opus.gwt.management.console.client.tools;
 
-import java.util.HashMap;
-
-import opus.gwt.management.console.client.deployer.AppIcon;
 import opus.gwt.management.console.client.overlays.Application;
 
 import com.google.gwt.core.client.GWT;
