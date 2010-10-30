@@ -2,6 +2,7 @@ package opus.gwt.management.console.client.event;
 
 import java.util.HashMap;
 
+import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.overlays.Project;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -14,11 +15,12 @@ public class UpdateProjectsEvent extends GwtEvent<UpdateProjectsEventHandler> {
 	public static Type<UpdateProjectsEventHandler> TYPE = new Type<UpdateProjectsEventHandler>();
 	private HashMap<String, Project> projects;
 	
-	public UpdateProjectsEvent(JavaScriptObject jso){
+	public UpdateProjectsEvent(JavaScriptObject jso, ClientFactory clientFactory){
 		JsArray<Project> projs = ConvertProjects(jso);
 		 for( int i =0; i < projs.length(); i++){
 			 projects.put(projs.get(i).getName(), projs.get(i));
 		 }
+		 clientFactory.setProjects(projects);
 	}
 	
 	public HashMap<String, Project> getProjects(){

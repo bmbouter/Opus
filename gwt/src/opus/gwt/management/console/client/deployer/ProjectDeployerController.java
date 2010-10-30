@@ -199,7 +199,7 @@ public class ProjectDeployerController extends Composite {
 		    	if( response.getText().contains("Back to") ){
 		    		loadingPopup.hide();
 		    		Window.alert("step 1");
-		    		eventBus.fireEvent(new AsyncRequestEvent("getProjects"));
+		    		eventBus.fireEvent(new AsyncRequestEvent("updateProjects"));
 		    		Window.alert("step 2");
 		    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, createdProjectName));
 		    		Window.alert("step 3");

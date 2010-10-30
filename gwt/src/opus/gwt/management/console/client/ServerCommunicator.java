@@ -49,13 +49,15 @@ public class ServerCommunicator {
 	private EventBus eventBus;
 	private JSVariableHandler JSvarHandler;
 	private HashMap<String, String> URLS;
+	private ClientFactory clientFactory;
 	
 	public ServerCommunicator(ClientFactory clientFactory) {
 		this.URLS = new HashMap<String, String>();
 		this.queryTypes = new HashMap<Integer, String>();
 		this.requestId = 0;
+		this.clientFactory = clientFactory;
 		this.eventBus = clientFactory.getEventBus();
-		JSvarHandler = new JSVariableHandler();
+		JSvarHandler = clientFactory.getJSVariableHandler();
 		setupURLS();
 		registerHandlers();
 	}
@@ -67,7 +69,7 @@ public class ServerCommunicator {
 		URLS.put("handleFeaturedList", JSvarHandler.getRepoBaseURL() + featuredListURL);
 		URLS.put("handleImportAppList", JSvarHandler.getRepoBaseURL() + importAppListURL);
 		URLS.put("handleVersion", JSvarHandler.getRepoBaseURL() + versionURL);
-		URLS.put("handleProjects", JSvarHandler.getDeployerBaseURL() + projectURL);
+		URLS.put("updateProjects", JSvarHandler.getDeployerBaseURL() + projectURL);
 		URLS.put("getProjects", JSvarHandler.getDeployerBaseURL() + projectURL);
 		URLS.put("getApplications", JSvarHandler.getRepoBaseURL() + applicationURL);
 	}
@@ -143,8 +145,8 @@ public class ServerCommunicator {
 		    	eventBus.fireEvent(new UpdateFeaturedListEvent(jso));
 		    } else if (queryType.equals("handleDBOptions")){
 		    	eventBus.fireEvent(new UpdateDBOptionsEvent(jso));
-		    } else if (queryType.equals("handleProjects")) {
-		     	eventBus.fireEvent(new UpdateProjectsEvent(jso));
+		    } else if (queryType.equals("updateProjects")) {
+		     	eventBus.fireEvent(new UpdateProjectsEvent(jso, clientFactory));
 		    } else if (queryType.equals("handleImportAppList")) {	
 		    	eventBus.fireEvent(new ImportAppListEvent(jso));
 		    } else if(queryType == "handleVersion") {

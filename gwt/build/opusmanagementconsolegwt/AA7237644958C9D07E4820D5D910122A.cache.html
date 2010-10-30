@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0RC1";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '9A487315C83A3E14F955600AA3CAE2E2';
+var $strongName = 'AA7237644958C9D07E4820D5D910122A';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -8926,6 +8926,7 @@ function ServerCommunicator_0(clientFactory){
   this.URLS = new HashMap_0;
   this.queryTypes = new HashMap_0;
   this.requestId = 0;
+  this.clientFactory = clientFactory;
   this.eventBus = clientFactory.eventBus;
   $put(this.URLS, 'getUser', $wnd.deployerBaseURL + '/json/username/?a&callback=');
   $put(this.URLS, 'handleDBOptions', $wnd.deployerBaseURL + '/json/database/?callback=');
@@ -8933,7 +8934,7 @@ function ServerCommunicator_0(clientFactory){
   $put(this.URLS, 'handleFeaturedList', $wnd.repoBaseURL + '/json/featured/?a&callback=');
   $put(this.URLS, 'handleImportAppList', $wnd.repoBaseURL + '/project/configuration/<placeHolder>/?callback=');
   $put(this.URLS, 'handleVersion', $wnd.repoBaseURL + '/json/application/<placeHolder>/versions/?a&callback=');
-  $put(this.URLS, 'handleProjects', $wnd.deployerBaseURL + '/json/projects/<placeHolder>/?a&callback=');
+  $put(this.URLS, 'updateProjects', $wnd.deployerBaseURL + '/json/projects/<placeHolder>/?a&callback=');
   $put(this.URLS, 'getProjects', $wnd.deployerBaseURL + '/json/projects/<placeHolder>/?a&callback=');
   $put(this.URLS, 'getApplications', $wnd.repoBaseURL + '/json/search/application/?a&callback=');
   $addHandler_0(this.eventBus, ($clinit_535() , TYPE_12), new ServerCommunicator$1_0(this));
@@ -8979,12 +8980,13 @@ _.handleJsonResponse = function handleJsonResponse(jso, error, rId){
     }
   }
    else {
-    $equals_2(queryType, 'getUser')?$fireEvent_0(this.eventBus, new GetUserEvent_0(jso)):queryType == 'handleApplication'?$fireEvent_0(this.eventBus, new UpdateApplicationEvent_0(jso)):queryType == 'handleFeaturedList'?$fireEvent_0(this.eventBus, new UpdateFeaturedListEvent_0(jso)):$equals_2(queryType, 'handleDBOptions')?$fireEvent_0(this.eventBus, new UpdateDBOptionsEvent_0(jso)):$equals_2(queryType, 'handleProjects')?$fireEvent_0(this.eventBus, new UpdateProjectsEvent_0(jso)):$equals_2(queryType, 'handleImportAppList')?$fireEvent_0(this.eventBus, new ImportAppListEvent_0(jso)):queryType == 'handleVersion'?$fireEvent_0(this.eventBus, new UpdateVersionEvent_0(jso)):$equals_2(queryType, 'getProjects')?$fireEvent_0(this.eventBus, new GetProjectsEvent_0(jso)):$equals_2(queryType, 'getApplications') && $fireEvent_0(this.eventBus, new GetApplicationsEvent_0(jso));
+    $equals_2(queryType, 'getUser')?$fireEvent_0(this.eventBus, new GetUserEvent_0(jso)):queryType == 'handleApplication'?$fireEvent_0(this.eventBus, new UpdateApplicationEvent_0(jso)):queryType == 'handleFeaturedList'?$fireEvent_0(this.eventBus, new UpdateFeaturedListEvent_0(jso)):$equals_2(queryType, 'handleDBOptions')?$fireEvent_0(this.eventBus, new UpdateDBOptionsEvent_0(jso)):$equals_2(queryType, 'updateProjects')?$fireEvent_0(this.eventBus, new UpdateProjectsEvent_0(jso, this.clientFactory)):$equals_2(queryType, 'handleImportAppList')?$fireEvent_0(this.eventBus, new ImportAppListEvent_0(jso)):queryType == 'handleVersion'?$fireEvent_0(this.eventBus, new UpdateVersionEvent_0(jso)):$equals_2(queryType, 'getProjects')?$fireEvent_0(this.eventBus, new GetProjectsEvent_0(jso)):$equals_2(queryType, 'getApplications') && $fireEvent_0(this.eventBus, new GetApplicationsEvent_0(jso));
   }
 }
 ;
 _.castableTypeMap$ = {};
 _.URLS = null;
+_.clientFactory = null;
 _.eventBus = null;
 _.queryTypes = null;
 _.requestId = 0;
@@ -11736,7 +11738,7 @@ _.onResponseReceived = function onResponseReceived_0(request, response){
   if (response.val$xmlHttpRequest.responseText.indexOf('Back to') != -1) {
     $hide(this.this$0.loadingPopup);
     $wnd.alert('step 1');
-    $fireEvent_0(this.this$0.eventBus, new AsyncRequestEvent_0('getProjects'));
+    $fireEvent_0(this.this$0.eventBus, new AsyncRequestEvent_0('updateProjects'));
     $wnd.alert('step 2');
     $fireEvent_0(this.this$0.eventBus, new PanelTransitionEvent_2(($clinit_553() , DASHBOARD), this.this$0.createdProjectName));
     $wnd.alert('step 3');
@@ -13079,13 +13081,14 @@ function $clinit_560(){
   TYPE_24 = new GwtEvent$Type_0;
 }
 
-function UpdateProjectsEvent_0(jso){
+function UpdateProjectsEvent_0(jso, clientFactory){
   $clinit_560();
   var i, projs;
   projs = jso;
   for (i = 0; i < projs.length; ++i) {
     null.nullMethod(projs[i].name, projs[i]);
   }
+  clientFactory.projects = this.projects;
 }
 
 function UpdateProjectsEvent(){
