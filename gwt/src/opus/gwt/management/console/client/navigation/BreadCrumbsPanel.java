@@ -47,7 +47,6 @@ public class BreadCrumbsPanel extends Composite {
 			new BreadCrumbEventHandler(){
 				public void onBreadCrumb(BreadCrumbEvent event){
 					if( event.getAction() == BreadCrumbEvent.Action.SET_CRUMBS ){
-						Window.alert(event.getCrumbNames().toString());
 						setBreadCrumbs(event.getCrumbNames());
 					} else if( event.getAction() == BreadCrumbEvent.Action.SET_ACTIVE ){
 						setActiveCrumb(event.getCrumb());
@@ -57,13 +56,11 @@ public class BreadCrumbsPanel extends Composite {
 						removeBreadCrumb();
 					}
 		}});
-		Window.alert("handlers registered");
 	}
 	
 	private void setBreadCrumbs(String[] names){
 		breadCrumbsContainer.clear();
 		breadCrumbLabels.clear();
-		Window.alert("setting crumbs");
 		for(int i = 0; i < names.length; i++ ){
 			if( i == 0 ){
 				addBreadCrumb(names[i], true);

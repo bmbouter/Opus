@@ -147,7 +147,6 @@ public class ServerCommunicator {
 		    } else if (queryType.equals("handleDBOptions")){
 		    	eventBus.fireEvent(new UpdateDBOptionsEvent(jso));
 		    } else if (queryType.equals("addProject")) {
-		    	Window.alert("test");
 		     	eventBus.fireEvent(new AddProjectEvent(jso));
 		    } else if (queryType.equals("handleImportAppList")) {	
 		    	eventBus.fireEvent(new ImportAppListEvent(jso));
