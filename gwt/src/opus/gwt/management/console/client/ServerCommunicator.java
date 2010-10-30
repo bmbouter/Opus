@@ -33,6 +33,7 @@ import opus.gwt.management.console.client.event.GetUserEvent;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 
 public class ServerCommunicator {
 	
@@ -57,7 +58,7 @@ public class ServerCommunicator {
 		this.requestId = 0;
 		this.clientFactory = clientFactory;
 		this.eventBus = clientFactory.getEventBus();
-		JSvarHandler = clientFactory.getJSVariableHandler();
+		this.JSvarHandler = clientFactory.getJSVariableHandler();
 		setupURLS();
 		registerHandlers();
 	}
@@ -146,6 +147,7 @@ public class ServerCommunicator {
 		    } else if (queryType.equals("handleDBOptions")){
 		    	eventBus.fireEvent(new UpdateDBOptionsEvent(jso));
 		    } else if (queryType.equals("updateProjects")) {
+		    	Window.alert("test");
 		     	eventBus.fireEvent(new UpdateProjectsEvent(jso, clientFactory));
 		    } else if (queryType.equals("handleImportAppList")) {	
 		    	eventBus.fireEvent(new ImportAppListEvent(jso));
