@@ -8,6 +8,8 @@ import opus.gwt.management.console.client.event.AddProjectEvent;
 import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.DataReadyEvent;
+import opus.gwt.management.console.client.event.DeleteProjectEvent;
+import opus.gwt.management.console.client.event.DeleteProjectEventHandler;
 import opus.gwt.management.console.client.event.GetApplicationsEvent;
 import opus.gwt.management.console.client.event.GetApplicationsEventHandler;
 import opus.gwt.management.console.client.event.GetProjectsEvent;
@@ -59,6 +61,13 @@ public class ModelController {
 					public void onAddProject(AddProjectEvent event) {
 						clientFactory.getProjects().put(event.getProject().getName(), event.getProject());
 						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, event.getProject().getName()));
+					}
+		});
+		eventBus.addHandler(DeleteProjectEvent.TYPE, 
+				new DeleteProjectEventHandler(){
+					public void onDeleteProject(DeleteProjectEvent event) {
+						clientFactory.getProjects().remove(event.getProjectName());
+						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTS));
 					}
 		});
 	}

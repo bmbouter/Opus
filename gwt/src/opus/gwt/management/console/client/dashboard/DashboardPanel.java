@@ -94,7 +94,7 @@ public class DashboardPanel extends Composite {
 	
 	@UiHandler("activeButton")
 	void onDeactivateButtonClick(ClickEvent event) {
-		setProjectStatus();
+		setProjectStatus(!clientFactory.getProjects().get(projectName).isActive());
 	}
 	
 	@UiHandler("deleteButton")
@@ -186,14 +186,11 @@ public class DashboardPanel extends Composite {
 
 	}
 	
-	private void setProjectStatus() {
+	private void setProjectStatus(boolean active) {
 		StringBuffer formBuilder = new StringBuffer();
 		formBuilder.append("csrfmiddlewaretoken=");
 		formBuilder.append( URL.encodeQueryString(JSVarHandler.getCSRFTokenURL()));
-		
-		formBuilder.append("&active=true");
-		
-		Window.alert(formBuilder.toString());
+		formBuilder.append("&active=" + active);
 		
 	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/confapps");
 		builder.setHeader("Content-type", "application/x-www-form-urlencoded");

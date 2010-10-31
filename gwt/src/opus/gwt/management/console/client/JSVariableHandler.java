@@ -43,5 +43,10 @@ public class JSVariableHandler {
 	public native String getCSRFTokenURL()/*-{
 		return $wnd.csrftoken;
 	}-*/;
+	
+	public native String getUser()/*-{
+		return $wnd.user;
+	}-*/;
+
 
 }

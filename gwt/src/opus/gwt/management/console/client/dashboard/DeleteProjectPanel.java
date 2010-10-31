@@ -20,6 +20,7 @@ package opus.gwt.management.console.client.dashboard;
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
+import opus.gwt.management.console.client.event.DeleteProjectEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 
@@ -90,7 +91,7 @@ public class DeleteProjectPanel extends Composite {
 		 });
 		deleteForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		        //managementCon.onProjectDelete(deletedProject);
+		        eventBus.fireEvent(new DeleteProjectEvent(projectName));
 		      }
 		 });
 	}

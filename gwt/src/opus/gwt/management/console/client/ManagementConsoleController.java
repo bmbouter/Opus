@@ -22,6 +22,8 @@ import opus.gwt.management.console.client.dashboard.IconPanel;
 import opus.gwt.management.console.client.dashboard.ProjectManagerController;
 import opus.gwt.management.console.client.deployer.ProjectDeployerController;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
+import opus.gwt.management.console.client.event.AuthenticationEvent;
+import opus.gwt.management.console.client.event.AuthenticationEventHandler;
 import opus.gwt.management.console.client.event.DataReadyEvent;
 import opus.gwt.management.console.client.event.DataReadyEventHandler;
 import opus.gwt.management.console.client.event.GetApplicationsEvent;
@@ -76,7 +78,7 @@ public class ManagementConsoleController extends Composite {
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
 		this.eventBus = clientFactory.getEventBus();
 		registerHandlers();
-		eventBus.fireEvent(new AsyncRequestEvent("getUser"));
+		checkAuthentication();
 	}
 	
 	private void registerHandlers(){
@@ -84,6 +86,12 @@ public class ManagementConsoleController extends Composite {
 				new DataReadyEventHandler(){
 					public void onDataReady(DataReadyEvent event) {
 						startConsole();
+					}
+		});
+		eventBus.addHandler(AuthenticationEvent.TYPE, 
+				new AuthenticationEventHandler(){
+					public void onAuthentication(AuthenticationEvent event) {
+						eventBus.fireEvent(new AsyncRequestEvent("getUser"));
 					}
 		});
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
@@ -100,10 +108,13 @@ public class ManagementConsoleController extends Composite {
 		});
 	}
 	
-	private void showAuthentication(){
-		contentLayoutPanel.clear();
-		contentLayoutPanel.add(authenticationPanel);
-		RootLayoutPanel.get().add(authenticationPanel);
+	private void checkAuthentication(){
+		if( jsVarHandler.getUser().equals("") ){
+			contentLayoutPanel.clear();
+			RootLayoutPanel.get().add(new AuthenticationPanel(clientFactory));			
+		} else {
+			eventBus.fireEvent(new AsyncRequestEvent("getUser"));
+		}
 	}
 	
 	private void startConsole(){

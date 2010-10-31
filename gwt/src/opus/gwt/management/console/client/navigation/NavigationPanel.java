@@ -6,6 +6,8 @@ import java.util.HashMap;
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
 import opus.gwt.management.console.client.event.AuthenticationEventHandler;
+import opus.gwt.management.console.client.event.DeleteProjectEvent;
+import opus.gwt.management.console.client.event.DeleteProjectEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.AddProjectEvent;
 import opus.gwt.management.console.client.event.AddProjectEventHandler;
@@ -46,6 +48,7 @@ public class NavigationPanel extends Composite {
 	private PopupPanel projectListPopup;
 	private FlowPanel projectNamesFlowPanel;
 	private ClientFactory clientFactory;
+	private HashMap<String, Label> projectLabels;
 	
 	@UiField HTMLPanel buttonHTMLPanel;
 	@UiField Button logoutButton;
@@ -59,6 +62,7 @@ public class NavigationPanel extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		projectListPopup = new PopupPanel();
 		projectNamesFlowPanel = new FlowPanel();
+		projectLabels = new HashMap<String, Label>();
 		setupLogoutForm();	
 	}
 	
@@ -76,6 +80,12 @@ public class NavigationPanel extends Composite {
 				public void onAddProject(AddProjectEvent event){
 					addProject(event.getProject());
 		}});
+		eventBus.addHandler(DeleteProjectEvent.TYPE, 
+				new DeleteProjectEventHandler(){
+					public void onDeleteProject(DeleteProjectEvent event) {
+						removeProject(event.getProjectName());
+					}
+		});
 	}
 	
 	private void setupLogoutForm(){
@@ -125,7 +135,7 @@ public class NavigationPanel extends Composite {
 		projectNamesFlowPanel.clear();
 	
 		for(String key : Projects.keySet()){
-			projectNamesFlowPanel.add(addProject(Projects.get(key)));
+			addProject(Projects.get(key));
 		}
 		projectListPopup.add(projectNamesFlowPanel);
 		projectListPopup.hide();
@@ -133,7 +143,7 @@ public class NavigationPanel extends Composite {
 		projectListPopup.setStyleName(style.projectsPopup());
 	}
 	
-	private Label addProject(Project project){
+	private void addProject(Project project){
 		final String projectName = project.getName();
 		final Label testLabel = new Label(project.getName());
 		testLabel.setStyleName(style.popupLabel());
@@ -155,6 +165,11 @@ public class NavigationPanel extends Composite {
 	        }
 	     });
 		
-		return testLabel;		
+		projectNamesFlowPanel.add(testLabel);
+		projectLabels.put(projectName, testLabel);
+	}
+	
+	private void removeProject(String projectName){
+		projectNamesFlowPanel.remove(projectLabels.remove(projectName));
 	}
 }

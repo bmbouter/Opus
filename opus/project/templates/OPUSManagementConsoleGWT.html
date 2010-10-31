@@ -44,6 +44,12 @@
         {% if project_token %}
             projectToken = "{{ project_token  }}";
         {% endif %}
+        {% if user.username %}
+            user = "{{ user.username }}";
+        {% else %}
+        	user = "";
+        {% endif %}
+        
             </script> 
   
 
