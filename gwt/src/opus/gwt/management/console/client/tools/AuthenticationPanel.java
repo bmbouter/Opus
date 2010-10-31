@@ -51,7 +51,6 @@ public class AuthenticationPanel extends Composite {
 	private final String loginURL = "/accounts/login/";
 
 	private boolean loggedIn;
-	private String username;
 	private boolean firstLoginAttempt;
 	private EventBus eventBus;
 	
@@ -67,7 +66,6 @@ public class AuthenticationPanel extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = clientFactory.getEventBus();
 		loggedIn = false;
-		username = "";
 		firstLoginAttempt = true;
 		registerHandlers();
 		setupAuthenticationForm();
@@ -87,30 +85,39 @@ public class AuthenticationPanel extends Composite {
 		authenticationForm.setAction(loginURL);
 		authenticationForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		    	  Window.alert(event.getResults());
-		    	  	//if( firstLoginAttempt )
-		    	  		//firstLoginAttempt = false;
-		    	  	//eventBus.fireEvent(new AsyncRequestEvent("handleUser"));
+		    	  if( event.getResults().contains("Please try again.") ){
+		    		  if( firstLoginAttempt )
+			    	  		firstLoginAttempt = false;
+		    		  loginFailed();
+		    	  } else {
+		    		  loginSucceed();
+		    	  }
 		      }
 		 });
 		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
         csrftoken.setName("csrfmiddlewaretoken");
 	}
 	
+	private void loginFailed(){
+		loggedIn = false;
+		usernameTextBox.setFocus(true);
+		if( !firstLoginAttempt ){
+			errorLabel.setVisible(true);
+			usernameTextBox.setText("");
+			passwordTextBox.setText("");
+		} 
+	}
+	
+	private void loginSucceed(){
+		loggedIn = true;
+		eventBus.fireEvent(new AuthenticationEvent());	
+	}
+	
 	public void handleUserInformation(User userInfo){
 		if( userInfo.isAuthenticated() ){
-			username = userInfo.getUsername();
-			loggedIn = true;
-			eventBus.fireEvent(new AuthenticationEvent(true, username));
+		
 		} else {
-			loggedIn = false;
-			usernameTextBox.setFocus(true);
-			if( !firstLoginAttempt ){
-				errorLabel.setVisible(true);
-				usernameTextBox.setText("");
-				passwordTextBox.setText("");
-			} 
-			eventBus.fireEvent(new AuthenticationEvent(false, ""));
+			
 		}
 	}
 		
@@ -142,9 +149,5 @@ public class AuthenticationPanel extends Composite {
 	
 	public boolean isLoggedIn(){
 		return loggedIn;
-	}
-	
-	public String getUsername(){
-		return username;
 	}
 }

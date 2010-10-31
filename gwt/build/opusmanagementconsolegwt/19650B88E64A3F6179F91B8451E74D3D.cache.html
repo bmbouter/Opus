@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = 'F921B9612012CC6788268257A11139DD';
+var $strongName = '19650B88E64A3F6179F91B8451E74D3D';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -14433,19 +14433,12 @@ function $clinit_615(){
 }
 
 var arrow_0 = null, bundledImage_None, externalImage, loadingSpinner = null;
-function $handleUserInformation(this$static, userInfo){
-  if (userInfo.authenticated) {
-    userInfo.username;
-    $fireEvent_0(this$static.eventBus, new AuthenticationEvent_0);
-  }
-   else {
-    $focus(this$static.usernameTextBox.element);
-    if (!this$static.firstLoginAttempt) {
-      this$static.errorLabel.element.style.display = '';
-      this$static.usernameTextBox.element['value'] = '';
-      this$static.passwordTextBox.element['value'] = '';
-    }
-    $fireEvent_0(this$static.eventBus, new AuthenticationEvent_0);
+function $loginFailed(this$static){
+  $focus(this$static.usernameTextBox.element);
+  if (!this$static.firstLoginAttempt) {
+    this$static.errorLabel.element.style.display = '';
+    this$static.usernameTextBox.element['value'] = '';
+    this$static.passwordTextBox.element['value'] = '';
   }
 }
 
@@ -14465,10 +14458,10 @@ function AuthenticationPanel_0(clientFactory){
   $initWidget(this, $createAndBindUi_13(this));
   this.eventBus = clientFactory.eventBus;
   this.firstLoginAttempt = true;
-  $addHandler_0(this.eventBus, ($clinit_566() , TYPE_22), new AuthenticationPanel$1_0(this));
+  $addHandler_0(this.eventBus, ($clinit_566() , TYPE_22), new AuthenticationPanel$1_0);
   this.authenticationForm.element.method = 'post';
   this.authenticationForm.element.action = '/accounts/login/';
-  $addHandler_1(this.authenticationForm, new AuthenticationPanel$2_0, (!TYPE_11 && (TYPE_11 = new GwtEvent$Type_0) , TYPE_11));
+  $addHandler_1(this.authenticationForm, new AuthenticationPanel$2_0(this), (!TYPE_11 && (TYPE_11 = new GwtEvent$Type_0) , TYPE_11));
   this.csrftoken_0.element.value = getCookie();
   this.csrftoken_0.element.name = 'csrfmiddlewaretoken';
 }
@@ -14490,8 +14483,7 @@ _.firstLoginAttempt = false;
 _.loginButton = null;
 _.passwordTextBox = null;
 _.usernameTextBox = null;
-function AuthenticationPanel$1_0(this$0){
-  this.this$0 = this$0;
+function AuthenticationPanel$1_0(){
 }
 
 function AuthenticationPanel$1(){
@@ -14503,12 +14495,12 @@ _.getClass$ = function getClass_353(){
 }
 ;
 _.onGetUser = function onGetUser_0(event_0){
-  $handleUserInformation(this.this$0, event_0.user_0);
+  event_0.user_0.authenticated;
 }
 ;
 _.castableTypeMap$ = {16:1, 79:1};
-_.this$0 = null;
-function AuthenticationPanel$2_0(){
+function AuthenticationPanel$2_0(this$0){
+  this.this$0 = this$0;
 }
 
 function AuthenticationPanel$2(){
@@ -14520,10 +14512,17 @@ _.getClass$ = function getClass_354(){
 }
 ;
 _.onSubmitComplete = function onSubmitComplete_1(event_0){
-  $wnd.alert(event_0.resultHtml);
+  if (event_0.resultHtml.indexOf('Please try again.') != -1) {
+    this.this$0.firstLoginAttempt && (this.this$0.firstLoginAttempt = false);
+    $loginFailed(this.this$0);
+  }
+   else {
+    $fireEvent_0(this.this$0.eventBus, new AuthenticationEvent_0);
+  }
 }
 ;
 _.castableTypeMap$ = {16:1, 32:1};
+_.this$0 = null;
 function $createAndBindUi_13(owner){
   var attachRecord0, attachRecord1, attachRecord2, attachRecord3, authenticationForm, csrftoken, domId0, domId0Element, domId1, domId1Element, domId2, domId2Element, domId3, domId3Element, domId4, domId4Element, domId5, domId5Element, domId6, domId6Element, domId7, domId7Element, domId8, domId8Element, errorLabel, f_HTMLPanel2, f_HTMLPanel3, f_HTMLPanel4, f_HTMLPanel5, f_HTMLPanel6, f_SimplePanel1, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames3, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames4, loginButton, passwordTextBox, usernameTextBox;
   $clinit_624();
@@ -14744,11 +14743,11 @@ function DescriptionPanel_0(){
   $maybeUpdateSize(this);
 }
 
---></script>
-<script><!--
 function DescriptionPanel(){
 }
 
+--></script>
+<script><!--
 _ = DescriptionPanel_0.prototype = DescriptionPanel.prototype = new PopupPanel;
 _.getClass$ = function getClass_360(){
   return Lopus_gwt_management_console_client_tools_DescriptionPanel_2_classLit;
