@@ -204,7 +204,7 @@ public class DashboardPanel extends Composite {
 
 				@Override
 				public void onError(Request request, Throwable exception) {
-					Window.alert("Error!");
+					Window.alert("Error!" + exception.getMessage());
 				}
 			});
 		} catch (RequestException e) {

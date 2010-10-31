@@ -12,12 +12,15 @@ import opus.gwt.management.console.client.event.DeleteProjectEvent;
 import opus.gwt.management.console.client.event.DeleteProjectEventHandler;
 import opus.gwt.management.console.client.event.GetApplicationsEvent;
 import opus.gwt.management.console.client.event.GetApplicationsEventHandler;
+import opus.gwt.management.console.client.event.GetDjangoPackagesEvent;
+import opus.gwt.management.console.client.event.GetDjangoPackagesEventHandler;
 import opus.gwt.management.console.client.event.GetProjectsEvent;
 import opus.gwt.management.console.client.event.GetProjectsEventHandler;
 import opus.gwt.management.console.client.event.GetUserEvent;
 import opus.gwt.management.console.client.event.GetUserEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.overlays.Application;
+import opus.gwt.management.console.client.overlays.DjangoPackage;
 import opus.gwt.management.console.client.overlays.Project;
 
 
@@ -38,6 +41,14 @@ public class ModelController {
 				public void onGetApplications(GetApplicationsEvent event) {
 					HashMap<String, Application> applications = event.getApplications();
 					clientFactory.setApplications(applications);
+					eventBus.fireEvent(new AsyncRequestEvent("getDjangoPackages"));
+				}
+		});
+		eventBus.addHandler(GetDjangoPackagesEvent.TYPE, 
+			new GetDjangoPackagesEventHandler() {
+				public void onGetDjangoPackages(GetDjangoPackagesEvent event) {
+					HashMap<String, DjangoPackage> djangoPackages = event.getDjangoPackages();
+					clientFactory.setDjangoPackages(djangoPackages);
 					eventBus.fireEvent(new DataReadyEvent());
 				}
 		});

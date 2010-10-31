@@ -84,6 +84,10 @@ public class ProjectDeployerController extends Composite {
 		setupdeployerDeckPanel();
 		registerHandlers();
 		setupBreadCrumbs();
+		String token = jsVarHandler.getProjectToken();
+		if (token != null) {
+			eventBus.fireEvent(new AsyncRequestEvent("handleImportAppList", token));
+		}
 	}
 	
 	private void setupdeployerDeckPanel(){

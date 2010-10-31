@@ -80,16 +80,15 @@
 	width: 100px;
 	float: left;
 	padding: 3px;
-	margin-left: 2px;
+	margin-left: 5px;
 	-webkit-border-radius: 10px 10px 0 0;
     -moz-border-radius: 10px 10px 0 0; 
     text-align: center;
     cursor: pointer;
     cursor: hand;
-    position: absolute;
+    position: relative;
     bottom: 0px;
-    left: 150px;
-    height: 40%;
+    height: 90%;
 }
 .featuredAppsLabel {
 	margin-left: 40px;
@@ -103,12 +102,12 @@
     text-align: center;
     cursor: pointer;
     cursor: hand;
-    position: absolute;
+    position: relative;
     bottom: 0px;
-    height: 40%;
+    height: 90%;
 }
 .allAppsLabelActive {
-	margin-left: 2px;
+	margin-left: 5px;
 	background: #386E2D;
 	color: white;
 	width: 100px;
@@ -117,10 +116,9 @@
 	-webkit-border-radius: 10px 10px 0 0;
     -moz-border-radius: 10px 10px 0 0;
     text-align: center;
-    position: absolute;
+    position: relative;
     bottom: 0px;
-    left: 150px;
-    height: 50%;
+    height: 100%;
 }
 .featuredAppsLabelActive {
 	margin-left: 40px;
@@ -132,9 +130,9 @@
 	-webkit-border-radius: 10px 10px 0 0;
    	-moz-border-radius: 10px 10px 0 0;
    	text-align: center;
-   	position: absolute;
+   	position: relative;
     bottom: 0px;
-    height: 50%;
+    height: 100%;
 }
 .DeployList {
 	margin-left: auto;
@@ -252,8 +250,8 @@ img {
 	margin: 0 1% 0 0;	
 }
 .tabPanel {
-	height: 3%;	
-	padding: 0.8% 0 0 0;
+	height: 2em;	
+	margin: 10px 0 0 0;
 	position: relative;
 }
 .projectConfigLabel {
@@ -262,4 +260,8 @@ img {
 	font-size: 1.4em;
 	font-weight: bold;
 	height: 3%;
+}
+.featuredAppsPanel {
+	overflow: auto;
+	height: 100%;
 }

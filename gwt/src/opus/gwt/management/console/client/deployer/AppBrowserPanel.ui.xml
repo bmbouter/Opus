@@ -2,28 +2,51 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="../resources/AppBrowser.css" type="opus.gwt.management.console.client.resources.AppBrowserCss.AppBrowserStyle"/>
+	
+	
 	<g:HTMLPanel styleName='{style.innerSubMainPanel}'>
 		<g:HTMLPanel styleName='{style.tabPanel}'>
-			<g:Label ui:field="featuredAppsLabel" styleName="{style.featuredAppsLabel}">Featured</g:Label>
+			<g:Label ui:field="featuredAppsLabel" styleName="{style.featuredAppsLabelActive}">Featured</g:Label>
 			<g:Label ui:field="allAppsLabel" styleName="{style.allAppsLabel}">All</g:Label>
+			<g:Label ui:field="djangoPackagesLabel" styleName="{style.allAppsLabel}">DjangoPackages</g:Label>
 		</g:HTMLPanel>
-		<g:HTMLPanel styleName='{style.appBrowser}'>
-			<div class="{style.AppList}">
-				<div class="{style.ListGrid}" id="ListGrid">
-					<g:DeckPanel ui:field="mainDeckPanel">
-					
-					</g:DeckPanel>			
-				</div>
-			</div>
-			<div class="{style.AppInfo}">
-				<g:HTML ui:field="AppInfo" styleName='{style.appInfo}'></g:HTML>
-				<br/>
-				<g:VerticalPanel ui:field="VersionInfo" styleName='{style.appInfo}'>
+	 	<g:HTMLPanel styleName='{style.appBrowser}'>
+			<g:DeckPanel ui:field="mainDeckPanel" height="100%">
+				<g:HTMLPanel ui:field="featuredAppsPanel" styleName="{style.featuredAppsPanel}">
+					<div class="{style.AppList}">
+						<div class="{style.ListGrid}" id="ListGrid">
+							<g:FlowPanel ui:field="featuredAppFlowPanel" />
+						</div>
+					</div>
+					<div class="{style.AppInfo}">
+						<g:HTML ui:field="AppInfo" styleName='{style.appInfo}'></g:HTML>
+						<br/>
+						<g:VerticalPanel ui:field="VersionInfo" styleName='{style.appInfo}'>
+						
+						</g:VerticalPanel>
+						<g:Button ui:field="AppActionButton" styleName='{style.AppActionButtonHidden}'>
+						</g:Button>
+					</div>
+				</g:HTMLPanel>
 				
-				</g:VerticalPanel>
-				<g:Button ui:field="AppActionButton" styleName='{style.AppActionButtonHidden}'>
-				</g:Button>
-			</div>
+				<g:HTMLPanel ui:field="appsPanel">
+					<div class="{style.AppList}">
+						<div class="{style.ListGrid}" id="ListGrid">
+							<g:FlowPanel ui:field="appFlowPanel"></g:FlowPanel>
+						</div>
+					</div>
+					<div class="{style.AppInfo}">
+						<g:HTML ui:field="allAppInfo" styleName='{style.appInfo}'></g:HTML>
+						<br/>
+						<g:VerticalPanel ui:field="allVersionInfo" styleName='{style.appInfo}'>
+						
+						</g:VerticalPanel>
+						<g:Button ui:field="allAppActionButton" styleName='{style.AppActionButtonHidden}'>
+						</g:Button>
+					</div>
+				</g:HTMLPanel>
+				<g:FlowPanel ui:field="djangoPackagesFlowPanel"></g:FlowPanel>
+			</g:DeckPanel>			
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName='{style.projectConfigLabel}'>
 			<u>New Project Apps</u>
@@ -37,4 +60,5 @@
 			</g:Button>
 		</div>
 	</g:HTMLPanel>
+	
 </ui:UiBinder> 

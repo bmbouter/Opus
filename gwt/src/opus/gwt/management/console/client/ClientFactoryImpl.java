@@ -3,6 +3,7 @@ package opus.gwt.management.console.client;
 import java.util.HashMap;
 
 import opus.gwt.management.console.client.overlays.Application;
+import opus.gwt.management.console.client.overlays.DjangoPackage;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.overlays.User;
 
@@ -15,6 +16,7 @@ public class ClientFactoryImpl implements ClientFactory {
 	private User user;
 	private HashMap<String, Application> applications = null;
 	private HashMap<String, Project> projects = null;
+	private HashMap<String, DjangoPackage> djangoPackages = null;
 	
 	@Override
 	public EventBus getEventBus(){
@@ -54,5 +56,15 @@ public class ClientFactoryImpl implements ClientFactory {
 	@Override
 	public void setProjects(HashMap<String, Project> projects) {
 		this.projects = projects;
+	}
+	
+	@Override
+	public HashMap<String, DjangoPackage> getDjangoPackages() {
+		return djangoPackages;
+	}
+	
+	@Override
+	public void setDjangoPackages(HashMap<String, DjangoPackage> djangoPackages) {
+		this.djangoPackages = djangoPackages;
 	}
 }

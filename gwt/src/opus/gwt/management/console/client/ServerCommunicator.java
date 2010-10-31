@@ -22,6 +22,7 @@ import opus.gwt.management.console.client.event.AddProjectEvent;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AsyncRequestEventHandler;
 import opus.gwt.management.console.client.event.GetApplicationsEvent;
+import opus.gwt.management.console.client.event.GetDjangoPackagesEvent;
 import opus.gwt.management.console.client.event.GetProjectsEvent;
 import opus.gwt.management.console.client.event.GetUserEvent;
 import opus.gwt.management.console.client.event.ImportAppListEvent;
@@ -40,6 +41,7 @@ public class ServerCommunicator {
 	private final String userURL = "/json/username/?a&callback=";
 	private final String dbOptionsURL = "/json/database/?callback=";
 	private final String applicationURL = "/json/search/application/?a&callback=";
+	private final String djangoPackagesURL = "/json/djangopackages/?a&callback=";
 	private final String featuredListURL =  "/json/featured/?a&callback=";
 	private final String importAppListURL = "/project/configuration/<placeHolder>/?callback=";
 	private final String versionURL = "/json/application/<placeHolder>/versions/?a&callback=";
@@ -67,12 +69,13 @@ public class ServerCommunicator {
 		URLS.put("getUser", JSvarHandler.getDeployerBaseURL() + userURL);
 		URLS.put("handleDBOptions", JSvarHandler.getDeployerBaseURL() + dbOptionsURL);
 		URLS.put("handleApplication", JSvarHandler.getRepoBaseURL() + applicationURL);
-		URLS.put("handleFeaturedList", JSvarHandler.getRepoBaseURL() + featuredListURL);
+		URLS.put("getFeatured", JSvarHandler.getRepoBaseURL() + featuredListURL);
 		URLS.put("handleImportAppList", JSvarHandler.getRepoBaseURL() + importAppListURL);
 		URLS.put("handleVersion", JSvarHandler.getRepoBaseURL() + versionURL);
 		URLS.put("addProject", JSvarHandler.getDeployerBaseURL() + projectURL);
 		URLS.put("getProjects", JSvarHandler.getDeployerBaseURL() + projectURL);
 		URLS.put("getApplications", JSvarHandler.getRepoBaseURL() + applicationURL);
+		URLS.put("getDjangoPackages", JSvarHandler.getRepoBaseURL() + djangoPackagesURL);
 	}
 	
 	private void registerHandlers(){
@@ -142,7 +145,7 @@ public class ServerCommunicator {
 		    	eventBus.fireEvent(new GetUserEvent(jso));
 		    } else if (queryType == "handleApplication") {
 		    	eventBus.fireEvent(new UpdateApplicationEvent(jso));
-		    } else if(queryType == "handleFeaturedList"){
+		    } else if(queryType == "getFeatured"){
 		    	eventBus.fireEvent(new UpdateFeaturedListEvent(jso));
 		    } else if (queryType.equals("handleDBOptions")){
 		    	eventBus.fireEvent(new UpdateDBOptionsEvent(jso));
@@ -156,6 +159,8 @@ public class ServerCommunicator {
 		    	eventBus.fireEvent(new GetProjectsEvent(jso));
 		    } else if(queryType.equals("getApplications")) {
 		    	eventBus.fireEvent(new GetApplicationsEvent(jso));
+		    } else if(queryType.equals("getDjangoPackages")) {
+		    	eventBus.fireEvent(new GetDjangoPackagesEvent(jso));
 		    }
 	    }
 	}

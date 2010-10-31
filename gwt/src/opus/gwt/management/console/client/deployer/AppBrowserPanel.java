@@ -47,6 +47,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -59,8 +60,6 @@ public class AppBrowserPanel extends Composite {
 	private final String tokenURL = "/project/configuration/token/?callback=";
 
 	private JSVariableHandler JSVarHandler;
-	private FlowPanel appFlowPanel;
-	private FlowPanel featuredAppFlowPanel;
 	private int[] featured;
 	private ArrayList<AppIcon> featuredIcons;
 	private int navigationselection;
@@ -76,45 +75,45 @@ public class AppBrowserPanel extends Composite {
 	private HashMap<String, AppIcon> FeaturedIconMap;
 	
 	@UiField VerticalPanel VersionInfo;
+	@UiField VerticalPanel allVersionInfo;
 	@UiField HTML AppInfo;
+	@UiField HTML allAppInfo;
 	@UiField Button AppActionButton;
+	@UiField Button allAppActionButton;
 	@UiField Button DeployButton;
 	@UiField Button RemoveButton;
 	@UiField FlowPanel DeployListFlowPanel;
 	@UiField DeckPanel mainDeckPanel;
 	@UiField Label allAppsLabel;
 	@UiField Label featuredAppsLabel;
+	@UiField Label djangoPackagesLabel;
 	@UiField AppBrowserStyle style;
+	@UiField FlowPanel featuredAppFlowPanel;
+	@UiField FlowPanel appFlowPanel;
+	@UiField FlowPanel djangoPackagesFlowPanel;
+	@UiField HTMLPanel featuredAppsPanel;
+	@UiField HTMLPanel appsPanel;
 	
 	
 	public AppBrowserPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.featuredListLoaded = false;
 		this.gridPopulationDelayed = false;
-		this.eventBus = clientFactory.getEventBus();
 		this.clientFactory = clientFactory;
-		this.JSVarHandler = new JSVariableHandler();
+		this.eventBus = clientFactory.getEventBus();
+		this.JSVarHandler = clientFactory.getJSVariableHandler();
 		registerHandlers();
-		eventBus.fireEvent(new AsyncRequestEvent("handleFeaturedList"));
-		//eventBus.fireEvent(new AsyncRequestEvent("getApplications"));
 		deployList = new ArrayList<AppIcon>();
 		IconMap = new HashMap<String,AppIcon>();
 		FeaturedIconMap = new HashMap<String,AppIcon>();
 		DeployListMap = new HashMap<String,AppIcon>();
-		appFlowPanel = new FlowPanel();
-		featuredAppFlowPanel = new FlowPanel();
-		mainDeckPanel.add(appFlowPanel);
-		mainDeckPanel.add(featuredAppFlowPanel);
-		mainDeckPanel.showWidget(1);
-		allAppsLabel.setStyleName(style.allAppsLabel());
-		featuredAppsLabel.setStyleName(style.featuredAppsLabelActive());
-		navigationselection = 2;
+		mainDeckPanel.add(featuredAppsPanel);
+		mainDeckPanel.add(appsPanel);
+		mainDeckPanel.add(djangoPackagesFlowPanel);
+		mainDeckPanel.showWidget(0);
+		navigationselection = 1;
 		featuredIcons = new ArrayList<AppIcon>();
-		String token = JSVarHandler.getProjectToken();
-		if (token != null) {
-			this.addProject(token);
-		}
-		populateAppGrid(clientFactory.getApplications());
+		eventBus.fireEvent(new AsyncRequestEvent("getFeatured"));
 	}
 
 	private void registerHandlers(){
@@ -134,77 +133,54 @@ public class AppBrowserPanel extends Composite {
 	
 	public void populateAppGrid(HashMap<String, Application> applications) {
 		this.applicationData = applications;
-		if(this.featuredListLoaded){
-			String innerHTML = "";
-			for (Application app : applicationData.values()){
-				try {
-					String name = app.getName();
-					String desc =  app.getDescription();
-					String email = app.getEmail();
-					String author = app.getAuthor();
-					int pk = app.getPk();
-					String iconPath = app.getIconURL();
-					String path = app.getPath();
-					String type = app.getType();
-					String appName = app.getAppName();
-					
-					if( iconPath.equals("") ){
-						iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";
-					} else if( iconPath.split("//").length < 2  ) {
-						iconPath = JSVarHandler.getCommunityBaseURL() + iconPath;
-					}
-					
-					AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path, type, appName);					
-					
-					for (int j=0; j < featured.length; j++){
-	
-						//Window.alert(String.valueOf(featured.length));
-						if (featured[j] == pk) {
-							featuredIcons.add(appIcon);
-							//featuredIcons.set(j, appIcon);
-						}
-					}
-					
-					appFlowPanel.add(appIcon);
-					IconMap.put(appIcon.getAppPk(), appIcon);
-					//Window.alert(appIcon.getAppPk());
-				} catch (Exception e){
-					//DOTO:need to handle these exceptions somehow
-					//		Not sure;
-				}
-
-				
-			}
-			for (int j=0; j < featured.length; j++){
-				//Window.alert(String.valueOf(featured[j]));
-
-				AppIcon icon = IconMap.get(String.valueOf(featured[j]));
-				AppIcon featuredIcon = createAppIcon(icon.getName(),icon.getEmail(), icon.getAuthor(), icon.getDescription(), Integer.valueOf(icon.getAppPk()), icon.getIcon(), icon.getPath(), icon.getType(), icon.getAppName());
-				FeaturedIconMap.put(featuredIcon.getAppPk(), featuredIcon);
-
-				featuredAppFlowPanel.add(featuredIcon);
-
-			}
-			handleFeaturedAppsLabelFunction();
-			String token = JSVarHandler.getProjectToken();
-			if (token != null) {
-				eventBus.fireEvent(new AsyncRequestEvent("handleImportAppList", token));
-			}
-		} else {
-			this.gridPopulationDelayed = true;
-		}
 		
-	}
-	
-	public void setAppInfo(AppIcon icon) {
-		AppInfo.setHTML("<div class='" + style.appInfoContainer() + "'><img align='left' src='" + icon.getIcon() + "' />"
-				+ "<h1>" + icon.getName() + "</h1><h2>Author: " + icon.getAuthor() + "</h2>" 
-				+ "<h2>Email: " + icon.getEmail() + "</h2><br />" + icon.getDescription() + "</div>");
-		VersionInfo.clear();
-		VersionInfo.add(icon.getVersions());
-	}
-	
+		for (Application app : applicationData.values()){
+			try {
+				String name = app.getName();
+				String desc =  app.getDescription();
+				String email = app.getEmail();
+				String author = app.getAuthor();
+				int pk = app.getPk();
+				String iconPath = app.getIconURL();
+				String path = app.getPath();
+				String type = app.getType();
+				String appName = app.getAppName();
+				
+				if( iconPath.equals("") ){
+					iconPath = "https://opus-dev.cnl.ncsu.edu/gwt/defaulticon.png";
+				} else if( iconPath.split("//").length < 2  ) {
+					iconPath = JSVarHandler.getCommunityBaseURL() + iconPath;
+				}
+				
+				AppIcon appIcon = createAppIcon(name, email, author, desc, pk, iconPath, path, type, appName);					
+				
+				for (int j=0; j < featured.length; j++){
 
+					//Window.alert(String.valueOf(featured.length));
+					if (featured[j] == pk) {
+						featuredIcons.add(appIcon);
+						//featuredIcons.set(j, appIcon);
+					}
+				}
+				
+				appFlowPanel.add(appIcon);
+				IconMap.put(appIcon.getAppPk(), appIcon);
+				//Window.alert(appIcon.getAppPk());
+			} catch (Exception e){
+				//DOTO:need to handle these exceptions somehow
+				//		Not sure;
+			}
+
+			
+		}
+		for (int j=0; j < featured.length; j++){
+			AppIcon icon = IconMap.get(String.valueOf(featured[j]));
+			AppIcon featuredIcon = createAppIcon(icon.getName(),icon.getEmail(), icon.getAuthor(), icon.getDescription(), Integer.valueOf(icon.getAppPk()), icon.getIcon(), icon.getPath(), icon.getType(), icon.getAppName());
+			FeaturedIconMap.put(featuredIcon.getAppPk(), featuredIcon);
+			featuredAppFlowPanel.add(featuredIcon);
+		}
+	}
+	
 	public AppIcon createAppIcon(String name, String email, String author, String info, int pk, String iconPath, String appPath, String type, String appName) { 
 		final AppIcon icon = new AppIcon(name, email, author, iconPath, info, pk, appPath, type, appName, clientFactory);
 		icon.setIconHTML("<img align='left' src='"+iconPath+"'/><b>"+name+"</b><br/>"+icon.getShortDescription());
@@ -242,6 +218,9 @@ public class AppBrowserPanel extends Composite {
 		        		AppActionButton.setText("Add to Deploy List");
 			        	AppActionButton.setStyleName(style.AppActionButton());
 			        	AppActionButton.setVisible(true);
+		        		allAppActionButton.setText("Add to Deploy List");
+			        	allAppActionButton.setStyleName(style.AppActionButton());
+			        	allAppActionButton.setVisible(true);
 		        		RemoveButton.setEnabled(false);
 	        		} else {
 	        			DeployListMap.get(icon.getAppPk()).setStyleName(style.appIconSmallActive());
@@ -254,16 +233,32 @@ public class AppBrowserPanel extends Composite {
 	        			setAppInfo(icon);
 		        		AppActionButton.setText("Remove from Deploy List");
 		        		AppActionButton.setVisible(false);
+		        		allAppActionButton.setText("Remove from Deploy List");
+		        		allAppActionButton.setVisible(false);
 		        		RemoveButton.setEnabled(true);
 	        		}
         			currentSelection = icon;
 
 		        	icon.iconPanel.setFocus(false);
 		        	AppActionButton.setStyleName(style.AppActionButton());
+		        	allAppActionButton.setStyleName(style.AppActionButton());
 	        	}
 	        }
 	     });
 		return icon;
+	}
+	
+	public void setAppInfo(AppIcon icon) {
+		AppInfo.setHTML("<div class='" + style.appInfoContainer() + "'><img align='left' src='" + icon.getIcon() + "' />"
+				+ "<h1>" + icon.getName() + "</h1><h2>Author: " + icon.getAuthor() + "</h2>" 
+				+ "<h2>Email: " + icon.getEmail() + "</h2><br />" + icon.getDescription() + "</div>");
+		allAppInfo.setHTML("<div class='" + style.appInfoContainer() + "'><img align='left' src='" + icon.getIcon() + "' />"
+				+ "<h1>" + icon.getName() + "</h1><h2>Author: " + icon.getAuthor() + "</h2>" 
+				+ "<h2>Email: " + icon.getEmail() + "</h2><br />" + icon.getDescription() + "</div>");
+		VersionInfo.clear();
+		allVersionInfo.clear();
+		VersionInfo.add(icon.getVersions());
+		allVersionInfo.add(icon.getVersions());
 	}
 	
 	@UiHandler("DeployButton")
@@ -285,26 +280,27 @@ public class AppBrowserPanel extends Composite {
 	void handleAllAppsLabel(ClickEvent event){
 		allAppsLabel.setStyleName(style.allAppsLabelActive());
 		featuredAppsLabel.setStyleName(style.featuredAppsLabel());
-		mainDeckPanel.showWidget(0);
+		djangoPackagesLabel.setStyleName(style.allAppsLabel());
+		mainDeckPanel.showWidget(1);
 		navigationselection = 1;
-	//	for (int i=0; i<featuredIcons.size(); i++){
-	//		appFlowPanel.add(featuredIcons.get(i));
-	//	}
 	}
 	
 	@UiHandler("featuredAppsLabel")
 	void handleFeaturedAppsLabel(ClickEvent event){
-		handleFeaturedAppsLabelFunction();
-	}
-	
-	public void handleFeaturedAppsLabelFunction(){
 		allAppsLabel.setStyleName(style.allAppsLabel());
 		featuredAppsLabel.setStyleName(style.featuredAppsLabelActive());
-		mainDeckPanel.showWidget(1);
+		djangoPackagesLabel.setStyleName(style.allAppsLabel());
+		mainDeckPanel.showWidget(0);
 		navigationselection = 2;
-		//for (int i=0; i<featuredIcons.size(); i++){
-			//featuredAppFlowPanel.add(featuredIcons.get(i));
-		//}
+	}
+	
+	@UiHandler("djangoPackagesLabel")
+	void handleDjangoPackagesLabel(ClickEvent event){
+		allAppsLabel.setStyleName(style.allAppsLabel());
+		featuredAppsLabel.setStyleName(style.featuredAppsLabel());
+		djangoPackagesLabel.setStyleName(style.allAppsLabelActive());
+		mainDeckPanel.showWidget(2);
+		navigationselection = 3;
 	}
 	
 	@UiHandler("AppActionButton")
@@ -337,6 +333,11 @@ public class AppBrowserPanel extends Composite {
 		}
 	}
 	
+	@UiHandler("allAppActionButton")
+	void handleAllAppActionButton(ClickEvent event){
+		AppActionButton.click();
+	}
+	
 	public void populateFeaturedList(JavaScriptObject jso){
 		featured = new int[20];
 
@@ -346,15 +347,8 @@ public class AppBrowserPanel extends Composite {
 		for (int i=0; i<s.length; i++){
 			featured[i] = Integer.valueOf(s[i]);
 		}
-		this.featuredListLoaded = true;
-		if(this.gridPopulationDelayed) {
-			this.populateAppGrid(this.applicationData);
-		}
+		populateAppGrid(clientFactory.getApplications());
 	}
-	
-	  public void addProject(String token){
-		  eventBus.fireEvent(new AsyncRequestEvent("handleImportAppList", token));
-	  }
 	  
 	  public void importAppList(JsArray<ProjectData> projectData) {
 		  JsArray<VersionData>versions = projectData.get(0).getVersions();
