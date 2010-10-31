@@ -81,7 +81,7 @@ public class DeleteProjectPanel extends Composite {
 	private void setupDeleteForm(){
 		deleteForm.setMethod(FormPanel.METHOD_POST);
 		deleteForm.setVisible(false);
-		deleteForm.setAction(JSVarHandler.getDeployerBaseURL() + deleteProjectURL.replaceAll("/projectTitle/", "/" + projectName +"/"));
+		deleteForm.setAction(JSVarHandler.getDeployerBaseURL() + deleteProjectURL.replaceAll("/projectName/", "/" + projectName +"/"));
 		titlePanel.add(deleteForm);
 		final String deletedProject = projectName;
 		deleteForm.addSubmitHandler(new FormPanel.SubmitHandler() {
@@ -92,7 +92,7 @@ public class DeleteProjectPanel extends Composite {
 		deleteForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
 		    	  event.getResults();
-		    	  eventBus.fireEvent(new DeleteProjectEvent(projectName));
+		    	  //eventBus.fireEvent(new DeleteProjectEvent(projectName));
 		      }
 		 });
 	}
