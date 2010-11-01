@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0RC1";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = 'C966C442E992C95D0212BB517BF5FE67';
+var $strongName = '7A15407E86DB7580908266D9BEF7E5BF';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -8961,6 +8961,7 @@ function $onDestroyButtonClick(this$static){
   deletedProject = this$static.projectName;
   $addHandler_1(this$static.deleteForm, new DashboardPanel$1_0(this$static), ($clinit_245() , !TYPE_12 && (TYPE_12 = new GwtEvent$Type_0) , $clinit_245() , TYPE_12));
   $addHandler_1(this$static.deleteForm, new DashboardPanel$2_0(this$static, deletedProject), (!TYPE_11 && (TYPE_11 = new GwtEvent$Type_0) , TYPE_11));
+  $submit_0(this$static.deleteForm);
 }
 
 function $setProjectStatus(this$static, active){

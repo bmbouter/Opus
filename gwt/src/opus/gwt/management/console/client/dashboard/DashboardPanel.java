@@ -151,6 +151,8 @@ public class DashboardPanel extends Composite {
 		    	  Window.alert("fired the delete event");
 		      }
 		 });
+		
+		deleteForm.submit();
 	}
 
 	public void handleProjectInformation(String projectName){

@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0RC1";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = 'A325640A96634EB4243B3344431CD9A5';
+var $strongName = 'F5D2FF276F4F3F3D5FF5309A752FA58C';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -8838,6 +8838,7 @@ function $onDestroyButtonClick(this$static){
   deletedProject = this$static.projectName;
   $addHandler_1(this$static.deleteForm, new DashboardPanel$1_0(this$static), ($clinit_242() , !TYPE_12 && (TYPE_12 = new GwtEvent$Type_0) , $clinit_242() , TYPE_12));
   $addHandler_1(this$static.deleteForm, new DashboardPanel$2_0(this$static, deletedProject), (!TYPE_11 && (TYPE_11 = new GwtEvent$Type_0) , TYPE_11));
+  $submit_0(this$static.deleteForm);
 }
 
 function $setProjectStatus(this$static, active){
@@ -9311,12 +9312,12 @@ function DashboardPanel_DashboardUiBinderImpl$5(){
 }
 
 _ = DashboardPanel_DashboardUiBinderImpl$5_0.prototype = DashboardPanel_DashboardUiBinderImpl$5.prototype = new Object_0;
+--></script>
+<script><!--
 _.getClass$ = function getClass_241(){
   return Lopus_gwt_management_console_client_dashboard_DashboardPanel_1DashboardUiBinderImpl$5_2_classLit;
 }
 ;
---></script>
-<script><!--
 _.onClick = function onClick_6(event_0){
   $onDestroyButtonClick(this.val$owner);
 }
