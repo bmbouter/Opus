@@ -97,6 +97,7 @@ public class DashboardPanel extends Composite {
 		this.projectName = projectName;
 		projectLabel.setText(projectName);
 		activeButton.setText("");
+		deleteForm = new FormPanel();
 		setDeletePopupPanelInitialState();
 		handleProjectInformation(projectName);
 	}
@@ -128,20 +129,26 @@ public class DashboardPanel extends Composite {
 	
 	@UiHandler("destroyButton")
 	void onDestroyButtonClick(ClickEvent event) {
-		deleteForm = new FormPanel();
 		deleteForm.setMethod(FormPanel.METHOD_POST);
 		deleteForm.setVisible(false);
 		deleteForm.setAction(JSVarHandler.getDeployerBaseURL() + deleteProjectURL.replaceAll("/projectName/", "/" + projectName +"/"));
+		Window.alert(deleteForm.getAction());
+		Window.alert(deleteForm.getEncoding());
+		Window.alert(deleteForm.getMethod());
 		deleteTitlePanel.add(deleteForm);
 		final String deletedProject = projectName;
 		deleteForm.addSubmitHandler(new FormPanel.SubmitHandler() {
 		      public void onSubmit(SubmitEvent event) {
-		        deleteForm.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
+		    	  Window.alert("Adding the csrf token");
+		          deleteForm.add(new Hidden("csrfmiddlewaretoken", JSVarHandler.getCSRFTokenURL()));
+		          Window.alert("Added the csrf token");
 		      }
 		 });
 		deleteForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		    	  eventBus.fireEvent(new DeleteProjectEvent(projectName));
+		    	  Window.alert("firing the delete event");
+		    	  eventBus.fireEvent(new DeleteProjectEvent(deletedProject));
+		    	  Window.alert("fired the delete event");
 		      }
 		 });
 	}

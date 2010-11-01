@@ -83,6 +83,7 @@ public class NavigationPanel extends Composite {
 		eventBus.addHandler(DeleteProjectEvent.TYPE, 
 				new DeleteProjectEventHandler(){
 					public void onDeleteProject(DeleteProjectEvent event) {
+						Window.alert("Got to the delete event in navigation panel");
 						removeProject(event.getProjectName());
 					}
 		});

@@ -3,6 +3,7 @@ package opus.gwt.management.console.client;
 import java.util.HashMap;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 
 import opus.gwt.management.console.client.event.AddProjectEvent;
 import opus.gwt.management.console.client.event.AddProjectEventHandler;
@@ -77,6 +78,7 @@ public class ModelController {
 		eventBus.addHandler(DeleteProjectEvent.TYPE, 
 				new DeleteProjectEventHandler(){
 					public void onDeleteProject(DeleteProjectEvent event) {
+						Window.alert("Got to the deletion from clientFactory");
 						clientFactory.getProjects().remove(event.getProjectName());
 						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTS));
 					}
