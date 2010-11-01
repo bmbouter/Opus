@@ -6,7 +6,9 @@
 	
 	<g:HTMLPanel styleName="{style.tooltip}">
 		<g:HTMLPanel ui:field="arrow" >
-			<g:Image resource="{res.arrow}" styleName="{style.tooltip_left}"></g:Image>
+			<g:HTMLPanel styleName="{style.arrow}">
+				<g:Image resource="{res.arrow}" styleName="{style.tooltip_left}"></g:Image>
+			</g:HTMLPanel>
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.tooltip_right}" ui:field="content">
 			<g:HTML ui:field="text" />

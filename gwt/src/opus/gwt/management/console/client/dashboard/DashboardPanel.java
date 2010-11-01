@@ -52,6 +52,7 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DashboardPanel extends Composite {
@@ -74,6 +75,9 @@ public class DashboardPanel extends Composite {
 	@UiField Button deleteButton;
 	@UiField FlexTable formContainer;
 	@UiField FormPanel optionsForm;
+	@UiField PopupPanel deletePopupPanel;
+	@UiField Button destroyButton;
+	@UiField Button noThanksButton;
 	
 	public DashboardPanel(ClientFactory clientFactory, String projectName) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -84,6 +88,7 @@ public class DashboardPanel extends Composite {
 		this.projectName = projectName;
 		projectLabel.setText(projectName);
 		activeButton.setText("");
+		setDeletePopupPanelInitialState();
 		handleProjectInformation(projectName);
 	}
 	
@@ -99,7 +104,22 @@ public class DashboardPanel extends Composite {
 	
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
-		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DELETE));
+		//eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DELETE));
+		deletePopupPanel.setPopupPosition(Window.getClientWidth()/2 - 210, Window.getClientHeight()/2 - 150);
+		deletePopupPanel.setGlassEnabled(true);
+		deletePopupPanel.setGlassStyleName(manager.glassOverlay());
+		deletePopupPanel.setAutoHideEnabled(true);
+		deletePopupPanel.show();
+	}
+	
+	@UiHandler("noThanksButton")
+	void onNoThanksButtonClick(ClickEvent event) {
+		deletePopupPanel.hide();
+	}
+	
+	@UiHandler("destroyButton")
+	void onDestroyButtonClick(ClickEvent event) {
+		
 	}
 
 	public void handleProjectInformation(String projectName){
@@ -146,11 +166,13 @@ public class DashboardPanel extends Composite {
 
 			applicationLabel.addMouseOverHandler(new MouseOverHandler() {
 				public void onMouseOver(MouseOverEvent event){
-					applicationLabel.setStyleName(manager.appIconActive());
-					appName.addStyleName(manager.text());
-					httpLabel.addStyleName(manager.link());
-					httpsLabel.addStyleName(manager.link());
-					settingsLabel.addStyleName(manager.link());
+					if(project.isActive()) {
+						applicationLabel.setStyleName(manager.appIconActive());
+						appName.addStyleName(manager.text());
+						httpLabel.addStyleName(manager.link());
+						httpsLabel.addStyleName(manager.link());
+						settingsLabel.addStyleName(manager.link());
+					}
 				}
 			});
 			applicationLabel.addMouseOutHandler(new MouseOutHandler() {
@@ -165,19 +187,25 @@ public class DashboardPanel extends Composite {
 			
 			httpLabel.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					Window.Location.assign(project.getURLS().get(0) + app.getAppName());
+					if(project.isActive()) {
+						Window.Location.assign(project.getURLS().get(0) + app.getAppName());
+					}
 				}
 			});
 			
 			httpsLabel.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					Window.Location.assign(project.getURLS().get(1) + app.getAppName());
+					if(project.isActive()) {
+						Window.Location.assign(project.getURLS().get(1) + app.getAppName());
+					}
 				}
 			});
 			
 			settingsLabel.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					Window.alert("Clicked settings link");
+					if(project.isActive()) {
+						Window.alert("Clicked settings link");
+					}
 				}
 			});
 			
@@ -210,5 +238,13 @@ public class DashboardPanel extends Composite {
 		} catch (RequestException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void setDeletePopupPanelInitialState() {
+		deletePopupPanel.setVisible(false);
+		deletePopupPanel.show();
+		deletePopupPanel.setPopupPosition(-100, -100);
+		deletePopupPanel.hide();
+		deletePopupPanel.setVisible(true);
 	}
 }
