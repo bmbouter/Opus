@@ -132,27 +132,21 @@ public class DashboardPanel extends Composite {
 		deleteForm.setMethod(FormPanel.METHOD_POST);
 		deleteForm.setVisible(false);
 		deleteForm.setAction(JSVarHandler.getDeployerBaseURL() + deleteProjectURL.replaceAll("/projectName/", "/" + projectName +"/"));
-		Window.alert(deleteForm.getAction());
-		Window.alert(deleteForm.getEncoding());
-		Window.alert(deleteForm.getMethod());
 		deleteTitlePanel.add(deleteForm);
 		final String deletedProject = projectName;
 		deleteForm.addSubmitHandler(new FormPanel.SubmitHandler() {
 		      public void onSubmit(SubmitEvent event) {
-		    	  Window.alert("Adding the csrf token");
 		          deleteForm.add(new Hidden("csrfmiddlewaretoken", JSVarHandler.getCSRFTokenURL()));
-		          Window.alert("Added the csrf token");
 		      }
 		 });
 		deleteForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		    	  Window.alert("firing the delete event");
 		    	  eventBus.fireEvent(new DeleteProjectEvent(deletedProject));
-		    	  Window.alert("fired the delete event");
 		      }
 		 });
 		
 		deleteForm.submit();
+		deletePopupPanel.hide();
 	}
 
 	public void handleProjectInformation(String projectName){

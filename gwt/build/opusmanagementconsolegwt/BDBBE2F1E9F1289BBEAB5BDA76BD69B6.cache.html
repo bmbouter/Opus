@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0RC1";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '19A5F5DB27F8FD05A92F76916694BE32';
+var $strongName = 'BDBBE2F1E9F1289BBEAB5BDA76BD69B6';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -9006,7 +9006,6 @@ _.getClass$ = function getClass_232(){
 }
 ;
 _.onDeleteProject = function onDeleteProject(event_0){
-  $wnd.alert('Got to the deletion from clientFactory');
   $remove_7(this.this$0.clientFactory.projects, event_0.projectName);
   $fireEvent_0(this.this$0.eventBus, new PanelTransitionEvent_1(($clinit_573() , PROJECTS)));
 }
@@ -9152,14 +9151,12 @@ function $onDestroyButtonClick(this$static){
   this$static.deleteForm.element.method = 'post';
   this$static.deleteForm.element.style.display = 'none';
   this$static.deleteForm.element.action = $wnd.deployerBaseURL + $replaceAll('/deployments/projectName/destroy', '/projectName/', '/' + this$static.projectName + '/');
-  $wnd.alert(this$static.deleteForm.element.action);
-  $wnd.alert(this$static.deleteForm.element.enctype);
-  $wnd.alert(this$static.deleteForm.element.method);
   $add_2(this$static.deleteTitlePanel, this$static.deleteForm);
   deletedProject = this$static.projectName;
   $addHandler_1(this$static.deleteForm, new DashboardPanel$1_0(this$static), ($clinit_243() , !TYPE_12 && (TYPE_12 = new GwtEvent$Type_0) , $clinit_243() , TYPE_12));
   $addHandler_1(this$static.deleteForm, new DashboardPanel$2_0(this$static, deletedProject), (!TYPE_11 && (TYPE_11 = new GwtEvent$Type_0) , TYPE_11));
   $submit_0(this$static.deleteForm);
+  $hide(this$static.deletePopupPanel);
 }
 
 function $setProjectStatus(this$static, active){
@@ -9232,9 +9229,7 @@ _.getClass$ = function getClass_236(){
 }
 ;
 _.onSubmit = function onSubmit(event_0){
-  $wnd.alert('Adding the csrf token');
   $add_3(this.this$0.deleteForm, new Hidden_2($wnd.csrftoken));
-  $wnd.alert('Added the csrf token');
 }
 ;
 _.castableTypeMap$ = {16:1, 33:1};
@@ -9253,9 +9248,7 @@ _.getClass$ = function getClass_237(){
 }
 ;
 _.onSubmitComplete = function onSubmitComplete(event_0){
-  $wnd.alert('firing the delete event');
   $fireEvent_0(this.this$0.eventBus, new DeleteProjectEvent_0(this.val$deletedProject));
-  $wnd.alert('fired the delete event');
 }
 ;
 _.castableTypeMap$ = {16:1, 32:1};
@@ -14107,7 +14100,6 @@ _.getClass$ = function getClass_353(){
 }
 ;
 _.onDeleteProject = function onDeleteProject_0(event_0){
-  $wnd.alert('Got to the delete event in navigation panel');
   $removeProject(this.this$0, event_0.projectName);
 }
 ;

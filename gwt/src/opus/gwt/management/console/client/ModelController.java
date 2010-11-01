@@ -78,7 +78,6 @@ public class ModelController {
 		eventBus.addHandler(DeleteProjectEvent.TYPE, 
 				new DeleteProjectEventHandler(){
 					public void onDeleteProject(DeleteProjectEvent event) {
-						Window.alert("Got to the deletion from clientFactory");
 						clientFactory.getProjects().remove(event.getProjectName());
 						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTS));
 					}
