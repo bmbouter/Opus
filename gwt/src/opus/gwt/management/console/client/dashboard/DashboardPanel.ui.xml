@@ -45,6 +45,7 @@
 					<g:Button ui:field="noThanksButton" text="No, thanks" styleName="{style.noThanksButton}"/>
 				</g:HTMLPanel>
 			</g:PopupPanel>
+			<g:FlowPanel ui:field="deleteTitlePanel" />
 		</g:HTMLPanel>
 	</g:SimplePanel>
 	

@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.event.DeleteProjectEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.Project;
@@ -43,6 +44,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -50,15 +52,20 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 
 public class DashboardPanel extends Composite {
 
 	private static DashboardUiBinder uiBinder = GWT.create(DashboardUiBinder.class);
 	interface DashboardUiBinder extends UiBinder<Widget, DashboardPanel> {}
+	
+	private final String deleteProjectURL = "/deployments/projectName/destroy";
 	
 	private EventBus eventBus;
 	private ClientFactory clientFactory;
@@ -66,6 +73,7 @@ public class DashboardPanel extends Composite {
 	private JSVariableHandler JSVarHandler;
 	private String projectName;
 	private boolean active;
+	private FormPanel deleteForm;
 	
 	@UiField FlowPanel applicationsFlowPanel;
 	@UiField Button settingsButton;
@@ -78,6 +86,7 @@ public class DashboardPanel extends Composite {
 	@UiField PopupPanel deletePopupPanel;
 	@UiField Button destroyButton;
 	@UiField Button noThanksButton;
+	@UiField FlowPanel deleteTitlePanel;
 	
 	public DashboardPanel(ClientFactory clientFactory, String projectName) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -119,7 +128,22 @@ public class DashboardPanel extends Composite {
 	
 	@UiHandler("destroyButton")
 	void onDestroyButtonClick(ClickEvent event) {
-		
+		deleteForm = new FormPanel();
+		deleteForm.setMethod(FormPanel.METHOD_POST);
+		deleteForm.setVisible(false);
+		deleteForm.setAction(JSVarHandler.getDeployerBaseURL() + deleteProjectURL.replaceAll("/projectName/", "/" + projectName +"/"));
+		deleteTitlePanel.add(deleteForm);
+		final String deletedProject = projectName;
+		deleteForm.addSubmitHandler(new FormPanel.SubmitHandler() {
+		      public void onSubmit(SubmitEvent event) {
+		        deleteForm.add(new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
+		      }
+		 });
+		deleteForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+		      public void onSubmitComplete(SubmitCompleteEvent event) {
+		    	  eventBus.fireEvent(new DeleteProjectEvent(projectName));
+		      }
+		 });
 	}
 
 	public void handleProjectInformation(String projectName){
