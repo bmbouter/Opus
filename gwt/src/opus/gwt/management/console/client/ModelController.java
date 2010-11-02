@@ -3,6 +3,7 @@ package opus.gwt.management.console.client;
 import java.util.HashMap;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 
 import opus.gwt.management.console.client.event.AddProjectEvent;
 import opus.gwt.management.console.client.event.AddProjectEventHandler;

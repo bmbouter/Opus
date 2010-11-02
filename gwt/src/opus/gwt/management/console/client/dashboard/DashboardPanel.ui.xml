@@ -19,6 +19,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="../resources/ProjectManager.css"/>
 	<ui:style field="manager" src="../resources/PanelManager.css" type="opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle"/>
+	<ui:style src="../resources/Forms.css" field="form"/>
 	
 	<g:SimplePanel>
 		<g:HTMLPanel styleName="{style.dashboardMainPanel}">
@@ -27,14 +28,24 @@
 					<h1>Dashboard: <g:Label styleName="{style.inline}" ui:field="projectLabel"/></h1>
 				</g:HTMLPanel>
 				<HTMLPanel styleName="{style.buttons}">
-					<g:Button ui:field="activeButton" styleName="{style.activate}"></g:Button>
 					<g:Button ui:field="deleteButton" styleName="{style.delete}">Delete Project</g:Button>
+					<g:Button ui:field="activeButton" styleName="{style.activate}"></g:Button>
 				</HTMLPanel>
 			</g:HTMLPanel>
 			<g:FlowPanel ui:field='applicationsFlowPanel' />
 			<g:Button ui:field='settingsButton' >Settings</g:Button>
 			<g:FormPanel ui:field="optionsForm" />
 			<g:FlexTable ui:field="formContainer" />
+			<g:PopupPanel ui:field="deletePopupPanel" styleName="{style.deletePopupPanel}">
+				<g:HTMLPanel>
+					<g:Label styleName="{style.destroyLabel}">
+						Are you sure you wish to delete your project? This action is irreversible.
+					</g:Label>
+					<g:Button ui:field="destroyButton" text="Delete Project" styleName="{style.destroyButton}" />
+					<g:Button ui:field="noThanksButton" text="No, thanks" styleName="{style.noThanksButton}"/>
+				</g:HTMLPanel>
+			</g:PopupPanel>
+			<g:FlowPanel ui:field="deleteTitlePanel" />
 		</g:HTMLPanel>
 	</g:SimplePanel>
 	

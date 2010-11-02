@@ -219,3 +219,25 @@
 	color: #ED9E16;
 	cursor: pointer;
 }
+
+.destroyButton {
+	background: literal("-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F50202), to(#D40202))");
+	background: literal("-moz-linear-gradient(linear, 0% 0%, 0% 100%, from(#F50202), to(#D40202))");
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	border: #A60202 solid 1px;
+	display: block;
+	float: left;
+	color: #FFFFFF;
+	height: 2.10em;
+	width: 9em;
+	font-size: 1.25em;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.glassOverlay {
+	background: #000000;
+	opacity: .75;
+}

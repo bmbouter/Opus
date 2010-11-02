@@ -38,5 +38,7 @@ public interface ManagementConsoleControllerResources extends ClientBundle {
 	    String appIconActive();
 	    String link();
 	    String text();
+	    String destroyButton();
+	    String glassOverlay();
 	}
 }

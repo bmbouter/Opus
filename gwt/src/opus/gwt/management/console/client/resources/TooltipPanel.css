@@ -1,5 +1,5 @@
 .tooltip {
-    width: 200px;
+    width: 202px;
     font-size: 1em;
 	color: #FFFFFF;
 	float: right;
@@ -10,18 +10,24 @@ div.tooltip {
 	margin: 0;
 }
 
+.arrow {
+	float: left;
+	width: 9px;
+	padding-top: 3px
+}
+
 .tooltip_left {
     width: 4%;
     height: 100%;
     float: left;
-    /*background: url('arrow.png') no-repeat 0px 4px;*/
-    padding: 25px 0 0 0;
+    padding: 0px 0px 0px 0px;
 }
 
 .tooltip_right {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     background: #323232;
+    margin: 0;
     padding: 3px;
     width: 93%;
     height: 100%;
