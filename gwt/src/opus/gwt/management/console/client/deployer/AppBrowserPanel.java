@@ -29,19 +29,29 @@ import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEventHandler;
 import opus.gwt.management.console.client.overlays.Application;
+import opus.gwt.management.console.client.overlays.DjangoPackage;
 import opus.gwt.management.console.client.overlays.ProjectData;
 import opus.gwt.management.console.client.overlays.VersionData;
 import opus.gwt.management.console.client.resources.AppBrowserCss.AppBrowserStyle;
 
+import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -51,11 +61,16 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 public class AppBrowserPanel extends Composite {
 
-	private static AppBrowserUiBinderUiBinder uiBinder = GWT.create(AppBrowserUiBinderUiBinder.class);
-	interface AppBrowserUiBinderUiBinder extends UiBinder<Widget, AppBrowserPanel> {}
+	private static AppBrowserPanelUiBinder uiBinder = GWT.create(AppBrowserPanelUiBinder.class);
+	interface AppBrowserPanelUiBinder extends UiBinder<Widget, AppBrowserPanel> {}
 	
 	private final String tokenURL = "/project/configuration/token/?callback=";
 
@@ -90,16 +105,17 @@ public class AppBrowserPanel extends Composite {
 	@UiField AppBrowserStyle style;
 	@UiField FlowPanel featuredAppFlowPanel;
 	@UiField FlowPanel appFlowPanel;
-	@UiField FlowPanel djangoPackagesFlowPanel;
+	@UiField HTMLPanel djangoPackagesHTMLPanel;
 	@UiField HTMLPanel featuredAppsPanel;
 	@UiField HTMLPanel appsPanel;
-	
+	@UiField(provided = true) DPCellTable djangoPackagesTable;
 	
 	public AppBrowserPanel(ClientFactory clientFactory) {
+		this.clientFactory = clientFactory;
+		djangoPackagesTable = new DPCellTable(clientFactory);
 		initWidget(uiBinder.createAndBindUi(this));
 		this.featuredListLoaded = false;
 		this.gridPopulationDelayed = false;
-		this.clientFactory = clientFactory;
 		this.eventBus = clientFactory.getEventBus();
 		this.JSVarHandler = clientFactory.getJSVariableHandler();
 		registerHandlers();
@@ -107,9 +123,9 @@ public class AppBrowserPanel extends Composite {
 		IconMap = new HashMap<String,AppIcon>();
 		FeaturedIconMap = new HashMap<String,AppIcon>();
 		DeployListMap = new HashMap<String,AppIcon>();
-		mainDeckPanel.add(featuredAppsPanel);
-		mainDeckPanel.add(appsPanel);
-		mainDeckPanel.add(djangoPackagesFlowPanel);
+		//mainDeckPanel.add(featuredAppsPanel);
+		//mainDeckPanel.add(appsPanel);
+		//mainDeckPanel.add(djangoPackagesJTMLPanel);
 		mainDeckPanel.showWidget(0);
 		navigationselection = 1;
 		featuredIcons = new ArrayList<AppIcon>();
