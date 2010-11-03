@@ -399,7 +399,9 @@ public class AppBrowserPanel extends Composite {
 		  }
 			Iterator<DjangoPackage> dpIter = djangoPackagesTable.selectionModel.getSelectedSet().iterator();
 			while( dpIter.hasNext() ){
-				paths.add(dpIter.next().getPath());
+				DjangoPackage dp = dpIter.next();
+				if(dp.getType().equals("git"))
+					paths.add(dpIter.next().getPath() + ".git");
 				dpIter.remove();
 			}
 		  return paths;
