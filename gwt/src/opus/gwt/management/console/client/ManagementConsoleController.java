@@ -16,10 +16,13 @@
 
 package opus.gwt.management.console.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import opus.gwt.management.console.client.dashboard.IconPanel;
 import opus.gwt.management.console.client.dashboard.ProjectManagerController;
+import opus.gwt.management.console.client.deployer.DPCellTable;
 import opus.gwt.management.console.client.deployer.ProjectDeployerController;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
@@ -39,6 +42,7 @@ import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.overlays.Application;
+import opus.gwt.management.console.client.overlays.DjangoPackage;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 import opus.gwt.management.console.client.tools.AuthenticationPanel;
@@ -47,10 +51,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 
 
 public class ManagementConsoleController extends Composite {
@@ -64,7 +73,6 @@ public class ManagementConsoleController extends Composite {
 	private ProjectDeployerController projectDeployerController;
 	private ProjectManagerController projectManagerController;
 	private JSVariableHandler jsVarHandler;
-
 	
 	@UiField LayoutPanel contentLayoutPanel;
 	@UiField NavigationPanel navigationPanel;

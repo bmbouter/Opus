@@ -33,7 +33,7 @@
 }
 .appBrowser {
 	width: 96%;
-	height: 60%;
+	height: 65%;
 	margin:	 0 1% 0 1%;
 	border: solid #386E2D 3px;
 	padding: 10px;
@@ -170,6 +170,7 @@
 	border-radius: 10px;
 	-webkt-border-radius: 10px;
 	-moz-border-radius: 10px;
+	width: 100%;
 }
 img {
 	width: 64px;

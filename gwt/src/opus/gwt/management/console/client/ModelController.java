@@ -48,8 +48,7 @@ public class ModelController {
 		eventBus.addHandler(GetDjangoPackagesEvent.TYPE, 
 			new GetDjangoPackagesEventHandler() {
 				public void onGetDjangoPackages(GetDjangoPackagesEvent event) {
-					HashMap<String, DjangoPackage> djangoPackages = event.getDjangoPackages();
-					clientFactory.setDjangoPackages(djangoPackages);
+					clientFactory.setDjangoPackages(event.getDjangoPackages());
 					eventBus.fireEvent(new DataReadyEvent());
 				}
 		});

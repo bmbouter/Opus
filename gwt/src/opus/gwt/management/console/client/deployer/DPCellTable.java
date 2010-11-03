@@ -18,6 +18,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionModel;
@@ -28,6 +29,7 @@ public class DPCellTable extends Composite {
 	interface DPCellTableUiBinder extends UiBinder<Widget, DPCellTable> {}
 
 	private ClientFactory clientFactory;
+	public final MultiSelectionModel<DjangoPackage> selectionModel;
 	
 	@UiField(provided = true) CellTable<DjangoPackage> cellTable;
 	@UiField(provided = true) SimplePager pager;
@@ -49,7 +51,7 @@ public class DPCellTable extends Composite {
 	    pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0, true);
 	    pager.setDisplay(cellTable);
 		
-	    final MultiSelectionModel<DjangoPackage> selectionModel = new MultiSelectionModel<DjangoPackage>(keyProvider);
+	    selectionModel = new MultiSelectionModel<DjangoPackage>(keyProvider);
 	    cellTable.setSelectionModel(selectionModel);
 	    
 	    initTableColumns(selectionModel);
@@ -90,9 +92,8 @@ public class DPCellTable extends Composite {
 		cellTable.addColumn(nameColumn, "App Name");
 		cellTable.addColumn(descriptionColumn, "Description");
 		cellTable.setRowCount(clientFactory.getDjangoPackages().size(), true);
-		ArrayList<DjangoPackage> dpList = new ArrayList<DjangoPackage>(clientFactory.getDjangoPackages().values());
-		cellTable.setRowData(0, dpList);
-		cellTable.redraw();
+		ListDataProvider<DjangoPackage> dataProvider = new ListDataProvider<DjangoPackage>(clientFactory.getDjangoPackages());
+		dataProvider.addDataDisplay(cellTable);
 	}
 	
 }

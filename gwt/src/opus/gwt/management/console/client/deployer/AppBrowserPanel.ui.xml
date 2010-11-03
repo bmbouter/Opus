@@ -46,9 +46,11 @@
 						</g:Button>
 					</div>
 				</g:HTMLPanel>
-				<g:HTMLPanel ui:field="djangoPackagesHTMLPanel">
-					<o:DPCellTable ui:field="djangoPackagesTable" />
-				</g:HTMLPanel>
+				<g:LayoutPanel ui:field="djangoPackagesHTMLPanel">
+					<g:layer>
+						<o:DPCellTable ui:field="djangoPackagesTable" />
+					</g:layer>
+				</g:LayoutPanel>
 			</g:DeckPanel>			
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName='{style.projectConfigLabel}'>

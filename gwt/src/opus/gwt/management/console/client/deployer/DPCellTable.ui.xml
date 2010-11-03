@@ -5,14 +5,19 @@
 
   <ui:style>
     .cellTable {
-      height: 400px;
+      height: 450px;
       border: 1px solid #ccc;
       text-align: left;
+      margin: 0 auto;
+    }
+    .tableContainer{
+   		width: 100%;
+    	margin: 0 auto;
     }
   </ui:style>
 
   <g:HTMLPanel>
-    <table>
+    <table class="{style.tableContainer}">
       <tr>
         <td
           valign='top'>

@@ -18,6 +18,8 @@ package opus.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import opus.gwt.management.console.client.ClientFactory;
@@ -59,6 +61,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.LazyPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.MultiSelectionModel;
@@ -105,7 +110,7 @@ public class AppBrowserPanel extends Composite {
 	@UiField AppBrowserStyle style;
 	@UiField FlowPanel featuredAppFlowPanel;
 	@UiField FlowPanel appFlowPanel;
-	@UiField HTMLPanel djangoPackagesHTMLPanel;
+	@UiField LayoutPanel djangoPackagesHTMLPanel;
 	@UiField HTMLPanel featuredAppsPanel;
 	@UiField HTMLPanel appsPanel;
 	@UiField(provided = true) DPCellTable djangoPackagesTable;
@@ -123,9 +128,6 @@ public class AppBrowserPanel extends Composite {
 		IconMap = new HashMap<String,AppIcon>();
 		FeaturedIconMap = new HashMap<String,AppIcon>();
 		DeployListMap = new HashMap<String,AppIcon>();
-		//mainDeckPanel.add(featuredAppsPanel);
-		//mainDeckPanel.add(appsPanel);
-		//mainDeckPanel.add(djangoPackagesJTMLPanel);
 		mainDeckPanel.showWidget(0);
 		navigationselection = 1;
 		featuredIcons = new ArrayList<AppIcon>();
@@ -395,6 +397,11 @@ public class AppBrowserPanel extends Composite {
 		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
 			  paths.add(e.getValue().getPath());
 		  }
+			Iterator<DjangoPackage> dpIter = djangoPackagesTable.selectionModel.getSelectedSet().iterator();
+			while( dpIter.hasNext() ){
+				paths.add(dpIter.next().getPath());
+				dpIter.remove();
+			}
 		  return paths;
 	  }
 	  
@@ -403,7 +410,12 @@ public class AppBrowserPanel extends Composite {
 		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
 			  types.add(e.getValue().getType());
 		  }
-		  return types;
+			Iterator<DjangoPackage> dpIter = djangoPackagesTable.selectionModel.getSelectedSet().iterator();
+			while( dpIter.hasNext() ){
+				types.add(dpIter.next().getType());
+				dpIter.remove();
+			}
+			return types;
 	  }
 	  
 	  public ArrayList<String> getApps() {
@@ -411,6 +423,11 @@ public class AppBrowserPanel extends Composite {
 		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
 			  apps.add(e.getValue().getName());
 		  }
+			Iterator<DjangoPackage> dpIter = djangoPackagesTable.selectionModel.getSelectedSet().iterator();
+			while( dpIter.hasNext() ){
+				apps.add(dpIter.next().getAppName());
+				dpIter.remove();
+			}
 		  return apps;
 	  }
 	  
@@ -420,6 +437,11 @@ public class AppBrowserPanel extends Composite {
 			  String name = e.getValue().getAppName();
 			  names.add(name);
 		  }
-		  return names;
-	  }
+		Iterator<DjangoPackage> dpIter = djangoPackagesTable.selectionModel.getSelectedSet().iterator();
+		while( dpIter.hasNext() ){
+			names.add(dpIter.next().getAppName());
+			dpIter.remove();
+		}
+		return names;
+	 }
 }
