@@ -16,6 +16,7 @@
 
 package opus.gwt.management.console.client;
 
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 
@@ -35,6 +36,7 @@ public class OPUSManagementConsoleGWT implements EntryPoint {
 		ClientFactory clientFactory = GWT.create(ClientFactory.class);
 		ServerCommunicator serverComm = new ServerCommunicator(clientFactory);
 		ModelController modelController = new ModelController(clientFactory);
-		ManagementConsoleController managementConsoleController = new ManagementConsoleController(clientFactory);
+		AuthenticationPanel authPanel = new AuthenticationPanel(clientFactory);
+		//ManagementConsoleController managementConsoleController = new ManagementConsoleController(clientFactory);
 	}
 }
