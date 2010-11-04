@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = 'CD85E60A7F053CCF8FF59CF468D80BD3';
+var $strongName = '1B3F08F8945759C1FBDCE54DDF79F186';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -552,7 +552,7 @@ function enter(){
   return false;
 }
 
-function entry_1(jsFunction){
+function entry_0(jsFunction){
   return function(){
     try {
       return entry0(jsFunction, this, arguments);
@@ -13610,7 +13610,7 @@ function $getAppNames(this$static){
 }
 
 function $getAppPaths(this$static){
-  var dp, dpIter, e, e$iterator, paths, outerIter, entry, entry_0;
+  var dp, dpIter, e, e$iterator, paths, outerIter, entry;
   paths = new ArrayList_0;
   for (e$iterator = new AbstractHashMap$EntrySetIterator_0((new AbstractHashMap$EntrySet_0(this$static.DeployListMap)).this$0); $hasNext_5(e$iterator.iter);) {
     e = e$iterator.last = dynamicCast($next_7(e$iterator.iter), 25);
@@ -13619,7 +13619,7 @@ function $getAppPaths(this$static){
   dpIter = (outerIter = new AbstractHashMap$EntrySetIterator_0($keySet($getSelectedSet(this$static.djangoPackagesTable.selectionModel).map).val$entrySet.this$0) , new AbstractMap$1$1_0(outerIter));
   while ($hasNext_5(dpIter.val$outerIter.iter)) {
     dp = dynamicCastJso((entry = $next_6(dpIter.val$outerIter) , entry.getKey()));
-    $equals_3(dp.fields.type, 'git') && $add_8(paths, dynamicCastJso((entry_0 = $next_6(dpIter.val$outerIter) , entry_0.getKey())).fields.path + '.git');
+    $equals_3(dp.fields.type, 'git') && $add_8(paths, dp.fields.path + '.git');
     $remove_9(dpIter.val$outerIter);
   }
   return paths;
@@ -18416,7 +18416,7 @@ _.getClass$ = function getClass_442(){
 ;
 _.castableTypeMap$ = {};
 _.injected = false;
-var $entry = entry_1;
+var $entry = entry_0;
 function gwtOnLoad(errFn, modName, modBase, softPermutationId){
   $moduleName = modName;
   $moduleBase = modBase;

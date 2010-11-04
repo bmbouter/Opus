@@ -401,7 +401,7 @@ public class AppBrowserPanel extends Composite {
 			while( dpIter.hasNext() ){
 				DjangoPackage dp = dpIter.next();
 				if(dp.getType().equals("git"))
-					paths.add(dpIter.next().getPath() + ".git");
+					paths.add(dp.getPath() + ".git");
 				dpIter.remove();
 			}
 		  return paths;
