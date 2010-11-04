@@ -18,6 +18,8 @@ package opus.gwt.management.console.client.deployer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import opus.gwt.management.console.client.ClientFactory;
@@ -29,19 +31,29 @@ import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEventHandler;
 import opus.gwt.management.console.client.overlays.Application;
+import opus.gwt.management.console.client.overlays.DjangoPackage;
 import opus.gwt.management.console.client.overlays.ProjectData;
 import opus.gwt.management.console.client.overlays.VersionData;
 import opus.gwt.management.console.client.resources.AppBrowserCss.AppBrowserStyle;
 
+import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -49,13 +61,21 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.LazyPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 public class AppBrowserPanel extends Composite {
 
-	private static AppBrowserUiBinderUiBinder uiBinder = GWT.create(AppBrowserUiBinderUiBinder.class);
-	interface AppBrowserUiBinderUiBinder extends UiBinder<Widget, AppBrowserPanel> {}
+	private static AppBrowserPanelUiBinder uiBinder = GWT.create(AppBrowserPanelUiBinder.class);
+	interface AppBrowserPanelUiBinder extends UiBinder<Widget, AppBrowserPanel> {}
 	
 	private final String tokenURL = "/project/configuration/token/?callback=";
 
@@ -90,16 +110,17 @@ public class AppBrowserPanel extends Composite {
 	@UiField AppBrowserStyle style;
 	@UiField FlowPanel featuredAppFlowPanel;
 	@UiField FlowPanel appFlowPanel;
-	@UiField FlowPanel djangoPackagesFlowPanel;
+	@UiField LayoutPanel djangoPackagesHTMLPanel;
 	@UiField HTMLPanel featuredAppsPanel;
 	@UiField HTMLPanel appsPanel;
-	
+	@UiField(provided = true) DPCellTable djangoPackagesTable;
 	
 	public AppBrowserPanel(ClientFactory clientFactory) {
+		this.clientFactory = clientFactory;
+		djangoPackagesTable = new DPCellTable(clientFactory);
 		initWidget(uiBinder.createAndBindUi(this));
 		this.featuredListLoaded = false;
 		this.gridPopulationDelayed = false;
-		this.clientFactory = clientFactory;
 		this.eventBus = clientFactory.getEventBus();
 		this.JSVarHandler = clientFactory.getJSVariableHandler();
 		registerHandlers();
@@ -107,9 +128,6 @@ public class AppBrowserPanel extends Composite {
 		IconMap = new HashMap<String,AppIcon>();
 		FeaturedIconMap = new HashMap<String,AppIcon>();
 		DeployListMap = new HashMap<String,AppIcon>();
-		mainDeckPanel.add(featuredAppsPanel);
-		mainDeckPanel.add(appsPanel);
-		mainDeckPanel.add(djangoPackagesFlowPanel);
 		mainDeckPanel.showWidget(0);
 		navigationselection = 1;
 		featuredIcons = new ArrayList<AppIcon>();
@@ -379,6 +397,13 @@ public class AppBrowserPanel extends Composite {
 		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
 			  paths.add(e.getValue().getPath());
 		  }
+			Iterator<DjangoPackage> dpIter = djangoPackagesTable.selectionModel.getSelectedSet().iterator();
+			while( dpIter.hasNext() ){
+				DjangoPackage dp = dpIter.next();
+				if(dp.getType().equals("git"))
+					paths.add(dp.getPath() + ".git");
+				dpIter.remove();
+			}
 		  return paths;
 	  }
 	  
@@ -387,7 +412,12 @@ public class AppBrowserPanel extends Composite {
 		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
 			  types.add(e.getValue().getType());
 		  }
-		  return types;
+			Iterator<DjangoPackage> dpIter = djangoPackagesTable.selectionModel.getSelectedSet().iterator();
+			while( dpIter.hasNext() ){
+				types.add(dpIter.next().getType());
+				dpIter.remove();
+			}
+			return types;
 	  }
 	  
 	  public ArrayList<String> getApps() {
@@ -395,6 +425,11 @@ public class AppBrowserPanel extends Composite {
 		  for(Entry<String,AppIcon> e : DeployListMap.entrySet()){
 			  apps.add(e.getValue().getName());
 		  }
+			Iterator<DjangoPackage> dpIter = djangoPackagesTable.selectionModel.getSelectedSet().iterator();
+			while( dpIter.hasNext() ){
+				apps.add(dpIter.next().getAppName());
+				dpIter.remove();
+			}
 		  return apps;
 	  }
 	  
@@ -404,6 +439,11 @@ public class AppBrowserPanel extends Composite {
 			  String name = e.getValue().getAppName();
 			  names.add(name);
 		  }
-		  return names;
-	  }
+		Iterator<DjangoPackage> dpIter = djangoPackagesTable.selectionModel.getSelectedSet().iterator();
+		while( dpIter.hasNext() ){
+			names.add(dpIter.next().getAppName());
+			dpIter.remove();
+		}
+		return names;
+	 }
 }

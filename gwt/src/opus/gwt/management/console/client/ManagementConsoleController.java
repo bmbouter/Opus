@@ -18,7 +18,6 @@ package opus.gwt.management.console.client;
 
 import opus.gwt.management.console.client.dashboard.IconPanel;
 import opus.gwt.management.console.client.dashboard.ProjectManagerController;
-import opus.gwt.management.console.client.dashboard.ProjectSettingsPanel;
 import opus.gwt.management.console.client.deployer.ProjectDeployerController;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
@@ -53,7 +52,6 @@ public class ManagementConsoleController extends Composite {
 	private ProjectDeployerController projectDeployerController;
 	private ProjectManagerController projectManagerController;
 	private JSVariableHandler jsVarHandler;
-
 	
 	@UiField LayoutPanel contentLayoutPanel;
 	@UiField NavigationPanel navigationPanel;

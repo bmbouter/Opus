@@ -1,6 +1,7 @@
 package opus.gwt.management.console.client;
 
 import java.util.HashMap;
+import java.util.List;
 
 import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.DjangoPackage;
@@ -16,8 +17,8 @@ public interface ClientFactory {
 	HashMap<String, Application> getApplications();
 	void setProjects(HashMap<String, Project> projects);
 	HashMap<String, Project> getProjects();
-	void setDjangoPackages(HashMap<String, DjangoPackage> djangoPackages);
-	HashMap<String, DjangoPackage> getDjangoPackages();
+	void setDjangoPackages(List<DjangoPackage> djangoPackages);
+	List<DjangoPackage> getDjangoPackages();
 	User getUser();
 	void setUser(User user);
 }

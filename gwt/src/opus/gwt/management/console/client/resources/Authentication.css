@@ -12,7 +12,6 @@
 	text-shadow: 3px 3px 5px #B87700;
 	border-bottom: 2px ridge #CCCCCC;
 	-webkit-box-reflect: below 0 literal('-webkit-gradient(linear, left top, left bottom, from(transparent), to(white), color-stop(.4, transparent))');
-	
 }
 .fieldWrapper {
 	font-size: 1em;

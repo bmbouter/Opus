@@ -1,6 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:o="urn:import:opus.gwt.management.console.client.deployer"
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
 	<ui:style src="../resources/AppBrowser.css" type="opus.gwt.management.console.client.resources.AppBrowserCss.AppBrowserStyle"/>
 	
 	
@@ -28,7 +30,6 @@
 						</g:Button>
 					</div>
 				</g:HTMLPanel>
-				
 				<g:HTMLPanel ui:field="appsPanel">
 					<div class="{style.AppList}">
 						<div class="{style.ListGrid}" id="ListGrid">
@@ -45,7 +46,11 @@
 						</g:Button>
 					</div>
 				</g:HTMLPanel>
-				<g:FlowPanel ui:field="djangoPackagesFlowPanel"></g:FlowPanel>
+				<g:LayoutPanel ui:field="djangoPackagesHTMLPanel">
+					<g:layer>
+						<o:DPCellTable ui:field="djangoPackagesTable" />
+					</g:layer>
+				</g:LayoutPanel>
 			</g:DeckPanel>			
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName='{style.projectConfigLabel}'>

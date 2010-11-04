@@ -10,14 +10,21 @@
     position: relative;
     z-index: 10;
 }
-
-
 .navigationContainer h1 {
-	font-size: 1.7em;
+	/*font-size: 1.7em;
     font-weight: normal;
-    margin: 0.3em 0 0 20px;
     padding: 0 0 0.2em 0;
+    float: left;*/
+    margin: 0.1em 0 0 20px;
     float: left;
+    color: orange;
+	font-size: 1.7em;	
+	font-weight: bold;
+	/*margin-bottom: 2em;*/
+	padding: 0 0 0.2em 0;
+	text-shadow: 4px 4px 3px #B87700;
+	/*border-bottom: 2px ridge #CCCCCC;
+	-webkit-box-reflect: below 0 literal('-webkit-gradient(linear, left top, left bottom, from(transparent), to(white), color-stop(.4, transparent))');*/
 }
 
 .menu {
@@ -37,14 +44,13 @@
 	-webkit-box-shadow: 10px 10px 10px white;*/
 }
 .logo {
-	font-size: 1.25em;
+	font-size: 1.2em;
 	padding: 0 0 0.2em 0;
 	width: 14em;
 	float: left;
-	margin: 0.3em 0 0 0.5em;
+	margin: 0 0 0 0.5em;
 	background: transparent;
 }
-
 .button {
 	cursor: pointer;
 	cursor: hand;
