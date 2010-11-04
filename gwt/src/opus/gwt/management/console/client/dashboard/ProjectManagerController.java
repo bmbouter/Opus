@@ -26,6 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -52,7 +53,7 @@ public class ProjectManagerController extends Composite {
 		this.projectName = projectName;
 		this.dashboardPanel = new DashboardPanel(clientFactory, projectName);
 		this.deleteProjectPanel = new DeleteProjectPanel(clientFactory, projectName);
-		//this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory, projectName);
+		this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory, projectName);
 		setupmanagerDeckPanel();
 		registerHandlers();
 		setupBreadCrumbs();
@@ -82,8 +83,8 @@ public class ProjectManagerController extends Composite {
 		dashboardPanel.setTitle("Dashboard");
 		managerDeckPanel.add(deleteProjectPanel);
 		deleteProjectPanel.setTitle("Delete Project");
-		/*managerDeckPanel.add(projectSettingsPanel);
-		projectSettingsPanel.setTitle("Project Settings");*/
+		managerDeckPanel.add(projectSettingsPanel);
+		projectSettingsPanel.setTitle("Project Settings");
 		managerDeckPanel.showWidget(0);
 	}
 }

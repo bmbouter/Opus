@@ -16,30 +16,19 @@
 
 package opus.gwt.management.console.client;
 
-import java.util.HashMap;
-
 import opus.gwt.management.console.client.dashboard.IconPanel;
 import opus.gwt.management.console.client.dashboard.ProjectManagerController;
+import opus.gwt.management.console.client.dashboard.ProjectSettingsPanel;
 import opus.gwt.management.console.client.deployer.ProjectDeployerController;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
 import opus.gwt.management.console.client.event.AuthenticationEventHandler;
 import opus.gwt.management.console.client.event.DataReadyEvent;
 import opus.gwt.management.console.client.event.DataReadyEventHandler;
-import opus.gwt.management.console.client.event.GetApplicationsEvent;
-import opus.gwt.management.console.client.event.GetApplicationsEventHandler;
-import opus.gwt.management.console.client.event.GetProjectsEvent;
-import opus.gwt.management.console.client.event.GetProjectsEventHandler;
-import opus.gwt.management.console.client.event.GetUserEvent;
-import opus.gwt.management.console.client.event.GetUserEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
-import opus.gwt.management.console.client.event.AddProjectEvent;
-import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
-import opus.gwt.management.console.client.overlays.Application;
-import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 import opus.gwt.management.console.client.tools.AuthenticationPanel;
 
@@ -152,8 +141,8 @@ public class ManagementConsoleController extends Composite {
 	private void showIconPanel(){
 		RootLayoutPanel.get().clear();
 		RootLayoutPanel.get().add(this);
-		contentLayoutPanel.clear();
 		IconPanel iconPanel = new IconPanel(clientFactory);
+		contentLayoutPanel.clear();
 		contentLayoutPanel.add(iconPanel);
 		contentLayoutPanel.setVisible(true);
 	}
