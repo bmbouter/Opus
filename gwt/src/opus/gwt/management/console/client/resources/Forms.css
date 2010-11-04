@@ -34,6 +34,7 @@ select {
 .formWrapper {
 	padding: 20px 20px 70px 0px;
 	width: 94%;
+	min-height: 40px;
 	height: auto;
 	float: left;
 }
@@ -52,10 +53,24 @@ select {
 	float: left;
 }
 
+.formWrapper .settingsFieldLabel {
+	width: 22em;
+	margin: 0px 0px 0px 5px;
+	text-align: right;
+	float: left;
+}
+
 .formWrapper .buttonWrapper {
 	width: 500px;
 	height: auto;
 	margin: 70px 0px 10px 10px;
+	float: left;
+}
+
+.formWrapper .settingsButtonWrapper {
+	width: 500px;
+	height: auto;
+	margin: 0px 0px 10px 100px;
 	float: left;
 }
 
@@ -75,12 +90,6 @@ select {
 	-webkit-box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
 	box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
 	float: left;
-	/* Activate these later for styling
-	background-color: #C2C2C2;
-	display: inline-block;
-	font-size: .8em;
-	border: 1px #999999 solid;
-	*/
 }
 
 .buttons {
@@ -106,6 +115,10 @@ select {
 	cursor: hand;
 }
 
+.settingsButton {
+	width: 12em;
+}
+
 .error {
 	color: red;
 	float: right;
@@ -115,4 +128,8 @@ select {
 
 .right {
 	float: right;
+}
+
+.greyBorder {
+	border: 1px solid #888888;
 }

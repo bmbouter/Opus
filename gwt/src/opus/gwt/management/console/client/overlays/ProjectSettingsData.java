@@ -18,7 +18,7 @@ public class ProjectSettingsData extends JavaScriptObject{
 		var settings = this[appname];
 		for(var i=0; i<settings.length; i++) {
 			if (settings[i][2] == "choice") {
-			//	alert(settings[i][3][0].join(";;;"));
+				//alert(settings[i][3][2]);
 			}
 		}
 		return settings;

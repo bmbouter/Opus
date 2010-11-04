@@ -2,6 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="../resources/ProjectManager.css" type="opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle"/>
+	<ui:style field="form" src="../resources/Forms.css" type="opus.gwt.management.console.client.resources.FormsCss.FormsStyle" />
 	
 	<g:SimplePanel>
 		<g:HTMLPanel styleName="{style.dashboardMainPanel}">
@@ -10,30 +11,16 @@
 					<h1>Settings: <g:Label styleName="{style.inline}" ui:field="projectLabel"/></h1>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			<g:HTMLPanel styleName="{style.innerSubMainPanel}">
-				<g:DockLayoutPanel unit='PCT' styleName="{style.topSubMainPanel}" >
-					<g:north size='6.5'>
-						<g:FlowPanel>
-							<g:Label styleName="{style.pageTitle}">
-								Application Settings
-							</g:Label>
-						</g:FlowPanel>
-					</g:north>
-					
-					<g:south size='93'>
-						<g:HTMLPanel ui:field="FormHolder">
-							<g:Label ui:field="WarningLabel"></g:Label>
-						
-						<g:FormPanel ui:field="optionsForm">
-							<g:FlexTable ui:field="formContainer">
-							
-							</g:FlexTable>
-						</g:FormPanel>
-						<g:Button ui:field="SaveButton" text="Save"></g:Button>
-						<g:Button ui:field="ActivateButton" text="Save and Activate"></g:Button>
-						</g:HTMLPanel>
-					</g:south>
-				</g:DockLayoutPanel>
+			<g:FlowPanel ui:field="content" />
+			<g:HTMLPanel styleName="{form.formWrapper}">
+				<g:HTMLPanel styleName="{form.settingsButtonWrapper}">
+					<g:HTMLPanel styleName="{form.fieldLabel}">
+						<g:Button ui:field="activateButton" text="Save and Activate" styleName="{form.button} {form.settingsButton} {form.right}"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{form.fieldLabel}">
+						<g:Button ui:field="saveButton" text="Save" styleName="{form.button} {form.settingsButton}"/>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:SimplePanel>

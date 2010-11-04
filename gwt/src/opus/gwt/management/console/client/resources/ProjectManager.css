@@ -21,7 +21,6 @@
 	min-height: 400px;
 	min-width: 600px;
 	border: 1px solid #CC8202;
-/*	-webkit-box-shadow: 2px 2px 7px #1F1F1F;	*/
 }
 
 .header { 
@@ -153,7 +152,8 @@
 }
 
 .dashboardMainPanel{
-
+	min-height: 200px;
+	height: 400px;
 }
 
 .emptyFooter {
@@ -255,4 +255,14 @@
 .WarningLabel{
 	color:red;
 	margin-top:10px;
+}
+
+input {
+	height: 1.6em;
+	width: 150px;
+	margin: 0 0 5px 10px;
+	border-radius: 3px;
+	-webkit-box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
+	box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
+	float: left;
 }

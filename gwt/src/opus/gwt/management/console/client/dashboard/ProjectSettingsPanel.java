@@ -6,11 +6,16 @@ import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
-import opus.gwt.management.console.client.resources.ProjectManagerCss.ProjectManagerStyle;
+import opus.gwt.management.console.client.resources.FormsCss.FormsStyle;
+import opus.gwt.management.console.client.tools.TooltipPanel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -21,16 +26,22 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 public class ProjectSettingsPanel extends Composite {
 
@@ -45,125 +56,127 @@ public class ProjectSettingsPanel extends Composite {
 	private boolean hasSettings;
 	private ArrayList<String> textboxes;
 	private Project project;
-	
-	@UiField FlexTable formContainer;
-	@UiField FormPanel optionsForm;
-	@UiField Button SaveButton;
-	@UiField Button ActivateButton;
-	@UiField Label WarningLabel;
-	@UiField ProjectManagerStyle style;
+	private TooltipPanel tooltip;
+
+	@UiField Button saveButton;
+	@UiField Button activateButton;
+//	@UiField Label WarningLabel;
+//	@UiField ProjectManagerStyle style;
+	@UiField Label projectLabel;
+	@UiField FormsStyle form;
+	@UiField FlowPanel content;
 
 
 	public ProjectSettingsPanel(ClientFactory clientFactory, String projectName) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.projectName = projectName;
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
-		this.optionsForm = new FormPanel();
 		this.textboxes = new ArrayList<String>();
-		//setupOptionsForm();
+		this.projectLabel.setText(projectName);
 		this.project = clientFactory.getProjects().get(projectName);
 		importProjectSettings(project.getAppSettings(), project.getApps());
-		registerHandlers();
+		tooltip = new TooltipPanel();
+		setTooltipInitialState();
 	}
 	
-	private void registerHandlers(){
+	public void importProjectSettings(ProjectSettingsData settings, JsArrayString apps) {
+		content.setStyleName(form.content());
 		
-	}
-	
-	public void setupOptionsForm(){
-		optionsForm.setAction((jsVarHandler.getDeployerBaseURL() + optionsUrl.replaceAll("projectName", this.projectName))); 
-		optionsForm.setMethod(FormPanel.METHOD_POST);
-		optionsForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-			public void onSubmitComplete(SubmitCompleteEvent event) {
-		        //managementCon.onDeployNewProject(projectName);
-		        //RootPanel.detachNow(optionsForm);
-		    }
-			});
-	}
-	
-	public void importProjectSettings(ProjectSettingsData settings, JsArrayString apps){
-		int row = 0;
-
-		for (int i=0; i < apps.length(); i++){
-			Label appName = new Label();
-			appName.setText(apps.get(i));
-			appName.addStyleName("SettingsAppName");
-			formContainer.setWidget(row++, 0, appName);
+		for(int i = 0; i < apps.length() - 1; i++) {
+			JsArray<JavaScriptObject> appSettings = settings.getAppSettings(apps.get(i));
 			
+			FlowPanel formWrapper = new FlowPanel();
+			formWrapper.setStyleName(form.formWrapper());
 			
-			//JsArray<JavaScriptObject> appsettings = settings.getAppSettings(apps.get(i));
-			/*
-			for(int j=0; j< appsettings.length() - 1; j++){
-				//Window.alert(String.valueOf(j));
-				JsArray<JavaScriptObject> p = settings.getSettingsArray(appsettings.get(j));
-				String[] parts = p.join(";;").split(";;\\s*");
-				if (parts[2].equals("string")){
-					TextBox setting = new TextBox();
-					setting.setName(apps.get(i)+"-"+parts[0]);
-					setting.getElement().setId(apps.get(i) + parts[0]);
-					//Check default value
-					if (parts.length > 3){
-						//Window.alert("gotcha");
-						//setting.setValue(parts[3]);
-						setting.setText(parts[3]);
+			for(int j = 0; j < appSettings.length()-1; j++) {
+				FlowPanel field = new FlowPanel();
+				FlowPanel fieldWrapper = new FlowPanel();
+				fieldWrapper.setStyleName(form.fieldWrapper());
+				field.setStyleName(form.field());
+				
+				//String[] settingsArray = appSettings.join(";;").split(";;\\s*");
+				JsArray<JavaScriptObject> settingsArray = settings.getSettingsArray(appSettings.get(j));
+				
+				String[] settingsContent = settingsArray.join(";;").split(";;\\s*");
+				
+				Label appName = new Label(apps.get(i));
+				
+				Label description = new Label(settingsContent[0]);
+				description.setStyleName(form.settingsFieldLabel());
+				field.add(description);
+				
+				if(settingsContent[2].equals("string")) {
+					final TextBox setting = new TextBox();
+					setting.setName(settingsContent[1]);
+					setting.setStyleName(form.greyBorder());
+					
+					if(settingsContent.length > 3) {
+						setting.setText(settingsContent[3]);
 					}
-					Label settingLabel = new Label();
-					settingLabel.setText(parts[1]);
-					settingLabel.addStyleName("SettingLabel");
-					setting.setStyleName("SettingInput");
-					formContainer.setWidget(row, 0,settingLabel);
-					formContainer.setWidget(row++, 1,setting);
-					textboxes.add(setting.getElement().getId());
-					//textboxes[textboxes.length] = setting;
-					//textboxes.add(setting);
-				} else if(parts[2].equals("int")){
-					TextBox setting = new TextBox();
-					//Check default value
-					if (parts.length > 3){
-						//setting.setValue(parts[3]);
-						setting.setText(parts[3]);
+					
+					setting.addFocusHandler(new FocusHandler() {
+						public void onFocus(FocusEvent event) {
+							tooltip.hide();
+							tooltip.setVisible(true);
+							
+							int x = getTooltipPosition(setting)[0];
+							int y = getTooltipPosition(setting)[1];
+								
+							tooltip.setGray();
+							setTooltipPosition(x, y);
+							tooltip.show();
+							setTooltipText(setting.getName());
+						}
+					});
+					
+					field.add(setting);
+				} else if(settingsContent[2].equals("int")) {
+					final TextBox setting = new TextBox();
+					setting.setName(settingsContent[1]);
+					setting.setStyleName(form.greyBorder());
+					
+					if(settingsContent.length > 3) {
+						setting.setText(settingsContent[3]);
 					}
-					setting.setName(apps.get(i) + "-" + parts[0]);
-					setting.getElement().setId(apps.get(i) + parts[0]);
-					Label settingLabel = new Label();
-					settingLabel.setText(parts[1]);
-					settingLabel.addStyleName("SettingLabel");
-					setting.setStyleName("SettingInput");
-					formContainer.setWidget(row, 0,settingLabel);
-					formContainer.setWidget(row++, 1,setting);
-					textboxes.add(setting.getElement().getId());
-					//textboxes.add(setting);
-				} else if(parts[2].equals("choice")){
+					
+					setting.addFocusHandler(new FocusHandler() {
+						public void onFocus(FocusEvent event) {
+							tooltip.hide();
+							tooltip.setVisible(true);
+							
+							int x = getTooltipPosition(setting)[0];
+							int y = getTooltipPosition(setting)[1];
+								
+							tooltip.setGray();
+							setTooltipPosition(x, y);
+							tooltip.show();
+							setTooltipText(setting.getName());
+						}
+					});
+					
+					field.add(setting);
+				} else if(settingsContent[2].equals("choice")) {
 					ListBox setting = new ListBox();
-					setting.setName(apps.get(i) + "-" + parts[0]);
-					Label settingLabel = new Label();
-					settingLabel.setText(parts[1]);
-					setting.getElement().setInnerHTML(parts[3]);
-					settingLabel.addStyleName("SettingLabel");
-					setting.setStyleName("SettingInput");
-					formContainer.setWidget(row, 0,settingLabel);
-					formContainer.setWidget(row++, 1,setting);
-				} else if(parts[2].equals("bool")) {
+					setting.setName(settingsContent[1]);
+					setting.setStyleName(form.greyBorder());
+					setting.getElement().setInnerHTML(settingsContent[3]);
+					
+					field.add(setting);
+				} else if(settingsContent[2].equals("bool")) {
 					CheckBox setting = new CheckBox();
-					if (parts.length > 3){
-						//setting.setValue(parts[3]);
-						setting.setValue(Boolean.valueOf(parts[3]));
+					setting.setName(settingsContent[1]);
+					
+					if (settingsContent.length > 3) {
+						setting.setValue(Boolean.valueOf(settingsContent[3]));
 					}
-					setting.setName(apps.get(i) + "-" + parts[0]);
-					Label settingLabel = new Label();
-					settingLabel.setText(parts[1]);
-					settingLabel.addStyleName("SettingLabel");
-					setting.setStyleName("SettingInput");
-					formContainer.setWidget(row, 0,settingLabel);
-					formContainer.setWidget(row++, 1,setting);
 				}
-			}
-			*/
-			formContainer.setHTML(row, 0, "<hr width=\"80%\">");
-			formContainer.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
+				fieldWrapper.add(field);
+				formWrapper.add(fieldWrapper);
+			}
+			
+			content.add(formWrapper);
 		}
-		this.hasSettings = true;
 	}
 	
 	public void setHasSettings(boolean state) {
@@ -171,32 +184,32 @@ public class ProjectSettingsPanel extends Composite {
 	}
 	
 	//ProjectManagerController.displayOptions() calls this function  
-	public void setActive(boolean active){
-		this.active = active;
-		if(!active){
-			if(hasSettings){
-				WarningLabel.setText("You must fill out all the settings and click \"Save and Activate\" button in order start using project.");
-			} else {
-				WarningLabel.setText("This project is not active.  Press the Activate button to activate it.");
-				ActivateButton.setText("Activate");
-				SaveButton.setVisible(false);
-			}
-			WarningLabel.setStyleName(style.WarningLabel());
-		} else {
-			WarningLabel.setText("");
-			ActivateButton.setText("Deactivate");
-			SaveButton.setVisible(true);
-			//Button.setText("Submit");
-		}
-	}
+//	public void setActive(boolean active){
+//		this.active = active;
+//		if(!active){
+//			if(hasSettings){
+//				WarningLabel.setText("You must fill out all the settings and click \"Save and Activate\" button in order start using project.");
+//			} else {
+//				WarningLabel.setText("This project is not active.  Press the Activate button to activate it.");
+//				ActivateButton.setText("Activate");
+//				SaveButton.setVisible(false);
+//			}
+//			WarningLabel.setStyleName(style.WarningLabel());
+//		} else {
+//			WarningLabel.setText("");
+//			ActivateButton.setText("Deactivate");
+//			SaveButton.setVisible(true);
+//			//Button.setText("Submit");
+//		}
+//	}
 	
 	private boolean validateForm(){
 		for(String t : textboxes){
 			//Window.alert(getValue(t));
-			/*if (DOM.getElementById(t).getInnerText().length() == 0) {
+			if (DOM.getElementById(t).getInnerText().length() == 0) {
 				Window.alert("All settings are required.");
 				return false;
-			}*/
+			}
 		}
 		return true;
 	}
@@ -205,38 +218,21 @@ public class ProjectSettingsPanel extends Composite {
 		alert("hello");
 		return document.getElementById(id).value; }-*/;
 	
-	@UiHandler("SaveButton")
-	void handleSaveButton(ClickEvent event){
-		if( validateForm() ){
-
-			//formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", jsVarHandler.getCSRFTokenURL()));
-			optionsForm.add(formContainer);
-			//optionsForm.submit();
-			
-			saveSettings();
-		}
-	}
-	@UiHandler("ActivateButton")
-	void handleActivateButton(ClickEvent event){
-		if( validateForm() ){
-			formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", Cookies.getCookie("csrftoken")));
-			TextBox activeField = new TextBox();
-			activeField.setVisible(false);
-			activeField.setName("active");
-			if(this.active) {
-				activeField.setText("false");
-				//TextBox activate = new TextBox();
-				//activate.setName("activate");
-				//formContainer.setWidget(formContainer.getRowCount(), 1, activate);
-			} else {
-				activeField.setText("true");
-			}
-			formContainer.setWidget(formContainer.getRowCount(), 1, activeField);
-			optionsForm.add(formContainer);
+//	@UiHandler("SaveButton")
+//	void handleSaveButton(ClickEvent event){
+//		if( validateForm() ){
+//
+//			//formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", jsVarHandler.getCSRFTokenURL()));
+//			optionsForm.add(formContainer);
+//			//optionsForm.submit();
+//			
+//			saveSettings();
+//		}
+//	}
 	
-			//RootPanel.get().add(optionsForm);
-			optionsForm.submit();
-		}
+	@UiHandler("activateButton")
+	void handleActivateButton(ClickEvent event){
+		saveSettings();
 	}
 	
 	private void saveSettings(){
@@ -264,5 +260,59 @@ public class ProjectSettingsPanel extends Composite {
 		    } catch (RequestException e) {
 		    	
 		    }
+	}
+	
+	/**
+	 * Set the tooltips initial state on page load
+	 */
+	private void setTooltipInitialState() {
+		tooltip.setVisible(false);
+	}
+	
+	/**
+	 * Set the position of a tooltip relative to the browser window
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 */
+	private void setTooltipPosition(int x, int y) {
+		tooltip.setPopupPosition(x, y);
+	}
+	
+	/**
+	 * Set the text of a tooltip
+	 * @param text the text to set
+	 */
+	private void setTooltipText(String text) {
+		tooltip.hide();
+		tooltip.setText(text);
+		tooltip.show();
+	}
+	
+	/**
+	 * Return the tooltip position as an array in for them [x, y]
+	 * @param textbox the textbox to get the position of
+	 * @return tooltip position
+	 */
+	private int[] getTooltipPosition(TextBox textbox) {
+		int[] pos = new int[2];
+		
+		pos[0] = textbox.getAbsoluteLeft() + textbox.getOffsetWidth() + 5;
+		pos[1] = textbox.getAbsoluteTop() + 2;
+		
+		return pos;
+	}
+	
+	/**
+	 * Return the tooltip position as an array in for them [x, y]
+	 * @param textbox the textbox to get the position of
+	 * @return tooltip position
+	 */
+	private int[] getTooltipPosition(PasswordTextBox textbox) {
+		int[] pos = new int[2];
+		
+		pos[0] = textbox.getAbsoluteLeft() + textbox.getOffsetWidth() + 5;
+		pos[1] = textbox.getAbsoluteTop() + 2;
+	
+		return pos;
 	}
 }

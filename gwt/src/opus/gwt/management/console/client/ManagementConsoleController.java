@@ -16,49 +16,28 @@
 
 package opus.gwt.management.console.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import opus.gwt.management.console.client.dashboard.IconPanel;
 import opus.gwt.management.console.client.dashboard.ProjectManagerController;
-import opus.gwt.management.console.client.deployer.DPCellTable;
 import opus.gwt.management.console.client.deployer.ProjectDeployerController;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
 import opus.gwt.management.console.client.event.AuthenticationEventHandler;
 import opus.gwt.management.console.client.event.DataReadyEvent;
 import opus.gwt.management.console.client.event.DataReadyEventHandler;
-import opus.gwt.management.console.client.event.GetApplicationsEvent;
-import opus.gwt.management.console.client.event.GetApplicationsEventHandler;
-import opus.gwt.management.console.client.event.GetProjectsEvent;
-import opus.gwt.management.console.client.event.GetProjectsEventHandler;
-import opus.gwt.management.console.client.event.GetUserEvent;
-import opus.gwt.management.console.client.event.GetUserEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
-import opus.gwt.management.console.client.event.AddProjectEvent;
-import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
-import opus.gwt.management.console.client.overlays.Application;
-import opus.gwt.management.console.client.overlays.DjangoPackage;
-import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
 
 
 public class ManagementConsoleController extends Composite {
@@ -159,8 +138,8 @@ public class ManagementConsoleController extends Composite {
 	private void showIconPanel(){
 		RootLayoutPanel.get().clear();
 		RootLayoutPanel.get().add(this);
-		contentLayoutPanel.clear();
 		IconPanel iconPanel = new IconPanel(clientFactory);
+		contentLayoutPanel.clear();
 		contentLayoutPanel.add(iconPanel);
 		contentLayoutPanel.setVisible(true);
 	}
