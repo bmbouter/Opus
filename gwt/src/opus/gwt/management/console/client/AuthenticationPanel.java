@@ -14,9 +14,11 @@
 #   limitations under the License.                                           #
 ############################################################################*/
 
-package opus.gwt.management.console.client.tools;
+package opus.gwt.management.console.client;
 
-import opus.gwt.management.console.client.ClientFactory;
+import java.util.ArrayList;
+
+import opus.gwt.management.console.client.deployer.ErrorPanel;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.AuthenticationEvent;
 import opus.gwt.management.console.client.event.GetUserEvent;
@@ -28,6 +30,12 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -39,6 +47,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -53,6 +62,7 @@ public class AuthenticationPanel extends Composite {
 	private boolean loggedIn;
 	private boolean firstLoginAttempt;
 	private EventBus eventBus;
+	private ClientFactory clientFactory;
 	
 	@UiField Hidden csrftoken;
 	@UiField Button loginButton;
@@ -65,19 +75,11 @@ public class AuthenticationPanel extends Composite {
 	public AuthenticationPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = clientFactory.getEventBus();
+		this.clientFactory = clientFactory;
 		loggedIn = false;
 		firstLoginAttempt = true;
-		registerHandlers();
 		setupAuthenticationForm();
-	}
-	
-	private void registerHandlers(){
-		eventBus.addHandler(GetUserEvent.TYPE, 
-			new GetUserEventHandler(){
-				public void onGetUser(GetUserEvent event){
-					handleUserInformation(event.getUser());
-				}
-		});
+		RootPanel.get().add(this);
 	}
 	
 	private void setupAuthenticationForm(){
@@ -98,6 +100,16 @@ public class AuthenticationPanel extends Composite {
         csrftoken.setName("csrfmiddlewaretoken");
 	}
 	
+	private void onLogin(boolean success){
+		if( !success ){
+  		  if( firstLoginAttempt )
+	    	  		firstLoginAttempt = false;
+  		  loginFailed();
+  	  } else {
+  		  loginSucceed();
+  	  }
+	}
+	
 	private void loginFailed(){
 		loggedIn = false;
 		usernameTextBox.setFocus(true);
@@ -110,20 +122,41 @@ public class AuthenticationPanel extends Composite {
 	
 	private void loginSucceed(){
 		loggedIn = true;
-		eventBus.fireEvent(new AuthenticationEvent());	
+		ManagementConsoleController mcc = new ManagementConsoleController(clientFactory);
 	}
 	
-	public void handleUserInformation(User userInfo){
-		if( userInfo.isAuthenticated() ){
+	private void submitLogin(){
+		StringBuffer formBuilder = new StringBuffer();
+		formBuilder.append("csrfmiddlewaretoken=");
+		formBuilder.append( URL.encodeQueryString(clientFactory.getJSVariableHandler().getCSRFTokenURL()));
 		
-		} else {
-			
-		}
+		formBuilder.append("&username=");
+		formBuilder.append( URL.encodeQueryString(usernameTextBox.getText()));
+		formBuilder.append("&password=");
+		formBuilder.append( URL.encodeQueryString(passwordTextBox.getText()));
+				
+	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/accounts/login/");
+	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
+	    
+	    try {
+	      Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
+	        public void onError(Request request, Throwable exception) {
+	        	Window.alert(exception.getMessage());
+	        }
+
+	        public void onResponseReceived(Request request, Response response) {
+		    	Window.alert(response.getText());
+		    	onLogin(false);
+	        }});
+	    } catch (RequestException e) {
+	    	
+	    }
+
 	}
 		
 	@UiHandler("loginButton")
 	void onLoginClick(ClickEvent event) {
-		authenticationForm.submit();
+		submitLogin();
 	}
 
 	@UiHandler("loginButton")

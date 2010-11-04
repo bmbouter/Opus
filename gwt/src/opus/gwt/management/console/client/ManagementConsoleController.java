@@ -29,7 +29,6 @@ import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
 import opus.gwt.management.console.client.navigation.NavigationPanel;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
-import opus.gwt.management.console.client.tools.AuthenticationPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -54,18 +53,20 @@ public class ManagementConsoleController extends Composite {
 	private JSVariableHandler jsVarHandler;
 	
 	@UiField LayoutPanel contentLayoutPanel;
-	@UiField NavigationPanel navigationPanel;
-	@UiField BreadCrumbsPanel breadCrumbsPanel;
+	@UiField(provided = true) NavigationPanel navigationPanel;
+	@UiField(provided = true) BreadCrumbsPanel breadCrumbsPanel;
 	@UiField ManagementConsoleControllerStyle style;
 	
 	public ManagementConsoleController(ClientFactory clientFactory) {
-		initWidget(uiBinder.createAndBindUi(this));
-		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
 		this.clientFactory = clientFactory;
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
 		this.eventBus = clientFactory.getEventBus();
 		registerHandlers();
-		checkAuthentication();
+		navigationPanel = new NavigationPanel(clientFactory);
+		breadCrumbsPanel.setClientFactory(clientFactory);
+		initWidget(uiBinder.createAndBindUi(this));
+		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
+		eventBus.fireEvent(new AsyncRequestEvent("getUser"));
 	}
 	
 	private void registerHandlers(){
@@ -100,13 +101,11 @@ public class ManagementConsoleController extends Composite {
 			contentLayoutPanel.clear();
 			RootLayoutPanel.get().add(new AuthenticationPanel(clientFactory));			
 		} else {
-			eventBus.fireEvent(new AsyncRequestEvent("getUser"));
+			
 		}
 	}
 	
 	private void startConsole(){
-		navigationPanel.setClientFactory(clientFactory);
-		breadCrumbsPanel.setClientFactory(clientFactory);
 		if( clientFactory.getProjects().size() > 0 ){
 			if( jsVarHandler.getProjectToken() != null ){
 				showDeployer();

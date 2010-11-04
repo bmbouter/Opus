@@ -58,20 +58,17 @@ public class NavigationPanel extends Composite {
 	@UiField Button deployNewButton;
 	@UiField NavigationPanelStyle style;
 	
-	public NavigationPanel() {
-		initWidget(uiBinder.createAndBindUi(this));
+	public NavigationPanel(ClientFactory clientFactory) {
+		this.clientFactory = clientFactory;
+		this.eventBus = clientFactory.getEventBus();
 		projectListPopup = new PopupPanel();
 		projectNamesFlowPanel = new FlowPanel();
 		projectLabels = new HashMap<String, Label>();
-		setupLogoutForm();	
-	}
-	
-	public void setClientFactory(ClientFactory clientFactory){
-		this.clientFactory = clientFactory;
-		this.eventBus = clientFactory.getEventBus();
-		setUsername(clientFactory.getUser().getUsername());
-		handleProjectNames(clientFactory.getProjects());
 		registerHandlers();
+		setUsername(clientFactory.getJSVariableHandler().getUser());
+		handleProjectNames(clientFactory.getProjects());
+		setupLogoutForm();
+		initWidget(uiBinder.createAndBindUi(this));
 	}
 	
 	private void registerHandlers(){

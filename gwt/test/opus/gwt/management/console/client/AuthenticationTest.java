@@ -1,6 +1,5 @@
 package opus.gwt.management.console.client;
 
-import opus.gwt.management.console.client.tools.AuthenticationPanel;
 
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.junit.client.GWTTestCase;
