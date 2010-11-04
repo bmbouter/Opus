@@ -47,7 +47,6 @@ public class ManagementConsoleController extends Composite {
 	
 	private EventBus eventBus;
 	private ClientFactory clientFactory;
-	private AuthenticationPanel authenticationPanel;
 	private ProjectDeployerController projectDeployerController;
 	private ProjectManagerController projectManagerController;
 	private JSVariableHandler jsVarHandler;

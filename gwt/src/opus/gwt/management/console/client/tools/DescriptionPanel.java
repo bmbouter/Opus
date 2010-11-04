@@ -56,6 +56,7 @@ public class DescriptionPanel extends PopupPanel {
 	 * Set the title that is displayed to a certain String
 	 * @param str the String title to set
 	 */
+	@Override
 	public void setTitle(String str) {
 		title.setText(str);
 	}

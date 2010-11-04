@@ -16,20 +16,10 @@
 
 package opus.gwt.management.console.client;
 
-import java.util.ArrayList;
-
-import opus.gwt.management.console.client.deployer.ErrorPanel;
-import opus.gwt.management.console.client.event.AsyncRequestEvent;
-import opus.gwt.management.console.client.event.AuthenticationEvent;
-import opus.gwt.management.console.client.event.GetUserEvent;
-import opus.gwt.management.console.client.event.GetUserEventHandler;
-import opus.gwt.management.console.client.overlays.User;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -39,7 +29,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -50,7 +39,6 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 public class AuthenticationPanel extends Composite {
 	
@@ -61,7 +49,6 @@ public class AuthenticationPanel extends Composite {
 
 	private boolean loggedIn;
 	private boolean firstLoginAttempt;
-	private EventBus eventBus;
 	private ClientFactory clientFactory;
 	
 	@UiField Hidden csrftoken;
@@ -74,30 +61,14 @@ public class AuthenticationPanel extends Composite {
 
 	public AuthenticationPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.eventBus = clientFactory.getEventBus();
 		this.clientFactory = clientFactory;
 		loggedIn = false;
 		firstLoginAttempt = true;
-		setupAuthenticationForm();
-		RootPanel.get().add(this);
-	}
-	
-	private void setupAuthenticationForm(){
-		authenticationForm.setMethod(FormPanel.METHOD_POST);
-		authenticationForm.setAction(loginURL);
-		authenticationForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		    	  if( event.getResults().contains("Please try again.") ){
-		    		  if( firstLoginAttempt )
-			    	  		firstLoginAttempt = false;
-		    		  loginFailed();
-		    	  } else {
-		    		  loginSucceed();
-		    	  }
-		      }
-		 });
-		csrftoken.setValue(Cookies.getCookie("csrftoken")); 
-        csrftoken.setName("csrfmiddlewaretoken");
+		if( !clientFactory.getJSVariableHandler().getUser().equals("") ){
+			loginSucceeded();
+		} else {
+			RootPanel.get().add(this);
+		}
 	}
 	
 	private void onLogin(boolean success){
@@ -106,7 +77,7 @@ public class AuthenticationPanel extends Composite {
 	    	  		firstLoginAttempt = false;
   		  loginFailed();
   	  } else {
-  		  loginSucceed();
+  		  loginSucceeded();
   	  }
 	}
 	
@@ -120,7 +91,7 @@ public class AuthenticationPanel extends Composite {
 		} 
 	}
 	
-	private void loginSucceed(){
+	private void loginSucceeded(){
 		loggedIn = true;
 		ManagementConsoleController mcc = new ManagementConsoleController(clientFactory);
 	}
@@ -135,7 +106,7 @@ public class AuthenticationPanel extends Composite {
 		formBuilder.append("&password=");
 		formBuilder.append( URL.encodeQueryString(passwordTextBox.getText()));
 				
-	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/accounts/login/");
+	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, loginURL);
 	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
 	    
 	    try {
@@ -145,8 +116,11 @@ public class AuthenticationPanel extends Composite {
 	        }
 
 	        public void onResponseReceived(Request request, Response response) {
-		    	Window.alert(response.getText());
-		    	onLogin(false);
+	        	if( response.getText().contains("Please try again.") ){	
+	        		onLogin(false);
+	        	} else {
+	        		onLogin(true);
+	        	}
 	        }});
 	    } catch (RequestException e) {
 	    	

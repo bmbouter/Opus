@@ -20,8 +20,6 @@ import java.util.HashMap;
 
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.event.BreadCrumbEvent;
-import opus.gwt.management.console.client.event.GetProjectsEvent;
-import opus.gwt.management.console.client.event.GetProjectsEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.overlays.Project;
@@ -40,7 +38,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;

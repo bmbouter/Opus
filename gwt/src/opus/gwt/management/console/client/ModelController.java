@@ -2,9 +2,6 @@ package opus.gwt.management.console.client;
 
 import java.util.HashMap;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.Window;
-
 import opus.gwt.management.console.client.event.AddProjectEvent;
 import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
@@ -21,8 +18,9 @@ import opus.gwt.management.console.client.event.GetUserEvent;
 import opus.gwt.management.console.client.event.GetUserEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.overlays.Application;
-import opus.gwt.management.console.client.overlays.DjangoPackage;
 import opus.gwt.management.console.client.overlays.Project;
+
+import com.google.gwt.event.shared.EventBus;
 
 
 public class ModelController {

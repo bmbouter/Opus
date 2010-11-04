@@ -4,13 +4,11 @@ package opus.gwt.management.console.client.navigation;
 import java.util.HashMap;
 
 import opus.gwt.management.console.client.ClientFactory;
-import opus.gwt.management.console.client.event.AuthenticationEvent;
-import opus.gwt.management.console.client.event.AuthenticationEventHandler;
+import opus.gwt.management.console.client.event.AddProjectEvent;
+import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.event.DeleteProjectEvent;
 import opus.gwt.management.console.client.event.DeleteProjectEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
-import opus.gwt.management.console.client.event.AddProjectEvent;
-import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.NavigationPanelCss.NavigationPanelStyle;
 

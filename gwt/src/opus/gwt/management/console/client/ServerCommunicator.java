@@ -34,7 +34,6 @@ import opus.gwt.management.console.client.event.UpdateVersionEvent;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Window;
 
 public class ServerCommunicator {
 	
