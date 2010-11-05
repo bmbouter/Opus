@@ -11,6 +11,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -24,21 +25,16 @@ public class BreadCrumbsPanel extends Composite {
 	private EventBus eventBus;
 	private HTML activeCrumb;
 	private HashMap<String, HTML> breadCrumbLabels;
-	private ClientFactory clientFactory;
 	
 	@UiField FlowPanel breadCrumbsContainer;
 	@UiField BreadCrumbsPanelStyle style;
 	
-	public BreadCrumbsPanel() {
+	public BreadCrumbsPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		activeCrumb = new HTML();
-		breadCrumbLabels = new HashMap<String, HTML>();	
-	}
-
-	public void setClientFactory(ClientFactory clientFactory){
-		this.clientFactory = clientFactory;
 		this.eventBus = clientFactory.getEventBus();
 		registerHandlers();
+		activeCrumb = new HTML();
+		breadCrumbLabels = new HashMap<String, HTML>();	
 	}
 	
 	private void registerHandlers(){

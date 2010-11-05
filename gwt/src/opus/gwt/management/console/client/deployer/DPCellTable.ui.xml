@@ -23,7 +23,7 @@
           valign='top'>
           <c:CellTable
             addStyleNames='{style.cellTable}'
-            pageSize='15'
+            pageSize='10'
             ui:field='cellTable' />
         </td>
       </tr>

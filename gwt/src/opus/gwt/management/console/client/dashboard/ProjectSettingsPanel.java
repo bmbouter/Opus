@@ -6,6 +6,7 @@ import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
+import opus.gwt.management.console.client.resources.FormsCss.FormsStyle;
 import opus.gwt.management.console.client.tools.TooltipPanel;
 
 import com.google.gwt.core.client.GWT;

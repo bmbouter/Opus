@@ -41,11 +41,9 @@ public class NavigationPanel extends Composite {
 
 	private final String logoutURL = "/accounts/logout/";
 	
-	private int projectCount;
 	private EventBus eventBus;
 	private PopupPanel projectListPopup;
 	private FlowPanel projectNamesFlowPanel;
-	private ClientFactory clientFactory;
 	private HashMap<String, Label> projectLabels;
 	
 	@UiField HTMLPanel buttonHTMLPanel;
@@ -57,16 +55,15 @@ public class NavigationPanel extends Composite {
 	@UiField NavigationPanelStyle style;
 	
 	public NavigationPanel(ClientFactory clientFactory) {
-		this.clientFactory = clientFactory;
+		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = clientFactory.getEventBus();
 		projectListPopup = new PopupPanel();
 		projectNamesFlowPanel = new FlowPanel();
 		projectLabels = new HashMap<String, Label>();
 		registerHandlers();
-		setUsername(clientFactory.getJSVariableHandler().getUser());
 		handleProjectNames(clientFactory.getProjects());
 		setupLogoutForm();
-		initWidget(uiBinder.createAndBindUi(this));
+		setUsername(clientFactory.getUser().getUsername());
 	}
 	
 	private void registerHandlers(){
@@ -76,10 +73,10 @@ public class NavigationPanel extends Composite {
 					addProject(event.getProject());
 		}});
 		eventBus.addHandler(DeleteProjectEvent.TYPE, 
-				new DeleteProjectEventHandler(){
-					public void onDeleteProject(DeleteProjectEvent event) {
-						removeProject(event.getProjectName());
-					}
+			new DeleteProjectEventHandler(){
+				public void onDeleteProject(DeleteProjectEvent event) {
+					removeProject(event.getProjectName());
+				}
 		});
 	}
 	

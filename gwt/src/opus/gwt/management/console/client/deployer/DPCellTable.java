@@ -35,8 +35,6 @@ public class DPCellTable extends Composite {
 		this.clientFactory = clientFactory;
 		ProvidesKey<DjangoPackage> keyProvider = new ProvidesKey<DjangoPackage>() {
 		      public Object getKey(DjangoPackage item) {
-		        // Always do a null check.
-		    	  item = item;
 		        return (item == null) ? null : item.getPk();
 		      }
 		};

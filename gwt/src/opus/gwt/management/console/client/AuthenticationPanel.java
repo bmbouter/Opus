@@ -93,7 +93,7 @@ public class AuthenticationPanel extends Composite {
 	
 	private void loginSucceeded(){
 		loggedIn = true;
-		ManagementConsoleController mcc = new ManagementConsoleController(clientFactory);
+		ManagementConsole mcc = new ManagementConsole(clientFactory);
 	}
 	
 	private void submitLogin(){
