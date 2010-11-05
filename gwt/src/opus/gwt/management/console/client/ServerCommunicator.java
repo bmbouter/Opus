@@ -142,9 +142,9 @@ public class ServerCommunicator {
 	    	
 		    if (queryType.equals("getUser")) {
 		    	eventBus.fireEvent(new GetUserEvent(jso));
-		    } else if (queryType == "handleApplication") {
+		    } else if (queryType.equals("handleApplication")) {
 		    	eventBus.fireEvent(new UpdateApplicationEvent(jso));
-		    } else if(queryType == "getFeatured"){
+		    } else if(queryType.equals("getFeatured")){
 		    	eventBus.fireEvent(new UpdateFeaturedListEvent(jso));
 		    } else if (queryType.equals("handleDBOptions")){
 		    	eventBus.fireEvent(new UpdateDBOptionsEvent(jso));
@@ -152,7 +152,7 @@ public class ServerCommunicator {
 		     	eventBus.fireEvent(new AddProjectEvent(jso));
 		    } else if (queryType.equals("handleImportAppList")) {	
 		    	eventBus.fireEvent(new ImportAppListEvent(jso));
-		    } else if(queryType == "handleVersion") {
+		    } else if(queryType.equals("handleVersion")) {
 		    	eventBus.fireEvent(new UpdateVersionEvent(jso));
 		    } else if(queryType.equals("getProjects")) {
 		    	eventBus.fireEvent(new GetProjectsEvent(jso));

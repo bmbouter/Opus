@@ -65,6 +65,7 @@ public class ProjectDeployerController extends Composite {
 	private PopupPanel loadingPopup;
 	private JSVariableHandler jsVarHandler;
 	private ClientFactory clientFactory;
+	private int	currentPanelIndex;
 		
 	@UiField DeckPanel deployerDeckPanel;
 	@UiField ProjectDeployerStyle style;
@@ -72,6 +73,7 @@ public class ProjectDeployerController extends Composite {
 	public ProjectDeployerController(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.createdProjectName = "";
+		this.currentPanelIndex = 0;
 		this.eventBus = clientFactory.getEventBus();
 		this.clientFactory = clientFactory;
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
@@ -114,13 +116,15 @@ public class ProjectDeployerController extends Composite {
 			new PanelTransitionEventHandler(){
 				public void onPanelTransition(PanelTransitionEvent event){
 					if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.NEXT ){
+						currentPanelIndex++;
 						Widget panel =  event.getPanel();
-						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) + 1);
+						deployerDeckPanel.showWidget(currentPanelIndex);
 						eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
 						setFocus(panel);
 					} else if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PREVIOUS ){
+						currentPanelIndex--;
 						Widget panel =  event.getPanel();
-						deployerDeckPanel.showWidget(deployerDeckPanel.getWidgetIndex(panel) - 1);
+						deployerDeckPanel.showWidget(currentPanelIndex);
 						eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
 					}
 		}});
@@ -219,7 +223,6 @@ public class ProjectDeployerController extends Composite {
 		loadingPopup.show();
 		int left = ( Window.getClientWidth() / 2 ) - 150;
 		int top = ( Window.getClientHeight() / 2) - 10;
-		//loadingPopup.setSize(Integer.toString(Window.getClientWidth()), Integer.toString(Window.getClientHeight()));
 		loadingPopup.setPopupPosition(left, top);
 		loadingPopup.show();
 	}
