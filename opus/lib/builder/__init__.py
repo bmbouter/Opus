@@ -367,7 +367,7 @@ class ProjectEditor(object):
         # Sync db and install deps
         deployer = opus.lib.deployer.ProjectDeployer(self.projectdir)
         deployer.sync_database(secureops=secureops)
-        deployer.install_requirements([appname], settings.OPUS_SECUREOPS_COMMAND)
+        deployer.install_requirements(settings.OPUS_SECUREOPS_COMMAND)
 
         # reload
         self._touch_wsgi()

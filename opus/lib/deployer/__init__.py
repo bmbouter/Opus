@@ -639,7 +639,7 @@ environment=PYTHONPATH="{path}:%(here)s",OPUS_SETTINGS_FILE={opussettings!r},DJA
         if ret:
             raise DeploymentException("Failed to create environment. Ret:{0}. Output:{1}".format(ret, output))
 
-    def install_requirements(self, apps, secureops="secureops"):
+    def install_requirements(self, secureops="secureops"):
         """Goes through each appdirectory in apprepos/* and looks for a
         requirements.pip or requirements.txt file. If one exists, calls pip
         install -r on that file
@@ -653,11 +653,14 @@ environment=PYTHONPATH="{path}:%(here)s",OPUS_SETTINGS_FILE={opussettings!r},DJA
         username = "opus"+self.projectname
 
         # Go through each app to look for requirements
-        for app in apps:
+        repodir = os.path.join(self.projectdir, "apprepos")
+        repos = os.listdir(repodir)
+        for repo in repos:
             for reqfilename in ('requirements.txt', 'requirements.pip'):
-                reqpath = os.path.join(self.projectdir, app, reqfilename)
+                reqpath = os.path.join(repodir, repo, reqfilename)
                 if os.path.exists(reqpath):
-                    log.debug("Installing requirements for %s, found in %s", app, reqpath)
+                    log.debug("Installing requirements for %s, found in %s",
+                            repo, reqpath)
                     # Run secureops -i 
                     command = [secureops,
                             "-i", username,
