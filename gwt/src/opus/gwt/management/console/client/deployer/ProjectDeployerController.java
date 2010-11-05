@@ -123,7 +123,6 @@ public class ProjectDeployerController extends Composite {
 						setFocus(panel);
 					} else if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PREVIOUS ){
 						currentPanelIndex--;
-						Widget panel =  event.getPanel();
 						deployerDeckPanel.showWidget(currentPanelIndex);
 						eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
 					}

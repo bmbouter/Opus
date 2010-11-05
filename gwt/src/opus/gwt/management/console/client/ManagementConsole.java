@@ -1,5 +1,5 @@
 /*############################################################################
-# Copyright 2010 North Carolina State University                             #
+	# Copyright 2010 North Carolina State University                             #
 #                                                                            #
 #   Licensed under the Apache License, Version 2.0 (the "License");          #
 #   you may not use this file except in compliance with the License.         #
@@ -40,7 +40,7 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class ManagementConsole extends Composite {
+public class ManagementConsole extends Composite {	
 
 	private static ManagementConsoleUiBinder uiBinder = GWT.create(ManagementConsoleUiBinder.class);
 	interface ManagementConsoleUiBinder extends UiBinder<Widget, ManagementConsole> {}
@@ -48,6 +48,7 @@ public class ManagementConsole extends Composite {
 	private EventBus eventBus;
 	private ClientFactory clientFactory;
 	private JSVariableHandler jsVarHandler;
+	private ProjectDeployerController projectDeployerController; 
 	
 	@UiField LayoutPanel contentLayoutPanel;
 	@UiField(provided = true) NavigationPanel navigationPanel;
@@ -95,7 +96,7 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void showDeployer(){
-		ProjectDeployerController projectDeployerController = new ProjectDeployerController(clientFactory);
+		projectDeployerController = new ProjectDeployerController(clientFactory);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(projectDeployerController);
 		contentLayoutPanel.setVisible(true);

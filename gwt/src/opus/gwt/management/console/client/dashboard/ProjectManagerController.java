@@ -87,8 +87,8 @@ public class ProjectManagerController extends Composite {
 		dashboardPanel.setTitle("Dashboard");
 		managerDeckPanel.add(deleteProjectPanel);
 		deleteProjectPanel.setTitle("Delete Project");
-//		managerDeckPanel.add(projectSettingsPanel);
-//		projectSettingsPanel.setTitle("Project Settings");
+		managerDeckPanel.add(projectSettingsPanel);
+		projectSettingsPanel.setTitle("Project Settings");
 		managerDeckPanel.showWidget(0);
 	}
 }
