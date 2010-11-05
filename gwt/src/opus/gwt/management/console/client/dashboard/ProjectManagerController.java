@@ -39,6 +39,7 @@ public class ProjectManagerController extends Composite {
 	private DashboardPanel dashboardPanel;
 	private DeleteProjectPanel deleteProjectPanel;
 	private ProjectSettingsPanel projectSettingsPanel;
+	private AppSettingsPanel appSettingsPanel;
 	private EventBus eventBus;
 	private String projectName;
 	private ClientFactory clientFactory;
@@ -53,7 +54,7 @@ public class ProjectManagerController extends Composite {
 		this.projectName = projectName;
 		this.dashboardPanel = new DashboardPanel(clientFactory, projectName);
 		this.deleteProjectPanel = new DeleteProjectPanel(clientFactory, projectName);
-		this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory, projectName);
+		//this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory, projectName);
 		setupmanagerDeckPanel();
 		registerHandlers();
 		setupBreadCrumbs();
@@ -70,7 +71,11 @@ public class ProjectManagerController extends Composite {
 				new PanelTransitionEventHandler(){
 					public void onPanelTransition(PanelTransitionEvent event){
 						if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS ){
-							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(projectSettingsPanel));
+							//managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(projectSettingsPanel));
+							appSettingsPanel = new AppSettingsPanel(clientFactory, projectName, event.name);
+							managerDeckPanel.add(appSettingsPanel);
+							appSettingsPanel.setTitle("Application Settings");
+							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(appSettingsPanel));
 						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DELETE) {
 							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(deleteProjectPanel));
 						}
@@ -83,8 +88,8 @@ public class ProjectManagerController extends Composite {
 		dashboardPanel.setTitle("Dashboard");
 		managerDeckPanel.add(deleteProjectPanel);
 		deleteProjectPanel.setTitle("Delete Project");
-		managerDeckPanel.add(projectSettingsPanel);
-		projectSettingsPanel.setTitle("Project Settings");
+//		managerDeckPanel.add(projectSettingsPanel);
+//		projectSettingsPanel.setTitle("Project Settings");
 		managerDeckPanel.showWidget(0);
 	}
 }
