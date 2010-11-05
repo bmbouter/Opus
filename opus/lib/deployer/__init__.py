@@ -39,6 +39,14 @@ from opus.lib.log import get_logger
 import opus.lib.deployer.ssl
 log = get_logger()
 
+def which(prog):
+    paths = os.environ.get("PATH", os.defpath).split(os.pathsep)
+    for path in paths:
+        progpath = os.path.join(path, prog)
+        if os.path.exists(progpath):
+            return progpath
+    return False
+
 class DeploymentException(Exception):
     pass
 
@@ -191,7 +199,15 @@ if __name__ == "__main__":
     def _sync_database(self, secureops):
         # Runs sync on the database
         log.debug("Running syncdb")
-        proc = subprocess.Popen([secureops, "-y", "opus"+self.projectname],
+        envpython = os.path.join(self.projectdir, "env", "bin", "python")
+        # Search path for where django-admin is
+        djangoadmin = which("django-admin.py")
+        if not djangoadmin:
+            raise DeploymentException("Could not find django-admin.py. Is it installed and in the system PATH?")
+        proc = subprocess.Popen([secureops, "-y", "opus"+self.projectname,
+            envpython,
+            djangoadmin
+            ],
                 cwd=self.projectdir,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,

@@ -225,6 +225,8 @@ class DeployedProject(models.Model):
         # set by set_paths are used by a models.py at import time.
         d.set_paths()
 
+        d.install_requirements(self.get_apps(), settings.OPUS_SECUREOPS_COMMAND)
+
         d.sync_database(info.superusername,
                 info.superemail,
                 info.superpassword,
@@ -235,8 +237,6 @@ class DeployedProject(models.Model):
 
         d.setup_celery(settings.OPUS_SECUREOPS_COMMAND,
                 pythonpath=self._get_path_additions())
-
-        d.install_requirements(self.get_apps(), settings.OPUS_SECUREOPS_COMMAND)
 
         if active:
             self.activate(d)
