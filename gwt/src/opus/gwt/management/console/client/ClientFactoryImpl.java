@@ -1,5 +1,6 @@
 package opus.gwt.management.console.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class ClientFactoryImpl implements ClientFactory {
 	private User user;
 	private HashMap<String, Application> applications = null;
 	private HashMap<String, Project> projects = null;
-	private List<DjangoPackage> djangoPackages = null;
+	private List<DjangoPackage> djangoPackages = new ArrayList<DjangoPackage>();
 	
 	@Override
 	public EventBus getEventBus(){

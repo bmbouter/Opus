@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '3CE1FEADD1EE3FFC0CE47D6CB173DD9F';
+var $strongName = 'BAB52B989FFA86B03712A3C99BAE7F0B';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -12533,6 +12533,7 @@ function equalsWithNullCheck(a, b){
 
 function ClientFactoryImpl_0(){
   this.eventBus = new SimpleEventBus_0;
+  this.djangoPackages = new ArrayList_0;
 }
 
 function ClientFactoryImpl(){
@@ -12545,7 +12546,6 @@ _.getClass$ = function getClass_284(){
 ;
 _.castableTypeMap$ = {};
 _.applications = null;
-_.djangoPackages = null;
 _.projects = null;
 _.user = null;
 function $manageProjects(this$static, projectName){
