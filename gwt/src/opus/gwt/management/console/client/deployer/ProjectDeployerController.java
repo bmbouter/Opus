@@ -81,7 +81,7 @@ public class ProjectDeployerController extends Composite {
 		this.databaseOptionsPanel = new DatabaseOptionsPanel(clientFactory);
 		this.deploymentOptionsPanel = new DeploymentOptionsPanel(clientFactory);
 		setupLoadingPopup();
-		setupdeployerDeckPanel();
+		setupDeployerDeckPanel();
 		registerHandlers();
 		setupBreadCrumbs();
 		String token = jsVarHandler.getProjectToken();
@@ -90,7 +90,7 @@ public class ProjectDeployerController extends Composite {
 		}
 	}
 	
-	private void setupdeployerDeckPanel(){
+	private void setupDeployerDeckPanel(){
 		deployerDeckPanel.add(appBrowserPanel);
 		deployerDeckPanel.add(projectOptionsPanel);
 		deployerDeckPanel.add(databaseOptionsPanel);

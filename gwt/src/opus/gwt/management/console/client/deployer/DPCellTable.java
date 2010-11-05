@@ -1,7 +1,5 @@
 package opus.gwt.management.console.client.deployer;
 
-import java.util.ArrayList;
-
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.overlays.DjangoPackage;
 
@@ -21,7 +19,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.SelectionModel;
 
 public class DPCellTable extends Composite {
 
@@ -38,8 +35,6 @@ public class DPCellTable extends Composite {
 		this.clientFactory = clientFactory;
 		ProvidesKey<DjangoPackage> keyProvider = new ProvidesKey<DjangoPackage>() {
 		      public Object getKey(DjangoPackage item) {
-		        // Always do a null check.
-		    	  item = (DjangoPackage)item;
 		        return (item == null) ? null : item.getPk();
 		      }
 		};

@@ -4,13 +4,11 @@ package opus.gwt.management.console.client.navigation;
 import java.util.HashMap;
 
 import opus.gwt.management.console.client.ClientFactory;
-import opus.gwt.management.console.client.event.AuthenticationEvent;
-import opus.gwt.management.console.client.event.AuthenticationEventHandler;
+import opus.gwt.management.console.client.event.AddProjectEvent;
+import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.event.DeleteProjectEvent;
 import opus.gwt.management.console.client.event.DeleteProjectEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
-import opus.gwt.management.console.client.event.AddProjectEvent;
-import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.NavigationPanelCss.NavigationPanelStyle;
 
@@ -43,11 +41,9 @@ public class NavigationPanel extends Composite {
 
 	private final String logoutURL = "/accounts/logout/";
 	
-	private int projectCount;
 	private EventBus eventBus;
 	private PopupPanel projectListPopup;
 	private FlowPanel projectNamesFlowPanel;
-	private ClientFactory clientFactory;
 	private HashMap<String, Label> projectLabels;
 	
 	@UiField HTMLPanel buttonHTMLPanel;
@@ -59,16 +55,15 @@ public class NavigationPanel extends Composite {
 	@UiField NavigationPanelStyle style;
 	
 	public NavigationPanel(ClientFactory clientFactory) {
-		this.clientFactory = clientFactory;
+		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = clientFactory.getEventBus();
 		projectListPopup = new PopupPanel();
 		projectNamesFlowPanel = new FlowPanel();
 		projectLabels = new HashMap<String, Label>();
 		registerHandlers();
-		setUsername(clientFactory.getJSVariableHandler().getUser());
 		handleProjectNames(clientFactory.getProjects());
 		setupLogoutForm();
-		initWidget(uiBinder.createAndBindUi(this));
+		setUsername(clientFactory.getUser().getUsername());
 	}
 	
 	private void registerHandlers(){
@@ -78,10 +73,10 @@ public class NavigationPanel extends Composite {
 					addProject(event.getProject());
 		}});
 		eventBus.addHandler(DeleteProjectEvent.TYPE, 
-				new DeleteProjectEventHandler(){
-					public void onDeleteProject(DeleteProjectEvent event) {
-						removeProject(event.getProjectName());
-					}
+			new DeleteProjectEventHandler(){
+				public void onDeleteProject(DeleteProjectEvent event) {
+					removeProject(event.getProjectName());
+				}
 		});
 	}
 	
