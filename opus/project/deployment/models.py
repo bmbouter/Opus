@@ -208,6 +208,8 @@ class DeployedProject(models.Model):
 
         d = opus.lib.deployer.ProjectDeployer(self.projectdir)
 
+        d.create_environment()
+
         # Do this before settings the sensitive database information
         d.secure_project(settings.OPUS_SECUREOPS_COMMAND)
 
@@ -233,6 +235,8 @@ class DeployedProject(models.Model):
 
         d.setup_celery(settings.OPUS_SECUREOPS_COMMAND,
                 pythonpath=self._get_path_additions())
+
+        d.install_requirements(self.get_apps(), settings.OPUS_SECUREOPS_COMMAND)
 
         if active:
             self.activate(d)

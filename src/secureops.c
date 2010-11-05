@@ -55,6 +55,8 @@ int help()
     printf("Changes to the given user and runs 'django-admin.py syncdb' and that's it\n");
     printf("(You probably want to set the DJANGO_SETTINGS_FILE env var before calling\n");
     printf("    secureops -y <username>\n");
+    printf("Run pip install on a requirements file\n");
+    printf("    secureops -i <username> <path to pip> <path to requirements file>\n");
     return 1;
 }
 
@@ -573,6 +575,27 @@ int main(int argc, char **argv)
         
         return 255;
     }
+
+    if (strcmp(argv[1], "-i") == 0) {
+        if (argc < 5) {
+            printf("Not enough arguments\n");
+            return help();
+        }
+        char *username = argv[2];
+        if (drop_privs(username)) {
+            return 1;
+        }
+        char *pip = argv[3];
+        char *requirements = argv[4];
+
+        execl(pip, pip, "install", //"--use-mirrors",
+                "-r", requirements,
+                (char *)NULL);
+        printf("Could not launch pip install\n");
+
+        return 255;
+    }
+
 
     printf("Bad mode\n");
     return help();
