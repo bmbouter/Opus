@@ -92,7 +92,7 @@ public class ManagementConsoleController {
 	}
 	
 	private void start(){
-		if( projectsReady && applicationsReady && djangoPackagesReady && userReady){
+		if( projectsReady && applicationsReady && userReady){
 			ManagementConsole mc = new ManagementConsole(clientFactory);
 		}
 	}
