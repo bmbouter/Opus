@@ -31,12 +31,21 @@ import grp
 import random
 import shutil
 import time
+from glob import glob
 
 import opus
 from opus.lib.conf import OpusConfig
 from opus.lib.log import get_logger
 import opus.lib.deployer.ssl
 log = get_logger()
+
+def which(prog):
+    paths = os.environ.get("PATH", os.defpath).split(os.pathsep)
+    for path in paths:
+        progpath = os.path.join(path, prog)
+        if os.path.exists(progpath):
+            return progpath
+    return False
 
 class DeploymentException(Exception):
     pass
@@ -190,7 +199,15 @@ if __name__ == "__main__":
     def _sync_database(self, secureops):
         # Runs sync on the database
         log.debug("Running syncdb")
-        proc = subprocess.Popen([secureops, "-y", "opus"+self.projectname],
+        envpython = os.path.join(self.projectdir, "env", "bin", "python")
+        # Search path for where django-admin is
+        djangoadmin = which("django-admin.py")
+        if not djangoadmin:
+            raise DeploymentException("Could not find django-admin.py. Is it installed and in the system PATH?")
+        proc = subprocess.Popen([secureops, "-y", "opus"+self.projectname,
+            envpython,
+            djangoadmin
+            ],
                 cwd=self.projectdir,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
@@ -316,6 +333,11 @@ User.objects.create_superuser({suuser!r},{suemail!r},{supassword!r})
         command.append(os.path.join(self.projectdir, "ssl.key"))
         command.append(os.path.join(self.projectdir, "run"))
         command.append(os.path.join(self.projectdir, "opus_secure_uploads"))
+        # Set writable several directories under the requirements env
+        command.append(os.path.join(self.projectdir, "env"))
+        for d in (['bin'], ['include'], ['lib','python*','site-packages']):
+            p = glob(os.path.join(self.projectdir, "env", *d))[0]
+            command.append(p)
 
         log.info("Calling secure operation with arguments {0!r}".format(command))
         log.debug("cwd: {0}".format(os.getcwd()))
@@ -384,16 +406,23 @@ User.objects.create_superuser({suuser!r},{suemail!r},{supassword!r})
         else:
             ppdirective = ""
 
+        envpath = glob(os.path.join(self.projectdir, "env",
+            "lib", "python*", "site-packages"))[0]
+
         with open(os.path.join(wsgi_dir, "django.wsgi"), 'w') as wsgi:
             wsgi.write("""
 import os
 import sys
+import site
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 os.environ['OPUS_SETTINGS_FILE'] = {settingspath!r}
 os.environ['CELERY_LOADER'] = 'django'
 
 {additionalpaths}
+
+# Any dependencies for installed applications go in here
+site.addsitedir({envpath!r})
 
 # Needed so that apps can import their own things without having to know the
 # project name.
@@ -409,6 +438,7 @@ application = opus.lib.profile.OpusWSGIHandler()
            projectpath = self.projectdir,
            additionalpaths = ppdirective,
            settingspath = os.path.join(self.projectdir, "opussettings.json"),
+           envpath = envpath
            ))
 
 
@@ -529,6 +559,8 @@ application = opus.lib.profile.OpusWSGIHandler()
         self.config['BROKER_VHOST'] = username
         self.config.save()
 
+        path_to_python = os.path.join(self.projectdir, "env", "bin", "python")
+
         # Set up a supervisord configuration file
         supervisordconf = """
 [supervisord]
@@ -537,7 +569,7 @@ pidfile=%(here)s/run/supervisord.pid
 loglevel=debug
 
 [program:celeryd]
-command=django-admin.py celeryd --loglevel=INFO
+command={python} django-admin.py celeryd --loglevel=INFO
 directory=%(here)s
 numprocs=1
 stdout_logfile=%(here)s/log/celeryd.log
@@ -549,7 +581,7 @@ stopwaitsecs = 600
 environment=PYTHONPATH="{path}:%(here)s",OPUS_SETTINGS_FILE={opussettings!r},DJANGO_SETTINGS_MODULE=settings
 
 [program:celerybeat]
-command=django-admin.py celerybeat --loglevel=INFO -s %(here)s/sqlite/celerybeat-schedule.db
+command={python} django-admin.py celerybeat --loglevel=INFO -s %(here)s/sqlite/celerybeat-schedule.db
 directory=%(here)s
 numprocs=1
 stdout_logfile=%(here)s/log/celerybeat.log
@@ -560,7 +592,8 @@ startsecs=10
 stopwaitsecs = 600
 environment=PYTHONPATH="{path}:%(here)s",OPUS_SETTINGS_FILE={opussettings!r},DJANGO_SETTINGS_MODULE=settings
 """.format(path=pythonpath,
-        opussettings=str(os.path.join(self.projectdir, "opussettings.json")))
+        opussettings=str(os.path.join(self.projectdir, "opussettings.json")),
+        python = path_to_python)
 
         conffilepath = os.path.join(self.projectdir, "supervisord.conf")
         with open(os.path.join(self.projectdir, "supervisord.conf"), 'w') as sobj:
@@ -588,6 +621,64 @@ environment=PYTHONPATH="{path}:%(here)s",OPUS_SETTINGS_FILE={opussettings!r},DJA
         if ret:
             raise DeploymentException("Failed to start supervisord. Ret:{0}. Output:{1}".format(ret, output))
         log.debug("Secure ops finished. Ret: {0}".format(ret))
+
+    def create_environment(self):
+        """Creates a new virtualenv for this project, which will house
+        requirements for the installed applications.
+        """
+        log.debug("Creating environment")
+        proc = subprocess.Popen(["virtualenv",
+            os.path.join(self.projectdir, "env")
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            close_fds=True,
+            )
+        output = proc.communicate()[0]
+        ret = proc.wait()
+        if ret:
+            raise DeploymentException("Failed to create environment. Ret:{0}. Output:{1}".format(ret, output))
+
+    def install_requirements(self, secureops="secureops"):
+        """Goes through each appdirectory in apprepos/* and looks for a
+        requirements.pip or requirements.txt file. If one exists, calls pip
+        install -r on that file
+        """
+        log.info("Installing requirements...")
+        # Find the pip for the environment
+        pippath = os.path.join(self.projectdir, "env", "bin", "pip")
+        if not os.path.exists(pippath):
+            raise DeploymentException("Could not find the environment's pip installer. Perhaps pip is not installed? Virtualenvironments must have pip installed, which is normally done automatically.")
+
+        username = "opus"+self.projectname
+
+        # Go through each app to look for requirements
+        repodir = os.path.join(self.projectdir, "apprepos")
+        repos = os.listdir(repodir)
+        for repo in repos:
+            for reqfilename in ('requirements.txt', 'requirements.pip'):
+                reqpath = os.path.join(repodir, repo, reqfilename)
+                if os.path.exists(reqpath):
+                    log.debug("Installing requirements for %s, found in %s",
+                            repo, reqpath)
+                    # Run secureops -i 
+                    command = [secureops,
+                            "-i", username,
+                            pippath,
+                            reqpath]
+                    proc = subprocess.Popen(command,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            close_fds=True,
+                            )
+                    output = proc.communicate()[0]
+                    ret = proc.wait()
+                    log.debug("PIP output: %s", output)
+                    if ret:
+                        raise DeploymentException("Failed to install requirements. Ret:{0}. Output:{1}".format(ret, output))
+
+                            
+        
 
 class ProjectUndeployer(object):
     """Contains methods for destroying a deployed project.

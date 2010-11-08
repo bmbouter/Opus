@@ -208,6 +208,8 @@ class DeployedProject(models.Model):
 
         d = opus.lib.deployer.ProjectDeployer(self.projectdir)
 
+        d.create_environment()
+
         # Do this before settings the sensitive database information
         d.secure_project(settings.OPUS_SECUREOPS_COMMAND)
 
@@ -222,6 +224,8 @@ class DeployedProject(models.Model):
         # This must go before sync_database, in case some settings that are
         # set by set_paths are used by a models.py at import time.
         d.set_paths()
+
+        d.install_requirements(settings.OPUS_SECUREOPS_COMMAND)
 
         d.sync_database(info.superusername,
                 info.superemail,
