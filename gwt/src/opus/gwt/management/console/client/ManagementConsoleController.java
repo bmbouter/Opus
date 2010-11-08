@@ -21,6 +21,7 @@ import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.Project;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 
 
 public class ManagementConsoleController {
@@ -33,6 +34,7 @@ public class ManagementConsoleController {
 	private EventBus eventBus;
 	
 	public ManagementConsoleController(ClientFactory clientFactory){
+		Window.alert("creating the management console controller");
 		this.clientFactory = clientFactory;
 		this.eventBus = clientFactory.getEventBus();
 		registerHandlers();
@@ -92,7 +94,8 @@ public class ManagementConsoleController {
 	}
 	
 	private void start(){
-		if( projectsReady && applicationsReady && userReady){
+		if( projectsReady && applicationsReady && userReady && djangoPackagesReady){
+			Window.alert("instantiating the management console in the management console controller");
 			ManagementConsole mc = new ManagementConsole(clientFactory);
 		}
 	}

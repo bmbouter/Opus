@@ -38,6 +38,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -63,12 +64,13 @@ public class IconPanel extends Composite {
 	
 	public IconPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
+		Window.alert("creating the icon panel");
 		this.eventBus = clientFactory.getEventBus();
 		this.clientFactory = clientFactory;
 		iconMap = new HashMap<String, Integer>();
 		desc = DescriptionPanel.getInstance();
 		registerHandlers();
-		setupBreadCrumbs();
+		//setupBreadCrumbs();
 		setAppDescPanelInitialState();
 		handleProjects();
 	}
@@ -144,6 +146,7 @@ public class IconPanel extends Composite {
 		testLabel.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
 	        	testLabel.setStyleName(style.projectIcon());
+	        	Window.alert("firing event to show the dashboard from icon panel");
 	        	eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 	        }
 	     });

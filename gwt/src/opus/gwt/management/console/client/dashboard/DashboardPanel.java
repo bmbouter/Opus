@@ -114,7 +114,6 @@ public class DashboardPanel extends Composite {
 	
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
-		//eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DELETE));
 		deletePopupPanel.setPopupPosition(Window.getClientWidth()/2 - 210, Window.getClientHeight()/2 - 150);
 		deletePopupPanel.setGlassEnabled(true);
 		deletePopupPanel.setGlassStyleName(manager.glassOverlay());
@@ -231,6 +230,7 @@ public class DashboardPanel extends Composite {
 			settingsLabel.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					if(project.isActive()) {
+						Window.alert("firing switch settings event from dashboard panel");
 						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS, app.getAppName()));
 					}
 				}

@@ -26,6 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -37,7 +38,6 @@ public class ProjectManagerController extends Composite {
 
 	private DashboardPanel dashboardPanel;
 	private DeleteProjectPanel deleteProjectPanel;
-	private ProjectSettingsPanel projectSettingsPanel;
 	private AppSettingsPanel appSettingsPanel;
 	private EventBus eventBus;
 	private String projectName;
@@ -48,12 +48,13 @@ public class ProjectManagerController extends Composite {
 	
 	public ProjectManagerController(ClientFactory clientFactory, String projectName){
 		initWidget(uiBinder.createAndBindUi(this));
+		Window.alert("creating a project manager controller");
 		this.clientFactory = clientFactory;
 		this.eventBus = clientFactory.getEventBus();
 		this.projectName = projectName;
 		this.dashboardPanel = new DashboardPanel(clientFactory, projectName);
 		this.deleteProjectPanel = new DeleteProjectPanel(clientFactory, projectName);
-		//this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory, projectName);
+		this.appSettingsPanel = new AppSettingsPanel(clientFactory, projectName);
 		setupmanagerDeckPanel();
 		registerHandlers();
 		setupBreadCrumbs();
@@ -70,12 +71,10 @@ public class ProjectManagerController extends Composite {
 				new PanelTransitionEventHandler(){
 					public void onPanelTransition(PanelTransitionEvent event){
 						if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS ){
-							//managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(projectSettingsPanel));
-							appSettingsPanel = new AppSettingsPanel(clientFactory, projectName, event.name);
-							managerDeckPanel.add(appSettingsPanel);
-							appSettingsPanel.setTitle("Application Settings");
+							Window.alert("received event in project manager controller to show app settings panel");
 							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(appSettingsPanel));
 						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DELETE) {
+							Window.alert("received event in project manager controller to show delete project panel");
 							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(deleteProjectPanel));
 						}
 					}
@@ -83,12 +82,13 @@ public class ProjectManagerController extends Composite {
 	}
 	
 	private void setupmanagerDeckPanel(){
+		Window.alert("adding all the panels in project manager controller");
 		managerDeckPanel.add(dashboardPanel);
 		dashboardPanel.setTitle("Dashboard");
 		managerDeckPanel.add(deleteProjectPanel);
 		deleteProjectPanel.setTitle("Delete Project");
-		managerDeckPanel.add(projectSettingsPanel);
-		projectSettingsPanel.setTitle("Project Settings");
+		managerDeckPanel.add(appSettingsPanel);
+		appSettingsPanel.setTitle("Application Settings");
 		managerDeckPanel.showWidget(0);
 	}
 }

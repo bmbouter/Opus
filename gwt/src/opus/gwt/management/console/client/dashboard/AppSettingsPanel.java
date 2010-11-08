@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 import opus.gwt.management.console.client.resources.FormsCss.FormsStyle;
@@ -12,10 +14,10 @@ import opus.gwt.management.console.client.tools.TooltipPanel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -25,18 +27,12 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -52,9 +48,9 @@ public class AppSettingsPanel extends Composite {
 	
 	private String projectName;
 	private JSVariableHandler jsVarHandler;
+	private EventBus eventBus;
 	private boolean active;
 	private boolean hasSettings;
-	private ArrayList<String> textboxes;
 	private Project project;
 	private TooltipPanel tooltip;
 
@@ -65,19 +61,33 @@ public class AppSettingsPanel extends Composite {
 	@UiField FlowPanel content;
 
 
-	public AppSettingsPanel(ClientFactory clientFactory, String projectName, String applicationName) {
+	public AppSettingsPanel(ClientFactory clientFactory, String projectName) {
 		initWidget(uiBinder.createAndBindUi(this));
+		Window.alert("creating an app settings panel");
 		this.projectName = projectName;
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
-		this.textboxes = new ArrayList<String>();
-		this.projectLabel.setText(projectName);
+		this.eventBus = clientFactory.getEventBus();
 		this.project = clientFactory.getProjects().get(projectName);
-		importProjectSettings(project.getAppSettings(), applicationName);
+		registerHandlers();
 		tooltip = new TooltipPanel();
 		setTooltipInitialState();
 	}
 	
+	private void registerHandlers() {
+		eventBus.addHandler(PanelTransitionEvent.TYPE, 
+				new PanelTransitionEventHandler(){
+					public void onPanelTransition(PanelTransitionEvent event){
+						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS){
+							Window.alert("received event in app settings from switch settings event");
+							projectLabel.setText(projectName + " settings: " + event.name);
+							importProjectSettings(project.getAppSettings(), event.name);
+						}
+					}
+			});
+	}
+	
 	public void importProjectSettings(ProjectSettingsData settings, String application) {
+		content.clear();
 		content.setStyleName(form.content());
 		
 		JsArray<JavaScriptObject> appSettings = settings.getAppSettings(application);
@@ -85,7 +95,7 @@ public class AppSettingsPanel extends Composite {
 		FlowPanel formWrapper = new FlowPanel();
 		formWrapper.setStyleName(form.formWrapper());
 		
-		for(int j = 0; j < appSettings.length()-1; j++) {
+		for(int j = 0; j < appSettings.length(); j++) {
 			FlowPanel field = new FlowPanel();
 			FlowPanel fieldWrapper = new FlowPanel();
 			fieldWrapper.setStyleName(form.fieldWrapper());
@@ -155,7 +165,7 @@ public class AppSettingsPanel extends Composite {
 				ListBox setting = new ListBox();
 				setting.setName(settingsContent[1]);
 				setting.setStyleName(form.greyBorder());
-				setting.getElement().setInnerHTML(settingsContent[3]);
+				//setting.getElement().setInnerHTML(settingsContent[3]);
 				
 				field.add(setting);
 			} else if(settingsContent[2].equals("bool")) {
@@ -198,16 +208,16 @@ public class AppSettingsPanel extends Composite {
 //		}
 //	}
 	
-	private boolean validateForm(){
-		for(String t : textboxes){
-			//Window.alert(getValue(t));
-			if (DOM.getElementById(t).getInnerText().length() == 0) {
-				Window.alert("All settings are required.");
-				return false;
-			}
-		}
-		return true;
-	}
+//	private boolean validateForm(){
+//		for(String t : textboxes){
+//			//Window.alert(getValue(t));
+//			if (DOM.getElementById(t).getInnerText().length() == 0) {
+//				Window.alert("All settings are required.");
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 	
 	public final native String getValue(String id) /*-{ 
 		alert("hello");

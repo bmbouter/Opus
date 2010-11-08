@@ -34,6 +34,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -49,6 +50,8 @@ public class ManagementConsole extends Composite {
 	private ClientFactory clientFactory;
 	private JSVariableHandler jsVarHandler;
 	private ProjectDeployerController projectDeployerController; 
+	private ProjectManagerController projectManagerController;
+	private IconPanel iconPanel;
 	
 	@UiField LayoutPanel contentLayoutPanel;
 	@UiField(provided = true) NavigationPanel navigationPanel;
@@ -56,6 +59,7 @@ public class ManagementConsole extends Composite {
 	@UiField ManagementConsoleControllerStyle style;
 	
 	public ManagementConsole(ClientFactory clientFactory) {
+		Window.alert("creating the management console");
 		this.clientFactory = clientFactory;
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
 		this.eventBus = clientFactory.getEventBus();
@@ -77,6 +81,7 @@ public class ManagementConsole extends Composite {
 					} else if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTS ){
 						showIconPanel();
 					} else if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD ){
+						Window.alert("recieved event to show dashboard in management console");
 						manageProjects(event.getName());
 					}
 				}
@@ -103,14 +108,18 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void manageProjects(String projectName){
-		ProjectManagerController projectManagerController = new ProjectManagerController(clientFactory, projectName);
+		projectManagerController = (ProjectManagerController)contentLayoutPanel.getWidget(0);
+		projectManagerController = null;
+		Window.alert("instantiating the project manager controller in management console under manage projects");
+		projectManagerController = new ProjectManagerController(clientFactory, projectName);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(projectManagerController);
 		contentLayoutPanel.setVisible(true);
 	}
 	
 	private void showIconPanel(){
-		IconPanel iconPanel = new IconPanel(clientFactory);
+		Window.alert("instantiating the icon panel in management console");
+		iconPanel = new IconPanel(clientFactory);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(iconPanel);
 		contentLayoutPanel.setVisible(true);
