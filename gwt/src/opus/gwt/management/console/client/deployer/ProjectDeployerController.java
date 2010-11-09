@@ -126,6 +126,9 @@ public class ProjectDeployerController extends Composite {
 						deployerDeckPanel.showWidget(currentPanelIndex);
 						eventBus.fireEvent(new BreadCrumbEvent(BreadCrumbEvent.Action.SET_ACTIVE, deployerDeckPanel.getWidget(deployerDeckPanel.getVisibleWidget()).getTitle()));
 					}
+					if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DEPLOY ){
+						reset();
+					}
 		}});
 		eventBus.addHandler(DeployProjectEvent.TYPE, 
 				new DeployProjectEventHandler(){
@@ -133,6 +136,15 @@ public class ProjectDeployerController extends Composite {
 						deployProject();
 					}
 		});
+	}
+	
+	private void reset(){
+		projectOptionsPanel.reset();
+		appBrowserPanel.reset();
+		databaseOptionsPanel.reset();
+		deploymentOptionsPanel.reset();
+		deployerDeckPanel.showWidget(0);
+		currentPanelIndex = 0;
 	}
 	
 	private void setupLoadingPopup(){

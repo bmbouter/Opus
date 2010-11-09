@@ -80,6 +80,13 @@ public class ProjectOptionsPanel extends Composite {
 		});
 	}
 	
+	public void reset(){
+		usernameTextBox.setText("");
+		emailTextBox.setText("");
+		passwordTextBox.setText("");
+		passwordConfirmTextBox.setText("");
+	}
+	
 	public void setAllowedAuthApps(String allowedAuthApps){
 		int size = idProvider.getItemCount();
 		for(int i=0; i < size; i++){

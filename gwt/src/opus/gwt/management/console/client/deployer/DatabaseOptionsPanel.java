@@ -87,6 +87,13 @@ public class DatabaseOptionsPanel extends Composite {
 		});
 	}
 	
+	public void reset(){
+		nameTextBox.setText("");
+		passwordTextBox.setText("");
+		hostTextBox.setText("");
+		portTextBox.setText("");
+	}
+	
 	public void handleDBOptions(DBOptions dbOptionsData){
 		optionsFlag = false;
 		

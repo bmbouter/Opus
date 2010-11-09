@@ -40,6 +40,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -130,6 +131,22 @@ public class AppBrowserPanel extends Composite {
 					importAppList(event.getProjectData());
 				}
 		});
+	}
+	
+	public void reset(){
+		DeployListMap.clear();
+		DeployListFlowPanel.clear();
+		currentSelection = null;
+		djangoPackagesTable.selectionModel.getSelectedSet().clear();
+		allAppsLabel.setStyleName(style.allAppsLabel());
+		featuredAppsLabel.setStyleName(style.featuredAppsLabelActive());
+		djangoPackagesLabel.setStyleName(style.allAppsLabel());
+		mainDeckPanel.showWidget(0);
+		navigationselection = 2;
+		VersionInfo.clear();
+		allVersionInfo.clear();
+		AppInfo.setHTML("");
+		allAppInfo.setHTML("");
 	}
 	
 	public void populateAppGrid(HashMap<String, Application> applications) {

@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '23F64C41C29E6A9099C091C26486322F';
+var $strongName = '310299A35E8BFA6854F5ACFBEBA517FE';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -12079,7 +12079,6 @@ function $manageProjects(this$static){
 }
 
 function $showDeployer(this$static){
-  this$static.projectDeployerController = new ProjectDeployerController_0(this$static.clientFactory);
   $clear(this$static.contentLayoutPanel);
   $add_5(this$static.contentLayoutPanel, this$static.projectDeployerController);
   this$static.contentLayoutPanel.element.style.display = '';
@@ -12098,6 +12097,7 @@ function ManagementConsole_0(clientFactory){
   this.navigationPanel = new NavigationPanel_0(clientFactory);
   this.breadCrumbsPanel = new BreadCrumbsPanel_0(clientFactory);
   this.projectManagerController = new ProjectManagerController_0(clientFactory);
+  this.projectDeployerController = new ProjectDeployerController_0(clientFactory);
   this.iconPanel = new IconPanel_0(clientFactory);
   $initWidget(this, ($clinit_506() , navigationPanel = this.navigationPanel , breadCrumbsPanel = this.breadCrumbsPanel , contentLayoutPanel = new LayoutPanel_0 , f_DockLayoutPanel1 = new DockLayoutPanel_0(($clinit_64() , EM)) , navigationPanel.getStyleElement()['className'] = 'GIMQ-1ECIG' , $insert(f_DockLayoutPanel1, navigationPanel, ($clinit_304() , NORTH), 3) , breadCrumbsPanel.getStyleElement()['className'] = 'GIMQ-1ECLF' , $insert(f_DockLayoutPanel1, breadCrumbsPanel, NORTH, 2) , contentLayoutPanel.element['className'] = 'GIMQ-1ECGG' , $insert(f_DockLayoutPanel1, contentLayoutPanel, CENTER_0, 0) , f_DockLayoutPanel1.element['className'] = 'GIMQ-1ECHG' , this.contentLayoutPanel = contentLayoutPanel , $ensureInjected_1(style_3) , f_DockLayoutPanel1));
   $add_5(get_0(), this);
@@ -13907,6 +13907,21 @@ function $populateFeaturedList(this$static, jso){
   $populateAppGrid(this$static, this$static.clientFactory.applications);
 }
 
+function $reset(this$static){
+  $clearImpl(this$static.DeployListMap);
+  $clear_0(this$static.DeployListFlowPanel);
+  this$static.currentSelection = null;
+  $clearImpl($getSelectedSet(this$static.djangoPackagesTable.selectionModel).map);
+  this$static.allAppsLabel.getStyleElement()['className'] = 'GIMQ-1ECB1';
+  this$static.featuredAppsLabel.getStyleElement()['className'] = 'GIMQ-1ECL1';
+  this$static.djangoPackagesLabel.getStyleElement()['className'] = 'GIMQ-1ECB1';
+  $showWidget(this$static.mainDeckPanel, 0);
+  $clear(this$static.VersionInfo);
+  $clear(this$static.allVersionInfo);
+  $setTextOrHtml(this$static.AppInfo, '', true);
+  $setTextOrHtml(this$static.allAppInfo, '', true);
+}
+
 function $setAppInfo(this$static, icon){
   $setTextOrHtml(this$static.AppInfo, "<div class='GIMQ-1ECJ1'><img align='left' src='" + icon.icon + "' /><h1>" + icon.name_0 + '<\/h1><h2>Author: ' + icon.author_0 + '<\/h2><h2>Email: ' + icon.email_0 + '<\/h2><br />' + icon.desc + '<\/div>', true);
   $setTextOrHtml(this$static.allAppInfo, "<div class='GIMQ-1ECJ1'><img align='left' src='" + icon.icon + "' /><h1>" + icon.name_0 + '<\/h1><h2>Author: ' + icon.author_0 + '<\/h2><h2>Email: ' + icon.email_0 + '<\/h2><br />' + icon.desc + '<\/div>', true);
@@ -14782,6 +14797,13 @@ function $handlePreviousButton(this$static){
   $fireEvent_0(this$static.eventBus, new PanelTransitionEvent_0(($clinit_683() , PREVIOUS), this$static));
 }
 
+function $reset_0(this$static){
+  this$static.nameTextBox.element['value'] = '';
+  this$static.passwordTextBox.element['value'] = '';
+  this$static.hostTextBox.element['value'] = '';
+  this$static.portTextBox.element['value'] = '';
+}
+
 function $setDBOptionParams(this$static){
   var item;
   item = $getItemText(this$static.dbengineListBox, this$static.dbengineListBox.element.selectedIndex);
@@ -15486,6 +15508,12 @@ function $projectNameTextboxOnKeyUp(this$static){
   }
 }
 
+function $reset_1(this$static){
+  this$static.projectNameTextBox.element['value'] = '';
+  $setValue_1(this$static.debugCheckBox, ($clinit_432() , $clinit_432() , FALSE));
+  $setTextOrHtml(this$static.subDomainLabel, '', false);
+}
+
 function $validateFields(this$static){
   if (!$getPropertyString(this$static.projectNameTextBox.element, 'value').length) {
     this$static.projectNameTextBox.getStyleElement()['className'] = 'GIMQ-1ECFBB';
@@ -15844,9 +15872,9 @@ function $clinit_623(){
   form_3 = new DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$2_0;
 }
 
-var deployer_0 = null, form_3 = null;
 --></script>
 <script><!--
+var deployer_0 = null, form_3 = null;
 function $ensureInjected_16(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
@@ -15984,6 +16012,15 @@ function $deployProject(this$static){
   $show(this$static.loadingPopup);
 }
 
+function $reset_2(this$static){
+  $reset_3(this$static.projectOptionsPanel);
+  $reset(this$static.appBrowserPanel);
+  $reset_0(this$static.databaseOptionsPanel);
+  $reset_1(this$static.deploymentOptionsPanel);
+  $showWidget(this$static.deployerDeckPanel, 0);
+  this$static.currentPanelIndex = 0;
+}
+
 function $setFocus_0(this$static, panel){
   panel.getClass$() == Lopus_gwt_management_console_client_deployer_DatabaseOptionsPanel_2_classLit?(this$static.deploymentOptionsPanel.projectNameTextBox.element.focus() , undefined):panel.getClass$() == Lopus_gwt_management_console_client_deployer_AppBrowserPanel_2_classLit?(this$static.projectOptionsPanel.usernameTextBox.element.focus() , undefined):panel.getClass$() == Lopus_gwt_management_console_client_deployer_ProjectOptionsPanel_2_classLit && (this$static.databaseOptionsPanel.dbengineListBox.element.focus() , undefined);
 }
@@ -16070,6 +16107,7 @@ _.onPanelTransition = function onPanelTransition_4(event_0){
     $showWidget(this.this$0.deployerDeckPanel, this.this$0.currentPanelIndex);
     $fireEvent_0(this.this$0.eventBus, new BreadCrumbEvent_1(($clinit_666() , SET_ACTIVE), $get_1(this.this$0.deployerDeckPanel.children, $getVisibleWidget(this.this$0.deployerDeckPanel)).getTitle()));
   }
+  event_0.transitionType == DEPLOY && $reset_2(this.this$0);
 }
 ;
 _.castableTypeMap$ = {17:1, 91:1};
@@ -16301,6 +16339,13 @@ function $passwordTextBoxOnFocus(this$static){
     $setTextOrHtml(this$static.active_0.text_0, 'Must be entered if your wish to create a superuser.', true);
     $show(this$static.active_0);
   }
+}
+
+function $reset_3(this$static){
+  this$static.usernameTextBox.element['value'] = '';
+  this$static.emailTextBox.element['value'] = '';
+  this$static.passwordTextBox.element['value'] = '';
+  this$static.passwordConfirmTextBox.element['value'] = '';
 }
 
 function $setAllowedAuthApps(this$static, allowedAuthApps){

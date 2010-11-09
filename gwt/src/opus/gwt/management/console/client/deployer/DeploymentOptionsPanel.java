@@ -83,6 +83,12 @@ public class DeploymentOptionsPanel extends Composite {
 		}
 	}
 	
+	public void reset(){
+		projectNameTextBox.setText("");
+		debugCheckBox.setValue(false);
+		subDomainLabel.setText("");
+	}
+	
 	public void setFocus(){
 		projectNameTextBox.setFocus(true);
 	}

@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '854FC9E90BA154D84D1898E4CED1391A';
+var $strongName = '64153BF726857F0479311F8B74FCAD21';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -12529,7 +12529,6 @@ function $manageProjects(this$static){
 }
 
 function $showDeployer(this$static){
-  this$static.projectDeployerController = new ProjectDeployerController_0(this$static.clientFactory);
   $clear(this$static.contentLayoutPanel);
   $add_5(this$static.contentLayoutPanel, this$static.projectDeployerController);
   this$static.contentLayoutPanel.element.style.display = '';
@@ -12548,6 +12547,7 @@ function ManagementConsole_0(clientFactory){
   this.navigationPanel = new NavigationPanel_0(clientFactory);
   this.breadCrumbsPanel = new BreadCrumbsPanel_0(clientFactory);
   this.projectManagerController = new ProjectManagerController_0(clientFactory);
+  this.projectDeployerController = new ProjectDeployerController_0(clientFactory);
   this.iconPanel = new IconPanel_0(clientFactory);
   $initWidget(this, ($clinit_513() , navigationPanel = this.navigationPanel , breadCrumbsPanel = this.breadCrumbsPanel , contentLayoutPanel = new LayoutPanel_0 , f_DockLayoutPanel1 = new DockLayoutPanel_0(($clinit_68() , EM)) , navigationPanel.getStyleElement()['className'] = 'GIMQ-1ECIG' , $insert(f_DockLayoutPanel1, navigationPanel, ($clinit_309() , NORTH), 3) , breadCrumbsPanel.getStyleElement()['className'] = 'GIMQ-1ECLF' , $insert(f_DockLayoutPanel1, breadCrumbsPanel, NORTH, 2) , contentLayoutPanel.element['className'] = 'GIMQ-1ECGG' , $insert(f_DockLayoutPanel1, contentLayoutPanel, CENTER_0, 0) , f_DockLayoutPanel1.element['className'] = 'GIMQ-1ECHG' , this.contentLayoutPanel = contentLayoutPanel , $ensureInjected_1(style_3) , f_DockLayoutPanel1));
   $add_5(get_0(), this);
@@ -14357,6 +14357,21 @@ function $populateFeaturedList(this$static, jso){
   $populateAppGrid(this$static, this$static.clientFactory.applications);
 }
 
+function $reset(this$static){
+  $clearImpl(this$static.DeployListMap);
+  $clear_0(this$static.DeployListFlowPanel);
+  this$static.currentSelection = null;
+  $clearImpl($getSelectedSet(this$static.djangoPackagesTable.selectionModel).map);
+  this$static.allAppsLabel.getStyleElement()['className'] = 'GIMQ-1ECB1';
+  this$static.featuredAppsLabel.getStyleElement()['className'] = 'GIMQ-1ECL1';
+  this$static.djangoPackagesLabel.getStyleElement()['className'] = 'GIMQ-1ECB1';
+  $showWidget(this$static.mainDeckPanel, 0);
+  $clear(this$static.VersionInfo);
+  $clear(this$static.allVersionInfo);
+  $setTextOrHtml(this$static.AppInfo, '', true);
+  $setTextOrHtml(this$static.allAppInfo, '', true);
+}
+
 function $setAppInfo(this$static, icon){
   $setTextOrHtml(this$static.AppInfo, "<div class='GIMQ-1ECJ1'><img align='left' src='" + icon.icon + "' /><h1>" + icon.name_0 + '<\/h1><h2>Author: ' + icon.author_0 + '<\/h2><h2>Email: ' + icon.email_0 + '<\/h2><br />' + icon.desc + '<\/div>', true);
   $setTextOrHtml(this$static.allAppInfo, "<div class='GIMQ-1ECJ1'><img align='left' src='" + icon.icon + "' /><h1>" + icon.name_0 + '<\/h1><h2>Author: ' + icon.author_0 + '<\/h2><h2>Email: ' + icon.email_0 + '<\/h2><br />' + icon.desc + '<\/div>', true);
@@ -15232,6 +15247,13 @@ function $handlePreviousButton(this$static){
   $fireEvent_0(this$static.eventBus, new PanelTransitionEvent_0(($clinit_690() , PREVIOUS), this$static));
 }
 
+function $reset_0(this$static){
+  this$static.nameTextBox.element['value'] = '';
+  this$static.passwordTextBox.element['value'] = '';
+  this$static.hostTextBox.element['value'] = '';
+  this$static.portTextBox.element['value'] = '';
+}
+
 function $setDBOptionParams(this$static){
   var item;
   item = $getItemText(this$static.dbengineListBox, this$static.dbengineListBox.element.selectedIndex);
@@ -15936,6 +15958,12 @@ function $projectNameTextboxOnKeyUp(this$static){
   }
 }
 
+function $reset_1(this$static){
+  this$static.projectNameTextBox.element['value'] = '';
+  $setValue_1(this$static.debugCheckBox, ($clinit_439() , $clinit_439() , FALSE));
+  $setTextOrHtml(this$static.subDomainLabel, '', false);
+}
+
 function $validateFields(this$static){
   if (!$getPropertyString(this$static.projectNameTextBox.element, 'value').length) {
     this$static.projectNameTextBox.getStyleElement()['className'] = 'GIMQ-1ECFBB';
@@ -16288,6 +16316,8 @@ _.onKeyUp = function onKeyUp_4(event_0){
 ;
 _.castableTypeMap$ = {11:1, 17:1};
 _.val$owner = null;
+--></script>
+<script><!--
 function $clinit_630(){
   $clinit_630 = nullMethod;
   deployer_0 = new DeploymentOptionsPanel_DeploymentOptionsBuildProjectUiBinderImpl_GenBundle_default_InlineClientBundleGenerator$1_0;
@@ -16295,8 +16325,6 @@ function $clinit_630(){
 }
 
 var deployer_0 = null, form_3 = null;
---></script>
-<script><!--
 function $ensureInjected_16(this$static){
   if (!this$static.injected) {
     this$static.injected = true;
@@ -16434,6 +16462,15 @@ function $deployProject(this$static){
   $show(this$static.loadingPopup);
 }
 
+function $reset_2(this$static){
+  $reset_3(this$static.projectOptionsPanel);
+  $reset(this$static.appBrowserPanel);
+  $reset_0(this$static.databaseOptionsPanel);
+  $reset_1(this$static.deploymentOptionsPanel);
+  $showWidget(this$static.deployerDeckPanel, 0);
+  this$static.currentPanelIndex = 0;
+}
+
 function $setFocus_1(this$static, panel){
   panel.getClass$() == Lopus_gwt_management_console_client_deployer_DatabaseOptionsPanel_2_classLit?(impl_1.focus_0(this$static.deploymentOptionsPanel.projectNameTextBox.element) , undefined):panel.getClass$() == Lopus_gwt_management_console_client_deployer_AppBrowserPanel_2_classLit?(impl_1.focus_0(this$static.projectOptionsPanel.usernameTextBox.element) , undefined):panel.getClass$() == Lopus_gwt_management_console_client_deployer_ProjectOptionsPanel_2_classLit && (impl_1.focus_0(this$static.databaseOptionsPanel.dbengineListBox.element) , undefined);
 }
@@ -16520,6 +16557,7 @@ _.onPanelTransition = function onPanelTransition_4(event_0){
     $showWidget(this.this$0.deployerDeckPanel, this.this$0.currentPanelIndex);
     $fireEvent_0(this.this$0.eventBus, new BreadCrumbEvent_1(($clinit_673() , SET_ACTIVE), $get_1(this.this$0.deployerDeckPanel.children_0, $getVisibleWidget(this.this$0.deployerDeckPanel)).getTitle()));
   }
+  event_0.transitionType == DEPLOY && $reset_2(this.this$0);
 }
 ;
 _.castableTypeMap$ = {17:1, 91:1};
@@ -16753,6 +16791,13 @@ function $passwordTextBoxOnFocus(this$static){
   }
 }
 
+function $reset_3(this$static){
+  this$static.usernameTextBox.element['value'] = '';
+  this$static.emailTextBox.element['value'] = '';
+  this$static.passwordTextBox.element['value'] = '';
+  this$static.passwordConfirmTextBox.element['value'] = '';
+}
+
 function $setAllowedAuthApps(this$static, allowedAuthApps){
   var i, option, option$index, option$max, options, size;
   size = this$static.idProvider.element.children.length;
@@ -16846,6 +16891,8 @@ function ProjectOptionsPanel$1_0(this$0){
 function ProjectOptionsPanel$1(){
 }
 
+--></script>
+<script><!--
 _ = ProjectOptionsPanel$1_0.prototype = ProjectOptionsPanel$1.prototype = new Object_0;
 _.getClass$ = function getClass_393(){
   return Lopus_gwt_management_console_client_deployer_ProjectOptionsPanel$1_2_classLit;
@@ -16857,8 +16904,6 @@ _.onUpdateDBOptions = function onUpdateDBOptions_0(event_0){
 ;
 _.castableTypeMap$ = {17:1, 92:1};
 _.this$0 = null;
---></script>
-<script><!--
 function $createAndBindUi_11(owner){
   var active, attachRecord0, attachRecord1, attachRecord10, attachRecord11, attachRecord12, attachRecord13, attachRecord14, attachRecord15, attachRecord16, attachRecord17, attachRecord2, attachRecord3, attachRecord4, attachRecord5, attachRecord6, attachRecord7, attachRecord8, attachRecord9, domId0, domId0Element, domId1, domId10, domId10Element, domId11, domId11Element, domId12, domId12Element, domId13, domId13Element, domId14, domId14Element, domId15, domId15Element, domId16, domId16Element, domId17, domId17Element, domId18, domId18Element, domId19, domId19Element, domId1Element, domId2, domId20, domId20Element, domId21, domId21Element, domId22, domId22Element, domId23, domId23Element, domId24, domId24Element, domId25, domId25Element, domId26, domId26Element, domId27, domId27Element, domId28, domId28Element, domId29, domId29Element, domId2Element, domId3, domId3Element, domId4, domId4Element, domId5, domId5Element, domId6, domId6Element, domId7, domId7Element, domId8, domId8Element, domId9, domId9Element, emailError, emailTextBox, f_HTMLPanel10, f_HTMLPanel11, f_HTMLPanel12, f_HTMLPanel13, f_HTMLPanel14, f_HTMLPanel15, f_HTMLPanel16, f_HTMLPanel17, f_HTMLPanel18, f_HTMLPanel19, f_HTMLPanel2, f_HTMLPanel20, f_HTMLPanel21, f_HTMLPanel3, f_HTMLPanel4, f_HTMLPanel5, f_HTMLPanel6, f_HTMLPanel7, f_HTMLPanel8, f_HTMLPanel9, f_SimplePanel1, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames1, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames10, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames2, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames3, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames4, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames5, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames6, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames7, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames8, handlerMethodWithNameVeryUnlikelyToCollideWithUserFieldNames9, idProvider, nextButton, passwordConfirmTextBox, passwordError, passwordTextBox, previousButton, projectOptionsPanel, usernameTextBox;
   $clinit_661();

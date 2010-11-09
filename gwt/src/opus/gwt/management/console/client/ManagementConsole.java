@@ -60,6 +60,7 @@ public class ManagementConsole extends Composite {
 		navigationPanel = new NavigationPanel(clientFactory);
 		breadCrumbsPanel = new BreadCrumbsPanel(clientFactory);
 		projectManagerController = new ProjectManagerController(clientFactory);
+		projectDeployerController = new ProjectDeployerController(clientFactory);
 		iconPanel = new IconPanel(clientFactory);
 		initWidget(uiBinder.createAndBindUi(this));
 		RootLayoutPanel.get().add(this);
@@ -96,7 +97,6 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void showDeployer(){
-		projectDeployerController = new ProjectDeployerController(clientFactory);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(projectDeployerController);
 		contentLayoutPanel.setVisible(true);
