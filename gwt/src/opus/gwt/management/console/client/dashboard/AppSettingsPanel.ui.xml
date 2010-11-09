@@ -8,7 +8,7 @@
 		<g:HTMLPanel styleName="{style.dashboardMainPanel}">
 			<g:HTMLPanel styleName="{style.header}">
 				<g:HTMLPanel styleName="{style.insetType}">
-					<h1>Settings: <g:Label styleName="{style.inline}" ui:field="projectLabel"/></h1>
+					<h1><g:Label styleName="{style.inline}" ui:field="projectLabel"/></h1>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:FlowPanel ui:field="content" />

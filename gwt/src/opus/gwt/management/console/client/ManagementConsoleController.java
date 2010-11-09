@@ -16,6 +16,7 @@ import opus.gwt.management.console.client.event.GetUserEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 
 
 public class ManagementConsoleController {
@@ -87,7 +88,7 @@ public class ManagementConsoleController {
 	}
 	
 	private void start(){
-		if( projectsReady && applicationsReady && userReady){
+		if(projectsReady && applicationsReady && userReady && djangoPackagesReady){
 			ManagementConsole mc = new ManagementConsole(clientFactory);
 		}
 	}

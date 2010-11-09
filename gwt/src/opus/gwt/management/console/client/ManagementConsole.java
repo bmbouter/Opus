@@ -29,6 +29,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -44,6 +45,8 @@ public class ManagementConsole extends Composite {
 	private ClientFactory clientFactory;
 	private JSVariableHandler jsVarHandler;
 	private ProjectDeployerController projectDeployerController; 
+	private ProjectManagerController projectManagerController;
+	private IconPanel iconPanel;
 	
 	@UiField LayoutPanel contentLayoutPanel;
 	@UiField(provided = true) NavigationPanel navigationPanel;
@@ -56,6 +59,8 @@ public class ManagementConsole extends Composite {
 		this.eventBus = clientFactory.getEventBus();
 		navigationPanel = new NavigationPanel(clientFactory);
 		breadCrumbsPanel = new BreadCrumbsPanel(clientFactory);
+		projectManagerController = new ProjectManagerController(clientFactory);
+		iconPanel = new IconPanel(clientFactory);
 		initWidget(uiBinder.createAndBindUi(this));
 		RootLayoutPanel.get().add(this);
 		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
@@ -98,14 +103,13 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void manageProjects(String projectName){
-		ProjectManagerController projectManagerController = new ProjectManagerController(clientFactory, projectName);
+		//projectManagerController = ProjectManagerController.getInstance(clientFactory, projectName);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(projectManagerController);
 		contentLayoutPanel.setVisible(true);
 	}
 	
 	private void showIconPanel(){
-		IconPanel iconPanel = new IconPanel(clientFactory);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(iconPanel);
 		contentLayoutPanel.setVisible(true);

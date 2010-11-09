@@ -22,6 +22,7 @@ import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.event.DeleteProjectEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.overlays.Application;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.resources.ManagementConsoleControllerResources.ManagementConsoleControllerStyle;
@@ -87,23 +88,34 @@ public class DashboardPanel extends Composite {
 	@UiField Button noThanksButton;
 	@UiField FlowPanel deleteTitlePanel;
 	
-	public DashboardPanel(ClientFactory clientFactory, String projectName) {
+	public DashboardPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = clientFactory.getEventBus();
 		this.clientFactory = clientFactory;
 		this.JSVarHandler = clientFactory.getJSVariableHandler();
 		this.applications = clientFactory.getApplications();
-		this.projectName = projectName;
-		projectLabel.setText(projectName);
 		activeButton.setText("");
 		deleteForm = new FormPanel();
+		registerHandlers();
 		setDeletePopupPanelInitialState();
-		handleProjectInformation(projectName);
+	}
+	
+	private void registerHandlers() {
+		eventBus.addHandler(PanelTransitionEvent.TYPE, 
+				new PanelTransitionEventHandler(){
+					public void onPanelTransition(PanelTransitionEvent event){
+						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD){
+							projectName = event.name;
+							projectLabel.setText(projectName);
+							handleProjectInformation(projectName);
+						}
+					}
+			});
 	}
 	
 	@UiHandler("settingsButton")
 	void onSettingsButtonClick(ClickEvent event){
-		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS));
+		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS, "worklog"));
 	}
 	
 	@UiHandler("activeButton")
@@ -113,7 +125,6 @@ public class DashboardPanel extends Composite {
 	
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
-		//eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DELETE));
 		deletePopupPanel.setPopupPosition(Window.getClientWidth()/2 - 210, Window.getClientHeight()/2 - 150);
 		deletePopupPanel.setGlassEnabled(true);
 		deletePopupPanel.setGlassStyleName(manager.glassOverlay());
@@ -149,6 +160,8 @@ public class DashboardPanel extends Composite {
 	}
 
 	public void handleProjectInformation(String projectName){
+		applicationsFlowPanel.clear();
+		
 		final Project project = clientFactory.getProjects().get(projectName);
 		HashMap<String, Application> applicationsMap = clientFactory.getApplications();
 		JsArrayString applicationsArray = project.getApps();
