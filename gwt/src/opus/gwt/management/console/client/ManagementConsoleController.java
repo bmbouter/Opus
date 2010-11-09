@@ -34,7 +34,6 @@ public class ManagementConsoleController {
 	private EventBus eventBus;
 	
 	public ManagementConsoleController(ClientFactory clientFactory){
-		Window.alert("creating the management console controller");
 		this.clientFactory = clientFactory;
 		this.eventBus = clientFactory.getEventBus();
 		registerHandlers();
@@ -94,8 +93,7 @@ public class ManagementConsoleController {
 	}
 	
 	private void start(){
-		if( projectsReady && applicationsReady && userReady && djangoPackagesReady){
-			Window.alert("instantiating the management console in the management console controller");
+		if(projectsReady && applicationsReady && userReady && djangoPackagesReady){
 			ManagementConsole mc = new ManagementConsole(clientFactory);
 		}
 	}

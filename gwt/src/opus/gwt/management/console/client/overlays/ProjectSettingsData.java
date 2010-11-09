@@ -16,6 +16,7 @@ public class ProjectSettingsData extends JavaScriptObject{
 	
 	public final native JsArray<JavaScriptObject> getAppSettings(String appname) /*-{
 		var settings = this[appname];
+		
 		for(var i=0; i<settings.length; i++) {
 			if (settings[i][2] == "choice") {
 				//alert(settings[i][3][2]);
@@ -25,19 +26,42 @@ public class ProjectSettingsData extends JavaScriptObject{
 	}-*/;
 
 	public final native JsArray<JavaScriptObject> getSettingsArray(JavaScriptObject setting) /*-{
+//		alert("Setting: " + setting);
+//		if(setting[2] == "choice") {
+//			var options = "";
+//			var selected = "";
+//			
+//			for(var i=0; i<setting[3][0].length-1; i++) {
+//				if (setting[3][i][2] == "true"){
+//					selected = "selected='selected'";
+//				}
+//				options += "<option value='" +setting[3][i][0] + "'" + selected + ">" + setting[3][i][1] + "</option>\n";
+//			}
+//			setting[3] = options;
+//		}
+		return setting;
+	}-*/;
+	
+	public final native String getChoiceSettingsArray(JavaScriptObject setting) /*-{
 		
 		if(setting[2] == "choice") {
 			var options = "";
 			var selected = "";
-			for(var i=0; i<setting[3][0].length-1; i++) {
-				if (setting[3][i][2] == "true"){
+			var choiceSettings = setting[3];
+			
+			for(var i = 0; i < choiceSettings[0].length - 1; i++) {
+				if(choiceSettings[i][2] == "true")
 					selected = "selected='selected'";
-				}
-				options += "<option value='" +setting[3][i][0] + "'" + selected + ">" + setting[3][i][1] + "</option>\n";
+				
+				options = "<option value='" + choiceSettings[i][0] + "'" + selected + ">" + choiceSettings[i][1] + "</option>\n";
 			}
-			setting[3] = options;
+			
+			choiceSettings = options;
+			
+			return choiceSettings;
 		}
-		return setting;
+		
+		return "";
 	}-*/;
 	
 	public final native JavaScriptObject getNext() /*-{

@@ -88,23 +88,34 @@ public class DashboardPanel extends Composite {
 	@UiField Button noThanksButton;
 	@UiField FlowPanel deleteTitlePanel;
 	
-	public DashboardPanel(ClientFactory clientFactory, String projectName) {
+	public DashboardPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.eventBus = clientFactory.getEventBus();
 		this.clientFactory = clientFactory;
 		this.JSVarHandler = clientFactory.getJSVariableHandler();
 		this.applications = clientFactory.getApplications();
-		this.projectName = projectName;
-		projectLabel.setText(projectName);
 		activeButton.setText("");
 		deleteForm = new FormPanel();
+		registerHandlers();
 		setDeletePopupPanelInitialState();
-		handleProjectInformation(projectName);
+	}
+	
+	private void registerHandlers() {
+		eventBus.addHandler(PanelTransitionEvent.TYPE, 
+				new PanelTransitionEventHandler(){
+					public void onPanelTransition(PanelTransitionEvent event){
+						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD){
+							projectName = event.name;
+							projectLabel.setText(projectName);
+							handleProjectInformation(projectName);
+						}
+					}
+			});
 	}
 	
 	@UiHandler("settingsButton")
 	void onSettingsButtonClick(ClickEvent event){
-		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS));
+		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS, "worklog"));
 	}
 	
 	@UiHandler("activeButton")
@@ -149,6 +160,8 @@ public class DashboardPanel extends Composite {
 	}
 
 	public void handleProjectInformation(String projectName){
+		applicationsFlowPanel.clear();
+		
 		final Project project = clientFactory.getProjects().get(projectName);
 		HashMap<String, Application> applicationsMap = clientFactory.getApplications();
 		JsArrayString applicationsArray = project.getApps();
@@ -230,7 +243,6 @@ public class DashboardPanel extends Composite {
 			settingsLabel.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					if(project.isActive()) {
-						Window.alert("firing switch settings event from dashboard panel");
 						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS, app.getAppName()));
 					}
 				}

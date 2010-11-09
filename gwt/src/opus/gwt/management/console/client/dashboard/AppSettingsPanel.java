@@ -47,6 +47,7 @@ public class AppSettingsPanel extends Composite {
 	private final String optionsUrl = "/deployments/projectName/confapps/";
 	
 	private String projectName;
+	private ClientFactory clientFactory;
 	private JSVariableHandler jsVarHandler;
 	private EventBus eventBus;
 	private boolean active;
@@ -61,13 +62,11 @@ public class AppSettingsPanel extends Composite {
 	@UiField FlowPanel content;
 
 
-	public AppSettingsPanel(ClientFactory clientFactory, String projectName) {
+	public AppSettingsPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		Window.alert("creating an app settings panel");
-		this.projectName = projectName;
+		this.clientFactory = clientFactory;
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
 		this.eventBus = clientFactory.getEventBus();
-		this.project = clientFactory.getProjects().get(projectName);
 		registerHandlers();
 		tooltip = new TooltipPanel();
 		setTooltipInitialState();
@@ -78,9 +77,11 @@ public class AppSettingsPanel extends Composite {
 				new PanelTransitionEventHandler(){
 					public void onPanelTransition(PanelTransitionEvent event){
 						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS){
-							Window.alert("received event in app settings from switch settings event");
 							projectLabel.setText(projectName + " settings: " + event.name);
 							importProjectSettings(project.getAppSettings(), event.name);
+						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD){
+							projectName = event.name;
+							project = clientFactory.getProjects().get(projectName);
 						}
 					}
 			});
@@ -94,7 +95,7 @@ public class AppSettingsPanel extends Composite {
 		
 		FlowPanel formWrapper = new FlowPanel();
 		formWrapper.setStyleName(form.formWrapper());
-		
+
 		for(int j = 0; j < appSettings.length(); j++) {
 			FlowPanel field = new FlowPanel();
 			FlowPanel fieldWrapper = new FlowPanel();
@@ -102,8 +103,10 @@ public class AppSettingsPanel extends Composite {
 			field.setStyleName(form.field());
 			
 			JsArray<JavaScriptObject> settingsArray = settings.getSettingsArray(appSettings.get(j));
+			String choiceSettings = settings.getChoiceSettingsArray(appSettings.get(j));
 			
 			String[] settingsContent = settingsArray.join(";;").split(";;\\s*");
+			//String[] choiceSettingsContent = choiceSettingsArray.join(";;").split(";;\\s*");
 			
 			Label appName = new Label(application);
 			
@@ -165,7 +168,7 @@ public class AppSettingsPanel extends Composite {
 				ListBox setting = new ListBox();
 				setting.setName(settingsContent[1]);
 				setting.setStyleName(form.greyBorder());
-				//setting.getElement().setInnerHTML(settingsContent[3]);
+				setting.getElement().setInnerHTML(choiceSettings);
 				
 				field.add(setting);
 			} else if(settingsContent[2].equals("bool")) {

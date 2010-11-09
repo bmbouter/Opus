@@ -64,7 +64,6 @@ public class IconPanel extends Composite {
 	
 	public IconPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		Window.alert("creating the icon panel");
 		this.eventBus = clientFactory.getEventBus();
 		this.clientFactory = clientFactory;
 		iconMap = new HashMap<String, Integer>();
@@ -146,7 +145,6 @@ public class IconPanel extends Composite {
 		testLabel.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
 	        	testLabel.setStyleName(style.projectIcon());
-	        	Window.alert("firing event to show the dashboard from icon panel");
 	        	eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 	        }
 	     });

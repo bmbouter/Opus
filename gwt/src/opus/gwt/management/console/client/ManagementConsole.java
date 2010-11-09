@@ -59,12 +59,13 @@ public class ManagementConsole extends Composite {
 	@UiField ManagementConsoleControllerStyle style;
 	
 	public ManagementConsole(ClientFactory clientFactory) {
-		Window.alert("creating the management console");
 		this.clientFactory = clientFactory;
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
 		this.eventBus = clientFactory.getEventBus();
 		navigationPanel = new NavigationPanel(clientFactory);
 		breadCrumbsPanel = new BreadCrumbsPanel(clientFactory);
+		projectManagerController = new ProjectManagerController(clientFactory);
+		iconPanel = new IconPanel(clientFactory);
 		initWidget(uiBinder.createAndBindUi(this));
 		RootLayoutPanel.get().add(this);
 		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
@@ -81,7 +82,6 @@ public class ManagementConsole extends Composite {
 					} else if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTS ){
 						showIconPanel();
 					} else if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD ){
-						Window.alert("recieved event to show dashboard in management console");
 						manageProjects(event.getName());
 					}
 				}
@@ -108,18 +108,13 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void manageProjects(String projectName){
-		projectManagerController = (ProjectManagerController)contentLayoutPanel.getWidget(0);
-		projectManagerController = null;
-		Window.alert("instantiating the project manager controller in management console under manage projects");
-		projectManagerController = new ProjectManagerController(clientFactory, projectName);
+		//projectManagerController = ProjectManagerController.getInstance(clientFactory, projectName);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(projectManagerController);
 		contentLayoutPanel.setVisible(true);
 	}
 	
 	private void showIconPanel(){
-		Window.alert("instantiating the icon panel in management console");
-		iconPanel = new IconPanel(clientFactory);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(iconPanel);
 		contentLayoutPanel.setVisible(true);
