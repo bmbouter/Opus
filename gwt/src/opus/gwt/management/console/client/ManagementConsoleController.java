@@ -1,11 +1,8 @@
 package opus.gwt.management.console.client;
 
-import java.util.HashMap;
-
 import opus.gwt.management.console.client.event.AddProjectEvent;
 import opus.gwt.management.console.client.event.AddProjectEventHandler;
 import opus.gwt.management.console.client.event.AsyncRequestEvent;
-import opus.gwt.management.console.client.event.DataReadyEvent;
 import opus.gwt.management.console.client.event.DeleteProjectEvent;
 import opus.gwt.management.console.client.event.DeleteProjectEventHandler;
 import opus.gwt.management.console.client.event.GetApplicationsEvent;
@@ -17,8 +14,6 @@ import opus.gwt.management.console.client.event.GetProjectsEventHandler;
 import opus.gwt.management.console.client.event.GetUserEvent;
 import opus.gwt.management.console.client.event.GetUserEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
-import opus.gwt.management.console.client.overlays.Application;
-import opus.gwt.management.console.client.overlays.Project;
 
 import com.google.gwt.event.shared.EventBus;
 
